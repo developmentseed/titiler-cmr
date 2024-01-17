@@ -1,0 +1,67 @@
+site_name: TiTiler.CMR
+site_description: Connect Common Metadata Repository (CMR) and TiTiler.
+
+docs_dir: 'src'
+site_dir: 'build'
+
+repo_name: developmentseed/titiler-cmr
+repo_url: https://github.com/developmentseed/titiler-cmr
+edit_uri: blob/main/docs/
+site_url: https://developmentseed.org/titiler-cmr/
+
+extra:
+  social:
+    - icon: "fontawesome/brands/github"
+      link: "https://github.com/stac-utils"
+  version:
+    provider: mike
+    default: latest
+
+nav:
+  - Home: index.md
+  - Development - Contributing: contributing.md
+  - Release notes: release-notes.md
+  - Performance Benchmarks: benchmark.html
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      include_source: True
+
+theme:
+  name: material
+  favicon: img/favicon.ico
+  logo: img/logo.png
+  features:
+    - navigation.indexes
+
+extra_css:
+  - overrides/stylesheets/extra.css
+
+# https://github.com/kylebarron/cogeo-mosaic/blob/mkdocs/mkdocs.yml#L50-L75
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite:
+      guess_lang: false
+  - def_list
+  - footnotes
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret:
+      insert: false
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.escapeall:
+      hardbreak: true
+      nbsp: true
+  - pymdownx.magiclink:
+      hide_protocol: true
+      repo_url_shortener: true
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - toc:
+      permalink: true
