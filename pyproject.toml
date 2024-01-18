@@ -23,10 +23,12 @@ classifiers = [
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
+    "orjson",
     "titiler.core>=0.17.0,<0.18",
     "xarray",
     "rioxarray",
     "earthaccess",
+    "ciso8601~=2.3",
     "pydantic>=2.4,<3.0",
     "pydantic-settings~=2.0",
 ]
