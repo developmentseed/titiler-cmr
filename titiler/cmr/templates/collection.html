@@ -1,0 +1,77 @@
+{% include "header.html" %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb bg-light">
+    {% for crumb in crumbs %} {% if not loop.last %}
+    <li class="breadcrumb-item">
+      <a href="{{ crumb.url }}/">{{ crumb.part }}</a>
+    </li>
+    {% else %}
+    <li class="breadcrumb-item active" aria-current="page">{{ crumb.part }}</li>
+    {% endif %} {% endfor %}
+
+    <li class="ml-auto json-link">
+      <a target="_blank" href="{{ url }}?f=json">JSON</a>
+    </li>
+  </ol>
+</nav>
+
+<h1>Collection: {{ response.title or response.id }}</h1>
+
+<div class="row">
+  <div class="col-sm">
+    <p>{{ response.description or response.title or response.id }}</p>
+    {% if "keywords" in response and length(response.keywords) > 0 %}
+    <div id="keywords">
+      <p>
+        {% for keyword in response.keywords %}
+        <span class="badge badge-secondary">{{ keyword }}</span>
+        {% endfor %}
+      </p>
+    </div>
+    {% endif %}
+
+    <h2>Links</h2>
+    <ul>
+      {% for link in response.links %}
+      <li><a href="{{ link.href }}">{{ link.title or link.rel }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-sm">
+    <div id="map" class="rounded" style="width: 100%; height: 400px">
+      Loading...
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function() {
+    var collection = {{ response|tojson }};
+    if (collection.extent && collection.extent.spatial){
+      var bbox = collection.extent.spatial.bbox[0]
+      var bbox_polygon = L.polygon([
+        [bbox[1], bbox[0]],
+        [bbox[1], bbox[2]],
+        [bbox[3], bbox[2]],
+        [bbox[3], bbox[0]]
+      ]);
+
+      var map = L.map('map').setView([0, 0], 1);
+      map.addLayer(new L.TileLayer(
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+        }
+      ));
+
+      map.addLayer(bbox_polygon);
+      map.fitBounds(bbox_polygon.getBounds());
+    } else {
+      document.getElementById("map").style.display = "none";
+    }
+
+  });
+</script>
+
+{% include "footer.html" %}

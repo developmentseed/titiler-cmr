@@ -1,5 +1,5 @@
 {
-    "id": "MUR-JPL-L4-GLOB-v4.1.v4.1",
+    "id": "MUR-JPL-L4-GLOB",
     "stac_version": "1.0.0",
     "license": "not-provided",
     "title": "GHRSST Level 4 MUR Global Foundation Sea Surface Temperature Analysis (v4.1)",
@@ -23,7 +23,7 @@
             "lon"
           ],
           "type": "data"
-        }      
+        }
     },
     "renders": {
       "analysed_sst": {
@@ -34,7 +34,7 @@
         "resampling": "average",
         "colormap_name": "ocean"
       }
-    },  
+    },
     "links": [
       {
         "rel": "self",
@@ -70,4 +70,3 @@
       }
     }
   }
-  
