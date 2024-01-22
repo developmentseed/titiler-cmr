@@ -1,8 +1,9 @@
-"""tipg.factory: router factories."""
+"""titiler.cmr.factory: router factories."""
 
 import json
+import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Literal, Optional
+from typing import Any, Literal, Optional
 
 import jinja2
 import orjson
@@ -10,14 +11,13 @@ from fastapi import APIRouter, Depends, Path
 from fastapi.responses import ORJSONResponse
 from morecantile import tms as default_tms
 from morecantile.defaults import TileMatrixSets
-from starlette.datastructures import QueryParams
 from starlette.requests import Request
 from starlette.routing import compile_path, replace_params
 from starlette.templating import Jinja2Templates, _TemplateResponse
 from typing_extensions import Annotated
 
 from titiler.cmr import models
-from titiler.cmr.dependencies import CollectionParams, CollectionsParams, OutputType
+from titiler.cmr.dependencies import OutputType
 from titiler.cmr.enums import MediaType
 
 jinja2_env = jinja2.Environment(
@@ -35,6 +35,9 @@ def create_html_response(
 ) -> _TemplateResponse:
     """Create Template response."""
     urlpath = request.url.path
+    if root_path := request.app.root_path:
+        urlpath = re.sub(r"^" + root_path, "", urlpath)
+
     crumbs = []
     baseurl = str(request.base_url).rstrip("/")
 
@@ -75,10 +78,6 @@ class Endpoints:
 
     # FastAPI router
     router: APIRouter = field(default_factory=APIRouter)
-
-    # collection dependency
-    collections_dependency: Callable[..., models.CollectionList] = CollectionsParams
-    collection_dependency: Callable[..., models.Collection] = CollectionParams
 
     supported_tms: TileMatrixSets = default_tms
 
@@ -127,8 +126,6 @@ class Endpoints:
 
         self.register_landing()
         self.register_conformance()
-        self.register_collections()
-        self.register_collection()
         self.register_tilematrixsets()
 
     def register_landing(self) -> None:
@@ -182,12 +179,6 @@ class Endpoints:
                         href=self.url_for(request, "conformance"),
                         type=MediaType.json,
                         rel="conformance",
-                    ),
-                    models.Link(
-                        title="Collections",
-                        href=self.url_for(request, "collections"),
-                        type=MediaType.json,
-                        rel="data",
                     ),
                     models.Link(
                         title="TiTiler-CMR Documentation (external link)",
@@ -246,8 +237,6 @@ class Endpoints:
                     "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json",
                     "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html",
                     "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30",
-                    "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections",
-                    "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/simple-query",
                     "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core",
                     "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30",
                     "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset",
@@ -260,160 +249,6 @@ class Endpoints:
                     request,
                     data.model_dump_json(exclude_none=True),
                     template_name="conformance",
-                )
-
-            return data
-
-    def register_collections(self) -> None:
-        """register collections endpoint."""
-
-        @self.router.get(
-            "/collections",
-            response_model=models.Collections,
-            response_model_exclude_none=True,
-            response_class=ORJSONResponse,
-            responses={
-                200: {
-                    "content": {
-                        MediaType.json.value: {},
-                        MediaType.html.value: {},
-                    }
-                },
-            },
-            summary="list the collections in the dataset",
-            operation_id="getCollections",
-            tags=["Data Collections"],
-        )
-        def collections(
-            request: Request,
-            collection_list: Annotated[
-                models.CollectionList,
-                Depends(self.collections_dependency),
-            ],
-            output_type: Annotated[
-                Optional[MediaType],
-                Depends(OutputType),
-            ] = None,
-        ):
-            """List the collections in the dataset."""
-            links: list = [
-                models.Link(
-                    href=self.url_for(request, "collections"),
-                    rel="self",
-                    type=MediaType.json,
-                ),
-            ]
-
-            if next_token := collection_list.get("next"):
-                query_params = QueryParams(
-                    {**request.query_params, "offset": next_token}
-                )
-                url = self.url_for(request, "collections") + f"?{query_params}"
-                links.append(
-                    models.Link(
-                        href=url,
-                        rel="next",
-                        type=MediaType.json,
-                        title="Next page",
-                    ),
-                )
-
-            if collection_list.get("prev") is not None:
-                prev_token = collection_list["prev"]
-                qp = dict(request.query_params)
-                qp.pop("offset", None)
-                query_params = QueryParams({**qp, "offset": prev_token})
-                url = self.url_for(request, "collections")
-                if query_params:
-                    url += f"?{query_params}"
-
-                links.append(
-                    models.Link(
-                        href=url,
-                        rel="prev",
-                        type=MediaType.json,
-                        title="Previous page",
-                    ),
-                )
-
-            collections = [
-                collection.copy() for collection in collection_list["collections"]
-            ]
-            for collection in collections:
-                collection.links = [
-                    models.Link(
-                        href=self.url_for(
-                            request,
-                            "collection",
-                            collectionId=collection.id,
-                        ),
-                        rel="collection",
-                        type=MediaType.json,
-                    ),
-                ]
-
-            data = models.Collections(
-                links=links,
-                numberMatched=collection_list.get("matched"),
-                numberReturned=len(collection_list["collections"]),
-                collections=collections,
-            )
-
-            if output_type == MediaType.html:
-                return self._create_html_response(
-                    request,
-                    data.model_dump_json(exclude_none=True),
-                    template_name="collections",
-                )
-
-            return data
-
-    def register_collection(self) -> None:
-        """register collection endpoint."""
-
-        @self.router.get(
-            "/collections/{collectionId}",
-            response_model=models.Collection,
-            response_model_exclude_none=True,
-            response_class=ORJSONResponse,
-            responses={
-                200: {
-                    "content": {
-                        MediaType.json.value: {},
-                        MediaType.html.value: {},
-                    }
-                },
-            },
-            summary="describe the collection with id `collectionId`",
-            operation_id="describeCollection",
-            tags=["Data Collections"],
-        )
-        def collection(
-            request: Request,
-            collection: Annotated[
-                models.Collection, Depends(self.collection_dependency)
-            ],
-            output_type: Annotated[Optional[MediaType], Depends(OutputType)] = None,
-        ):
-            """Describe the collection with id `collectionId`"""
-            data = collection.copy()
-            data.links = [
-                models.Link(
-                    href=self.url_for(
-                        request,
-                        "collection",
-                        collectionId=collection.id,
-                    ),
-                    rel="collection",
-                    type=MediaType.json,
-                ),
-            ]
-
-            if output_type == MediaType.html:
-                return self._create_html_response(
-                    request,
-                    data.model_dump_json(exclude_none=True),
-                    template_name="collection",
                 )
 
             return data

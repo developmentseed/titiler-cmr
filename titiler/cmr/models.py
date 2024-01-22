@@ -1,7 +1,7 @@
 """ogcapi pydantic models."""
 
 from datetime import datetime
-from typing import Any, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union
+from typing import Any, Dict, List, Literal, Optional, Set, Tuple, Union
 
 from pydantic import AnyHttpUrl, AnyUrl, BaseModel, Field, RootModel
 from typing_extensions import Annotated
@@ -910,20 +910,3 @@ class TileMatrixSet(BaseModel, arbitrary_types_allowed=True):
         List[TileMatrix],
         Field(description="Describes scale levels and its tile matrices"),
     ]
-
-
-# Non-OGC
-class CollectionList(TypedDict):
-    """Collections."""
-
-    collections: List[Collection]
-    matched: Optional[int]
-    next: Optional[int]
-    prev: Optional[int]
-
-
-class Catalog(TypedDict):
-    """Internal Collection Catalog."""
-
-    collections: Dict[str, Collection]
-    last_updated: datetime

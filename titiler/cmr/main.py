@@ -1,16 +1,11 @@
 """TiTiler+cmr FastAPI application."""
 
-import datetime
-import pathlib
-from contextlib import asynccontextmanager
-
 import jinja2
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 
 from titiler.cmr import __version__ as titiler_cmr_version
-from titiler.cmr import models
 from titiler.cmr.factory import Endpoints
 from titiler.cmr.settings import ApiSettings
 from titiler.core.middleware import CacheControlMiddleware
@@ -25,27 +20,6 @@ jinja2_env = jinja2.Environment(
 templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """FastAPI Lifespan."""
-
-    def parse(path: pathlib.Path) -> models.Collection:
-        with path.open() as f:
-            return models.Collection.model_validate_json(f.read())
-
-    collections = [
-        parse(collection)
-        for collection in pathlib.Path(__file__).parent.joinpath("data").glob("*.json")
-    ]
-
-    app.state.collection_catalog = models.Catalog(
-        collections={collection.id: collection for collection in collections},
-        last_updated=datetime.datetime.now(),
-    )
-
-    yield
 
 
 app = FastAPI(
@@ -64,7 +38,6 @@ app = FastAPI(
     """,
     version=titiler_cmr_version,
     root_path=settings.root_path,
-    lifespan=lifespan,
 )
 
 

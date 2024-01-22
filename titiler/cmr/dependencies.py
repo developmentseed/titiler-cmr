@@ -3,13 +3,12 @@
 from typing import List, Literal, Optional, get_args
 
 from ciso8601 import parse_rfc3339
-from fastapi import Depends, HTTPException, Path, Query
+from fastapi import HTTPException, Query
 from starlette.requests import Request
 from typing_extensions import Annotated
 
 from titiler.cmr.enums import MediaType
-from titiler.cmr.errors import InvalidBBox, MissingCollectionCatalog
-from titiler.cmr.models import Catalog, Collection, CollectionList
+from titiler.cmr.errors import InvalidBBox
 
 ResponseType = Literal["json", "html"]
 
@@ -176,88 +175,3 @@ def datetime_query(
         return dt
 
     return None
-
-
-def CollectionParams(
-    request: Request,
-    collectionId: Annotated[str, Path(description="Local identifier of a collection")],
-) -> Collection:
-    """Return Layer Object."""
-    catalog: Optional[Catalog] = getattr(request.app.state, "collection_catalog", None)
-    if not catalog:
-        raise MissingCollectionCatalog("Could not find collections catalog.")
-
-    if collectionId in catalog["collections"]:
-        return catalog["collections"][collectionId].copy()
-
-    raise HTTPException(
-        status_code=404, detail=f"Collection '{collectionId}' not found."
-    )
-
-
-def CollectionsParams(
-    request: Request,
-    bbox_filter: Annotated[Optional[List[float]], Depends(bbox_query)],
-    datetime_filter: Annotated[Optional[List[str]], Depends(datetime_query)],
-    limit: Annotated[
-        Optional[int],
-        Query(
-            ge=0,
-            le=1000,
-            description="Limits the number of collection in the response.",
-        ),
-    ] = None,
-    offset: Annotated[
-        Optional[int],
-        Query(
-            ge=0,
-            description="Starts the response at an offset.",
-        ),
-    ] = None,
-) -> CollectionList:
-    """Return Collections Catalog."""
-    limit = limit or 0
-    offset = offset or 0
-
-    # NOTE:
-    # For now, we are using a static catalog which is loaded at startup but
-    # we could use an external STAC API to get the list of collection / CMR collection_concept_id
-    catalog: Optional[Catalog] = getattr(request.app.state, "collection_catalog", None)
-    if not catalog:
-        raise MissingCollectionCatalog("Could not find collections catalog.")
-
-    collections_list = list(catalog["collections"].values())
-
-    # bbox filter
-    if bbox_filter is not None:
-        collections_list = [
-            collection
-            for collection in collections_list
-            if collection.bounds is not None
-            and s_intersects(bbox_filter, collection.bounds)
-        ]
-
-    # datetime filter
-    if datetime_filter is not None:
-        collections_list = [
-            collection
-            for collection in collections_list
-            if collection.dt_bounds is not None
-            and t_intersects(datetime_filter, collection.dt_bounds)
-        ]
-
-    matched = len(collections_list)
-
-    if limit:
-        collections_list = collections_list[offset : offset + limit]
-    else:
-        collections_list = collections_list[offset:]
-
-    returned = len(collections_list)
-
-    return CollectionList(
-        collections=collections_list,
-        matched=matched,
-        next=offset + returned if matched - returned > offset else None,
-        prev=max(offset - limit, 0) if offset else None,
-    )
