@@ -25,6 +25,7 @@ classifiers = [
 dependencies = [
     "orjson",
     "titiler.core>=0.17.0,<0.18",
+    "titiler.mosaic>0.17.0,<0.18",
     "xarray",
     "rioxarray",
     "earthaccess",
