@@ -3,22 +3,36 @@
 import json
 import re
 from dataclasses import dataclass, field
-from typing import Any, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
+from urllib.parse import urlencode
 
 import jinja2
+import numpy
 import orjson
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, Path, Query
 from fastapi.responses import ORJSONResponse
 from morecantile import tms as default_tms
 from morecantile.defaults import TileMatrixSets
+from pydantic import conint
+from rio_tiler.io import Reader
+from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
+from starlette.responses import Response
 from starlette.routing import compile_path, replace_params
 from starlette.templating import Jinja2Templates, _TemplateResponse
 from typing_extensions import Annotated
 
 from titiler.cmr import models
-from titiler.cmr.dependencies import OutputType
+from titiler.cmr.backend import CMRBackend
+from titiler.cmr.dependencies import OutputType, cmr_query
 from titiler.cmr.enums import MediaType
+from titiler.cmr.reader import ZarrReader
+from titiler.core import dependencies
+from titiler.core.algorithm import algorithms as available_algorithms
+from titiler.core.factory import img_endpoint_params
+from titiler.core.models.mapbox import TileJSON
+from titiler.core.resources.enums import ImageType
+from titiler.core.utils import render_image
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader([jinja2.PackageLoader(__package__, "templates")])
@@ -127,6 +141,7 @@ class Endpoints:
         self.register_landing()
         self.register_conformance()
         self.register_tilematrixsets()
+        self.register_tiles()
 
     def register_landing(self) -> None:
         """register landing page endpoint."""
@@ -350,3 +365,405 @@ class Endpoints:
                 )
 
             return data
+
+    def register_tiles(self):  # noqa: C901
+        """Register tileset endpoints."""
+
+        @self.router.get(
+            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}",
+            **img_endpoint_params,
+            tags=["Raster Tiles"],
+        )
+        @self.router.get(
+            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}",
+            **img_endpoint_params,
+            tags=["Raster Tiles"],
+        )
+        @self.router.get(
+            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x",
+            **img_endpoint_params,
+            tags=["Raster Tiles"],
+        )
+        @self.router.get(
+            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}",
+            **img_endpoint_params,
+            tags=["Raster Tiles"],
+        )
+        def tiles_endpoint(
+            collectionId: Annotated[
+                str,
+                Path(
+                    description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
+                ),
+            ],
+            tileMatrixSetId: Annotated[
+                Literal[tuple(self.supported_tms.list())],
+                Path(description="Identifier for a supported TileMatrixSet"),
+            ],
+            z: Annotated[
+                int,
+                Path(
+                    description="Identifier (Z) selecting one of the scales defined in the TileMatrixSet and representing the scaleDenominator the tile.",
+                ),
+            ],
+            x: Annotated[
+                int,
+                Path(
+                    description="Column (X) index of the tile on the selected TileMatrix. It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
+                ),
+            ],
+            y: Annotated[
+                int,
+                Path(
+                    description="Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
+                ),
+            ],
+            scale: Annotated[  # type: ignore
+                conint(gt=0, le=4), "Tile size scale. 1=256x256, 2=512x512..."
+            ] = 1,
+            format: Annotated[
+                ImageType,
+                "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+            ] = None,
+            ###################################################################
+            # CMR options
+            query=Depends(cmr_query),
+            ###################################################################
+            backend: Annotated[
+                Literal["cog", "xarray"],
+                Query(description="Backend to read the CMR dataset"),
+            ] = "cog",
+            ###################################################################
+            # ZarrReader Options
+            ###################################################################
+            variable: Annotated[
+                Optional[str],
+                Query(description="Xarray Variable"),
+            ] = None,
+            drop_dim: Annotated[
+                Optional[str],
+                Query(description="Dimension to drop"),
+            ] = None,
+            time_slice: Annotated[
+                Optional[str], Query(description="Slice of time to read (if available)")
+            ] = None,
+            decode_times: Annotated[
+                Optional[bool],
+                Query(
+                    title="decode_times",
+                    description="Whether to decode times",
+                ),
+            ] = None,
+            ###################################################################
+            # COG Reader Options
+            ###################################################################
+            indexes: Annotated[
+                Optional[List[int]],
+                Query(
+                    title="Band indexes",
+                    alias="bidx",
+                    description="Dataset band indexes",
+                ),
+            ] = None,
+            expression: Annotated[
+                Optional[str],
+                Query(
+                    title="Band Math expression",
+                    description="rio-tiler's band math expression",
+                ),
+            ] = None,
+            unscale: Annotated[
+                Optional[bool],
+                Query(
+                    title="Apply internal Scale/Offset",
+                    description="Apply internal Scale/Offset. Defaults to `False`.",
+                ),
+            ] = None,
+            resampling_method: Annotated[
+                Optional[RIOResampling],
+                Query(
+                    alias="resampling",
+                    description="RasterIO resampling algorithm. Defaults to `nearest`.",
+                ),
+            ] = None,
+            ###################################################################
+            # Reader options
+            ###################################################################
+            nodata: Annotated[
+                Optional[Union[str, int, float]],
+                Query(
+                    title="Nodata value",
+                    description="Overwrite internal Nodata value",
+                ),
+            ] = None,
+            reproject_method: Annotated[
+                Optional[WarpResampling],
+                Query(
+                    alias="reproject",
+                    description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
+                ),
+            ] = None,
+            ###################################################################
+            # Rendering Options
+            ###################################################################
+            post_process=Depends(available_algorithms.dependency),
+            rescale=Depends(dependencies.RescalingParams),
+            color_formula=Depends(dependencies.ColorFormulaParams),
+            colormap=Depends(dependencies.ColorMapParams),
+            render_params=Depends(dependencies.ImageRenderingParams),
+        ) -> Response:
+            """Create map tile from a dataset."""
+            resampling_method = resampling_method or "nearest"
+            reproject_method = reproject_method or "nearest"
+            if nodata is not None:
+                nodata = numpy.nan if nodata == "nan" else float(nodata)
+
+            tms = self.supported_tms.get(tileMatrixSetId)
+
+            read_options: Dict[str, Any] = {}
+            reader_options: Dict[str, Any] = {}
+
+            if backend != "cog":
+                reader = ZarrReader
+                read_options = {}
+
+                options = {
+                    "variable": variable,
+                    "decode_times": decode_times,
+                    "drop_dim": drop_dim,
+                    "time_slice": time_slice,
+                }
+                reader_options = {k: v for k, v in options.items() if v is not None}
+            else:
+                reader = Reader
+                options = {
+                    "indexes": indexes,  # type: ignore
+                    "expression": expression,
+                    "unscale": unscale,
+                    "resampling_method": resampling_method,
+                }
+                read_options = {k: v for k, v in options.items() if v is not None}
+
+                reader_options = {}
+
+            with CMRBackend(
+                collectionId,
+                tms=tms,
+                reader=reader,
+                reader_options=reader_options,
+            ) as src_dst:
+                image = src_dst.tile(
+                    x,
+                    y,
+                    z,
+                    tilesize=scale * 256,
+                    cmr_query=cmr_query,
+                    nodata=nodata,
+                    reproject_method=reproject_method,
+                    **read_options,
+                )
+
+            if post_process:
+                image = post_process(image)
+
+            if rescale:
+                image.rescale(rescale)
+
+            if color_formula:
+                image.apply_color_formula(color_formula)
+
+            content, media_type = render_image(
+                image,
+                output_format=format,
+                colormap=colormap,
+                **render_params,
+            )
+
+            return Response(content, media_type=media_type)
+
+        @self.router.get(
+            "/collections/{collectionId}/{tileMatrixSetId}/tilejson.json",
+            response_model=TileJSON,
+            responses={200: {"description": "Return a tilejson"}},
+            response_model_exclude_none=True,
+            tags=["TileJSON"],
+        )
+        def tilejson_endpoint(  # type: ignore
+            request: Request,
+            collectionId: Annotated[
+                str,
+                Path(
+                    description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
+                ),
+            ],
+            tileMatrixSetId: Annotated[
+                Literal[tuple(self.supported_tms.list())],
+                Path(description="Identifier for a supported TileMatrixSet"),
+            ],
+            tile_format: Annotated[
+                Optional[ImageType],
+                Query(
+                    description="Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+                ),
+            ] = None,
+            tile_scale: Annotated[
+                int,
+                Query(
+                    gt=0, lt=4, description="Tile size scale. 1=256x256, 2=512x512..."
+                ),
+            ] = 1,
+            minzoom: Annotated[
+                Optional[int],
+                Query(description="Overwrite default minzoom."),
+            ] = None,
+            maxzoom: Annotated[
+                Optional[int],
+                Query(description="Overwrite default maxzoom."),
+            ] = None,
+            ###################################################################
+            # CMR options
+            query=Depends(cmr_query),
+            ###################################################################
+            backend: Annotated[
+                Literal["cog", "xarray"],
+                Query(description="Backend to read the CMR dataset"),
+            ] = "cog",
+            ###################################################################
+            # ZarrReader Options
+            ###################################################################
+            variable: Annotated[
+                Optional[str],
+                Query(description="Xarray Variable"),
+            ] = None,
+            drop_dim: Annotated[
+                Optional[str],
+                Query(description="Dimension to drop"),
+            ] = None,
+            time_slice: Annotated[
+                Optional[str], Query(description="Slice of time to read (if available)")
+            ] = None,
+            decode_times: Annotated[
+                Optional[bool],
+                Query(
+                    title="decode_times",
+                    description="Whether to decode times",
+                ),
+            ] = None,
+            ###################################################################
+            # COG Reader Options
+            ###################################################################
+            indexes: Annotated[
+                Optional[List[int]],
+                Query(
+                    title="Band indexes",
+                    alias="bidx",
+                    description="Dataset band indexes",
+                ),
+            ] = None,
+            expression: Annotated[
+                Optional[str],
+                Query(
+                    title="Band Math expression",
+                    description="rio-tiler's band math expression",
+                ),
+            ] = None,
+            unscale: Annotated[
+                Optional[bool],
+                Query(
+                    title="Apply internal Scale/Offset",
+                    description="Apply internal Scale/Offset. Defaults to `False`.",
+                ),
+            ] = None,
+            resampling_method: Annotated[
+                Optional[RIOResampling],
+                Query(
+                    alias="resampling",
+                    description="RasterIO resampling algorithm. Defaults to `nearest`.",
+                ),
+            ] = None,
+            ###################################################################
+            # Reader options
+            ###################################################################
+            nodata: Annotated[
+                Optional[Union[str, int, float]],
+                Query(
+                    title="Nodata value",
+                    description="Overwrite internal Nodata value",
+                ),
+            ] = None,
+            reproject_method: Annotated[
+                Optional[WarpResampling],
+                Query(
+                    alias="reproject",
+                    description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
+                ),
+            ] = None,
+            ###################################################################
+            # Rendering Options
+            ###################################################################
+            post_process=Depends(available_algorithms.dependency),
+            rescale=Depends(dependencies.RescalingParams),
+            color_formula=Depends(dependencies.ColorFormulaParams),
+            colormap=Depends(dependencies.ColorMapParams),
+            render_params=Depends(dependencies.ImageRenderingParams),
+        ) -> Dict:
+            """Return TileJSON document for a dataset."""
+            route_params = {
+                "z": "{z}",
+                "x": "{x}",
+                "y": "{y}",
+                "scale": tile_scale,
+                "tileMatrixSetId": tileMatrixSetId,
+            }
+            if tile_format:
+                route_params["format"] = tile_format.value
+
+            tiles_url = self.url_for(request, "tiles_endpoint", **route_params)
+
+            qs_key_to_remove = [
+                "tilematrixsetid",
+                "tile_format",
+                "tile_scale",
+                "minzoom",
+                "maxzoom",
+            ]
+            qs = [
+                (key, value)
+                for (key, value) in request.query_params._list
+                if key.lower() not in qs_key_to_remove
+            ]
+            if qs:
+                tiles_url += f"?{urlencode(qs)}"
+
+            tms = self.supported_tms.get(tileMatrixSetId)
+
+            if backend != "cog":
+                reader = ZarrReader
+                options = {
+                    "variable": variable,
+                    "decode_times": decode_times,
+                    "drop_dim": drop_dim,
+                    "time_slice": time_slice,
+                }
+                reader_options = {k: v for k, v in options.items() if v is not None}
+            else:
+                reader = Reader
+                reader_options = {}
+
+            with CMRBackend(
+                collectionId,
+                tms=tms,
+                reader=reader,
+                reader_options=reader_options,
+            ) as src_dst:
+                minx, miny, maxx, maxy = zip(
+                    [-180, -90, 180, 90], list(src_dst.geographic_bounds)
+                )
+                bounds = [max(minx), max(miny), min(maxx), min(maxy)]
+
+                return {
+                    "bounds": bounds,
+                    "minzoom": minzoom if minzoom is not None else src_dst.minzoom,
+                    "maxzoom": maxzoom if maxzoom is not None else src_dst.maxzoom,
+                    "tiles": [tiles_url],
+                }

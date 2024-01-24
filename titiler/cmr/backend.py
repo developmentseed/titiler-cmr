@@ -19,7 +19,6 @@ from rio_tiler.models import ImageData
 from rio_tiler.mosaic import mosaic_reader
 from rio_tiler.types import BBox
 
-from titiler.cmr.reader import ZarrReader
 from titiler.pgstac.settings import CacheSettings, RetrySettings
 from titiler.pgstac.utils import retry
 
@@ -38,6 +37,9 @@ class CMRBackend(BaseBackend):
     minzoom: int = attr.ib()
     maxzoom: int = attr.ib()
 
+    reader: Type[Reader] = attr.ib(default=Reader)
+    reader_options: Dict = attr.ib(factory=dict)
+
     # default values for bounds
     bounds: BBox = attr.ib(default=(-180, -90, 180, 90))
 
@@ -46,11 +48,6 @@ class CMRBackend(BaseBackend):
 
     # The reader is read-only (outside init)
     mosaic_def: MosaicJSON = attr.ib(init=False)
-
-    # NOT USED
-    # Use reader (outside init)
-    reader: Type[Reader] = attr.ib(default=Reader, init=False)
-    reader_options: Dict = attr.ib(factory=dict, init=False)
 
     _backend_name = "CMR"
 
@@ -182,12 +179,11 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(src_path: str, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            if src_path.endswith(".tif"):
-                reader = Reader
-            else:
-                reader = ZarrReader
-
-            with reader(src_path, tms=self.tms) as src_dst:
+            with self.reader(
+                src_path,
+                tms=self.tms,
+                **self.reader_options,
+            ) as src_dst:
                 return src_dst.tile(x, y, z, **kwargs)
 
         return mosaic_reader(mosaic_assets, _reader, tile_x, tile_y, tile_z, **kwargs)

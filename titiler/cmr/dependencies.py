@@ -1,6 +1,6 @@
 """titiler-cmr dependencies."""
 
-from typing import List, Literal, Optional, get_args
+from typing import Dict, List, Literal, Optional, get_args
 
 from ciso8601 import parse_rfc3339
 from fastapi import HTTPException, Query
@@ -8,48 +8,8 @@ from starlette.requests import Request
 from typing_extensions import Annotated
 
 from titiler.cmr.enums import MediaType
-from titiler.cmr.errors import InvalidBBox
 
 ResponseType = Literal["json", "html"]
-
-
-def s_intersects(bbox: List[float], spatial_extent: List[float]) -> bool:
-    """Check if bbox intersects with spatial extent."""
-    return (
-        (bbox[0] < spatial_extent[2])
-        and (bbox[2] > spatial_extent[0])
-        and (bbox[3] > spatial_extent[1])
-        and (bbox[1] < spatial_extent[3])
-    )
-
-
-def t_intersects(interval: List[str], temporal_extent: List[Optional[str]]) -> bool:
-    """Check if dates intersect with temporal extent."""
-    if len(interval) == 1:
-        start = end = parse_rfc3339(interval[0])
-
-    else:
-        start = parse_rfc3339(interval[0]) if interval[0] not in ["..", ""] else None
-        end = parse_rfc3339(interval[1]) if interval[1] not in ["..", ""] else None
-
-    mint, maxt = temporal_extent
-    min_ext = parse_rfc3339(mint) if mint is not None else None
-    max_ext = parse_rfc3339(maxt) if maxt is not None else None
-
-    if len(interval) == 1:
-        if start == min_ext or start == max_ext:
-            return True
-
-    if not start:
-        return max_ext <= end or min_ext <= end
-
-    elif not end:
-        return min_ext >= start or max_ext >= start
-
-    else:
-        return min_ext >= start and max_ext <= end
-
-    return False
 
 
 def accept_media_type(accept: str, mediatypes: List[MediaType]) -> Optional[MediaType]:
@@ -116,42 +76,8 @@ def OutputType(
     return accept_media_type(request.headers.get("accept", ""), accepted_media)
 
 
-def bbox_query(
-    bbox: Annotated[
-        Optional[str],
-        Query(
-            description="A bounding box, expressed in WGS84 (westLong,southLat,eastLong,northLat) or WGS84h (westLong,southLat,minHeight,eastLong,northLat,maxHeight) CRS, by which to filter out all collections whose spatial extent does not intersect with the bounding box.",
-            openapi_examples={
-                "simple": {"value": "160.6,-55.95,-170,-25.89"},
-            },
-        ),
-    ] = None
-) -> Optional[List[float]]:
-    """BBox dependency."""
-    if bbox:
-        bounds = list(map(float, bbox.split(",")))
-        if len(bounds) == 4:
-            if abs(bounds[0]) > 180 or abs(bounds[2]) > 180:
-                raise InvalidBBox(f"Invalid longitude in bbox: {bounds}")
-            if abs(bounds[1]) > 90 or abs(bounds[3]) > 90:
-                raise InvalidBBox(f"Invalid latitude in bbox: {bounds}")
-
-        elif len(bounds) == 6:
-            if abs(bounds[0]) > 180 or abs(bounds[3]) > 180:
-                raise InvalidBBox(f"Invalid longitude in bbox: {bounds}")
-            if abs(bounds[1]) > 90 or abs(bounds[4]) > 90:
-                raise InvalidBBox(f"Invalid latitude in bbox: {bounds}")
-
-        else:
-            raise InvalidBBox(f"Invalid bbox: {bounds}")
-
-        return bounds
-
-    return None
-
-
-def datetime_query(
-    datetime: Annotated[
+def cmr_query(
+    temporal: Annotated[
         Optional[str],
         Query(
             description="Either a date-time or an interval. Date and time expressions adhere to [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339). Intervals may be bounded or half-bounded (double-dots at start or end).",
@@ -165,13 +91,21 @@ def datetime_query(
             },
         ),
     ] = None,
-) -> Optional[List[str]]:
-    """Datetime dependency."""
-    if datetime:
-        dt = datetime.split("/")
+) -> Dict:
+    """CMR Query options."""
+    query = {}
+    if temporal:
+        dt = temporal.split("/")
         if len(dt) > 2:
-            raise HTTPException(status_code=422, detail="Invalid datetime: {datetime}")
+            raise HTTPException(status_code=422, detail="Invalid temporal: {temporal}")
 
-        return dt
+        if len(dt) == 1:
+            start = end = parse_rfc3339(dt[0])
 
-    return None
+        else:
+            start = parse_rfc3339(dt[0]) if dt[0] not in ["..", ""] else None
+            end = parse_rfc3339(dt[1]) if dt[1] not in ["..", ""] else None
+
+        query["temporal"] = [start, end]
+
+    return query
