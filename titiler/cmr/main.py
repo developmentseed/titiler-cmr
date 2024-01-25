@@ -1,5 +1,8 @@
 """TiTiler+cmr FastAPI application."""
 
+from contextlib import asynccontextmanager
+
+import earthaccess
 import jinja2
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -22,6 +25,13 @@ templates = Jinja2Templates(env=jinja2_env)
 settings = ApiSettings()
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI Lifespan."""
+    app.state.cmr_auth = earthaccess.login(strategy="netrc")
+    yield
+
+
 app = FastAPI(
     title=settings.name,
     openapi_url="/api",
@@ -38,6 +48,7 @@ app = FastAPI(
     """,
     version=titiler_cmr_version,
     root_path=settings.root_path,
+    lifespan=lifespan,
 )
 
 

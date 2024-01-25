@@ -1,7 +1,6 @@
 """TiTiler.cmr custom Mosaic Backend."""
 
-import itertools
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional, Tuple, Type, TypedDict
 
 import attr
 import earthaccess
@@ -14,7 +13,7 @@ from morecantile import Tile, TileMatrixSet
 from rasterio.crs import CRS
 from rasterio.warp import transform_bounds
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
-from rio_tiler.io import Reader
+from rio_tiler.io import BaseReader, Reader
 from rio_tiler.models import ImageData
 from rio_tiler.mosaic import mosaic_reader
 from rio_tiler.types import BBox
@@ -24,6 +23,14 @@ from titiler.pgstac.utils import retry
 
 cache_config = CacheSettings()
 retry_config = RetrySettings()
+
+
+class Asset(TypedDict, total=False):
+    """Simple Asset model."""
+
+    url: str
+    type: Optional[str]
+    provider: Optional[str]
 
 
 @attr.s
@@ -37,7 +44,7 @@ class CMRBackend(BaseBackend):
     minzoom: int = attr.ib()
     maxzoom: int = attr.ib()
 
-    reader: Type[Reader] = attr.ib(default=Reader)
+    reader: Type[BaseReader] = attr.ib(default=Reader)
     reader_options: Dict = attr.ib(factory=dict)
 
     # default values for bounds
@@ -85,7 +92,7 @@ class CMRBackend(BaseBackend):
         """This method is not used but is required by the abstract class."""
         pass
 
-    def assets_for_tile(self, x: int, y: int, z: int, **kwargs: Any) -> List[str]:
+    def assets_for_tile(self, x: int, y: int, z: int, **kwargs: Any) -> List[Asset]:
         """Retrieve assets for tile."""
         bbox = self.tms.bounds(Tile(x, y, z))
         return self.get_assets(*bbox, **kwargs)
@@ -96,7 +103,7 @@ class CMRBackend(BaseBackend):
         lat: float,
         coord_crs: CRS = WGS84_CRS,
         **kwargs: Any,
-    ) -> List[str]:
+    ) -> List[Asset]:
         """Retrieve assets for point."""
         raise NotImplementedError
 
@@ -108,7 +115,7 @@ class CMRBackend(BaseBackend):
         ymax: float,
         coord_crs: CRS = WGS84_CRS,
         **kwargs: Any,
-    ) -> List[Dict]:
+    ) -> List[Asset]:
         """Retrieve assets for bbox."""
         if coord_crs != WGS84_CRS:
             xmin, ymin, xmax, ymax = transform_bounds(
@@ -141,7 +148,7 @@ class CMRBackend(BaseBackend):
         ymax: float,
         limit: int = 100,
         **kwargs: Any,
-    ) -> List[str]:
+    ) -> List[Asset]:
         """Find assets."""
         results = earthaccess.search_data(
             concept_id=self.input,
@@ -149,9 +156,20 @@ class CMRBackend(BaseBackend):
             count=limit,
             **kwargs,
         )
-        return list(
-            itertools.chain.from_iterable([res.data_links() for res in results])
-        )
+
+        assets: List[Asset] = []
+        for r in results:
+            assets.append(
+                {
+                    "url": r.data_links(access="direct")[
+                        0
+                    ],  # NOTE: should we not do this?
+                    "type": r["meta"].get("concept-type"),
+                    "provider": r["meta"].get("provider-id"),
+                }
+            )
+
+        return assets
 
     @property
     def _quadkeys(self) -> List[str]:
@@ -178,9 +196,9 @@ class CMRBackend(BaseBackend):
                 f"No assets found for tile {tile_z}-{tile_x}-{tile_y}"
             )
 
-        def _reader(src_path: str, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
+        def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
             with self.reader(
-                src_path,
+                asset["url"],
                 tms=self.tms,
                 **self.reader_options,
             ) as src_dst:

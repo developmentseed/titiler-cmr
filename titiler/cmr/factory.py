@@ -14,7 +14,7 @@ from fastapi.responses import ORJSONResponse
 from morecantile import tms as default_tms
 from morecantile.defaults import TileMatrixSets
 from pydantic import conint
-from rio_tiler.io import Reader
+from rio_tiler.io import BaseReader, Reader
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from starlette.responses import Response
@@ -737,6 +737,7 @@ class Endpoints:
 
             tms = self.supported_tms.get(tileMatrixSetId)
 
+            reader: BaseReader
             if backend != "cog":
                 reader = ZarrReader
                 options = {
