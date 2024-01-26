@@ -14,7 +14,7 @@ from fastapi.responses import ORJSONResponse
 from morecantile import tms as default_tms
 from morecantile.defaults import TileMatrixSets
 from pydantic import conint
-from rio_tiler.io import BaseReader, Reader
+from rio_tiler.io import Reader
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from starlette.responses import Response
@@ -390,6 +390,7 @@ class Endpoints:
             tags=["Raster Tiles"],
         )
         def tiles_endpoint(
+            request: Request,
             collectionId: Annotated[
                 str,
                 Path(
@@ -548,6 +549,7 @@ class Endpoints:
 
             with CMRBackend(
                 collectionId,
+                auth=request.app.cmr_auth,
                 tms=tms,
                 reader=reader,
                 reader_options=reader_options,
@@ -737,25 +739,11 @@ class Endpoints:
 
             tms = self.supported_tms.get(tileMatrixSetId)
 
-            reader: BaseReader
-            if backend != "cog":
-                reader = ZarrReader
-                options = {
-                    "variable": variable,
-                    "decode_times": decode_times,
-                    "drop_dim": drop_dim,
-                    "time_slice": time_slice,
-                }
-                reader_options = {k: v for k, v in options.items() if v is not None}
-            else:
-                reader = Reader
-                reader_options = {}
-
+            # TODO: can we get metadata from the collection?
             with CMRBackend(
                 collectionId,
+                auth=request.app.cmr_auth,
                 tms=tms,
-                reader=reader,
-                reader_options=reader_options,
             ) as src_dst:
                 minx, miny, maxx, maxy = zip(
                     [-180, -90, 180, 90], list(src_dst.geographic_bounds)

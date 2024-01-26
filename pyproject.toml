@@ -26,7 +26,7 @@ dependencies = [
     "orjson",
     "titiler.core>=0.17.0,<0.18",
     "titiler.mosaic>=0.17.0,<0.18",
-    "rio_tiler>=6.4.0,<7.0",
+    "rio_tiler[s3]>=6.4.0,<7.0",
     "xarray",
     "rioxarray",
     "cftime",

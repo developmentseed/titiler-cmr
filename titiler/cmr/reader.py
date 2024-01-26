@@ -20,7 +20,7 @@ from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.io.xarray import XarrayReader
 from rio_tiler.types import BBox
 
-from titiler.pgstac.settings import CacheSettings
+from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
 cache_config = CacheSettings()
@@ -61,12 +61,14 @@ def get_filesystem(
     protocol: str,
     xr_engine: str,
     anon: bool = True,
+    s3_credentials: Optional[Dict] = None,
 ):
     """
     Get the filesystem for the given source path.
     """
     if protocol == "s3":
-        s3_filesystem = s3fs.S3FileSystem()
+        s3_credentials = s3_credentials or {}
+        s3_filesystem = s3fs.S3FileSystem(**s3_credentials)
         return (
             s3_filesystem.open(src_path)
             if xr_engine == "h5netcdf"
@@ -95,6 +97,7 @@ def xarray_open_dataset(
     reference: Optional[bool] = False,
     decode_times: Optional[bool] = True,
     consolidated: Optional[bool] = True,
+    s3_credentials: Optional[Dict] = None,
 ) -> xarray.Dataset:
     """Open dataset."""
     # Generate cache key and attempt to fetch the dataset from cache
@@ -105,7 +108,9 @@ def xarray_open_dataset(
 
     protocol = parse_protocol(src_path, reference=reference)
     xr_engine = xarray_engine(src_path)
-    file_handler = get_filesystem(src_path, protocol, xr_engine)
+    file_handler = get_filesystem(
+        src_path, protocol, xr_engine, s3_credentials=s3_credentials
+    )
 
     # Arguments for xarray.open_dataset
     # Default args
@@ -215,6 +220,7 @@ class ZarrReader(XarrayReader):
     decode_times: bool = attr.ib(default=False)
     group: Optional[Any] = attr.ib(default=None)
     consolidated: Optional[bool] = attr.ib(default=True)
+    s3_credentials: Optional[Dict] = attr.ib(default=None)
 
     # xarray.DataArray options
     time_slice: Optional[str] = attr.ib(default=None)
@@ -243,6 +249,7 @@ class ZarrReader(XarrayReader):
                 group=self.group,
                 reference=self.reference,
                 consolidated=self.consolidated,
+                s3_credentials=self.s3_credentials,
             ),
         )
         self.input = get_variable(

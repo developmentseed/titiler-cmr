@@ -4,11 +4,13 @@ from typing import Any, Dict, List, Optional, Tuple, Type, TypedDict
 
 import attr
 import earthaccess
+import rasterio
 from cachetools import TTLCache, cached
 from cachetools.keys import hashkey
 from cogeo_mosaic.backends import BaseBackend
 from cogeo_mosaic.errors import NoAssetFoundError
 from cogeo_mosaic.mosaic import MosaicJSON
+from earthaccess.auth import Auth
 from morecantile import Tile, TileMatrixSet
 from rasterio.crs import CRS
 from rasterio.warp import transform_bounds
@@ -18,19 +20,29 @@ from rio_tiler.models import ImageData
 from rio_tiler.mosaic import mosaic_reader
 from rio_tiler.types import BBox
 
-from titiler.pgstac.settings import CacheSettings, RetrySettings
-from titiler.pgstac.utils import retry
+from titiler.cmr.settings import AuthSettings, CacheSettings, RetrySettings
+from titiler.cmr.utils import retry
 
 cache_config = CacheSettings()
 retry_config = RetrySettings()
+s3_auth_config = AuthSettings()
+
+
+@cached(  # type: ignore
+    TTLCache(maxsize=100, ttl=60),
+    key=lambda auth, daac: hashkey(auth.tokens[0]["access_token"], daac),
+)
+def aws_s3_credential(auth: Auth, provider: str) -> Dict:
+    """Get AWS S3 credential through earthaccess."""
+    return auth.get_s3_credentials(provider=provider)
 
 
 class Asset(TypedDict, total=False):
     """Simple Asset model."""
 
     url: str
-    type: Optional[str]
-    provider: Optional[str]
+    type: str
+    provider: str
 
 
 @attr.s
@@ -39,6 +51,7 @@ class CMRBackend(BaseBackend):
 
     # ConceptID
     input: str = attr.ib()
+    auth: Auth = attr.ib()
 
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
     minzoom: int = attr.ib()
@@ -164,8 +177,7 @@ class CMRBackend(BaseBackend):
                     "url": r.data_links(access="direct")[
                         0
                     ],  # NOTE: should we not do this?
-                    "type": r["meta"].get("concept-type"),
-                    "provider": r["meta"].get("provider-id"),
+                    "provider": r["meta"]["provider-id"],
                 }
             )
 
@@ -197,10 +209,45 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
+            if s3_auth_config.type == "auto":
+                s3_credentials = aws_s3_credential(self.auth, asset["provider"])
+
+            else:
+                s3_credentials = None
+
+            if isinstance(self.reader, Reader):
+                aws_session = None
+                if s3_credentials:
+                    aws_session = rasterio.session.AWSSession(
+                        aws_access_key_id=s3_credentials["accessKeyId"],
+                        aws_secret_access_key=s3_credentials["secretAccessKey"],
+                        aws_session_token=s3_credentials["sessionToken"],
+                    )
+
+                with rasterio.Env(aws_session):
+                    with self.reader(
+                        asset["url"],
+                        tms=self.tms,
+                        **self.reader_options,
+                    ) as src_dst:
+                        return src_dst.tile(x, y, z, **kwargs)
+
+            if s3_credentials:
+                options = {
+                    **self.reader_options,
+                    "s3_credentials": {
+                        "key": s3_credentials["accessKeyId"],
+                        "secret": s3_credentials["secretAccessKey"],
+                        "token": s3_credentials["sessionToken"],
+                    },
+                }
+            else:
+                options = self.reader_options
+
             with self.reader(
                 asset["url"],
                 tms=self.tms,
-                **self.reader_options,
+                **options,
             ) as src_dst:
                 return src_dst.tile(x, y, z, **kwargs)
 
