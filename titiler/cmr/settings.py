@@ -68,7 +68,7 @@ class RetrySettings(BaseSettings):
 class AuthSettings(BaseSettings):
     """AWS credential settings."""
 
-    type: Literal["auto", "iam"] = "auto"
+    strategy: Literal["environment", "iam"] = "environment"
 
     model_config = {
         "env_prefix": "TITILER_CMR_S3_AUTH_",

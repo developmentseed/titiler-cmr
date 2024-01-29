@@ -549,10 +549,10 @@ class Endpoints:
 
             with CMRBackend(
                 collectionId,
-                auth=request.app.cmr_auth,
                 tms=tms,
                 reader=reader,
                 reader_options=reader_options,
+                auth=request.app.cmr_auth,
             ) as src_dst:
                 image = src_dst.tile(
                     x,

@@ -51,7 +51,6 @@ class CMRBackend(BaseBackend):
 
     # ConceptID
     input: str = attr.ib()
-    auth: Auth = attr.ib()
 
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
     minzoom: int = attr.ib()
@@ -68,6 +67,8 @@ class CMRBackend(BaseBackend):
 
     # The reader is read-only (outside init)
     mosaic_def: MosaicJSON = attr.ib(init=False)
+
+    auth: Optional[Auth] = attr.ib(default=None)
 
     _backend_name = "CMR"
 
@@ -209,7 +210,7 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            if s3_auth_config.type == "auto":
+            if s3_auth_config.type == "environment" and self.auth:
                 s3_credentials = aws_s3_credential(self.auth, asset["provider"])
 
             else:
