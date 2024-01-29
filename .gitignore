@@ -100,3 +100,8 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# AWS CDK
+cdk.out/
+node_modules
+cdk.context.json
