@@ -15,6 +15,8 @@ on:
       - 'infrastructure/aws/**'
       - 'titiler/**'
       - '.pre-commit-config.yaml'
+      - '.github/workflows/ci.yml'
+
   # Run tests on pull requests.
   pull_request:
 env:
