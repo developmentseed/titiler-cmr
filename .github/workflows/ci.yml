@@ -55,7 +55,7 @@ jobs:
         run: python -m pytest --cov titiler.cmr --cov-report term-missing -s -vv
 
   deploy:
-    # needs: [tests]
+    needs: [tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
 
@@ -64,7 +64,7 @@ jobs:
         working-directory: infrastructure/aws
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -76,7 +76,7 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: '14.x'
 
       - name: Install cdk
         run: npm install -g
