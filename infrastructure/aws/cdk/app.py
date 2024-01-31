@@ -55,6 +55,7 @@ class LambdaStack(Stack):
         permissions = permissions or []
         environment = environment or {}
 
+        iam_reader_role = None
         if role_arn:
             iam_reader_role = iam.Role.from_role_arn(
                 self,
