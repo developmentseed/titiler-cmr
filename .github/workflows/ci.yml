@@ -99,7 +99,7 @@ jobs:
           # STACK_ALARM_EMAIL: ${{ secrets.ALARM_EMAIL }}
           STACK_ROLE_ARN: ${{ secrets.lambda_role_arn }}
           STACK_STAGE: staging
-          STACK_ADDITIONAL_ENV: '{"TITILER_CMR_S3_AUTH_STRATEGY":"iam", "TITILER_CMR_API_DEBUG": True}'
+          STACK_ADDITIONAL_ENV: '{"TITILER_CMR_S3_AUTH_STRATEGY":"iam", "TITILER_CMR_API_DEBUG": true}'
 
       # Build and deploy to production deployment whenever there a new tag is pushed
       - name: Build & Deploy Production
