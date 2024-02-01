@@ -554,7 +554,7 @@ class Endpoints:
                 reader_options=reader_options,
                 auth=request.app.state.cmr_auth,
             ) as src_dst:
-                image = src_dst.tile(
+                image, _ = src_dst.tile(
                     x,
                     y,
                     z,
