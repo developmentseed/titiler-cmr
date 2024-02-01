@@ -210,7 +210,7 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            if s3_auth_config.type == "environment" and self.auth:
+            if s3_auth_config.strategy == "environment" and self.auth:
                 s3_credentials = aws_s3_credential(self.auth, asset["provider"])
 
             else:
