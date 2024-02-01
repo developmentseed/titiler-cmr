@@ -11,7 +11,7 @@ from starlette.templating import Jinja2Templates
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.factory import Endpoints
 from titiler.cmr.settings import ApiSettings, AuthSettings
-from titiler.core.middleware import CacheControlMiddleware
+from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
@@ -68,6 +68,9 @@ if settings.cors_origins:
     )
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
+
+if settings.debug:
+    app.add_middleware(LoggerMiddleware, headers=True, querystrings=True)
 
 ###############################################################################
 # application endpoints

@@ -106,6 +106,6 @@ def cmr_query(
             start = parse_rfc3339(dt[0]) if dt[0] not in ["..", ""] else None
             end = parse_rfc3339(dt[1]) if dt[1] not in ["..", ""] else None
 
-        query["temporal"] = [start, end]
+        query["temporal"] = (start, end)
 
     return query
