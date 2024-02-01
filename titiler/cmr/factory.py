@@ -552,7 +552,7 @@ class Endpoints:
                 tms=tms,
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.cmr_auth,
+                auth=request.app.state.cmr_auth,
             ) as src_dst:
                 image = src_dst.tile(
                     x,
@@ -742,7 +742,7 @@ class Endpoints:
             # TODO: can we get metadata from the collection?
             with CMRBackend(
                 collectionId,
-                auth=request.app.cmr_auth,
+                auth=request.app.state.cmr_auth,
                 tms=tms,
             ) as src_dst:
                 minx, miny, maxx, maxy = zip(
