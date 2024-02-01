@@ -559,7 +559,7 @@ class Endpoints:
                     y,
                     z,
                     tilesize=scale * 256,
-                    cmr_query=cmr_query,
+                    cmr_query=query,
                     nodata=nodata,
                     reproject_method=reproject_method,
                     **read_options,
