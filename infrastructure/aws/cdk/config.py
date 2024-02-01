@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class StackSettings(BaseSettings):
@@ -36,8 +36,6 @@ class StackSettings(BaseSettings):
     max_concurrent: Optional[int] = None
     alarm_email: Optional[str] = None
 
-    model_config = {
-        "env_prefix": "STACK",
-        "env_file": ".env",
-        "extra": "ignore",
-    }
+    model_config = SettingsConfigDict(
+        env_prefix="STACK_", env_file=".env", extra="ignore"
+    )
