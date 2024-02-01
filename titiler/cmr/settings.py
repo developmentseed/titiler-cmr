@@ -14,7 +14,6 @@ class ApiSettings(BaseSettings):
     cors_origins: str = "*"
     cachecontrol: str = "public, max-age=3600"
     root_path: str = ""
-    debug: bool = False
 
     model_config = {
         "env_prefix": "TITILER_CMR_API_",

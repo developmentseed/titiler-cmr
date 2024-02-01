@@ -18,7 +18,6 @@ from constructs import Construct
 
 settings = StackSettings()
 
-
 DEFAULT_ENV = {
     "GDAL_CACHEMAX": "200",  # 200 mb
     "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
@@ -55,6 +54,7 @@ class LambdaStack(Stack):
         permissions = permissions or []
         environment = environment or {}
 
+        iam_reader_role = None
         if role_arn:
             iam_reader_role = iam.Role.from_role_arn(
                 self,
@@ -138,7 +138,6 @@ if settings.buckets:
             resources=[f"arn:aws:s3:::{bucket}*" for bucket in settings.buckets],
         )
     )
-
 
 lambda_stack = LambdaStack(
     app,
