@@ -34,7 +34,6 @@ dependencies = [
     "fsspec",
     "s3fs",
     "earthaccess",
-    "ciso8601~=2.3",
     "pydantic>=2.4,<3.0",
     "pydantic-settings~=2.0",
 ]

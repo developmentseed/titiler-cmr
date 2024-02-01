@@ -1,13 +1,14 @@
 """titiler-cmr dependencies."""
 
+from datetime import datetime
 from typing import Dict, List, Literal, Optional, get_args
 
-from ciso8601 import parse_rfc3339
 from fastapi import HTTPException, Query
 from starlette.requests import Request
 from typing_extensions import Annotated
 
 from titiler.cmr.enums import MediaType
+from titiler.cmr.errors import InvalidDatetime
 
 ResponseType = Literal["json", "html"]
 
@@ -80,14 +81,12 @@ def cmr_query(
     temporal: Annotated[
         Optional[str],
         Query(
-            description="Either a date-time or an interval. Date and time expressions adhere to [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339). Intervals may be bounded or half-bounded (double-dots at start or end).",
+            description="Either a date-time or an interval. Date and time expressions adhere to 'YYYY-MM-DD' format. Intervals may be bounded or half-bounded (double-dots at start or end).",
             openapi_examples={
-                "A date-time": {"value": "2018-02-12T23:20:50Z"},
-                "A bounded interval": {
-                    "value": "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"
-                },
-                "Half-bounded intervals (start)": {"value": "2018-02-12T00:00:00Z/.."},
-                "Half-bounded intervals (end)": {"value": "../2018-03-18T12:31:12Z"},
+                "A date-time": {"value": "2018-02-12"},
+                "A bounded interval": {"value": "2018-02-12/2018-03-18"},
+                "Half-bounded intervals (start)": {"value": "2018-02-12/.."},
+                "Half-bounded intervals (end)": {"value": "../2018-03-18"},
             },
         ),
     ] = None,
@@ -99,12 +98,35 @@ def cmr_query(
         if len(dt) > 2:
             raise HTTPException(status_code=422, detail="Invalid temporal: {temporal}")
 
+        start: Optional[str]
+        end: Optional[str]
+
         if len(dt) == 1:
-            start = end = parse_rfc3339(dt[0])
+            start = end = dt[0]
 
         else:
-            start = parse_rfc3339(dt[0]) if dt[0] not in ["..", ""] else None
-            end = parse_rfc3339(dt[1]) if dt[1] not in ["..", ""] else None
+            start = dt[0] if dt[0] not in ["..", ""] else None
+            end = dt[1] if dt[1] not in ["..", ""] else None
+
+        if start:
+            try:
+                datetime.strptime(
+                    start, "%Y-%m-%d"
+                ), f"Start datetime {start} not in form of 'YYYY-MM-DD'"
+            except ValueError as e:
+                raise InvalidDatetime(
+                    f"Start datetime {start} not in form of 'YYYY-MM-DD'"
+                ) from e
+
+        if end:
+            try:
+                datetime.strptime(
+                    end, "%Y-%m-%d"
+                ), f"Start datetime {start} not in form of 'YYYY-MM-DD'"
+            except ValueError as e:
+                raise InvalidDatetime(
+                    f"End datetime {end} not in form of 'YYYY-MM-DD'"
+                ) from e
 
         query["temporal"] = (start, end)
 
