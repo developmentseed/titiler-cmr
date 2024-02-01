@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=3.10
 
 FROM --platform=linux/amd64 public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
@@ -15,10 +15,8 @@ COPY titiler/ titiler/
 # and becaise we NEED to remove both boto3 and botocore to save space for the package
 # we have to force using old package version that seems `almost` compatible with Lambda env botocore
 # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
-# boto3-1.28.72
-# botocore-1.31.72
 RUN python -m pip install --upgrade pip
-RUN python -m pip install . "mangum>=0.10.0" "aiobotocore==2.7.0" -t /asset --no-binary pydantic
+RUN python -m pip install . "mangum>=0.10.0" "botocore==1.29.76" "aiobotocore==2.5.0" -t /asset --no-binary pydantic
 
 # Reduce package size and remove useless files
 RUN cd /asset && find . -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-[0-9]*//'); cp $f $n; done;
