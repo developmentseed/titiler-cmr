@@ -69,7 +69,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.role_arn }}
+          role-to-assume: ${{ secrets.deploy_role_arn }}
           role-session-name: samplerolesession
           aws-region: us-west-2
 
@@ -97,7 +97,7 @@ jobs:
         run: npm run cdk -- deploy titiler-cmr-staging --require-approval never
         env:
           # STACK_ALARM_EMAIL: ${{ secrets.ALARM_EMAIL }}
-          STACK_ROLE_ARN: ${{ secrets.role_arn }}
+          STACK_ROLE_ARN: ${{ secrets.lambda_role_arn }}
           STACK_STAGE: staging
 
       # Build and deploy to production deployment whenever there a new tag is pushed
@@ -106,5 +106,5 @@ jobs:
         run: npm run cdk -- deploy titiler-cmr-production --require-approval never
         env:
           # STACK_ALARM_EMAIL: ${{ secrets.ALARM_EMAIL }}
-          STACK_ROLE_ARN: ${{ secrets.role_arn }}
+          STACK_ROLE_ARN: ${{ secrets.lambda_role_arn }}
           STACK_STAGE: production
