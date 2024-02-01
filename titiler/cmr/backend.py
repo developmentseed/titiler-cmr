@@ -1,5 +1,6 @@
 """TiTiler.cmr custom Mosaic Backend."""
 
+import json
 from typing import Any, Dict, List, Optional, Tuple, Type, TypedDict
 
 import attr
@@ -146,7 +147,7 @@ class CMRBackend(BaseBackend):
     @cached(  # type: ignore
         TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl),
         key=lambda self, xmin, ymin, xmax, ymax, **kwargs: hashkey(
-            self.input, str(xmin), str(ymin), str(xmax), str(ymax), **kwargs
+            self.input, str(xmin), str(ymin), str(xmax), str(ymax), json.dumps(kwargs)
         ),
     )
     @retry(
