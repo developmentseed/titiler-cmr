@@ -49,9 +49,6 @@ class Asset(TypedDict, total=False):
 class CMRBackend(BaseBackend):
     """CMR Mosaic Backend."""
 
-    # ConceptID
-    input: str = attr.ib()
-
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
     minzoom: int = attr.ib()
     maxzoom: int = attr.ib()
@@ -69,6 +66,8 @@ class CMRBackend(BaseBackend):
     mosaic_def: MosaicJSON = attr.ib(init=False)
 
     auth: Optional[Auth] = attr.ib(default=None)
+
+    input: str = attr.ib("CMR", init=False)
 
     _backend_name = "CMR"
 
@@ -146,7 +145,7 @@ class CMRBackend(BaseBackend):
     @cached(  # type: ignore
         TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl),
         key=lambda self, xmin, ymin, xmax, ymax, **kwargs: hashkey(
-            self.input, xmin, ymin, xmax, ymax, **kwargs
+            xmin, ymin, xmax, ymax, **kwargs
         ),
     )
     @retry(
@@ -165,7 +164,6 @@ class CMRBackend(BaseBackend):
     ) -> List[Asset]:
         """Find assets."""
         results = earthaccess.search_data(
-            concept_id=self.input,
             bounding_box=(xmin, ymin, xmax, ymax),
             count=limit,
             **kwargs,

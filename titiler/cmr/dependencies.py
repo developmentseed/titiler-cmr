@@ -1,7 +1,7 @@
 """titiler-cmr dependencies."""
 
 from datetime import datetime
-from typing import Dict, List, Literal, Optional, get_args
+from typing import Any, Dict, List, Literal, Optional, get_args
 
 from fastapi import HTTPException, Query
 from starlette.requests import Request
@@ -78,6 +78,12 @@ def OutputType(
 
 
 def cmr_query(
+    concept_id: Annotated[
+        str,
+        Query(
+            description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
+        ),
+    ],
     temporal: Annotated[
         Optional[str],
         Query(
@@ -92,7 +98,8 @@ def cmr_query(
     ] = None,
 ) -> Dict:
     """CMR Query options."""
-    query = {}
+    query: Dict[str, Any] = {"concept_id": concept_id}
+
     if temporal:
         dt = temporal.split("/")
         if len(dt) > 2:

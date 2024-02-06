@@ -370,33 +370,27 @@ class Endpoints:
         """Register tileset endpoints."""
 
         @self.router.get(
-            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}",
+            "/tiles/{tileMatrixSetId}/{z}/{x}/{y}",
             **img_endpoint_params,
             tags=["Raster Tiles"],
         )
         @self.router.get(
-            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}",
+            "/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}",
             **img_endpoint_params,
             tags=["Raster Tiles"],
         )
         @self.router.get(
-            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x",
+            "/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x",
             **img_endpoint_params,
             tags=["Raster Tiles"],
         )
         @self.router.get(
-            "/collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}",
+            "/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}",
             **img_endpoint_params,
             tags=["Raster Tiles"],
         )
         def tiles_endpoint(
             request: Request,
-            collectionId: Annotated[
-                str,
-                Path(
-                    description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
-                ),
-            ],
             tileMatrixSetId: Annotated[
                 Literal[tuple(self.supported_tms.list())],
                 Path(description="Identifier for a supported TileMatrixSet"),
@@ -431,9 +425,9 @@ class Endpoints:
             query=Depends(cmr_query),
             ###################################################################
             backend: Annotated[
-                Literal["cog", "xarray"],
+                Literal["rasterio", "xarray"],
                 Query(description="Backend to read the CMR dataset"),
-            ] = "cog",
+            ] = "rasterio",
             ###################################################################
             # ZarrReader Options
             ###################################################################
@@ -548,7 +542,6 @@ class Endpoints:
                 reader_options = {}
 
             with CMRBackend(
-                collectionId,
                 tms=tms,
                 reader=reader,
                 reader_options=reader_options,
@@ -741,7 +734,6 @@ class Endpoints:
 
             # TODO: can we get metadata from the collection?
             with CMRBackend(
-                collectionId,
                 auth=request.app.state.cmr_auth,
                 tms=tms,
             ) as src_dst:
