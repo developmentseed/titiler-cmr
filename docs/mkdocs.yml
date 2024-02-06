@@ -19,6 +19,7 @@ extra:
 
 nav:
   - Home: index.md
+  - API: API.md
   - Development - Contributing: contributing.md
   - Release notes: release-notes.md
   - Performance Benchmarks: benchmark.html
