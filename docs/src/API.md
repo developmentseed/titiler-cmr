@@ -4,20 +4,19 @@
 
 ## Endpoint Description
 
-`GET /collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x`
+`GET /tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x`
 
-`GET /collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}`
+`GET /tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}`
 
-`GET /collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}`
+`GET /tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}`
 
-`GET /collections/{collectionId}/tiles/{tileMatrixSetId}/{z}/{x}/{y}`
+`GET /tiles/{tileMatrixSetId}/{z}/{x}/{y}`
 
 This endpoint provides tiled data for specific geographical locations and times. Tiles are defined by their x, y, and z coordinates.
 
 ## Parameters
 
 - **Path Parameters:**
-  - `collectionId` (string): The [concept ID](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#c-concept-id) of the collection.
   - `tileMatrixSetId` (string): TileMatrixSet name (e.g **WebMercatorQuad**)
   - `x` (integer): The x coordinate of the tile
   - `y` (integer): The y coordinate of the tile
@@ -26,8 +25,9 @@ This endpoint provides tiled data for specific geographical locations and times.
   - `format` (string, optional): Output image format, default is set to None and will be either JPEG or PNG depending on the presence of masked value.
 
 - **Query Parameters:**
+  - `concept_id` (string): The [concept ID](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#c-concept-id) of the collection. **REQUIRED**
   - `temporal` (string, optional): Either a date-time or an interval. Date and time expressions adhere to 'YYYY-MM-DD' format. Intervals may be bounded or half-bounded (double-dots at start or end) **RECOMMENDED**
-  - `backend` (*cog* or *xarray*, optional): Backend to use in order to read the CMR dataset. Defaults to `cog`
+  - `backend` (*rasterio* or *xarray*, optional): Backend to use in order to read the CMR dataset. Defaults to `rasterio`
   - `variable`* (string, optional): The variable of interest. `required` when using `xarray` backend
   - `time_slice`* (string, optional): The time for which data is requested, in ISO 8601 format
   - `decode_times`* (bool, optional): Whether to decode times
@@ -51,7 +51,7 @@ This endpoint provides tiled data for specific geographical locations and times.
 
 ## Request Example
 
-GET /collections/C0000000000-YOCLOUD/tiles/WebMercatorQuad/1/2/3?backend=xarray&variable=temperature&timestamp=2024-01-16T00:00:00Z&colormap=viridis&rescale=0,100&temporal=2024-01-16/2024-01-16
+GET /tiles/WebMercatorQuad/1/2/3?backend=xarray&variable=temperature&timestamp=2024-01-16T00:00:00Z&colormap=viridis&rescale=0,100&temporal=2024-01-16/2024-01-16&concept_id=C0000000000-YOCLOUD
 
 
 ## Responses
