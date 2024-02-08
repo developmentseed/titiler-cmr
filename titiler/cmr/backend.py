@@ -163,11 +163,14 @@ class CMRBackend(BaseBackend):
         **kwargs: Any,
     ) -> List[Asset]:
         """Find assets."""
-        results = earthaccess.search_data(
-            bounding_box=(xmin, ymin, xmax, ymax),
-            count=limit,
-            **kwargs,
-        )
+        try:
+            results = earthaccess.search_data(
+                bounding_box=(xmin, ymin, xmax, ymax),
+                count=limit,
+                **kwargs,
+            )
+        except RuntimeError:
+            return []
 
         assets: List[Asset] = []
         for r in results:

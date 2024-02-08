@@ -17,7 +17,7 @@ from pydantic import conint
 from rio_tiler.io import Reader
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import HTMLResponse, Response
 from starlette.routing import compile_path, replace_params
 from starlette.templating import Jinja2Templates, _TemplateResponse
 from typing_extensions import Annotated
@@ -142,6 +142,7 @@ class Endpoints:
         self.register_conformance()
         self.register_tilematrixsets()
         self.register_tiles()
+        self.register_map()
 
     def register_landing(self) -> None:
         """register landing page endpoint."""
@@ -577,7 +578,7 @@ class Endpoints:
             return Response(content, media_type=media_type)
 
         @self.router.get(
-            "/collections/{collectionId}/{tileMatrixSetId}/tilejson.json",
+            "/{tileMatrixSetId}/tilejson.json",
             response_model=TileJSON,
             responses={200: {"description": "Return a tilejson"}},
             response_model_exclude_none=True,
@@ -585,12 +586,6 @@ class Endpoints:
         )
         def tilejson_endpoint(  # type: ignore
             request: Request,
-            collectionId: Annotated[
-                str,
-                Path(
-                    description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
-                ),
-            ],
             tileMatrixSetId: Annotated[
                 Literal[tuple(self.supported_tms.list())],
                 Path(description="Identifier for a supported TileMatrixSet"),
@@ -620,9 +615,9 @@ class Endpoints:
             query=Depends(cmr_query),
             ###################################################################
             backend: Annotated[
-                Literal["cog", "xarray"],
+                Literal["rasterio", "xarray"],
                 Query(description="Backend to read the CMR dataset"),
-            ] = "cog",
+            ] = "rasterio",
             ###################################################################
             # ZarrReader Options
             ###################################################################
@@ -732,10 +727,10 @@ class Endpoints:
 
             tms = self.supported_tms.get(tileMatrixSetId)
 
-            # TODO: can we get metadata from the collection?
+            # TODO: can we get metadata from the CMR dataset?
             with CMRBackend(
-                auth=request.app.state.cmr_auth,
                 tms=tms,
+                auth=request.app.state.cmr_auth,
             ) as src_dst:
                 minx, miny, maxx, maxy = zip(
                     [-180, -90, 180, 90], list(src_dst.geographic_bounds)
@@ -748,3 +743,66 @@ class Endpoints:
                     "maxzoom": maxzoom if maxzoom is not None else src_dst.maxzoom,
                     "tiles": [tiles_url],
                 }
+
+    def register_map(self):  # noqa: C901
+        """Register map endpoints."""
+
+        @self.router.get(
+            "/{tileMatrixSetId}/map",
+            response_class=HTMLResponse,
+            responses={200: {"description": "Return a Map document"}},
+            tags=["Map"],
+        )
+        def map_endpoint(  # type: ignore
+            request: Request,
+            tileMatrixSetId: Annotated[
+                Literal[tuple(self.supported_tms.list())],
+                Path(description="Identifier for a supported TileMatrixSet"),
+            ],
+            minzoom: Annotated[
+                Optional[int],
+                Query(description="Overwrite default minzoom."),
+            ] = None,
+            maxzoom: Annotated[
+                Optional[int],
+                Query(description="Overwrite default maxzoom."),
+            ] = None,
+        ) -> Dict:
+            """Return Map document."""
+            tilejson_url = self.url_for(
+                request,
+                "tilejson_endpoint",
+                tileMatrixSetId=tileMatrixSetId,
+            )
+            if request.query_params._list:
+                tilejson_url += f"?{urlencode(request.query_params._list)}"
+
+            tms = self.supported_tms.get(tileMatrixSetId)
+
+            base_url = str(request.base_url).rstrip("/")
+            if self.router_prefix:
+                prefix = self.router_prefix.lstrip("/")
+                # If we have prefix with custom path param we check and replace them with
+                # the path params provided
+                if "{" in prefix:
+                    _, path_format, param_convertors = compile_path(prefix)
+                    prefix, _ = replace_params(
+                        path_format, param_convertors, request.path_params.copy()
+                    )
+                base_url += prefix
+
+            return self.templates.TemplateResponse(
+                name="map.html",
+                context={
+                    "request": request,
+                    "tilejson_endpoint": tilejson_url,
+                    "tms": tms,
+                    "resolutions": [matrix.cellSize for matrix in tms],
+                    "template": {
+                        "api_root": base_url,
+                        "params": request.query_params,
+                        "title": "Map",
+                    },
+                },
+                media_type="text/html",
+            )
