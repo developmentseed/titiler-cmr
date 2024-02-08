@@ -1,9 +1,9 @@
 """titiler-cmr dependencies."""
 
-from datetime import datetime
 from typing import Any, Dict, List, Literal, Optional, get_args
 
-from fastapi import HTTPException, Query
+from ciso8601 import parse_rfc3339
+from fastapi import Query
 from starlette.requests import Request
 from typing_extensions import Annotated
 
@@ -87,12 +87,14 @@ def cmr_query(
     temporal: Annotated[
         Optional[str],
         Query(
-            description="Either a date-time or an interval. Date and time expressions adhere to 'YYYY-MM-DD' format. Intervals may be bounded or half-bounded (double-dots at start or end).",
+            description="Either a date-time or an interval. Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format. Intervals may be bounded or half-bounded (double-dots at start or end).",
             openapi_examples={
-                "A date-time": {"value": "2018-02-12"},
-                "A bounded interval": {"value": "2018-02-12/2018-03-18"},
-                "Half-bounded intervals (start)": {"value": "2018-02-12/.."},
-                "Half-bounded intervals (end)": {"value": "../2018-03-18"},
+                "A date-time": {"value": "2018-02-12T09:00:00Z"},
+                "A bounded interval": {
+                    "value": "2018-02-12T09:00:00Z/2018-03-18T09:00:00Z"
+                },
+                "Half-bounded intervals (start)": {"value": "2018-02-12T09:00:00Z/.."},
+                "Half-bounded intervals (end)": {"value": "../2018-03-18T09:00:00Z"},
             },
         ),
     ] = None,
@@ -103,36 +105,33 @@ def cmr_query(
     if temporal:
         dt = temporal.split("/")
         if len(dt) > 2:
-            raise HTTPException(status_code=422, detail="Invalid temporal: {temporal}")
+            raise InvalidDatetime("Invalid temporal: {temporal}")
 
-        start: Optional[str]
-        end: Optional[str]
-
+        dates: List[Optional[str]] = [None, None]
         if len(dt) == 1:
-            start = end = dt[0]
+            dates = [dt[0], dt[0]]
 
         else:
-            start = dt[0] if dt[0] not in ["..", ""] else None
-            end = dt[1] if dt[1] not in ["..", ""] else None
+            dates[0] = dt[0] if dt[0] not in ["..", ""] else None
+            dates[1] = dt[1] if dt[1] not in ["..", ""] else None
 
-        if start:
-            try:
-                datetime.strptime(
-                    start, "%Y-%m-%d"
-                ), f"Start datetime {start} not in form of 'YYYY-MM-DD'"
-            except ValueError as e:
-                raise InvalidDatetime(
-                    f"Start datetime {start} not in form of 'YYYY-MM-DD'"
-                ) from e
+        # TODO: once https://github.com/nsidc/earthaccess/pull/451 is publish
+        # we can move to Datetime object instead of String
+        start: Optional[str] = None
+        end: Optional[str] = None
 
-        if end:
+        if dates[0]:
             try:
-                datetime.strptime(
-                    end, "%Y-%m-%d"
-                ), f"Start datetime {start} not in form of 'YYYY-MM-DD'"
-            except ValueError as e:
+                start = parse_rfc3339(dates[0]).strftime("%Y-%m-%d")
+            except Exception as e:
+                raise InvalidDatetime(f"Start datetime {dates[0]} not valid.") from e
+
+        if dates[1]:
+            try:
+                end = parse_rfc3339(dates[1]).strftime("%Y-%m-%d")
+            except Exception as e:
                 raise InvalidDatetime(
-                    f"End datetime {end} not in form of 'YYYY-MM-DD'"
+                    f"End datetime {dates[1]} not in form of 'YYYY-MM-DD'"
                 ) from e
 
         query["temporal"] = (start, end)
