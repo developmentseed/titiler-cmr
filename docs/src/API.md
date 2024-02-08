@@ -26,7 +26,7 @@ This endpoint provides tiled data for specific geographical locations and times.
 
 - **Query Parameters:**
   - `concept_id` (string): The [concept ID](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#c-concept-id) of the collection. **REQUIRED**
-  - `temporal` (string, optional): Either a date-time or an interval. Date and time expressions adhere to 'YYYY-MM-DD' format. Intervals may be bounded or half-bounded (double-dots at start or end) **RECOMMENDED**
+  - `temporal` (string, optional): Either a date-time or an interval. Date and time expressions adhere to rfc3339 '2018-02-12T09:00:00Z' format. Intervals may be bounded or half-bounded (double-dots at start or end) **RECOMMENDED**
   - `backend` (*rasterio* or *xarray*, optional): Backend to use in order to read the CMR dataset. Defaults to `rasterio`
   - `variable`* (string, optional): The variable of interest. `required` when using `xarray` backend
   - `time_slice`* (string, optional): The time for which data is requested, in ISO 8601 format
@@ -51,7 +51,7 @@ This endpoint provides tiled data for specific geographical locations and times.
 
 ## Request Example
 
-GET /tiles/WebMercatorQuad/1/2/3?backend=xarray&variable=temperature&timestamp=2024-01-16T00:00:00Z&colormap=viridis&rescale=0,100&temporal=2024-01-16/2024-01-16&concept_id=C0000000000-YOCLOUD
+GET /tiles/WebMercatorQuad/1/2/3?backend=xarray&variable=temperature&timestamp=2024-01-16T00:00:00Z&colormap=viridis&rescale=0,100&temporal=2024-01-16T09:00:00Z&concept_id=C0000000000-YOCLOUD
 
 
 ## Responses
