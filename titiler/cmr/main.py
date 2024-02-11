@@ -9,9 +9,12 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 
 from titiler.cmr import __version__ as titiler_cmr_version
+from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
 from titiler.cmr.settings import ApiSettings, AuthSettings
+from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
+from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
@@ -56,6 +59,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+add_exception_handlers(app, DEFAULT_STATUS_CODES)
+add_exception_handlers(app, MOSAIC_STATUS_CODES)
+add_exception_handlers(app, CMR_STATUS_CODES)
 
 # Set all CORS enabled origins
 if settings.cors_origins:
