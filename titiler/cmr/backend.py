@@ -20,6 +20,7 @@ from rio_tiler.models import ImageData
 from rio_tiler.mosaic import mosaic_reader
 from rio_tiler.types import BBox
 
+from titiler.cmr.logger import logger
 from titiler.cmr.settings import AuthSettings, CacheSettings, RetrySettings
 from titiler.cmr.utils import retry
 
@@ -164,12 +165,14 @@ class CMRBackend(BaseBackend):
     ) -> List[Asset]:
         """Find assets."""
         try:
+            xmin, ymin, xmax, ymax = (round(n, 8) for n in [xmin, ymin, xmax, ymax])
             results = earthaccess.search_data(
                 bounding_box=(xmin, ymin, xmax, ymax),
                 count=limit,
                 **kwargs,
             )
-        except RuntimeError:
+        except RuntimeError as e:
+            logger.debug(repr(e))
             return []
 
         assets: List[Asset] = []
