@@ -6,7 +6,7 @@ Originaly from titiler-xarray
 import contextlib
 import pickle
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
 
 import attr
 import fsspec
@@ -17,6 +17,8 @@ from cachetools import TTLCache
 from morecantile import TileMatrixSet
 from rasterio.crs import CRS
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
+from rio_tiler.errors import InvalidBandName
+from rio_tiler.io import BaseReader, MultiBandReader, Reader
 from rio_tiler.io.xarray import XarrayReader
 from rio_tiler.types import BBox
 
@@ -284,3 +286,45 @@ class ZarrReader(XarrayReader):
             consolidated=consolidated,
         ) as ds:
             return list(ds.data_vars)  # type: ignore
+
+
+@attr.s
+class MultiFilesBandsReader(MultiBandReader):
+    """Multiple Files as Bands."""
+
+    input: Dict[str, str] = attr.ib()
+    tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
+
+    reader_options: Dict = attr.ib(factory=dict)
+    reader: Type[BaseReader] = attr.ib(default=Reader)
+
+    minzoom: int = attr.ib()
+    maxzoom: int = attr.ib()
+
+    @minzoom.default
+    def _minzoom(self):
+        return self.tms.minzoom
+
+    @maxzoom.default
+    def _maxzoom(self):
+        return self.tms.maxzoom
+
+    def __attrs_post_init__(self):
+        """Fetch Reference band to get the bounds."""
+        self.bands = list(self.input)
+        # with self.reader(
+        #     self.input[0],
+        #     tms=self.tms,
+        #     **self.reader_options,
+        # ) as cog:
+        #     self.bounds = cog.bounds
+        #     self.crs = cog.crs
+        #     self.minzoom = cog.minzoom
+        #     self.maxzoom = cog.maxzoom
+
+    def _get_band_url(self, band: str) -> str:
+        """Validate band's name and return band's url."""
+        if band not in self.bands:
+            raise InvalidBandName(f"{band} is not valid")
+
+        return self.input[band]
