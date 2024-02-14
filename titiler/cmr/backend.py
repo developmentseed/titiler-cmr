@@ -179,7 +179,7 @@ class CMRBackend(BaseBackend):
 
                 band_urls = []
                 for url in links:
-                    if match := re.search("B[0-9][0-9]", os.path.basename(url)):
+                    if match := re.search(bands_regex, os.path.basename(url)):
                         band_urls.append((match.group(), url))
 
                 urls = dict(band_urls)
