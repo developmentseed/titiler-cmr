@@ -122,6 +122,14 @@
           // Bounds crossing dateline
           if (bounds[0] > bounds[2]) {
             bounds[0] = bounds[0] - 360
+          } else {
+            // Avoid bounds overflow and limit to the max TileMatrixSet bbox
+            bounds = [
+              max(bounds[0], tms.xy_bbox.left),
+              max(bounds[1], tms.xy_bbox.bottom),
+              min(bounds[2], tms.xy_bbox.right),
+              min(bounds[3], tms.xy_bbox.top),
+            ]
           }
           var left = bounds[0],
             bottom = bounds[1],
