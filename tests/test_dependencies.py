@@ -119,7 +119,7 @@ def test_output_type():
 def test_cmr_query(temporal, res):
     """test cmr query dependency."""
     assert (
-        dependencies.cmr_query(concept_id="something", temporal=temporal)["temporal"]
+        dependencies.cmr_query(concept_id="something", datetime=temporal)["temporal"]
         == res
     )
 
@@ -133,17 +133,17 @@ def test_cmr_query_more():
     with pytest.raises(InvalidDatetime):
         dependencies.cmr_query(
             concept_id="something",
-            temporal="yo/yo/yo",
+            datetime="yo/yo/yo",
         )
 
     with pytest.raises(InvalidDatetime):
         dependencies.cmr_query(
             concept_id="something",
-            temporal="2019-02-12",
+            datetime="2019-02-12",
         )
 
     with pytest.raises(InvalidDatetime):
         dependencies.cmr_query(
             concept_id="something",
-            temporal="2019-02-12T09:00:00Z/2019-02-12",
+            datetime="2019-02-12T09:00:00Z/2019-02-12",
         )
