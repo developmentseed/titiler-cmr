@@ -84,7 +84,7 @@ def cmr_query(
             description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
         ),
     ],
-    temporal: Annotated[
+    datetime: Annotated[
         Optional[str],
         Query(
             description="Either a date-time or an interval. Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format. Intervals may be bounded or half-bounded (double-dots at start or end).",
@@ -102,10 +102,10 @@ def cmr_query(
     """CMR Query options."""
     query: Dict[str, Any] = {"concept_id": concept_id}
 
-    if temporal:
-        dt = temporal.split("/")
+    if datetime:
+        dt = datetime.split("/")
         if len(dt) > 2:
-            raise InvalidDatetime("Invalid temporal: {temporal}")
+            raise InvalidDatetime("Invalid datetime: {datetime}")
 
         dates: List[Optional[str]] = [None, None]
         if len(dt) == 1:

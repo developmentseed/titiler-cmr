@@ -26,13 +26,15 @@ This endpoint provides tiled data for specific geographical locations and times.
 
 - **Query Parameters:**
   - `concept_id` (string): The [concept ID](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#c-concept-id) of the collection. **REQUIRED**
-  - `temporal` (string, optional): Either a date-time or an interval. Date and time expressions adhere to rfc3339 '2018-02-12T09:00:00Z' format. Intervals may be bounded or half-bounded (double-dots at start or end) **RECOMMENDED**
+  - `datetime` (string, optional): Either a date-time or an interval. Date and time expressions adhere to rfc3339 '2018-02-12T09:00:00Z' format. Intervals may be bounded or half-bounded (double-dots at start or end) **RECOMMENDED**
   - `backend` (*rasterio* or *xarray*, optional): Backend to use in order to read the CMR dataset. Defaults to `rasterio`
   - `variable`* (string, optional): The variable of interest. `required` when using `xarray` backend
   - `time_slice`* (string, optional): The time for which data is requested, in ISO 8601 format
   - `decode_times`* (bool, optional): Whether to decode times
   - `bidx`** (int, optional): Dataset band indexes (multiple allowed)
   - `expression`** (string, optional): rio-tiler's band math expression
+  - `bands` ** (string, optional): Band name. Used when data is split into multiple files (multiple allowed)
+  - `bands_regex` ** (string, optional): Regex expression to parse CMR dataset links.
   - `unscale`** (bool, optional): Apply dataset internal Scale/Offset.
   - `nodata` (string or number, optional): Overwrite internal Nodata value
   - `resampling`**: RasterIO resampling algorithm. Defaults to `nearest`.
@@ -47,11 +49,11 @@ This endpoint provides tiled data for specific geographical locations and times.
 
 \* used in `xarray` backend only
 
-\** used in `cog` backend only
+\** used in `rasterio` backend only
 
 ## Request Example
 
-GET /tiles/WebMercatorQuad/1/2/3?backend=xarray&variable=temperature&timestamp=2024-01-16T00:00:00Z&colormap=viridis&rescale=0,100&temporal=2024-01-16T09:00:00Z&concept_id=C0000000000-YOCLOUD
+GET /tiles/WebMercatorQuad/1/2/3?backend=xarray&variable=temperature&time_slice=2024-01-16T00:00:00Z&colormap=viridis&rescale=0,100&datetime=2024-01-16T09:00:00Z&concept_id=C0000000000-YOCLOUD
 
 
 ## Responses
