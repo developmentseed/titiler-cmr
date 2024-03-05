@@ -3,7 +3,7 @@
 import json
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Type, Union
 from urllib.parse import urlencode
 
 import jinja2
@@ -14,7 +14,7 @@ from fastapi.responses import ORJSONResponse
 from morecantile import tms as default_tms
 from morecantile.defaults import TileMatrixSets
 from pydantic import conint
-from rio_tiler.io import Reader
+from rio_tiler.io import BaseReader, Reader
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, Response
@@ -26,7 +26,7 @@ from titiler.cmr import models
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.dependencies import OutputType, cmr_query
 from titiler.cmr.enums import MediaType
-from titiler.cmr.reader import ZarrReader
+from titiler.cmr.reader import MultiFilesBandsReader, ZarrReader
 from titiler.core import dependencies
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.factory import img_endpoint_params
@@ -451,7 +451,7 @@ class Endpoints:
                 ),
             ] = None,
             ###################################################################
-            # COG Reader Options
+            # Rasterio Reader Options
             ###################################################################
             indexes: Annotated[
                 Optional[List[int]],
@@ -466,6 +466,20 @@ class Endpoints:
                 Query(
                     title="Band Math expression",
                     description="rio-tiler's band math expression",
+                ),
+            ] = None,
+            bands: Annotated[
+                Optional[List[str]],
+                Query(
+                    title="Band names",
+                    description="Band names.",
+                ),
+            ] = None,
+            bands_regex: Annotated[
+                Optional[str],
+                Query(
+                    title="Regex expression to parse dataset links",
+                    description="Regex expression to parse dataset links.",
                 ),
             ] = None,
             unscale: Annotated[
@@ -516,10 +530,12 @@ class Endpoints:
 
             tms = self.supported_tms.get(tileMatrixSetId)
 
-            read_options: Dict[str, Any] = {}
-            reader_options: Dict[str, Any] = {}
+            read_options: Dict[str, Any]
+            reader_options: Dict[str, Any]
+            options: Dict[str, Any]
+            reader: Type[BaseReader]
 
-            if backend != "cog":
+            if backend != "rasterio":
                 reader = ZarrReader
                 read_options = {}
 
@@ -531,16 +547,34 @@ class Endpoints:
                 }
                 reader_options = {k: v for k, v in options.items() if v is not None}
             else:
-                reader = Reader
-                options = {
-                    "indexes": indexes,  # type: ignore
-                    "expression": expression,
-                    "unscale": unscale,
-                    "resampling_method": resampling_method,
-                }
-                read_options = {k: v for k, v in options.items() if v is not None}
+                if bands_regex:
+                    assert (
+                        bands
+                    ), "`bands=` option must be provided when using Multi bands collections."
 
-                reader_options = {}
+                    reader = MultiFilesBandsReader
+                    options = {
+                        "expression": expression,
+                        "bands": bands,
+                        "unscale": unscale,
+                        "resampling_method": resampling_method,
+                        "bands_regex": bands_regex,
+                    }
+                    read_options = {k: v for k, v in options.items() if v is not None}
+                    reader_options = {}
+
+                else:
+                    assert bands, "Can't use `bands=` option without `bands_regex`"
+
+                    reader = Reader
+                    options = {
+                        "indexes": indexes,
+                        "expression": expression,
+                        "unscale": unscale,
+                        "resampling_method": resampling_method,
+                    }
+                    read_options = {k: v for k, v in options.items() if v is not None}
+                    reader_options = {}
 
             with CMRBackend(
                 tms=tms,

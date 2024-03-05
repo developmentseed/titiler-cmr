@@ -1,6 +1,8 @@
 """TiTiler.cmr custom Mosaic Backend."""
 
-from typing import Any, Dict, List, Optional, Tuple, Type, TypedDict
+import os
+import re
+from typing import Any, Dict, List, Optional, Tuple, Type, TypedDict, Union
 
 import attr
 import earthaccess
@@ -40,8 +42,7 @@ def aws_s3_credential(auth: Auth, provider: str) -> Dict:
 class Asset(TypedDict, total=False):
     """Simple Asset model."""
 
-    url: str
-    type: str
+    url: Union[str, Dict[str, str]]
     provider: str
 
 
@@ -160,6 +161,7 @@ class CMRBackend(BaseBackend):
         xmax: float,
         ymax: float,
         limit: int = 100,
+        bands_regex: Optional[str] = None,
         **kwargs: Any,
     ) -> List[Asset]:
         """Find assets."""
@@ -172,14 +174,30 @@ class CMRBackend(BaseBackend):
 
         assets: List[Asset] = []
         for r in results:
-            assets.append(
-                {
-                    "url": r.data_links(access="direct")[
-                        0
-                    ],  # NOTE: should we not do this?
-                    "provider": r["meta"]["provider-id"],
-                }
-            )
+            if bands_regex:
+                links = r.data_links(access="direct")
+
+                band_urls = []
+                for url in links:
+                    if match := re.search(bands_regex, os.path.basename(url)):
+                        band_urls.append((match.group(), url))
+
+                urls = dict(band_urls)
+                if urls:
+                    assets.append(
+                        {
+                            "url": urls,
+                            "provider": r["meta"]["provider-id"],
+                        }
+                    )
+
+            else:
+                assets.append(
+                    {
+                        "url": r.data_links(access="direct")[0],
+                        "provider": r["meta"]["provider-id"],
+                    }
+                )
 
         return assets
 
@@ -193,6 +211,7 @@ class CMRBackend(BaseBackend):
         tile_y: int,
         tile_z: int,
         cmr_query: Dict,
+        bands_regex: Optional[str] = None,
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Get Tile from multiple observation."""
@@ -201,6 +220,7 @@ class CMRBackend(BaseBackend):
             tile_y,
             tile_z,
             **cmr_query,
+            bands_regex=bands_regex,
         )
 
         if not mosaic_assets:
@@ -259,6 +279,7 @@ class CMRBackend(BaseBackend):
         lat: float,
         cmr_query: Dict,
         coord_crs: CRS = WGS84_CRS,
+        bands_regex: Optional[str] = None,
         **kwargs: Any,
     ) -> List:
         """Get Point value from multiple observation."""
@@ -270,6 +291,7 @@ class CMRBackend(BaseBackend):
         cmr_query: Dict,
         dst_crs: Optional[CRS] = None,
         bounds_crs: CRS = WGS84_CRS,
+        bands_regex: Optional[str] = None,
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Create an Image from multiple items for a bbox."""
@@ -282,6 +304,7 @@ class CMRBackend(BaseBackend):
         dst_crs: Optional[CRS] = None,
         shape_crs: CRS = WGS84_CRS,
         max_size: int = 1024,
+        bands_regex: Optional[str] = None,
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Create an Image from multiple items for a GeoJSON feature."""
