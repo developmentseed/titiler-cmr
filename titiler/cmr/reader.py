@@ -312,6 +312,8 @@ class MultiFilesBandsReader(MultiBandReader):
     def __attrs_post_init__(self):
         """Fetch Reference band to get the bounds."""
         self.bands = list(self.input)
+        self.bounds = (-180.0, -90, 180.0, 90)
+        self.crs = WGS84_CRS
         # with self.reader(
         #     self.input[0],
         #     tms=self.tms,
