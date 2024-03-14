@@ -77,6 +77,13 @@ def OutputType(
     return accept_media_type(request.headers.get("accept", ""), accepted_media)
 
 
+def _parse_and_format(date: str) -> str:
+    try:
+        return parse_rfc3339(date).strftime("%Y-%m-%d")
+    except Exception as e:
+        raise InvalidDatetime(f"Invalid datetime {date}") from e
+
+
 def cmr_query(
     concept_id: Annotated[
         str,
@@ -104,36 +111,27 @@ def cmr_query(
 
     if datetime:
         dt = datetime.split("/")
-        if len(dt) > 2:
-            raise InvalidDatetime("Invalid datetime: {datetime}")
-
-        dates: List[Optional[str]] = [None, None]
         if len(dt) == 1:
-            dates = [dt[0], dt[0]]
+            query["temporal"] = _parse_and_format(dt[0])
 
-        else:
+        elif len(dt) == 2:
+            dates: List[Optional[str]] = [None, None]
             dates[0] = dt[0] if dt[0] not in ["..", ""] else None
             dates[1] = dt[1] if dt[1] not in ["..", ""] else None
 
-        # TODO: once https://github.com/nsidc/earthaccess/pull/451 is publish
-        # we can move to Datetime object instead of String
-        start: Optional[str] = None
-        end: Optional[str] = None
+            # TODO: once https://github.com/nsidc/earthaccess/pull/451 is publish
+            # we can move to Datetime object instead of String
+            start: Optional[str] = None
+            end: Optional[str] = None
 
-        if dates[0]:
-            try:
-                start = parse_rfc3339(dates[0]).strftime("%Y-%m-%d")
-            except Exception as e:
-                raise InvalidDatetime(f"Start datetime {dates[0]} not valid.") from e
+            if dates[0]:
+                start = _parse_and_format(dates[0])
 
-        if dates[1]:
-            try:
-                end = parse_rfc3339(dates[1]).strftime("%Y-%m-%d")
-            except Exception as e:
-                raise InvalidDatetime(
-                    f"End datetime {dates[1]} not in form of 'YYYY-MM-DD'"
-                ) from e
+            if dates[1]:
+                end = _parse_and_format(dates[1])
 
-        query["temporal"] = (start, end)
+            query["temporal"] = (start, end)
+        else:
+            raise InvalidDatetime("Invalid datetime: {datetime}")
 
     return query
