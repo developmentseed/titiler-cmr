@@ -1,5 +1,6 @@
 """titiler-cmr dependencies."""
 
+import datetime as python_datetime
 from typing import Any, Dict, List, Literal, Optional, get_args
 
 from ciso8601 import parse_rfc3339
@@ -77,11 +78,11 @@ def OutputType(
     return accept_media_type(request.headers.get("accept", ""), accepted_media)
 
 
-def _parse_and_format(date: str) -> str:
+def _parse_date(date: str) -> python_datetime.datetime:
     try:
-        return parse_rfc3339(date).strftime("%Y-%m-%d")
+        return parse_rfc3339(date[0])
     except Exception as e:
-        raise InvalidDatetime(f"Invalid datetime {date}") from e
+        raise InvalidDatetime(f"Invalid datetime {date[0]}") from e
 
 
 def cmr_query(
@@ -112,7 +113,12 @@ def cmr_query(
     if datetime:
         dt = datetime.split("/")
         if len(dt) == 1:
-            query["temporal"] = _parse_and_format(dt[0])
+            start_datetime = _parse_date(dt[0])
+            end_datetime = start_datetime + python_datetime.timedelta(days=1)
+            query["temporal"] = (
+                start_datetime.strftime("%Y-%m-%d"),
+                end_datetime.strftime("%Y-%m-%d"),
+            )
 
         elif len(dt) == 2:
             dates: List[Optional[str]] = [None, None]
@@ -125,10 +131,10 @@ def cmr_query(
             end: Optional[str] = None
 
             if dates[0]:
-                start = _parse_and_format(dates[0])
+                start = _parse_date(dates[0]).strftime("%Y-%m-%d")
 
             if dates[1]:
-                end = _parse_and_format(dates[1])
+                end = _parse_date(dates[1]).strftime("%Y-%m-%d")
 
             query["temporal"] = (start, end)
         else:
