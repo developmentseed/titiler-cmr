@@ -80,9 +80,9 @@ def OutputType(
 
 def _parse_date(date: str) -> python_datetime.datetime:
     try:
-        return parse_rfc3339(date[0])
+        return parse_rfc3339(date)
     except Exception as e:
-        raise InvalidDatetime(f"Invalid datetime {date[0]}") from e
+        raise InvalidDatetime(f"Invalid datetime {date}") from e
 
 
 def cmr_query(
