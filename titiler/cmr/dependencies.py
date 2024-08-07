@@ -1,55 +1,17 @@
 """titiler-cmr dependencies."""
 
-from typing import List, Literal, Optional, get_args
+import datetime as python_datetime
+from typing import Any, Dict, List, Literal, Optional, get_args
 
 from ciso8601 import parse_rfc3339
-from fastapi import HTTPException, Query
+from fastapi import Query
 from starlette.requests import Request
 from typing_extensions import Annotated
 
 from titiler.cmr.enums import MediaType
-from titiler.cmr.errors import InvalidBBox
+from titiler.cmr.errors import InvalidDatetime
 
 ResponseType = Literal["json", "html"]
-
-
-def s_intersects(bbox: List[float], spatial_extent: List[float]) -> bool:
-    """Check if bbox intersects with spatial extent."""
-    return (
-        (bbox[0] < spatial_extent[2])
-        and (bbox[2] > spatial_extent[0])
-        and (bbox[3] > spatial_extent[1])
-        and (bbox[1] < spatial_extent[3])
-    )
-
-
-def t_intersects(interval: List[str], temporal_extent: List[Optional[str]]) -> bool:
-    """Check if dates intersect with temporal extent."""
-    if len(interval) == 1:
-        start = end = parse_rfc3339(interval[0])
-
-    else:
-        start = parse_rfc3339(interval[0]) if interval[0] not in ["..", ""] else None
-        end = parse_rfc3339(interval[1]) if interval[1] not in ["..", ""] else None
-
-    mint, maxt = temporal_extent
-    min_ext = parse_rfc3339(mint) if mint is not None else None
-    max_ext = parse_rfc3339(maxt) if maxt is not None else None
-
-    if len(interval) == 1:
-        if start == min_ext or start == max_ext:
-            return True
-
-    if not start:
-        return max_ext <= end or min_ext <= end
-
-    elif not end:
-        return min_ext >= start or max_ext >= start
-
-    else:
-        return min_ext >= start and max_ext <= end
-
-    return False
 
 
 def accept_media_type(accept: str, mediatypes: List[MediaType]) -> Optional[MediaType]:
@@ -116,62 +78,66 @@ def OutputType(
     return accept_media_type(request.headers.get("accept", ""), accepted_media)
 
 
-def bbox_query(
-    bbox: Annotated[
-        Optional[str],
+def _parse_date(date: str) -> python_datetime.datetime:
+    try:
+        return parse_rfc3339(date)
+    except Exception as e:
+        raise InvalidDatetime(f"Invalid datetime {date}") from e
+
+
+def cmr_query(
+    concept_id: Annotated[
+        str,
         Query(
-            description="A bounding box, expressed in WGS84 (westLong,southLat,eastLong,northLat) or WGS84h (westLong,southLat,minHeight,eastLong,northLat,maxHeight) CRS, by which to filter out all collections whose spatial extent does not intersect with the bounding box.",
-            openapi_examples={
-                "simple": {"value": "160.6,-55.95,-170,-25.89"},
-            },
+            description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
         ),
-    ] = None
-) -> Optional[List[float]]:
-    """BBox dependency."""
-    if bbox:
-        bounds = list(map(float, bbox.split(",")))
-        if len(bounds) == 4:
-            if abs(bounds[0]) > 180 or abs(bounds[2]) > 180:
-                raise InvalidBBox(f"Invalid longitude in bbox: {bounds}")
-            if abs(bounds[1]) > 90 or abs(bounds[3]) > 90:
-                raise InvalidBBox(f"Invalid latitude in bbox: {bounds}")
-
-        elif len(bounds) == 6:
-            if abs(bounds[0]) > 180 or abs(bounds[3]) > 180:
-                raise InvalidBBox(f"Invalid longitude in bbox: {bounds}")
-            if abs(bounds[1]) > 90 or abs(bounds[4]) > 90:
-                raise InvalidBBox(f"Invalid latitude in bbox: {bounds}")
-
-        else:
-            raise InvalidBBox(f"Invalid bbox: {bounds}")
-
-        return bounds
-
-    return None
-
-
-def datetime_query(
+    ],
     datetime: Annotated[
         Optional[str],
         Query(
-            description="Either a date-time or an interval. Date and time expressions adhere to [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339). Intervals may be bounded or half-bounded (double-dots at start or end).",
+            description="Either a date-time or an interval. Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format. Intervals may be bounded or half-bounded (double-dots at start or end).",
             openapi_examples={
-                "A date-time": {"value": "2018-02-12T23:20:50Z"},
+                "A date-time": {"value": "2018-02-12T09:00:00Z"},
                 "A bounded interval": {
-                    "value": "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"
+                    "value": "2018-02-12T09:00:00Z/2018-03-18T09:00:00Z"
                 },
-                "Half-bounded intervals (start)": {"value": "2018-02-12T00:00:00Z/.."},
-                "Half-bounded intervals (end)": {"value": "../2018-03-18T12:31:12Z"},
+                "Half-bounded intervals (start)": {"value": "2018-02-12T09:00:00Z/.."},
+                "Half-bounded intervals (end)": {"value": "../2018-03-18T09:00:00Z"},
             },
         ),
     ] = None,
-) -> Optional[List[str]]:
-    """Datetime dependency."""
+) -> Dict:
+    """CMR Query options."""
+    query: Dict[str, Any] = {"concept_id": concept_id}
+
     if datetime:
         dt = datetime.split("/")
-        if len(dt) > 2:
-            raise HTTPException(status_code=422, detail="Invalid datetime: {datetime}")
+        if len(dt) == 1:
+            start_datetime = _parse_date(dt[0])
+            end_datetime = start_datetime + python_datetime.timedelta(days=1)
+            query["temporal"] = (
+                start_datetime.strftime("%Y-%m-%d"),
+                end_datetime.strftime("%Y-%m-%d"),
+            )
 
-        return dt
+        elif len(dt) == 2:
+            dates: List[Optional[str]] = [None, None]
+            dates[0] = dt[0] if dt[0] not in ["..", ""] else None
+            dates[1] = dt[1] if dt[1] not in ["..", ""] else None
 
-    return None
+            # TODO: once https://github.com/nsidc/earthaccess/pull/451 is publish
+            # we can move to Datetime object instead of String
+            start: Optional[str] = None
+            end: Optional[str] = None
+
+            if dates[0]:
+                start = _parse_date(dates[0]).strftime("%Y-%m-%d")
+
+            if dates[1]:
+                end = _parse_date(dates[1]).strftime("%Y-%m-%d")
+
+            query["temporal"] = (start, end)
+        else:
+            raise InvalidDatetime("Invalid datetime: {datetime}")
+
+    return query

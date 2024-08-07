@@ -18,7 +18,6 @@ from constructs import Construct
 
 settings = StackSettings()
 
-
 DEFAULT_ENV = {
     "GDAL_CACHEMAX": "200",  # 200 mb
     "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
@@ -41,7 +40,7 @@ class LambdaStack(Stack):
         id: str,
         memory: int = 1024,
         timeout: int = 30,
-        runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_11,
+        runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_10,
         concurrent: Optional[int] = None,
         permissions: Optional[List[iam.PolicyStatement]] = None,
         environment: Optional[Dict] = None,
@@ -55,6 +54,7 @@ class LambdaStack(Stack):
         permissions = permissions or []
         environment = environment or {}
 
+        iam_reader_role = None
         if role_arn:
             iam_reader_role = iam.Role.from_role_arn(
                 self,
@@ -138,7 +138,6 @@ if settings.buckets:
             resources=[f"arn:aws:s3:::{bucket}*" for bucket in settings.buckets],
         )
     )
-
 
 lambda_stack = LambdaStack(
     app,
