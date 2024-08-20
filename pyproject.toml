@@ -63,8 +63,7 @@ requires = ["pdm-pep517"]
 build-backend = "pdm.pep517.api"
 
 [tool.pdm.version]
-source = "file"
-path = "titiler/cmr/__init__.py"
+source = "scm"
 
 [tool.pdm.build]
 includes = ["titiler/cmr"]
