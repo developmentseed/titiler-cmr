@@ -42,6 +42,9 @@ dynamic = ["version"]
 [project.optional-dependencies]
 dev = [
     "pre-commit",
+    "jupyterlab>=4.2.5",
+    "httpx",
+    "folium",
 ]
 test = [
     "pytest",
@@ -111,3 +114,4 @@ no_implicit_optional = true
 strict_optional = true
 namespace_packages = true
 explicit_package_bases = true
+

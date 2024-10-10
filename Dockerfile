@@ -1,6 +1,5 @@
 ARG PYTHON_VERSION=3.11
-ARG EARTHDATA_USERNAME
-ARG EARTHDATA_PASSWORD
+
 
 FROM python:${PYTHON_VERSION}-slim
 
@@ -13,7 +12,16 @@ COPY LICENSE LICENSE
 
 RUN pip install --no-cache-dir --upgrade . uvicorn
 RUN rm -rf titiler/ pyproject.toml README.md LICENSE
-RUN echo -e "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc && \
+
+ARG EARTHDATA_USERNAME
+ARG EARTHDATA_PASSWORD
+
+# Check if EARTHDATA_USERNAME and EARTHDATA_PASSWORD are provided
+RUN if [ -z "$EARTHDATA_USERNAME" ] || [ -z "$EARTHDATA_PASSWORD" ]; then \
+  echo "Error: EARTHDATA_USERNAME and EARTHDATA_PASSWORD build args must be provided"; \
+  exit 1; \
+  fi && \
+  echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc && \
   unset EARTHDATA_USERNAME && \
   unset EARTHDATA_PASSWORD
 
