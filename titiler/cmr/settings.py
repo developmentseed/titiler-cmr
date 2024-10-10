@@ -68,7 +68,8 @@ class RetrySettings(BaseSettings):
 class AuthSettings(BaseSettings):
     """AWS credential settings."""
 
-    strategy: Literal["environment", "iam"] = "environment"
+    strategy: Literal["environment", "iam", "netrc"] = "environment"
+    access: Literal["direct", "external"] = "direct"
 
     model_config = {
         "env_prefix": "TITILER_CMR_S3_AUTH_",

@@ -29,6 +29,8 @@ cache_config = CacheSettings()
 retry_config = RetrySettings()
 s3_auth_config = AuthSettings()
 
+print("earthdata access method:", s3_auth_config.access)
+
 
 @cached(  # type: ignore
     TTLCache(maxsize=100, ttl=60),
@@ -175,7 +177,7 @@ class CMRBackend(BaseBackend):
         assets: List[Asset] = []
         for r in results:
             if bands_regex:
-                links = r.data_links(access="direct")
+                links = r.data_links(access=s3_auth_config.access)
 
                 band_urls = []
                 for url in links:
@@ -194,7 +196,7 @@ class CMRBackend(BaseBackend):
             else:
                 assets.append(
                     {
-                        "url": r.data_links(access="direct")[0],
+                        "url": r.data_links(access=s3_auth_config.access)[0],
                         "provider": r["meta"]["provider-id"],
                     }
                 )
@@ -271,6 +273,7 @@ class CMRBackend(BaseBackend):
             ) as src_dst:
                 return src_dst.tile(x, y, z, **kwargs)
 
+        print(mosaic_assets)
         return mosaic_reader(mosaic_assets, _reader, tile_x, tile_y, tile_z, **kwargs)
 
     def point(
