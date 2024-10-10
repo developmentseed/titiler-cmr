@@ -107,3 +107,5 @@ node_modules
 cdk.context.json
 
 notebooks/
+
+uv.lock

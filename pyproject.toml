@@ -2,7 +2,7 @@
 name = "titiler.cmr"
 description = "Connect Common Metadata Repository (CMR) and TiTiler."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [
     {name = "Aimee Barciauskas", email = "aimee@developmentseed.com"},
@@ -16,27 +16,26 @@ classifiers = [
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
-    "orjson",
-    "titiler.core>=0.17.0,<0.18",
-    "titiler.mosaic>=0.17.0,<0.18",
-    "rio_tiler[s3]>=6.4.0,<7.0",
+    "titiler.core>=0.18.0,<0.19",
+    "titiler.mosaic>=0.18.0,<0.19",
+    "cftime~=1.6.4",
     "ciso8601~=2.3",
-    "xarray",
-    "rioxarray",
-    "cftime",
-    "h5netcdf",
-    "fsspec",
-    "s3fs",
-    "earthaccess",
-    "pydantic>=2.4,<3.0",
+    "earthaccess~=0.11.0",
+    "fsspec~=2024.9.0",
+    "h5netcdf~=1.1.0",
+    "orjson~=3.10.7",
     "pydantic-settings~=2.0",
+    "pydantic>=2.4,<3.0",
+    "rio_tiler[s3]>=6.4.0,<7.0",
+    "rioxarray~=0.13.4",
+    "s3fs~=2024.9.0",
+    "xarray~=2024.9.0",
 ]
 dynamic = ["version"]
 
