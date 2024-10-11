@@ -36,6 +36,7 @@ dependencies = [
     "rioxarray~=0.13.4",
     "s3fs~=2024.9.0",
     "xarray~=2024.9.0",
+    "geojson-pydantic>=1.1.1",
 ]
 dynamic = ["version"]
 
