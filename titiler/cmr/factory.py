@@ -68,9 +68,9 @@ def create_html_response(
         baseurl += router_prefix
 
     return templates.TemplateResponse(
-        f"{template_name}.html",
-        {
-            "request": request,
+        request=request,
+        name=f"{template_name}.html",
+        context={
             "response": orjson.loads(data),
             "template": {
                 "api_root": baseurl,
@@ -801,7 +801,7 @@ class Endpoints:
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-        ) -> Dict:
+        ) -> _TemplateResponse:
             """Return Map document."""
             tilejson_url = self.url_for(
                 request,
@@ -826,9 +826,9 @@ class Endpoints:
                 base_url += prefix
 
             return self.templates.TemplateResponse(
+                request=request,
                 name="map.html",
                 context={
-                    "request": request,
                     "tilejson_endpoint": tilejson_url,
                     "tms": tms,
                     "resolutions": [matrix.cellSize for matrix in tms],
