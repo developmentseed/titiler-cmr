@@ -32,7 +32,7 @@ auth_config = AuthSettings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI Lifespan."""
-    if auth_config.strategy == "environment":
+    if auth_config.strategy == "environment" and auth_config.access == "direct":
         app.state.cmr_auth = earthaccess.login(strategy="environment")
     else:
         app.state.cmr_auth = None

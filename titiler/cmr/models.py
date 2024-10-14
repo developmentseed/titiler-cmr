@@ -21,20 +21,20 @@ class Link(BaseModel):
         str,
         Field(
             description="Supplies the URI to a remote resource (or resource fragment).",
-            example="http://data.example.com/buildings/123",
+            examples=["http://data.example.com/buildings/123"],
         ),
     ]
     rel: Annotated[
         str,
         Field(
-            description="The type or semantics of the relation.", example="alternate"
+            description="The type or semantics of the relation.", examples=["alternate"]
         ),
     ]
     type: Annotated[
         Optional[MediaType],
         Field(
             description="A hint indicating what the media type of the result of dereferencing the link should be.",
-            example="application/geo+json",
+            examples=["application/geo+json"],
         ),
     ] = None
     templated: Annotated[
@@ -45,21 +45,21 @@ class Link(BaseModel):
         Optional[str],
         Field(
             description="A base path to retrieve semantic information about the variables used in URL template.",
-            example="/ogcapi/vars/",
+            examples=["/ogcapi/vars/"],
         ),
     ] = None
     hreflang: Annotated[
         Optional[str],
         Field(
             description="A hint indicating what the language of the result of dereferencing the link should be.",
-            example="en",
+            examples=["en"],
         ),
     ] = None
     title: Annotated[
         Optional[str],
         Field(
             description="Used to label the destination of a link such that it can be used as a human-readable identifier.",
-            example="Trierer Strasse 70, 53115 Bonn",
+            examples=["Trierer Strasse 70, 53115 Bonn"],
         ),
     ] = None
     length: Optional[int] = None
@@ -298,7 +298,7 @@ class TimeStamp(RootModel):
         datetime,
         Field(
             description="This property indicates the time and date when the response was generated using RFC 3339 notation.",
-            example="2017-08-17T08:05:32Z",
+            examples=["2017-08-17T08:05:32Z"],
         ),
     ]
 
@@ -327,7 +327,7 @@ class BoundingBox(BaseModel):
             description="A 2D Point in the CRS indicated elsewhere",
         ),
     ]
-    crs: Annotated[Optional[CRS], Field(name="CRS")] = None
+    crs: Annotated[Optional[CRS], Field(title="CRS")] = None
     orderedAxes: Annotated[
         Optional[List[str]], Field(max_length=2, min_length=2)
     ] = None
@@ -519,7 +519,7 @@ class GeospatialData(BaseModel):
     theme: Annotated[
         Optional[str], Field(description="Category where the layer can be grouped")
     ] = None
-    crs: Annotated[Optional[CRS], Field(name="CRS")] = None
+    crs: Annotated[Optional[CRS], Field(title="CRS")] = None
     epoch: Annotated[
         Optional[float],
         Field(description="Epoch of the Coordinate Reference System (CRS)"),
@@ -579,7 +579,7 @@ class TilePoint(BaseModel):
     """
 
     coordinates: Annotated[List[float], Field(max_length=2, min_length=2)]
-    crs: Annotated[Optional[CRS], Field(name="CRS")]
+    crs: Annotated[Optional[CRS], Field(title="CRS")]
     tileMatrix: Annotated[
         Optional[str],
         Field(description="TileMatrix identifier associated with the scaleDenominator"),
@@ -624,7 +624,7 @@ class TileSet(BaseModel):
         Literal["map", "vector", "coverage"],
         Field(description="Type of data represented in the tileset"),
     ]
-    crs: Annotated[CRS, Field(name="CRS")]
+    crs: Annotated[CRS, Field(title="CRS")]
     tileMatrixSetURI: Annotated[
         Optional[AnyUrl],
         Field(

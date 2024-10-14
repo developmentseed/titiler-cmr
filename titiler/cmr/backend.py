@@ -2,11 +2,12 @@
 
 import os
 import re
-from typing import Any, Dict, List, Optional, Tuple, Type, TypedDict, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypedDict, Union
 
 import attr
 import earthaccess
 import rasterio
+import rasterio.session
 from cachetools import TTLCache, cached
 from cachetools.keys import hashkey
 from cogeo_mosaic.backends import BaseBackend
@@ -24,6 +25,8 @@ from rio_tiler.types import BBox
 
 from titiler.cmr.settings import AuthSettings, CacheSettings, RetrySettings
 from titiler.cmr.utils import retry
+
+Access = Literal["direct", "external"]
 
 cache_config = CacheSettings()
 retry_config = RetrySettings()
@@ -106,10 +109,12 @@ class CMRBackend(BaseBackend):
         """This method is not used but is required by the abstract class."""
         pass
 
-    def assets_for_tile(self, x: int, y: int, z: int, **kwargs: Any) -> List[Asset]:
+    def assets_for_tile(
+        self, x: int, y: int, z: int, access: Access = "direct", **kwargs: Any
+    ) -> List[Asset]:
         """Retrieve assets for tile."""
         bbox = self.tms.bounds(Tile(x, y, z))
-        return self.get_assets(*bbox, **kwargs)
+        return self.get_assets(*bbox, access=access, **kwargs)
 
     def assets_for_point(
         self,
@@ -128,6 +133,7 @@ class CMRBackend(BaseBackend):
         xmax: float,
         ymax: float,
         coord_crs: CRS = WGS84_CRS,
+        access: Access = "direct",
         **kwargs: Any,
     ) -> List[Asset]:
         """Retrieve assets for bbox."""
@@ -141,7 +147,7 @@ class CMRBackend(BaseBackend):
                 ymax,
             )
 
-        return self.get_assets(xmin, ymin, xmax, ymax, **kwargs)
+        return self.get_assets(xmin, ymin, xmax, ymax, access=access, **kwargs)
 
     @cached(  # type: ignore
         TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl),
@@ -162,6 +168,7 @@ class CMRBackend(BaseBackend):
         ymax: float,
         limit: int = 100,
         bands_regex: Optional[str] = None,
+        access: Access = "direct",
         **kwargs: Any,
     ) -> List[Asset]:
         """Find assets."""
@@ -175,7 +182,7 @@ class CMRBackend(BaseBackend):
         assets: List[Asset] = []
         for r in results:
             if bands_regex:
-                links = r.data_links(access="direct")
+                links = r.data_links(access=access)
 
                 band_urls = []
                 for url in links:
@@ -194,7 +201,7 @@ class CMRBackend(BaseBackend):
             else:
                 assets.append(
                     {
-                        "url": r.data_links(access="direct")[0],
+                        "url": r.data_links(access=access)[0],
                         "provider": r["meta"]["provider-id"],
                     }
                 )
@@ -220,6 +227,7 @@ class CMRBackend(BaseBackend):
             tile_y,
             tile_z,
             **cmr_query,
+            access=s3_auth_config.access,
             bands_regex=bands_regex,
         )
 
@@ -229,7 +237,11 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            if s3_auth_config.strategy == "environment" and self.auth:
+            if (
+                s3_auth_config.strategy == "environment"
+                and s3_auth_config.access == "direct"
+                and self.auth
+            ):
                 s3_credentials = aws_s3_credential(self.auth, asset["provider"])
 
             else:
