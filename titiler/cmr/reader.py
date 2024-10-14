@@ -9,6 +9,7 @@ import re
 from typing import Any, Dict, List, Optional, Type
 
 import attr
+import earthaccess
 import fsspec
 import numpy
 import s3fs
@@ -82,7 +83,10 @@ def get_filesystem(
         return fsspec.filesystem("reference", **reference_args).get_mapper("")
 
     elif protocol in ["https", "http", "file"]:
-        filesystem = fsspec.filesystem(protocol)  # type: ignore
+        if protocol in ["https", "http"]:
+            filesystem = earthaccess.get_fsspec_https_session()
+        else:
+            filesystem = fsspec.filesystem(protocol)  # type: ignore
         return (
             filesystem.open(src_path)
             if xr_engine == "h5netcdf"
