@@ -119,8 +119,8 @@ def cmr_query(
             start_datetime = _parse_date(dt[0])
             end_datetime = start_datetime + python_datetime.timedelta(days=1)
             query["temporal"] = (
-                start_datetime.strftime("%Y-%m-%d"),
-                end_datetime.strftime("%Y-%m-%d"),
+                start_datetime.isoformat(),
+                end_datetime.isoformat(),
             )
 
         elif len(dt) == 2:
@@ -134,10 +134,10 @@ def cmr_query(
             end: Optional[str] = None
 
             if dates[0]:
-                start = _parse_date(dates[0]).strftime("%Y-%m-%d")
+                start = _parse_date(dates[0]).isoformat()
 
             if dates[1]:
-                end = _parse_date(dates[1]).strftime("%Y-%m-%d")
+                end = _parse_date(dates[1]).isoformat()
 
             query["temporal"] = (start, end)
         else:
