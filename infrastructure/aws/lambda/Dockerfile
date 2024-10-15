@@ -19,7 +19,7 @@ RUN yum install -y gcc-c++
 # we have to force using old package version that seems `almost` compatible with Lambda env botocore
 # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 RUN python -m pip install --upgrade pip
-RUN python -m pip install . "mangum>=0.10.0" "botocore==1.35.36" "aiobotocore==2.15.2" -t /asset --no-binary pydantic
+RUN python -m pip install . "mangum>=0.10.0" "botocore==1.34.145" "aiobotocore==2.13.3" -t /asset --no-binary pydantic
 
 # Reduce package size and remove useless files
 RUN cd /asset && find . -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-[0-9]*//'); cp $f $n; done;
