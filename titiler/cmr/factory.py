@@ -47,7 +47,7 @@ from titiler.core.dependencies import (
 from titiler.core.factory import BaseTilerFactory, img_endpoint_params
 from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
-from titiler.core.resources.enums import ImageType
+from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
 from titiler.core.utils import render_image
 
@@ -206,6 +206,7 @@ class Endpoints(BaseTilerFactory):
         self.register_tiles()
         self.register_map()
         self.register_statistics()
+        self.register_parts()
 
     def register_landing(self) -> None:
         """register landing page endpoint."""
@@ -714,6 +715,189 @@ class Endpoints(BaseTilerFactory):
                 media_type="text/html",
             )
 
+    def register_parts(self):  # noqa: C901
+        """Register /bbox and /feature endpoint."""
+
+        # GET endpoints
+        @self.router.get(
+            "/bbox/{minx},{miny},{maxx},{maxy}.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        @self.router.get(
+            "/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        def bbox_image(
+            request: Request,
+            minx: Annotated[float, Path(description="Bounding box min X")],
+            miny: Annotated[float, Path(description="Bounding box min Y")],
+            maxx: Annotated[float, Path(description="Bounding box max X")],
+            maxy: Annotated[float, Path(description="Bounding box max Y")],
+            format: Annotated[
+                ImageType,
+                "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+            ] = None,
+            coord_crs=Depends(CoordCRSParams),
+            dst_crs=Depends(DstCRSParams),
+            query=Depends(cmr_query),
+            rasterio_params=Depends(self.rasterio_dependency),
+            zarr_params=Depends(self.zarr_dependency),
+            reader_params=Depends(self.reader_dependency),
+            post_process=Depends(self.process_dependency),
+            image_params=Depends(self.img_part_dependency),
+            rescale=Depends(self.rescale_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
+        ):
+            """Create image from a bbox."""
+            reader, read_options, reader_options = parse_reader_options(
+                rasterio_params=rasterio_params,
+                zarr_params=zarr_params,
+                reader_params=reader_params,
+            )
+
+            with CMRBackend(
+                reader=reader,
+                reader_options=reader_options,
+                auth=request.app.state.cmr_auth,
+            ) as src_dst:
+                if reader_params.backend == "rasterio":
+                    read_options.update(
+                        {
+                            "threads": MOSAIC_THREADS,
+                            "align_bounds_with_dataset": True,
+                        }
+                    )
+
+                    read_options.update(image_params)
+
+                image, assets = src_dst.part(
+                    bbox=[minx, miny, maxx, maxy],
+                    cmr_query=query,
+                    bounds_crs=coord_crs or WGS84_CRS,
+                    dst_crs=dst_crs,
+                    **read_options,
+                )
+
+                dst_colormap = getattr(src_dst, "colormap", None)
+
+            if post_process:
+                image = post_process(image)
+
+            if rescale:
+                image.rescale(rescale)
+
+            if color_formula:
+                image.apply_color_formula(color_formula)
+
+            content, media_type = render_image(
+                image,
+                output_format=format,
+                colormap=colormap or dst_colormap,
+                **render_params,
+            )
+
+            headers: Dict[str, str] = {}
+            if OptionalHeader.x_assets in self.optional_headers:
+                ids = [x["id"] for x in assets]
+                headers["X-Assets"] = ",".join(ids)
+
+            return Response(content, media_type=media_type, headers=headers)
+
+        @self.router.post(
+            "/feature",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        @self.router.post(
+            "/feature.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        @self.router.post(
+            "/feature/{width}x{height}.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        def feature_image(
+            request: Request,
+            geojson: Annotated[
+                Union[FeatureCollection, Feature],
+                Body(description="GeoJSON Feature or FeatureCollection."),
+            ],
+            format: Annotated[
+                ImageType,
+                "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+            ] = None,
+            coord_crs=Depends(CoordCRSParams),
+            dst_crs=Depends(DstCRSParams),
+            query=Depends(cmr_query),
+            rasterio_params=Depends(self.rasterio_dependency),
+            zarr_params=Depends(self.zarr_dependency),
+            reader_params=Depends(self.reader_dependency),
+            post_process=Depends(self.process_dependency),
+            rescale=Depends(self.rescale_dependency),
+            image_params=Depends(self.img_part_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
+        ):
+            """Create image from a geojson feature."""
+            reader, read_options, reader_options = parse_reader_options(
+                rasterio_params=rasterio_params,
+                zarr_params=zarr_params,
+                reader_params=reader_params,
+            )
+
+            with CMRBackend(
+                reader=reader,
+                reader_options=reader_options,
+                auth=request.app.state.cmr_auth,
+            ) as src_dst:
+                if reader_params.backend == "rasterio":
+                    read_options.update(
+                        {
+                            "threads": MOSAIC_THREADS,
+                            "align_bounds_with_dataset": True,
+                        }
+                    )
+
+                    read_options.update(image_params)
+
+                image, assets = src_dst.feature(
+                    geojson.model_dump(exclude_none=True),
+                    cmr_query=query,
+                    shape_crs=coord_crs or WGS84_CRS,
+                    dst_crs=dst_crs,
+                    **read_options,
+                )
+
+            if post_process:
+                image = post_process(image)
+
+            if rescale:
+                image.rescale(rescale)
+
+            if color_formula:
+                image.apply_color_formula(color_formula)
+
+            content, media_type = render_image(
+                image,
+                output_format=format,
+                colormap=colormap,
+                **render_params,
+            )
+
+            headers: Dict[str, str] = {}
+            if OptionalHeader.x_assets in self.optional_headers:
+                ids = [x["id"] for x in assets]
+                headers["X-Assets"] = ",".join(ids)
+
+            return Response(content, media_type=media_type, headers=headers)
+
     def register_statistics(self):
         """Register /statistics endpoint."""
 
@@ -745,7 +929,7 @@ class Endpoints(BaseTilerFactory):
             post_process=Depends(self.process_dependency),
             stats_params=Depends(self.stats_dependency),
             histogram_params=Depends(self.histogram_dependency),
-            img_part_params=Depends(self.img_part_dependency),
+            image_params=Depends(self.img_part_dependency),
         ):
             """Get Statistics from a geojson feature or featureCollection."""
             fc = geojson
@@ -774,7 +958,7 @@ class Endpoints(BaseTilerFactory):
                             }
                         )
 
-                        read_options.update(img_part_params)
+                        read_options.update(image_params)
 
                     image, _ = src_dst.feature(
                         shape,
