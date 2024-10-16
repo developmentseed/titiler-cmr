@@ -46,13 +46,14 @@ dev = [
     "jupyterlab>=4.2.5",
     "httpx",
     "folium",
-    "pytest-recording>=0.13.2",
 ]
 test = [
     "pytest",
     "pytest-cov",
     "pytest-asyncio",
     "httpx",
+    "pytest-mock>=3.14.0",
+    "pytest-recording>=0.13.2",
 ]
 
 [project.urls]
@@ -119,5 +120,5 @@ explicit_package_bases = true
 
 [tool.pytest.ini_options]
 markers = "vcr: records network activity"
-
+addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml"
 

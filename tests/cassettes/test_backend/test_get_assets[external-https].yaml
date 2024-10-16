@@ -6,352 +6,18 @@ interactions:
       - '*/*'
       Accept-Encoding:
       - gzip, deflate
-      Authorization:
-      - Bearer eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6Imhyb2RtYW4xIiwiZXhwIjoxNzMzNzU2MzAxLCJpYXQiOjE3Mjg1NzIzMDEsImlzcyI6Imh0dHBzOi8vdXJzLmVhcnRoZGF0YS5uYXNhLmdvdiJ9.NZFYum9ebUdihJJflCnCGFeOMZjbX8UTIceRO0cTyTZ4U51cIUaTNur5786kzs1-wTrE0Vz1Ku03fqljYt7jcdos14bNPF2MYjX930BCd_aqax5AN0nCF45lnisVtpxQoFM0-on1REU4CagVTxn7BjvnzmeqQC3F-J_d0-bm-9dzFjFFMScS9HomJOryHWAOfit3cUYVC_B8OHYQlw8R76CBUQvRgpco4SOOE_Tr2RXG-a5r8M9wD_sxrwGxfy-wAtXY2UgqRCrdmUWSv2ekcpe_QRwXt_vS9k-TPC7yIPZicWgsM22_JmAoCwmPH9YzF-jjBEjgsrSVKFy7dZL-ew
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.9.0
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-91.663,47.862,-91.537,47.928&concept_id%5B%5D=C2021957657-LPCLOUD&temporal%5B%5D=2024-02-11T00:00:00Z,2024-02-13T00:00:00Z&page_size=0
-  response:
-    body:
-      string: '{"hits":2,"took":321,"items":[]}'
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Access-Control-Expose-Headers:
-      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
-        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
-      - '2'
-      CMR-Request-Id:
-      - d5993e44-021c-4cda-97b3-bb02e9d6f13c
-      CMR-Took:
-      - '323'
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - 76d9290b11994a36eb1fd06260542650
-      Content-SHA1:
-      - 11628b47e93a29e9c894cfc49eeb35c3b7780644
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
-      Date:
-      - Fri, 11 Oct 2024 11:51:47 GMT
-      Server:
-      - ServerTokens ProductOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding, User-Agent
-      Via:
-      - 1.1 cc66f99a23df85de70ae5abde8d154fa.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - I4pez7tn7vLMvP38I0df504_ux4wiWpCz86g-UyuUGNSdvytEaR57Q==
-      X-Amz-Cf-Pop:
-      - MSP50-C1
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - I4pez7tn7vLMvP38I0df504_ux4wiWpCz86g-UyuUGNSdvytEaR57Q==
-      X-XSS-Protection:
-      - 1; mode=block
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Authorization:
-      - Bearer eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6Imhyb2RtYW4xIiwiZXhwIjoxNzMzNzU2MzAxLCJpYXQiOjE3Mjg1NzIzMDEsImlzcyI6Imh0dHBzOi8vdXJzLmVhcnRoZGF0YS5uYXNhLmdvdiJ9.NZFYum9ebUdihJJflCnCGFeOMZjbX8UTIceRO0cTyTZ4U51cIUaTNur5786kzs1-wTrE0Vz1Ku03fqljYt7jcdos14bNPF2MYjX930BCd_aqax5AN0nCF45lnisVtpxQoFM0-on1REU4CagVTxn7BjvnzmeqQC3F-J_d0-bm-9dzFjFFMScS9HomJOryHWAOfit3cUYVC_B8OHYQlw8R76CBUQvRgpco4SOOE_Tr2RXG-a5r8M9wD_sxrwGxfy-wAtXY2UgqRCrdmUWSv2ekcpe_QRwXt_vS9k-TPC7yIPZicWgsM22_JmAoCwmPH9YzF-jjBEjgsrSVKFy7dZL-ew
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.9.0
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-91.663,47.862,-91.537,47.928&concept_id%5B%5D=C2021957657-LPCLOUD&temporal%5B%5D=2024-02-11T00:00:00Z,2024-02-13T00:00:00Z&page_size=100
-  response:
-    body:
-      string: '{"hits":2,"took":387,"items":[{"meta":{"concept-type":"granule","concept-id":"G2865703539-LPCLOUD","revision-id":1,"native-id":"HLS.L30.T15UXP.2024042T165831.v2.0","collection-concept-id":"C2021957657-LPCLOUD","provider-id":"LPCLOUD","format":"application/echo10+xml","revision-date":"2024-02-15T00:22:50.376Z"},"umm":{"TemporalExtent":{"RangeDateTime":{"BeginningDateTime":"2024-02-11T16:58:31.150Z","EndingDateTime":"2024-02-11T16:58:31.150Z"}},"GranuleUR":"HLS.L30.T15UXP.2024042T165831.v2.0","AdditionalAttributes":[{"Name":"LANDSAT_PRODUCT_ID","Values":["LC09_L1TP_027027_20240211_20240211_02_T1"]},{"Name":"CLOUD_COVERAGE","Values":["100"]},{"Name":"MGRS_TILE_ID","Values":["15UXP"]},{"Name":"SPATIAL_COVERAGE","Values":["17"]},{"Name":"SPATIAL_RESOLUTION","Values":["30.0"]},{"Name":"SPATIAL_RESAMPLING_ALG","Values":["Cubic
-        Convolution"]},{"Name":"HLS_PROCESSING_TIME","Values":["2024-02-15T00:21:01Z"]},{"Name":"SENSING_TIME","Values":["2024-02-11T16:58:31.1504700Z"]},{"Name":"HORIZONTAL_CS_NAME","Values":["UTM,
-        WGS84, UTM ZONE 15"]},{"Name":"ULX","Values":["600000.0"]},{"Name":"ULY","Values":["5400000.0"]},{"Name":"ADD_OFFSET","Values":["0"]},{"Name":"REF_SCALE_FACTOR","Values":["0.0001"]},{"Name":"THERM_SCALE_FACTOR","Values":["0.01"]},{"Name":"ANG_SCALE_FACTOR","Values":["0.01"]},{"Name":"FILLVALUE","Values":["-9999"]},{"Name":"QA_FILLVALUE","Values":["255"]},{"Name":"NCOLS","Values":["3660"]},{"Name":"NROWS","Values":["3660"]},{"Name":"MEAN_SUN_AZIMUTH_ANGLE","Values":["158.08943194"]},{"Name":"MEAN_SUN_ZENITH_ANGLE","Values":["64.5797445"]},{"Name":"MEAN_VIEW_AZIMUTH_ANGLE","Values":["282.97959634"]},{"Name":"MEAN_VIEW_ZENITH_ANGLE","Values":["6.19114289"]},{"Name":"NBAR_SOLAR_ZENITH","Values":["64.53825582"]},{"Name":"ACCODE","Values":["LaSRC
-        v3.0.5"]},{"Name":"TIRS_SSM_MODEL","Values":["UNKNOWN"]},{"Name":"TIRS_SSM_POSITION_STATUS","Values":["UNKNOWN"]},{"Name":"USGS_SOFTWARE","Values":["LPGS_16.3.1"]},{"Name":"IDENTIFIER_PRODUCT_DOI","Values":["10.5067/HLS/HLSL30.002"]},{"Name":"IDENTIFIER_PRODUCT_DOI_AUTHORITY","Values":["https://doi.org"]}],"SpatialExtent":{"HorizontalSpatialDomain":{"Geometry":{"GPolygons":[{"Boundary":{"Points":[{"Longitude":-91.11111937,"Latitude":47.74962083},{"Longitude":-90.97433358,"Latitude":48.07607015},{"Longitude":-91.65417909,"Latitude":48.20130094},{"Longitude":-91.66566865,"Latitude":47.75740974},{"Longitude":-91.11111937,"Latitude":47.74962083}]}}]}}},"ProviderDates":[{"Date":"2024-02-15T00:21:32.710Z","Type":"Insert"},{"Date":"2024-02-15T00:21:32.710Z","Type":"Update"}],"CollectionReference":{"EntryTitle":"HLS
-        Landsat Operational Land Imager Surface Reflectance and TOA Brightness Daily
-        Global 30m v2.0"},"RelatedUrls":[{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B03.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B05.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B09.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B10.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.SAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.Fmask.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B07.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.VAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B02.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B11.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B06.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B04.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B01.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.VZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.SZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0_stac.json"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.cmr.xml"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials","Type":"VIEW
-        RELATED INFORMATION","Description":"api endpoint to retrieve temporary credentials
-        valid for same-region direct s3 access"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.jpg"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"This link provides direct download access
-        via S3 to the granule"}],"DataGranule":{"DayNightFlag":"Day","Identifiers":[{"Identifier":"HLS.L30.T15UXP.2024042T165831","IdentifierType":"ProducerGranuleId"}],"ProductionDateTime":"2024-02-15T00:21:01.000Z","ArchiveAndDistributionInformation":[{"Name":"Not
-        provided","SizeInBytes":37096119,"SizeUnit":"MB"}]},"Platforms":[{"ShortName":"LANDSAT-9","Instruments":[{"ShortName":"OLI"}]}],"MetadataSpecification":{"URL":"https://cdn.earthdata.nasa.gov/umm/granule/v1.6.6","Name":"UMM-G","Version":"1.6.6"}}},{"meta":{"concept-type":"granule","concept-id":"G2865703626-LPCLOUD","revision-id":1,"native-id":"HLS.L30.T15UWP.2024042T165831.v2.0","collection-concept-id":"C2021957657-LPCLOUD","provider-id":"LPCLOUD","format":"application/echo10+xml","revision-date":"2024-02-15T00:22:54.976Z"},"umm":{"TemporalExtent":{"RangeDateTime":{"BeginningDateTime":"2024-02-11T16:58:31.150Z","EndingDateTime":"2024-02-11T16:58:31.150Z"}},"GranuleUR":"HLS.L30.T15UWP.2024042T165831.v2.0","AdditionalAttributes":[{"Name":"LANDSAT_PRODUCT_ID","Values":["LC09_L1TP_027027_20240211_20240211_02_T1"]},{"Name":"CLOUD_COVERAGE","Values":["100"]},{"Name":"MGRS_TILE_ID","Values":["15UWP"]},{"Name":"SPATIAL_COVERAGE","Values":["55"]},{"Name":"SPATIAL_RESOLUTION","Values":["30.0"]},{"Name":"SPATIAL_RESAMPLING_ALG","Values":["Cubic
-        Convolution"]},{"Name":"HLS_PROCESSING_TIME","Values":["2024-02-15T00:19:48Z"]},{"Name":"SENSING_TIME","Values":["2024-02-11T16:58:31.1504700Z"]},{"Name":"HORIZONTAL_CS_NAME","Values":["UTM,
-        WGS84, UTM ZONE 15"]},{"Name":"ULX","Values":["499980.0"]},{"Name":"ULY","Values":["5400000.0"]},{"Name":"ADD_OFFSET","Values":["0"]},{"Name":"REF_SCALE_FACTOR","Values":["0.0001"]},{"Name":"THERM_SCALE_FACTOR","Values":["0.01"]},{"Name":"ANG_SCALE_FACTOR","Values":["0.01"]},{"Name":"FILLVALUE","Values":["-9999"]},{"Name":"QA_FILLVALUE","Values":["255"]},{"Name":"NCOLS","Values":["3660"]},{"Name":"NROWS","Values":["3660"]},{"Name":"MEAN_SUN_AZIMUTH_ANGLE","Values":["157.12099443"]},{"Name":"MEAN_SUN_ZENITH_ANGLE","Values":["64.90124778"]},{"Name":"MEAN_VIEW_AZIMUTH_ANGLE","Values":["182.30060983"]},{"Name":"MEAN_VIEW_ZENITH_ANGLE","Values":["2.57865721"]},{"Name":"NBAR_SOLAR_ZENITH","Values":["64.55126976"]},{"Name":"ACCODE","Values":["LaSRC
-        v3.0.5"]},{"Name":"TIRS_SSM_MODEL","Values":["UNKNOWN"]},{"Name":"TIRS_SSM_POSITION_STATUS","Values":["UNKNOWN"]},{"Name":"USGS_SOFTWARE","Values":["LPGS_16.3.1"]},{"Name":"IDENTIFIER_PRODUCT_DOI","Values":["10.5067/HLS/HLSL30.002"]},{"Name":"IDENTIFIER_PRODUCT_DOI_AUTHORITY","Values":["https://doi.org"]}],"SpatialExtent":{"HorizontalSpatialDomain":{"Geometry":{"GPolygons":[{"Boundary":{"Points":[{"Longitude":-91.53521313,"Latitude":47.75581865},{"Longitude":-91.52323712,"Latitude":48.17756004},{"Longitude":-93.0002704,"Latitude":48.43589509},{"Longitude":-93.0002669,"Latitude":47.76516657},{"Longitude":-91.53521313,"Latitude":47.75581865}]}}]}}},"ProviderDates":[{"Date":"2024-02-15T00:20:56.926Z","Type":"Insert"},{"Date":"2024-02-15T00:20:56.926Z","Type":"Update"}],"CollectionReference":{"EntryTitle":"HLS
-        Landsat Operational Land Imager Surface Reflectance and TOA Brightness Daily
-        Global 30m v2.0"},"RelatedUrls":[{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B06.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B04.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.Fmask.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.VAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.VZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B01.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B09.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B05.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B07.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B02.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B10.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B11.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B03.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.SZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.SAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0_stac.json"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.cmr.xml"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials","Type":"VIEW
-        RELATED INFORMATION","Description":"api endpoint to retrieve temporary credentials
-        valid for same-region direct s3 access"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.jpg"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"This link provides direct download access
-        via S3 to the granule"}],"DataGranule":{"DayNightFlag":"Day","Identifiers":[{"Identifier":"HLS.L30.T15UWP.2024042T165831","IdentifierType":"ProducerGranuleId"}],"ProductionDateTime":"2024-02-15T00:19:48.000Z","ArchiveAndDistributionInformation":[{"Name":"Not
-        provided","SizeInBytes":119675361,"SizeUnit":"MB"}]},"Platforms":[{"ShortName":"LANDSAT-9","Instruments":[{"ShortName":"OLI"}]}],"MetadataSpecification":{"URL":"https://cdn.earthdata.nasa.gov/umm/granule/v1.6.6","Name":"UMM-G","Version":"1.6.6"}}}]}'
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Access-Control-Expose-Headers:
-      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
-        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
-      - '2'
-      CMR-Request-Id:
-      - aae47a79-1f14-4325-b84d-aa147f49f440
-      CMR-Search-After:
-      - '["lpcloud",1707670711150,2865703626]'
-      CMR-Took:
-      - '387'
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - c12f95fbb3429d443fd9ed8207cdde05
-      Content-SHA1:
-      - d21a901b51343a11df8fe78ad7fe4f9b9664c050
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
-      Date:
-      - Fri, 11 Oct 2024 11:51:48 GMT
-      Server:
-      - ServerTokens ProductOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding, User-Agent
-      Via:
-      - 1.1 e7d0317d0bc6b15fd0158376ae9d8bfc.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - 5udFuGx89sLWPaK2p4waTu2YS0vfz4XZlU6WsOBYqghc60bRpk3OOw==
-      X-Amz-Cf-Pop:
-      - MSP50-C1
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - 5udFuGx89sLWPaK2p4waTu2YS0vfz4XZlU6WsOBYqghc60bRpk3OOw==
-      X-XSS-Protection:
-      - 1; mode=block
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Authorization:
-      - Bearer eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6Imhyb2RtYW4xIiwiZXhwIjoxNzMzNzU2MzAxLCJpYXQiOjE3Mjg1NzIzMDEsImlzcyI6Imh0dHBzOi8vdXJzLmVhcnRoZGF0YS5uYXNhLmdvdiJ9.NZFYum9ebUdihJJflCnCGFeOMZjbX8UTIceRO0cTyTZ4U51cIUaTNur5786kzs1-wTrE0Vz1Ku03fqljYt7jcdos14bNPF2MYjX930BCd_aqax5AN0nCF45lnisVtpxQoFM0-on1REU4CagVTxn7BjvnzmeqQC3F-J_d0-bm-9dzFjFFMScS9HomJOryHWAOfit3cUYVC_B8OHYQlw8R76CBUQvRgpco4SOOE_Tr2RXG-a5r8M9wD_sxrwGxfy-wAtXY2UgqRCrdmUWSv2ekcpe_QRwXt_vS9k-TPC7yIPZicWgsM22_JmAoCwmPH9YzF-jjBEjgsrSVKFy7dZL-ew
-      CMR-Search-After:
-      - '["lpcloud",1707670711150,2865703626]'
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.9.0
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-91.663,47.862,-91.537,47.928&concept_id%5B%5D=C2021957657-LPCLOUD&temporal%5B%5D=2024-02-11T00:00:00Z,2024-02-13T00:00:00Z&page_size=100
-  response:
-    body:
-      string: '{"hits":2,"took":637,"items":[]}'
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Access-Control-Expose-Headers:
-      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
-        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
-      - '2'
-      CMR-Request-Id:
-      - c96b7702-d84a-43d8-965a-9fa160931f7b
-      CMR-Took:
-      - '638'
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - fad853901a8011dccd34b20207a1cc5b
-      Content-SHA1:
-      - e7bbc75422be68cda877c0ace4c8aae8730f8f5b
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
-      Date:
-      - Fri, 11 Oct 2024 11:51:49 GMT
-      Server:
-      - ServerTokens ProductOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding, User-Agent
-      Via:
-      - 1.1 209792493d6e19a93cff691d8b1d29dc.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - fsck9c-05wl5fjW_g5ooE1ujJOKSz_QSk3bo_jb3-4YeNL2gZRTBCQ==
-      X-Amz-Cf-Pop:
-      - MSP50-C1
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - fsck9c-05wl5fjW_g5ooE1ujJOKSz_QSk3bo_jb3-4YeNL2gZRTBCQ==
-      X-XSS-Protection:
-      - 1; mode=block
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Authorization:
-      - Bearer eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6Imhyb2RtYW4xIiwiZXhwIjoxNzMzNzU2MzAxLCJpYXQiOjE3Mjg1NzIzMDEsImlzcyI6Imh0dHBzOi8vdXJzLmVhcnRoZGF0YS5uYXNhLmdvdiJ9.NZFYum9ebUdihJJflCnCGFeOMZjbX8UTIceRO0cTyTZ4U51cIUaTNur5786kzs1-wTrE0Vz1Ku03fqljYt7jcdos14bNPF2MYjX930BCd_aqax5AN0nCF45lnisVtpxQoFM0-on1REU4CagVTxn7BjvnzmeqQC3F-J_d0-bm-9dzFjFFMScS9HomJOryHWAOfit3cUYVC_B8OHYQlw8R76CBUQvRgpco4SOOE_Tr2RXG-a5r8M9wD_sxrwGxfy-wAtXY2UgqRCrdmUWSv2ekcpe_QRwXt_vS9k-TPC7yIPZicWgsM22_JmAoCwmPH9YzF-jjBEjgsrSVKFy7dZL-ew
       Connection:
       - keep-alive
       User-Agent:
       - earthaccess v0.11.0
+      authorization:
+      - DUMMY
     method: GET
     uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-91.663,47.862,-91.537,47.928&concept_id%5B%5D=C2021957657-LPCLOUD&temporal%5B%5D=2024-02-11T00:00:00Z,2024-02-13T23:59:59Z&page_size=0
   response:
     body:
-      string: '{"hits":2,"took":404,"items":[]}'
+      string: !!binary |
+        H4sIAAAAAAAAAKtWysgsKVayMtJRKsnPz1ayMjMCMjNLUnOBgtGxtQBStGjuIAAAAA==
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -361,21 +27,21 @@ interactions:
       CMR-Hits:
       - '2'
       CMR-Request-Id:
-      - b9ec7c92-ab81-4e85-99a8-c2e1e984b991
+      - ad0cf31c-8f91-4f8b-be65-511de4b40cbd
       CMR-Took:
-      - '405'
+      - '623'
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-MD5:
-      - 33e407c03954b766a502687942a9b456
+      - 44c28a883368ced7346510296e3e978a
       Content-SHA1:
-      - 780eb651eb0fb55731a9392f9565b8ca103c1f81
+      - 9534a89b77d0031ff57c0237a4b753cfef9b10bb
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Fri, 11 Oct 2024 11:56:08 GMT
+      - Wed, 16 Oct 2024 17:56:00 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -385,9 +51,9 @@ interactions:
       Vary:
       - Accept-Encoding, User-Agent
       Via:
-      - 1.1 74decfe3e233c69740a371ae86add18a.cloudfront.net (CloudFront)
+      - 1.1 3f6cef1b5ed86729efaa93542c4d1d36.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - SPgmo7t-teNBonCRbfAIxaruHe1_t-8NSG2E1Vfk4d0rxhky5TRs4w==
+      - xgyZI7F1QyDeO7He6z-cgodaz2O8q8xSshXUW2crMsPeRjce_DXeiw==
       X-Amz-Cf-Pop:
       - MSP50-C1
       X-Cache:
@@ -397,7 +63,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - SPgmo7t-teNBonCRbfAIxaruHe1_t-8NSG2E1Vfk4d0rxhky5TRs4w==
+      - xgyZI7F1QyDeO7He6z-cgodaz2O8q8xSshXUW2crMsPeRjce_DXeiw==
       X-XSS-Protection:
       - 1; mode=block
     status:
@@ -410,141 +76,59 @@ interactions:
       - '*/*'
       Accept-Encoding:
       - gzip, deflate
-      Authorization:
-      - Bearer eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6Imhyb2RtYW4xIiwiZXhwIjoxNzMzNzU2MzAxLCJpYXQiOjE3Mjg1NzIzMDEsImlzcyI6Imh0dHBzOi8vdXJzLmVhcnRoZGF0YS5uYXNhLmdvdiJ9.NZFYum9ebUdihJJflCnCGFeOMZjbX8UTIceRO0cTyTZ4U51cIUaTNur5786kzs1-wTrE0Vz1Ku03fqljYt7jcdos14bNPF2MYjX930BCd_aqax5AN0nCF45lnisVtpxQoFM0-on1REU4CagVTxn7BjvnzmeqQC3F-J_d0-bm-9dzFjFFMScS9HomJOryHWAOfit3cUYVC_B8OHYQlw8R76CBUQvRgpco4SOOE_Tr2RXG-a5r8M9wD_sxrwGxfy-wAtXY2UgqRCrdmUWSv2ekcpe_QRwXt_vS9k-TPC7yIPZicWgsM22_JmAoCwmPH9YzF-jjBEjgsrSVKFy7dZL-ew
       Connection:
       - keep-alive
       User-Agent:
       - earthaccess v0.11.0
+      authorization:
+      - DUMMY
     method: GET
     uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-91.663,47.862,-91.537,47.928&concept_id%5B%5D=C2021957657-LPCLOUD&temporal%5B%5D=2024-02-11T00:00:00Z,2024-02-13T23:59:59Z&page_size=100
   response:
     body:
-      string: '{"hits":2,"took":384,"items":[{"meta":{"concept-type":"granule","concept-id":"G2865703539-LPCLOUD","revision-id":1,"native-id":"HLS.L30.T15UXP.2024042T165831.v2.0","collection-concept-id":"C2021957657-LPCLOUD","provider-id":"LPCLOUD","format":"application/echo10+xml","revision-date":"2024-02-15T00:22:50.376Z"},"umm":{"TemporalExtent":{"RangeDateTime":{"BeginningDateTime":"2024-02-11T16:58:31.150Z","EndingDateTime":"2024-02-11T16:58:31.150Z"}},"GranuleUR":"HLS.L30.T15UXP.2024042T165831.v2.0","AdditionalAttributes":[{"Name":"LANDSAT_PRODUCT_ID","Values":["LC09_L1TP_027027_20240211_20240211_02_T1"]},{"Name":"CLOUD_COVERAGE","Values":["100"]},{"Name":"MGRS_TILE_ID","Values":["15UXP"]},{"Name":"SPATIAL_COVERAGE","Values":["17"]},{"Name":"SPATIAL_RESOLUTION","Values":["30.0"]},{"Name":"SPATIAL_RESAMPLING_ALG","Values":["Cubic
-        Convolution"]},{"Name":"HLS_PROCESSING_TIME","Values":["2024-02-15T00:21:01Z"]},{"Name":"SENSING_TIME","Values":["2024-02-11T16:58:31.1504700Z"]},{"Name":"HORIZONTAL_CS_NAME","Values":["UTM,
-        WGS84, UTM ZONE 15"]},{"Name":"ULX","Values":["600000.0"]},{"Name":"ULY","Values":["5400000.0"]},{"Name":"ADD_OFFSET","Values":["0"]},{"Name":"REF_SCALE_FACTOR","Values":["0.0001"]},{"Name":"THERM_SCALE_FACTOR","Values":["0.01"]},{"Name":"ANG_SCALE_FACTOR","Values":["0.01"]},{"Name":"FILLVALUE","Values":["-9999"]},{"Name":"QA_FILLVALUE","Values":["255"]},{"Name":"NCOLS","Values":["3660"]},{"Name":"NROWS","Values":["3660"]},{"Name":"MEAN_SUN_AZIMUTH_ANGLE","Values":["158.08943194"]},{"Name":"MEAN_SUN_ZENITH_ANGLE","Values":["64.5797445"]},{"Name":"MEAN_VIEW_AZIMUTH_ANGLE","Values":["282.97959634"]},{"Name":"MEAN_VIEW_ZENITH_ANGLE","Values":["6.19114289"]},{"Name":"NBAR_SOLAR_ZENITH","Values":["64.53825582"]},{"Name":"ACCODE","Values":["LaSRC
-        v3.0.5"]},{"Name":"TIRS_SSM_MODEL","Values":["UNKNOWN"]},{"Name":"TIRS_SSM_POSITION_STATUS","Values":["UNKNOWN"]},{"Name":"USGS_SOFTWARE","Values":["LPGS_16.3.1"]},{"Name":"IDENTIFIER_PRODUCT_DOI","Values":["10.5067/HLS/HLSL30.002"]},{"Name":"IDENTIFIER_PRODUCT_DOI_AUTHORITY","Values":["https://doi.org"]}],"SpatialExtent":{"HorizontalSpatialDomain":{"Geometry":{"GPolygons":[{"Boundary":{"Points":[{"Longitude":-91.11111937,"Latitude":47.74962083},{"Longitude":-90.97433358,"Latitude":48.07607015},{"Longitude":-91.65417909,"Latitude":48.20130094},{"Longitude":-91.66566865,"Latitude":47.75740974},{"Longitude":-91.11111937,"Latitude":47.74962083}]}}]}}},"ProviderDates":[{"Date":"2024-02-15T00:21:32.710Z","Type":"Insert"},{"Date":"2024-02-15T00:21:32.710Z","Type":"Update"}],"CollectionReference":{"EntryTitle":"HLS
-        Landsat Operational Land Imager Surface Reflectance and TOA Brightness Daily
-        Global 30m v2.0"},"RelatedUrls":[{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B03.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B05.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B09.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B10.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.SAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.Fmask.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B07.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.VAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B02.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B11.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B06.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B04.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.B01.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.VZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.SZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0_stac.json"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.cmr.xml"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials","Type":"VIEW
-        RELATED INFORMATION","Description":"api endpoint to retrieve temporary credentials
-        valid for same-region direct s3 access"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"Download HLS.L30.T15UXP.2024042T165831.v2.0.jpg"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UXP.2024042T165831.v2.0/HLS.L30.T15UXP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"This link provides direct download access
-        via S3 to the granule"}],"DataGranule":{"DayNightFlag":"Day","Identifiers":[{"Identifier":"HLS.L30.T15UXP.2024042T165831","IdentifierType":"ProducerGranuleId"}],"ProductionDateTime":"2024-02-15T00:21:01.000Z","ArchiveAndDistributionInformation":[{"Name":"Not
-        provided","SizeInBytes":37096119,"SizeUnit":"MB"}]},"Platforms":[{"ShortName":"LANDSAT-9","Instruments":[{"ShortName":"OLI"}]}],"MetadataSpecification":{"URL":"https://cdn.earthdata.nasa.gov/umm/granule/v1.6.6","Name":"UMM-G","Version":"1.6.6"}}},{"meta":{"concept-type":"granule","concept-id":"G2865703626-LPCLOUD","revision-id":1,"native-id":"HLS.L30.T15UWP.2024042T165831.v2.0","collection-concept-id":"C2021957657-LPCLOUD","provider-id":"LPCLOUD","format":"application/echo10+xml","revision-date":"2024-02-15T00:22:54.976Z"},"umm":{"TemporalExtent":{"RangeDateTime":{"BeginningDateTime":"2024-02-11T16:58:31.150Z","EndingDateTime":"2024-02-11T16:58:31.150Z"}},"GranuleUR":"HLS.L30.T15UWP.2024042T165831.v2.0","AdditionalAttributes":[{"Name":"LANDSAT_PRODUCT_ID","Values":["LC09_L1TP_027027_20240211_20240211_02_T1"]},{"Name":"CLOUD_COVERAGE","Values":["100"]},{"Name":"MGRS_TILE_ID","Values":["15UWP"]},{"Name":"SPATIAL_COVERAGE","Values":["55"]},{"Name":"SPATIAL_RESOLUTION","Values":["30.0"]},{"Name":"SPATIAL_RESAMPLING_ALG","Values":["Cubic
-        Convolution"]},{"Name":"HLS_PROCESSING_TIME","Values":["2024-02-15T00:19:48Z"]},{"Name":"SENSING_TIME","Values":["2024-02-11T16:58:31.1504700Z"]},{"Name":"HORIZONTAL_CS_NAME","Values":["UTM,
-        WGS84, UTM ZONE 15"]},{"Name":"ULX","Values":["499980.0"]},{"Name":"ULY","Values":["5400000.0"]},{"Name":"ADD_OFFSET","Values":["0"]},{"Name":"REF_SCALE_FACTOR","Values":["0.0001"]},{"Name":"THERM_SCALE_FACTOR","Values":["0.01"]},{"Name":"ANG_SCALE_FACTOR","Values":["0.01"]},{"Name":"FILLVALUE","Values":["-9999"]},{"Name":"QA_FILLVALUE","Values":["255"]},{"Name":"NCOLS","Values":["3660"]},{"Name":"NROWS","Values":["3660"]},{"Name":"MEAN_SUN_AZIMUTH_ANGLE","Values":["157.12099443"]},{"Name":"MEAN_SUN_ZENITH_ANGLE","Values":["64.90124778"]},{"Name":"MEAN_VIEW_AZIMUTH_ANGLE","Values":["182.30060983"]},{"Name":"MEAN_VIEW_ZENITH_ANGLE","Values":["2.57865721"]},{"Name":"NBAR_SOLAR_ZENITH","Values":["64.55126976"]},{"Name":"ACCODE","Values":["LaSRC
-        v3.0.5"]},{"Name":"TIRS_SSM_MODEL","Values":["UNKNOWN"]},{"Name":"TIRS_SSM_POSITION_STATUS","Values":["UNKNOWN"]},{"Name":"USGS_SOFTWARE","Values":["LPGS_16.3.1"]},{"Name":"IDENTIFIER_PRODUCT_DOI","Values":["10.5067/HLS/HLSL30.002"]},{"Name":"IDENTIFIER_PRODUCT_DOI_AUTHORITY","Values":["https://doi.org"]}],"SpatialExtent":{"HorizontalSpatialDomain":{"Geometry":{"GPolygons":[{"Boundary":{"Points":[{"Longitude":-91.53521313,"Latitude":47.75581865},{"Longitude":-91.52323712,"Latitude":48.17756004},{"Longitude":-93.0002704,"Latitude":48.43589509},{"Longitude":-93.0002669,"Latitude":47.76516657},{"Longitude":-91.53521313,"Latitude":47.75581865}]}}]}}},"ProviderDates":[{"Date":"2024-02-15T00:20:56.926Z","Type":"Insert"},{"Date":"2024-02-15T00:20:56.926Z","Type":"Update"}],"CollectionReference":{"EntryTitle":"HLS
-        Landsat Operational Land Imager Surface Reflectance and TOA Brightness Daily
-        Global 30m v2.0"},"RelatedUrls":[{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B06.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B06.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B04.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B04.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.Fmask.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.Fmask.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.VAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.VZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.VZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B01.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B01.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B09.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B09.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B05.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B05.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B07.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B07.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B02.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B02.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B10.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B10.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B11.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B11.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.B03.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.B03.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.SZA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SZA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.SAA.tif"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.SAA.tif","Type":"GET
-        DATA VIA DIRECT ACCESS","Description":"This link provides direct download
-        access via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0_stac.json"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0_stac.json","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.cmr.xml"},{"URL":"s3://lp-prod-protected/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.cmr.xml","Type":"VIEW
-        RELATED INFORMATION","Description":"This link provides direct download access
-        via S3 to the granule"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials","Type":"VIEW
-        RELATED INFORMATION","Description":"api endpoint to retrieve temporary credentials
-        valid for same-region direct s3 access"},{"URL":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"Download HLS.L30.T15UWP.2024042T165831.v2.0.jpg"},{"URL":"s3://lp-prod-public/HLSL30.020/HLS.L30.T15UWP.2024042T165831.v2.0/HLS.L30.T15UWP.2024042T165831.v2.0.jpg","Type":"GET
-        RELATED VISUALIZATION","Description":"This link provides direct download access
-        via S3 to the granule"}],"DataGranule":{"DayNightFlag":"Day","Identifiers":[{"Identifier":"HLS.L30.T15UWP.2024042T165831","IdentifierType":"ProducerGranuleId"}],"ProductionDateTime":"2024-02-15T00:19:48.000Z","ArchiveAndDistributionInformation":[{"Name":"Not
-        provided","SizeInBytes":119675361,"SizeUnit":"MB"}]},"Platforms":[{"ShortName":"LANDSAT-9","Instruments":[{"ShortName":"OLI"}]}],"MetadataSpecification":{"URL":"https://cdn.earthdata.nasa.gov/umm/granule/v1.6.6","Name":"UMM-G","Version":"1.6.6"}}}]}'
+      string: !!binary |
+        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
+        ySIvweNU1t88/B8LNMRY014AAA==
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -554,23 +138,23 @@ interactions:
       CMR-Hits:
       - '2'
       CMR-Request-Id:
-      - 925070a0-e0bb-49c0-b11f-4b5ad2a06c15
+      - 70d3dcb3-53d5-476f-857d-d47b5918df67
       CMR-Search-After:
       - '["lpcloud",1707670711150,2865703626]'
       CMR-Took:
-      - '385'
+      - '598'
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-MD5:
-      - a7980c114c394a2be79150293cd56397
+      - 24175b1afd3dd858200d06623eed5155
       Content-SHA1:
-      - 5c4640f09b73916dc9b087b176d8de8f12c45bbe
+      - ec526df258688f52e2987dc0d060573e9d9756cc
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Fri, 11 Oct 2024 11:56:09 GMT
+      - Wed, 16 Oct 2024 17:56:00 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -580,9 +164,9 @@ interactions:
       Vary:
       - Accept-Encoding, User-Agent
       Via:
-      - 1.1 209792493d6e19a93cff691d8b1d29dc.cloudfront.net (CloudFront)
+      - 1.1 3f6cef1b5ed86729efaa93542c4d1d36.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - RGHSztFLZ9k2tmNHjMAykR_c1vz82YbmVUfgovcZox7ITHIzGKvlIg==
+      - BdvjXHTJ0g3YS4BDIDOikZ90g1lP12Apqd-S3isPRb4BTU5cHb8pIQ==
       X-Amz-Cf-Pop:
       - MSP50-C1
       X-Cache:
@@ -592,7 +176,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - RGHSztFLZ9k2tmNHjMAykR_c1vz82YbmVUfgovcZox7ITHIzGKvlIg==
+      - BdvjXHTJ0g3YS4BDIDOikZ90g1lP12Apqd-S3isPRb4BTU5cHb8pIQ==
       X-XSS-Protection:
       - 1; mode=block
     status:
