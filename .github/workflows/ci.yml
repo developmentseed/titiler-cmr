@@ -52,7 +52,7 @@ jobs:
           pre-commit run --all-files
 
       - name: Run tests
-        run: python -m pytest --cov titiler.cmr --cov-report term-missing -s -vv
+        run: python -m pytest
 
   deploy:
     needs: [tests]
