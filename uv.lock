@@ -2920,7 +2920,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
-version = "0.1.dev84+g8abcf4f.d20241016"
+version = "0.1.dev87+gd2a898a.d20241017"
 source = { editable = "." }
 dependencies = [
     { name = "cftime" },
@@ -2955,6 +2955,9 @@ test = [
     { name = "pytest-mock" },
     { name = "pytest-recording" },
 ]
+uvicorn = [
+    { name = "uvicorn" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -2982,6 +2985,7 @@ requires-dist = [
     { name = "s3fs", specifier = "~=2024.9.0" },
     { name = "titiler-core", specifier = ">=0.18.0,<0.19" },
     { name = "titiler-mosaic", specifier = ">=0.18.0,<0.19" },
+    { name = "uvicorn", marker = "extra == 'uvicorn'" },
     { name = "xarray", specifier = "~=2024.9.0" },
 ]
 
@@ -3110,6 +3114,20 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e4/e8/6ff5e6bc22095cfc59b6ea711b687e2b7ed4bdb373f7eeec370a97d7392f/urllib3-1.26.20.tar.gz", hash = "sha256:40c2dc0c681e47eb8f90e7e27bf6ff7df2e677421fd46756da1161c39ca70d32", size = 307380 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/33/cf/8435d5a7159e2a9c83a95896ed596f68cf798005fe107cc655b5c5c14704/urllib3-1.26.20-py2.py3-none-any.whl", hash = "sha256:0ed14ccfbf1c30a9072c7ca157e4319b70d65f623e91e7b32fadb2853431016e", size = 144225 },
+]
+
+[[package]]
+name = "uvicorn"
+version = "0.32.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "h11" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e0/fc/1d785078eefd6945f3e5bab5c076e4230698046231eb0f3747bc5c8fa992/uvicorn-0.32.0.tar.gz", hash = "sha256:f78b36b143c16f54ccdb8190d0a26b5f1901fe5a3c777e1ab29f26391af8551e", size = 77564 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/eb/14/78bd0e95dd2444b6caacbca2b730671d4295ccb628ef58b81bee903629df/uvicorn-0.32.0-py3-none-any.whl", hash = "sha256:60b8f3a5ac027dcd31448f411ced12b5ef452c646f76f02f8cc3f25d8d26fd82", size = 63723 },
 ]
 
 [[package]]
