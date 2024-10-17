@@ -16,7 +16,8 @@ from cogeo_mosaic.mosaic import MosaicJSON
 from earthaccess.auth import Auth
 from morecantile import Tile, TileMatrixSet
 from rasterio.crs import CRS
-from rasterio.warp import transform_bounds
+from rasterio.features import bounds
+from rasterio.warp import transform_bounds, transform_geom
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.io import BaseReader, Reader
 from rio_tiler.models import ImageData
@@ -73,7 +74,7 @@ class CMRBackend(BaseBackend):
 
     input: str = attr.ib("CMR", init=False)
 
-    _backend_name = "CMR"
+    _backend_name: str = attr.ib(default="CMR")
 
     def __attrs_post_init__(self) -> None:
         """Post Init."""
@@ -178,7 +179,6 @@ class CMRBackend(BaseBackend):
             count=limit,
             **kwargs,
         )
-
         assets: List[Asset] = []
         for r in results:
             if bands_regex:
@@ -307,7 +307,75 @@ class CMRBackend(BaseBackend):
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Create an Image from multiple items for a bbox."""
-        raise NotImplementedError
+        xmin, ymin, xmax, ymax = bbox
+
+        mosaic_assets = self.assets_for_bbox(
+            xmin,
+            ymin,
+            xmax,
+            ymax,
+            coord_crs=bounds_crs,
+            access=s3_auth_config.access,
+            bands_regex=bands_regex,
+            **cmr_query,
+        )
+
+        if not mosaic_assets:
+            raise NoAssetFoundError("No assets found for bbox input")
+
+        def _reader(asset: Asset, bbox: BBox, **kwargs: Any) -> ImageData:
+            if (
+                s3_auth_config.strategy == "environment"
+                and s3_auth_config.access == "direct"
+                and self.auth
+            ):
+                s3_credentials = aws_s3_credential(self.auth, asset["provider"])
+
+            else:
+                s3_credentials = None
+
+            if isinstance(self.reader, Reader):
+                aws_session = None
+                if s3_credentials:
+                    aws_session = rasterio.session.AWSSession(
+                        aws_access_key_id=s3_credentials["accessKeyId"],
+                        aws_secret_access_key=s3_credentials["secretAccessKey"],
+                        aws_session_token=s3_credentials["sessionToken"],
+                    )
+
+                with rasterio.Env(aws_session):
+                    with self.reader(
+                        asset["url"],
+                        **self.reader_options,
+                    ) as src_dst:
+                        return src_dst.part(bbox, **kwargs)
+
+            if s3_credentials:
+                options = {
+                    **self.reader_options,
+                    "s3_credentials": {
+                        "key": s3_credentials["accessKeyId"],
+                        "secret": s3_credentials["secretAccessKey"],
+                        "token": s3_credentials["sessionToken"],
+                    },
+                }
+            else:
+                options = self.reader_options
+
+            with self.reader(
+                asset["url"],
+                **options,
+            ) as src_dst:
+                return src_dst.part(bbox, **kwargs)
+
+        return mosaic_reader(
+            mosaic_assets,
+            _reader,
+            bbox,
+            bounds_crs=bounds_crs,
+            dst_crs=dst_crs or bounds_crs,
+            **kwargs,
+        )
 
     def feature(
         self,
@@ -315,9 +383,80 @@ class CMRBackend(BaseBackend):
         cmr_query: Dict,
         dst_crs: Optional[CRS] = None,
         shape_crs: CRS = WGS84_CRS,
-        max_size: int = 1024,
         bands_regex: Optional[str] = None,
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Create an Image from multiple items for a GeoJSON feature."""
-        raise NotImplementedError
+        if "geometry" in shape:
+            shape = shape["geometry"]
+
+        shape_wgs84 = shape
+
+        if shape_crs != WGS84_CRS:
+            shape_wgs84 = transform_geom(shape_crs, WGS84_CRS, shape["geometry"])
+
+        shape_bounds = bounds(shape_wgs84)
+
+        mosaic_assets = self.get_assets(
+            *shape_bounds,
+            access=s3_auth_config.access,
+            bands_regex=bands_regex,
+            **cmr_query,
+        )
+
+        if not mosaic_assets:
+            raise NoAssetFoundError("No assets found for Geometry")
+
+        def _reader(asset: Asset, shape: Dict, **kwargs: Any) -> ImageData:
+            if (
+                s3_auth_config.strategy == "environment"
+                and s3_auth_config.access == "direct"
+                and self.auth
+            ):
+                s3_credentials = aws_s3_credential(self.auth, asset["provider"])
+
+            else:
+                s3_credentials = None
+
+            if isinstance(self.reader, Reader):
+                aws_session = None
+                if s3_credentials:
+                    aws_session = rasterio.session.AWSSession(
+                        aws_access_key_id=s3_credentials["accessKeyId"],
+                        aws_secret_access_key=s3_credentials["secretAccessKey"],
+                        aws_session_token=s3_credentials["sessionToken"],
+                    )
+
+                with rasterio.Env(aws_session):
+                    with self.reader(
+                        asset["url"],
+                        **self.reader_options,
+                    ) as src_dst:
+                        return src_dst.feature(shape, **kwargs)
+
+            if s3_credentials:
+                options = {
+                    **self.reader_options,
+                    "s3_credentials": {
+                        "key": s3_credentials["accessKeyId"],
+                        "secret": s3_credentials["secretAccessKey"],
+                        "token": s3_credentials["sessionToken"],
+                    },
+                }
+            else:
+                options = self.reader_options
+
+            with self.reader(
+                asset["url"],
+                **options,
+            ) as src_dst:
+                return src_dst.feature(shape, **kwargs)
+
+        return mosaic_reader(
+            mosaic_assets,
+            _reader,
+            shape,
+            shape_crs=shape_crs,
+            dst_crs=dst_crs or shape_crs,
+            **kwargs,
+        )

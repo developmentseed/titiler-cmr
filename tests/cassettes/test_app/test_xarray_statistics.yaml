@@ -1,0 +1,163 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - earthaccess v0.11.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-20.799,75.011,14.483,83.559&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=0
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAKtWysgsKVayMtRRKsnPzwYyTC11lDJLUnOBgtGxtQADB3OvIAAAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      CMR-Hits:
+      - '1'
+      CMR-Request-Id:
+      - d0a860d9-d9c9-42ce-a30d-21f916784057
+      CMR-Took:
+      - '160'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-MD5:
+      - 8abe28036bf7c9ae3fe21fc3603bb6e6
+      Content-SHA1:
+      - 44503a02e5b74ddbc007a4c3e8e573a4353431c6
+      Content-Type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
+      Date:
+      - Wed, 16 Oct 2024 17:55:56 GMT
+      Server:
+      - ServerTokens ProductOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding, User-Agent
+      Via:
+      - 1.1 f9a30196f92d97ac1f9de5de3070baa8.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - CRwNBPTSgqvPB_ykgczxZ7fzF_lOpHyGTe6RvJxrNDyC2z5JwUxovQ==
+      X-Amz-Cf-Pop:
+      - MSP50-C1
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - CRwNBPTSgqvPB_ykgczxZ7fzF_lOpHyGTe6RvJxrNDyC2z5JwUxovQ==
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - earthaccess v0.11.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-20.799,75.011,14.483,83.559&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=100
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAM1WbW/iOBD+K1a+XhPyQiDwLZAsi1RKRUL3tKdqZRIDviZ2znbY61b97zdO0pZ2
+        uVWl5V6qVgV7PH6emWfG82DsqZLG2LkwFOd3xtj3LgyqSAlrvz0YJVHYGD8YGWcZqZSp7itijI2d
+        wKwuiHHxvEFzWJ557qAfDAe2E5jXy+nlch2BiSAHKilnjY17YTCs6IG0J1zb7Tu24ziuDT9mOFku
+        zMv+l9nHVZKkJvxtWW7OwkWShF/c4K40Z5fLiXmwXcs2twfbsewGQ1GQTOkrXsGZurY3CAJn6PlH
+        cCrBDzQnorV5Wd9yUWIFS7iqCpph7a93YLnFsMRWVgqrLstffpecHXPKsSIdD9OxTcdN7WDseWPH
+        tQYj57PxeGHAMR3ClJQVF7iI/1SEKb2ywmxHInCQ0pLohZjllO1eVl65tcfNrwVx+gwIJmRHGfsb
+        c+eN+SPAWEAqAS1OKpLRbUdQ33pDhGw+Go41sAbge726hG97pSo57vWynFkEC7XXp9to7PihB7R6
+        nQ56h6eTV7gBsl4szJnmPmsN1qtz5fq6y55m3Uo0bSU5Z5IIBRbRyYy4475tBc5IZ+T5zLpq0veO
+        M7cXRlJBxI7T95EL+o0zhYtuK+Ilpk1IZ4RD5Yh7/XnC6yatK5AoJLzoYH8iUj1tTTkX8L8BYTrD
+        kRUMfbiQ12p/0iToLGJ82seziysuTrtoPTzePmplAHvcJUoDDkW2hwINWR5RqQTd1Fopc9YWSKMU
+        wJ/Qb2TNqC6YxQRCqL8bY9saBYHtDx1v4Hv+oN8HENM9ye5k3RTBDS5qHWmS9wfEzjEZjfJh5uOg
+        n/U3A39ENpt84251psNiBwFW+1LfEPlaTfqOOZvcN6l3oLht3a06zf28vCyWNeo4TQ0i5rpB3+/7
+        wSjoe0M/Nv3vIZ0XjlXmfiO+CN9f0d1efSjwTguXybaKSd7WRF43/e9063DcV70AMvLcMFdkSwSB
+        nvm2EegMJHuQT0fnGGnH5Qmxo12uSAF352tRtPJ+3UJwKymr4jnG2alu0u6YvJJmVpd1UUsTGrUC
+        lCTv/ejy3nnyDiEmMhO0agVuRPwrKzjO0bncdy1nFqcoCtOwEVobJOlBhP5v/NM9laig7A5176VE
+        ORUAB+VPkcFZRqREB4pR4iHFkdoT9DIZvCGMbuYhiuareJqicDqNk+QoBD+nk3oD7/W/EKSmGv9Z
+        oXRXdLGLf03jqyiO0CJOw/eq5j+Nxtlk8yPq71eL9DJBcniv4XWW34HFFUWE5RWnTGkgAp5sSg4E
+        qXZUE/fo6Dg64ILmCF5BJKEnmgIGMM6e6EmvI/ZC4WYef0Kr+DJMgcb86sNytQjT+fLqBBNeAQ5c
+        naLwMtzK3omB9mkEk2dI6gv0dRKjJF7dzKcxCq/n+i2oN93sv7yGxITXbRd7G9LlNWk2BfmjhgEH
+        aZp6yrh9/AvANhoTaQwAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      CMR-Hits:
+      - '1'
+      CMR-Request-Id:
+      - 51a626ab-5f58-42d8-979e-a22f66b55ebd
+      CMR-Search-After:
+      - '["pocloud",1728604800000,3264876018]'
+      CMR-Took:
+      - '54'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-MD5:
+      - 42c68300e1ff124bcb4d2d53400ecd50
+      Content-SHA1:
+      - cdbae2d49e7f67c55705222650c5e600a9112879
+      Content-Type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
+      Date:
+      - Wed, 16 Oct 2024 17:55:56 GMT
+      Server:
+      - ServerTokens ProductOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding, User-Agent
+      Via:
+      - 1.1 f9a30196f92d97ac1f9de5de3070baa8.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - LkfoeluWEUl483ALh-V1vedthX0s7GLaXv1r7ACJ2nBQLQ3RasKzeA==
+      X-Amz-Cf-Pop:
+      - MSP50-C1
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - LkfoeluWEUl483ALh-V1vedthX0s7GLaXv1r7ACJ2nBQLQ3RasKzeA==
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
