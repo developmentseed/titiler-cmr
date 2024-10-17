@@ -4,10 +4,21 @@ Issues and pull requests are more than welcome: <https://github.com/developments
 
 **dev install**
 
+This project uses [`uv`](https://docs.astral.sh/uv/) to manage the python environment and dependencies.
+To install the package for development you can follow these steps:
+
 ```bash
+# install uv
+
+# unix
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# or windows
+# powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
 git clone https://github.com/developmentseed/titiler-cmr.git
 cd titiler-cmr
-pip install pre-commit -e .["dev,test"]
+uv sync --all-extras
 ```
 
 ## Linting
@@ -15,7 +26,7 @@ pip install pre-commit -e .["dev,test"]
 This repo is set to use `pre-commit` to run *isort*, *flake8*, *pydocstring*, *black* ("uncompromising Python code formatter") and mypy when committing new code.
 
 ```bash
-pre-commit install
+uv pre-commit install
 ```
 
 ## Testing
@@ -23,7 +34,7 @@ pre-commit install
 You can then run the tests with the following command:
 
 ```bash
-python -m pytest
+uv run pytest
 ```
 
 The tests use `vcrpy <https://vcrpy.readthedocs.io/en/latest/>`_ to mock API calls
@@ -32,5 +43,5 @@ use the ``@pytest.mark.vcr`` decorator function to indicate ``vcrpy`` should be 
 Record the new responses and commit them to the repository.
 
 ```bash
-python -m pytest -v -s --record-mode new_episodes
+uv run pytest -v -s --record-mode new_episodes
 ```
