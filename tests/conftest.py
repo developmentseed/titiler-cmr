@@ -79,7 +79,7 @@ def mock_cmr_get_assets(monkeypatch):
                         asset["url"] = asset["url"].replace(
                             prefix, f"file://{data_dir}/"
                         )
-        print(assets)
+
         return assets
 
     monkeypatch.setattr(CMRBackend, "get_assets", mocked_get_assets)
