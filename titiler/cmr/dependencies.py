@@ -1,15 +1,18 @@
 """titiler-cmr dependencies."""
 
 import datetime as python_datetime
-from typing import Any, Dict, List, Literal, Optional, get_args
+from dataclasses import dataclass
+from typing import Any, Dict, List, Literal, Optional, Union, get_args
 
 from ciso8601 import parse_rfc3339
 from fastapi import Query
+from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from typing_extensions import Annotated
 
 from titiler.cmr.enums import MediaType
 from titiler.cmr.errors import InvalidDatetime
+from titiler.core.dependencies import DefaultDependency
 
 ResponseType = Literal["json", "html"]
 
@@ -116,8 +119,8 @@ def cmr_query(
             start_datetime = _parse_date(dt[0])
             end_datetime = start_datetime + python_datetime.timedelta(days=1)
             query["temporal"] = (
-                start_datetime.strftime("%Y-%m-%d"),
-                end_datetime.strftime("%Y-%m-%d"),
+                start_datetime.isoformat(),
+                end_datetime.isoformat(),
             )
 
         elif len(dt) == 2:
@@ -131,13 +134,110 @@ def cmr_query(
             end: Optional[str] = None
 
             if dates[0]:
-                start = _parse_date(dates[0]).strftime("%Y-%m-%d")
+                start = _parse_date(dates[0]).isoformat()
 
             if dates[1]:
-                end = _parse_date(dates[1]).strftime("%Y-%m-%d")
+                end = _parse_date(dates[1]).isoformat()
 
             query["temporal"] = (start, end)
         else:
             raise InvalidDatetime("Invalid datetime: {datetime}")
 
     return query
+
+
+@dataclass
+class RasterioParams(DefaultDependency):
+    """Rasterio backend parameters"""
+
+    indexes: Annotated[
+        Optional[List[int]],
+        Query(
+            title="Band indexes",
+            alias="bidx",
+            description="Dataset band indexes",
+        ),
+    ] = None
+    expression: Annotated[
+        Optional[str],
+        Query(
+            title="Band Math expression",
+            description="rio-tiler's band math expression",
+        ),
+    ] = None
+    bands: Annotated[
+        Optional[List[str]],
+        Query(
+            title="Band names",
+            description="Band names.",
+        ),
+    ] = None
+    bands_regex: Annotated[
+        Optional[str],
+        Query(
+            title="Regex expression to parse dataset links",
+            description="Regex expression to parse dataset links.",
+        ),
+    ] = None
+    unscale: Annotated[
+        Optional[bool],
+        Query(
+            title="Apply internal Scale/Offset",
+            description="Apply internal Scale/Offset. Defaults to `False`.",
+        ),
+    ] = None
+    resampling_method: Annotated[
+        Optional[RIOResampling],
+        Query(
+            alias="resampling",
+            description="RasterIO resampling algorithm. Defaults to `nearest`.",
+        ),
+    ] = None
+
+
+@dataclass
+class ZarrParams(DefaultDependency):
+    """Zarr backend parameters"""
+
+    variable: Annotated[
+        Optional[str],
+        Query(description="Xarray Variable"),
+    ] = None
+    drop_dim: Annotated[
+        Optional[str],
+        Query(description="Dimension to drop"),
+    ] = None
+    time_slice: Annotated[
+        Optional[str], Query(description="Slice of time to read (if available)")
+    ] = None
+    decode_times: Annotated[
+        Optional[bool],
+        Query(
+            title="decode_times",
+            description="Whether to decode times",
+        ),
+    ] = None
+
+
+@dataclass
+class ReaderParams(DefaultDependency):
+    """Reader parameters"""
+
+    backend: Annotated[
+        Literal["rasterio", "xarray"],
+        Query(description="Backend to read the CMR dataset"),
+    ] = "rasterio"
+    nodata: Annotated[
+        Optional[Union[str, int, float]],
+        Query(
+            title="Nodata value",
+            description="Overwrite internal Nodata value",
+        ),
+    ] = None
+    reproject_method: Annotated[
+        Optional[WarpResampling],
+        Query(
+            alias="reproject",
+            description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
+        ),
+    ] = None

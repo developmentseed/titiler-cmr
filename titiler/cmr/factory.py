@@ -1,21 +1,23 @@
 """titiler.cmr.factory: router factories."""
 
 import json
+import os
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Literal, Optional, Type, Union
+from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
 from urllib.parse import urlencode
 
 import jinja2
 import numpy
 import orjson
-from fastapi import APIRouter, Depends, Path, Query
+from fastapi import Body, Depends, Path, Query
 from fastapi.responses import ORJSONResponse
-from morecantile import tms as default_tms
+from geojson_pydantic import Feature, FeatureCollection
 from morecantile.defaults import TileMatrixSets
+from morecantile.defaults import tms as default_tms
 from pydantic import conint
-from rio_tiler.io import BaseReader, Reader
-from rio_tiler.types import RIOResampling, WarpResampling
+from rio_tiler.constants import MAX_THREADS, WGS84_CRS
+from rio_tiler.io import BaseReader, rasterio
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, Response
 from starlette.routing import compile_path, replace_params
@@ -24,20 +26,37 @@ from typing_extensions import Annotated
 
 from titiler.cmr import models
 from titiler.cmr.backend import CMRBackend
-from titiler.cmr.dependencies import OutputType, cmr_query
+from titiler.cmr.dependencies import (
+    OutputType,
+    RasterioParams,
+    ReaderParams,
+    ZarrParams,
+    cmr_query,
+)
 from titiler.cmr.enums import MediaType
 from titiler.cmr.reader import MultiFilesBandsReader, ZarrReader
-from titiler.core import dependencies
 from titiler.core.algorithm import algorithms as available_algorithms
-from titiler.core.factory import img_endpoint_params
+from titiler.core.dependencies import (
+    CoordCRSParams,
+    DefaultDependency,
+    DstCRSParams,
+    HistogramParams,
+    PartFeatureParams,
+    StatisticsParams,
+)
+from titiler.core.factory import BaseTilerFactory, img_endpoint_params
 from titiler.core.models.mapbox import TileJSON
-from titiler.core.resources.enums import ImageType
+from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
+from titiler.core.resources.enums import ImageType, OptionalHeader
+from titiler.core.resources.responses import GeoJSONResponse
 from titiler.core.utils import render_image
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader([jinja2.PackageLoader(__package__, "templates")])
 )
 DEFAULT_TEMPLATES = Jinja2Templates(env=jinja2_env)
+
+MOSAIC_THREADS = int(os.getenv("MOSAIC_CONCURRENCY", MAX_THREADS))
 
 
 def create_html_response(
@@ -86,40 +105,83 @@ def create_html_response(
     )
 
 
+def parse_reader_options(
+    rasterio_params: RasterioParams,
+    zarr_params: ZarrParams,
+    reader_params: ReaderParams,
+) -> Tuple[Type[BaseReader], Dict[str, Any], Dict[str, Any]]:
+    """Convert rasterio and zarr parameters into a reader and a set of reader_options and read_options"""
+
+    read_options: Dict[str, Any]
+    reader_options: Dict[str, Any]
+    options: Dict[str, Any]
+    reader: Type[BaseReader]
+
+    resampling_method = rasterio_params.resampling_method or "nearest"
+
+    if reader_params.backend == "xarray":
+        reader = ZarrReader
+        read_options = {}
+
+        options = {
+            "variable": zarr_params.variable,
+            "decode_times": zarr_params.decode_times,
+            "drop_dim": zarr_params.drop_dim,
+            "time_slice": zarr_params.time_slice,
+        }
+        reader_options = {k: v for k, v in options.items() if v is not None}
+    else:
+        if rasterio_params.bands_regex:
+            assert (
+                rasterio_params.bands
+            ), "`bands=` option must be provided when using Multi bands collections."
+
+            reader = MultiFilesBandsReader
+            options = {
+                "expression": rasterio_params.expression,
+                "bands": rasterio_params.bands,
+                "unscale": rasterio_params.unscale,
+                "resampling_method": rasterio_params.resampling_method,
+                "bands_regex": rasterio_params.bands_regex,
+            }
+            read_options = {k: v for k, v in options.items() if v is not None}
+            reader_options = {}
+
+        else:
+            assert (
+                rasterio_params.bands
+            ), "Can't use `bands=` option without `bands_regex`"
+
+            reader = rasterio.Reader
+            options = {
+                "indexes": rasterio_params.indexes,
+                "expression": rasterio_params.expression,
+                "unscale": rasterio_params.unscale,
+                "resampling_method": resampling_method,
+            }
+            read_options = {k: v for k, v in options.items() if v is not None}
+            reader_options = {}
+
+    return reader, read_options, reader_options
+
+
 @dataclass
-class Endpoints:
+class Endpoints(BaseTilerFactory):
     """Endpoints Factory."""
 
-    # FastAPI router
-    router: APIRouter = field(default_factory=APIRouter)
-
+    reader: Optional[Type[BaseReader]] = field(default=None)  # type: ignore
     supported_tms: TileMatrixSets = default_tms
 
-    # Router Prefix is needed to find the path for routes when prefixed
-    # e.g if you mount the route with `/foo` prefix, set router_prefix to foo
-    router_prefix: str = ""
+    zarr_dependency: Type[DefaultDependency] = ZarrParams
+    rasterio_dependency: Type[DefaultDependency] = RasterioParams
+    reader_dependency: Type[DefaultDependency] = ReaderParams
+    stats_dependency: Type[DefaultDependency] = StatisticsParams
+    histogram_dependency: Type[DefaultDependency] = HistogramParams
+    img_part_dependency: Type[DefaultDependency] = PartFeatureParams
 
     templates: Jinja2Templates = DEFAULT_TEMPLATES
 
     title: str = "TiTiler-CMR"
-
-    def url_for(self, request: Request, name: str, **path_params: Any) -> str:
-        """Return full url (with prefix) for a specific handler."""
-        url_path = self.router.url_path_for(name, **path_params)
-
-        base_url = str(request.base_url)
-        if self.router_prefix:
-            prefix = self.router_prefix.lstrip("/")
-            # If we have prefix with custom path param we check and replace them with
-            # the path params provided
-            if "{" in prefix:
-                _, path_format, param_convertors = compile_path(prefix)
-                prefix, _ = replace_params(
-                    path_format, param_convertors, request.path_params.copy()
-                )
-            base_url += prefix
-
-        return str(url_path.make_absolute_url(base_url=base_url))
 
     def _create_html_response(
         self,
@@ -135,7 +197,7 @@ class Endpoints:
             router_prefix=self.router_prefix,
         )
 
-    def __post_init__(self):
+    def register_routes(self):
         """Post Init: register routes."""
 
         self.register_landing()
@@ -143,6 +205,8 @@ class Endpoints:
         self.register_tilematrixsets()
         self.register_tiles()
         self.register_map()
+        self.register_statistics()
+        self.register_parts()
 
     def register_landing(self) -> None:
         """register landing page endpoint."""
@@ -418,163 +482,38 @@ class Endpoints:
                 conint(gt=0, le=4), "Tile size scale. 1=256x256, 2=512x512..."
             ] = 1,
             format: Annotated[
-                ImageType,
+                Optional[ImageType],
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = None,
-            ###################################################################
-            # CMR options
             query=Depends(cmr_query),
-            ###################################################################
-            backend: Annotated[
-                Literal["rasterio", "xarray"],
-                Query(description="Backend to read the CMR dataset"),
-            ] = "rasterio",
-            ###################################################################
-            # ZarrReader Options
-            ###################################################################
-            variable: Annotated[
-                Optional[str],
-                Query(description="Xarray Variable"),
-            ] = None,
-            drop_dim: Annotated[
-                Optional[str],
-                Query(description="Dimension to drop"),
-            ] = None,
-            time_slice: Annotated[
-                Optional[str], Query(description="Slice of time to read (if available)")
-            ] = None,
-            decode_times: Annotated[
-                Optional[bool],
-                Query(
-                    title="decode_times",
-                    description="Whether to decode times",
-                ),
-            ] = None,
-            ###################################################################
-            # Rasterio Reader Options
-            ###################################################################
-            indexes: Annotated[
-                Optional[List[int]],
-                Query(
-                    title="Band indexes",
-                    alias="bidx",
-                    description="Dataset band indexes",
-                ),
-            ] = None,
-            expression: Annotated[
-                Optional[str],
-                Query(
-                    title="Band Math expression",
-                    description="rio-tiler's band math expression",
-                ),
-            ] = None,
-            bands: Annotated[
-                Optional[List[str]],
-                Query(
-                    title="Band names",
-                    description="Band names.",
-                ),
-            ] = None,
-            bands_regex: Annotated[
-                Optional[str],
-                Query(
-                    title="Regex expression to parse dataset links",
-                    description="Regex expression to parse dataset links.",
-                ),
-            ] = None,
-            unscale: Annotated[
-                Optional[bool],
-                Query(
-                    title="Apply internal Scale/Offset",
-                    description="Apply internal Scale/Offset. Defaults to `False`.",
-                ),
-            ] = None,
-            resampling_method: Annotated[
-                Optional[RIOResampling],
-                Query(
-                    alias="resampling",
-                    description="RasterIO resampling algorithm. Defaults to `nearest`.",
-                ),
-            ] = None,
-            ###################################################################
-            # Reader options
-            ###################################################################
-            nodata: Annotated[
-                Optional[Union[str, int, float]],
-                Query(
-                    title="Nodata value",
-                    description="Overwrite internal Nodata value",
-                ),
-            ] = None,
-            reproject_method: Annotated[
-                Optional[WarpResampling],
-                Query(
-                    alias="reproject",
-                    description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
-                ),
-            ] = None,
-            ###################################################################
-            # Rendering Options
-            ###################################################################
-            post_process=Depends(available_algorithms.dependency),
-            rescale=Depends(dependencies.RescalingParams),
-            color_formula=Depends(dependencies.ColorFormulaParams),
-            colormap=Depends(dependencies.ColorMapParams),
-            render_params=Depends(dependencies.ImageRenderingParams),
+            zarr_params=Depends(self.zarr_dependency),
+            rasterio_params=Depends(self.rasterio_dependency),
+            reader_params=Depends(self.reader_dependency),
+            post_process=Depends(self.process_dependency),
+            rescale=Depends(self.rescale_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
         ) -> Response:
             """Create map tile from a dataset."""
-            resampling_method = resampling_method or "nearest"
-            reproject_method = reproject_method or "nearest"
-            if nodata is not None:
-                nodata = numpy.nan if nodata == "nan" else float(nodata)
+            reproject_method = reader_params.reproject_method or "nearest"
+            nodata = (
+                (
+                    numpy.nan
+                    if reader_params.nodata == "nan"
+                    else float(reader_params.nodata)
+                )
+                if reader_params.nodata
+                else None
+            )
 
             tms = self.supported_tms.get(tileMatrixSetId)
 
-            read_options: Dict[str, Any]
-            reader_options: Dict[str, Any]
-            options: Dict[str, Any]
-            reader: Type[BaseReader]
-
-            if backend != "rasterio":
-                reader = ZarrReader
-                read_options = {}
-
-                options = {
-                    "variable": variable,
-                    "decode_times": decode_times,
-                    "drop_dim": drop_dim,
-                    "time_slice": time_slice,
-                }
-                reader_options = {k: v for k, v in options.items() if v is not None}
-            else:
-                if bands_regex:
-                    assert (
-                        bands
-                    ), "`bands=` option must be provided when using Multi bands collections."
-
-                    reader = MultiFilesBandsReader
-                    options = {
-                        "expression": expression,
-                        "bands": bands,
-                        "unscale": unscale,
-                        "resampling_method": resampling_method,
-                        "bands_regex": bands_regex,
-                    }
-                    read_options = {k: v for k, v in options.items() if v is not None}
-                    reader_options = {}
-
-                else:
-                    assert bands, "Can't use `bands=` option without `bands_regex`"
-
-                    reader = Reader
-                    options = {
-                        "indexes": indexes,
-                        "expression": expression,
-                        "unscale": unscale,
-                        "resampling_method": resampling_method,
-                    }
-                    read_options = {k: v for k, v in options.items() if v is not None}
-                    reader_options = {}
+            reader, read_options, reader_options = parse_reader_options(
+                rasterio_params=rasterio_params,
+                zarr_params=zarr_params,
+                reader_params=reader_params,
+            )
 
             with CMRBackend(
                 tms=tms,
@@ -644,92 +583,15 @@ class Endpoints:
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-            ###################################################################
-            # CMR options
             query=Depends(cmr_query),
-            ###################################################################
-            backend: Annotated[
-                Literal["rasterio", "xarray"],
-                Query(description="Backend to read the CMR dataset"),
-            ] = "rasterio",
-            ###################################################################
-            # ZarrReader Options
-            ###################################################################
-            variable: Annotated[
-                Optional[str],
-                Query(description="Xarray Variable"),
-            ] = None,
-            drop_dim: Annotated[
-                Optional[str],
-                Query(description="Dimension to drop"),
-            ] = None,
-            time_slice: Annotated[
-                Optional[str], Query(description="Slice of time to read (if available)")
-            ] = None,
-            decode_times: Annotated[
-                Optional[bool],
-                Query(
-                    title="decode_times",
-                    description="Whether to decode times",
-                ),
-            ] = None,
-            ###################################################################
-            # COG Reader Options
-            ###################################################################
-            indexes: Annotated[
-                Optional[List[int]],
-                Query(
-                    title="Band indexes",
-                    alias="bidx",
-                    description="Dataset band indexes",
-                ),
-            ] = None,
-            expression: Annotated[
-                Optional[str],
-                Query(
-                    title="Band Math expression",
-                    description="rio-tiler's band math expression",
-                ),
-            ] = None,
-            unscale: Annotated[
-                Optional[bool],
-                Query(
-                    title="Apply internal Scale/Offset",
-                    description="Apply internal Scale/Offset. Defaults to `False`.",
-                ),
-            ] = None,
-            resampling_method: Annotated[
-                Optional[RIOResampling],
-                Query(
-                    alias="resampling",
-                    description="RasterIO resampling algorithm. Defaults to `nearest`.",
-                ),
-            ] = None,
-            ###################################################################
-            # Reader options
-            ###################################################################
-            nodata: Annotated[
-                Optional[Union[str, int, float]],
-                Query(
-                    title="Nodata value",
-                    description="Overwrite internal Nodata value",
-                ),
-            ] = None,
-            reproject_method: Annotated[
-                Optional[WarpResampling],
-                Query(
-                    alias="reproject",
-                    description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
-                ),
-            ] = None,
-            ###################################################################
-            # Rendering Options
-            ###################################################################
+            zarr_params=Depends(self.zarr_dependency),
+            rasterio_params=Depends(self.rasterio_dependency),
+            reader_params=Depends(self.reader_dependency),
             post_process=Depends(available_algorithms.dependency),
-            rescale=Depends(dependencies.RescalingParams),
-            color_formula=Depends(dependencies.ColorFormulaParams),
-            colormap=Depends(dependencies.ColorMapParams),
-            render_params=Depends(dependencies.ImageRenderingParams),
+            rescale=Depends(self.rescale_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
         ) -> Dict:
             """Return TileJSON document for a dataset."""
             route_params = {
@@ -801,6 +663,18 @@ class Endpoints:
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
+            query=Depends(cmr_query),
+            zarr_params=Depends(self.zarr_dependency),
+            rasterio_params=Depends(self.rasterio_dependency),
+            reader_params=Depends(self.reader_dependency),
+            ###################################################################
+            # Rendering Options
+            ###################################################################
+            post_process=Depends(self.process_dependency),
+            rescale=Depends(self.rescale_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
         ) -> _TemplateResponse:
             """Return Map document."""
             tilejson_url = self.url_for(
@@ -840,3 +714,279 @@ class Endpoints:
                 },
                 media_type="text/html",
             )
+
+    def register_parts(self):  # noqa: C901
+        """Register /bbox and /feature endpoint."""
+
+        # GET endpoints
+        @self.router.get(
+            "/bbox/{minx},{miny},{maxx},{maxy}.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        @self.router.get(
+            "/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        def bbox_image(
+            request: Request,
+            minx: Annotated[float, Path(description="Bounding box min X")],
+            miny: Annotated[float, Path(description="Bounding box min Y")],
+            maxx: Annotated[float, Path(description="Bounding box max X")],
+            maxy: Annotated[float, Path(description="Bounding box max Y")],
+            format: Annotated[
+                ImageType,
+                "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+            ] = None,
+            coord_crs=Depends(CoordCRSParams),
+            dst_crs=Depends(DstCRSParams),
+            query=Depends(cmr_query),
+            rasterio_params=Depends(self.rasterio_dependency),
+            zarr_params=Depends(self.zarr_dependency),
+            reader_params=Depends(self.reader_dependency),
+            post_process=Depends(self.process_dependency),
+            image_params=Depends(self.img_part_dependency),
+            rescale=Depends(self.rescale_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
+        ):
+            """Create image from a bbox."""
+            reader, read_options, reader_options = parse_reader_options(
+                rasterio_params=rasterio_params,
+                zarr_params=zarr_params,
+                reader_params=reader_params,
+            )
+
+            with CMRBackend(
+                reader=reader,
+                reader_options=reader_options,
+                auth=request.app.state.cmr_auth,
+            ) as src_dst:
+                if reader_params.backend == "rasterio":
+                    read_options.update(
+                        {
+                            "threads": MOSAIC_THREADS,
+                            "align_bounds_with_dataset": True,
+                        }
+                    )
+
+                    read_options.update(image_params)
+
+                image, assets = src_dst.part(
+                    bbox=[minx, miny, maxx, maxy],
+                    cmr_query=query,
+                    bounds_crs=coord_crs or WGS84_CRS,
+                    dst_crs=dst_crs,
+                    **read_options,
+                )
+
+                dst_colormap = getattr(src_dst, "colormap", None)
+
+            if post_process:
+                image = post_process(image)
+
+            if rescale:
+                image.rescale(rescale)
+
+            if color_formula:
+                image.apply_color_formula(color_formula)
+
+            content, media_type = render_image(
+                image,
+                output_format=format,
+                colormap=colormap or dst_colormap,
+                **render_params,
+            )
+
+            headers: Dict[str, str] = {}
+            if OptionalHeader.x_assets in self.optional_headers:
+                ids = [x["id"] for x in assets]
+                headers["X-Assets"] = ",".join(ids)
+
+            return Response(content, media_type=media_type, headers=headers)
+
+        @self.router.post(
+            "/feature",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        @self.router.post(
+            "/feature.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        @self.router.post(
+            "/feature/{width}x{height}.{format}",
+            tags=["images"],
+            **img_endpoint_params,
+        )
+        def feature_image(
+            request: Request,
+            geojson: Annotated[
+                Union[FeatureCollection, Feature],
+                Body(description="GeoJSON Feature or FeatureCollection."),
+            ],
+            format: Annotated[
+                ImageType,
+                "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+            ] = None,
+            coord_crs=Depends(CoordCRSParams),
+            dst_crs=Depends(DstCRSParams),
+            query=Depends(cmr_query),
+            rasterio_params=Depends(self.rasterio_dependency),
+            zarr_params=Depends(self.zarr_dependency),
+            reader_params=Depends(self.reader_dependency),
+            post_process=Depends(self.process_dependency),
+            rescale=Depends(self.rescale_dependency),
+            image_params=Depends(self.img_part_dependency),
+            color_formula=Depends(self.color_formula_dependency),
+            colormap=Depends(self.colormap_dependency),
+            render_params=Depends(self.render_dependency),
+        ):
+            """Create image from a geojson feature."""
+            reader, read_options, reader_options = parse_reader_options(
+                rasterio_params=rasterio_params,
+                zarr_params=zarr_params,
+                reader_params=reader_params,
+            )
+
+            with CMRBackend(
+                reader=reader,
+                reader_options=reader_options,
+                auth=request.app.state.cmr_auth,
+            ) as src_dst:
+                if reader_params.backend == "rasterio":
+                    read_options.update(
+                        {
+                            "threads": MOSAIC_THREADS,
+                            "align_bounds_with_dataset": True,
+                        }
+                    )
+
+                    read_options.update(image_params)
+
+                image, assets = src_dst.feature(
+                    geojson.model_dump(exclude_none=True),
+                    cmr_query=query,
+                    shape_crs=coord_crs or WGS84_CRS,
+                    dst_crs=dst_crs,
+                    **read_options,
+                )
+
+            if post_process:
+                image = post_process(image)
+
+            if rescale:
+                image.rescale(rescale)
+
+            if color_formula:
+                image.apply_color_formula(color_formula)
+
+            content, media_type = render_image(
+                image,
+                output_format=format,
+                colormap=colormap,
+                **render_params,
+            )
+
+            headers: Dict[str, str] = {}
+            if OptionalHeader.x_assets in self.optional_headers:
+                ids = [x["id"] for x in assets]
+                headers["X-Assets"] = ",".join(ids)
+
+            return Response(content, media_type=media_type, headers=headers)
+
+    def register_statistics(self):
+        """Register /statistics endpoint."""
+
+        @self.router.post(
+            "/statistics",
+            response_model=MultiBaseStatisticsGeoJSON,
+            response_model_exclude_none=True,
+            response_class=GeoJSONResponse,
+            responses={
+                200: {
+                    "content": {"application/geo+json": {}},
+                    "description": "Return statistics for geojson features.",
+                }
+            },
+            tags=["Statistics"],
+        )
+        def geojson_statistics(
+            request: Request,
+            geojson: Annotated[
+                Union[FeatureCollection, Feature],
+                Body(description="GeoJSON Feature or FeatureCollection."),
+            ],
+            coord_crs=Depends(CoordCRSParams),
+            dst_crs=Depends(DstCRSParams),
+            query=Depends(cmr_query),
+            rasterio_params=Depends(self.rasterio_dependency),
+            zarr_params=Depends(self.zarr_dependency),
+            reader_params=Depends(self.reader_dependency),
+            post_process=Depends(self.process_dependency),
+            stats_params=Depends(self.stats_dependency),
+            histogram_params=Depends(self.histogram_dependency),
+            image_params=Depends(self.img_part_dependency),
+        ):
+            """Get Statistics from a geojson feature or featureCollection."""
+            fc = geojson
+            if isinstance(fc, Feature):
+                fc = FeatureCollection(type="FeatureCollection", features=[geojson])
+
+            reader, read_options, reader_options = parse_reader_options(
+                rasterio_params=rasterio_params,
+                zarr_params=zarr_params,
+                reader_params=reader_params,
+            )
+
+            with CMRBackend(
+                reader=reader,
+                reader_options=reader_options,
+                auth=request.app.state.cmr_auth,
+            ) as src_dst:
+                for feature in fc:
+                    shape = feature.model_dump(exclude_none=True)
+
+                    if reader_params.backend == "rasterio":
+                        read_options.update(
+                            {
+                                "threads": MOSAIC_THREADS,
+                                "align_bounds_with_dataset": True,
+                            }
+                        )
+
+                        read_options.update(image_params)
+
+                    image, _ = src_dst.feature(
+                        shape,
+                        cmr_query=query,
+                        shape_crs=coord_crs or WGS84_CRS,
+                        dst_crs=dst_crs,
+                        **read_options,
+                    )
+
+                    coverage_array = image.get_coverage_array(
+                        shape,
+                        shape_crs=coord_crs or WGS84_CRS,
+                    )
+
+                    if post_process:
+                        image = post_process(image)
+
+                    # set band name for statistics method
+                    if not image.band_names and reader_params.backend == "xarray":
+                        image.band_names = [zarr_params.variable]
+
+                    stats = image.statistics(
+                        **stats_params,
+                        hist_options={**histogram_params},
+                        coverage=coverage_array,
+                    )
+
+                    feature.properties = feature.properties or {}
+                    feature.properties.update({"statistics": stats})
+
+            return fc.features[0] if isinstance(geojson, Feature) else fc

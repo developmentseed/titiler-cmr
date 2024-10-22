@@ -1,5 +1,10 @@
 """test titiler-cmr app."""
 
+from typing import Tuple
+
+import pytest
+from rasterio.errors import NotGeoreferencedWarning
+
 
 def test_landing(app):
     """Test / endpoint."""
@@ -84,3 +89,144 @@ def test_conformance(app):
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
     assert "Conformance" in response.text
+
+
+@pytest.mark.vcr
+def test_rasterio_statistics(app, mock_cmr_get_assets, mn_geojson):
+    """Test /statistics endpoint for a polygon that straddles the boundary between two HLS granules"""
+
+    concept_id = "C2021957657-LPCLOUD"
+    band = "Fmask"
+    datetime_range = "2024-10-09T00:00:01Z/2024-10-09T23:59:59Z"
+
+    response = app.post(
+        "/statistics",
+        params={
+            "concept_id": concept_id,
+            "datetime": datetime_range,
+            "backend": "rasterio",
+            "bands_regex": band,
+            "bands": band,
+            "dst_crs": "epsg:32615",
+        },
+        json=mn_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/geo+json"
+    resp = response.json()
+    stats = resp["properties"]["statistics"]
+    assert len(stats) == 1
+
+    # numbers corroborated by QGIS zonal stats for these files and polygon
+    assert stats[band]["majority"] == 64.0
+    assert stats[band]["minority"] == 96.0
+    assert stats[band]["sum"] == 19888616.0
+    assert round(stats[band]["count"]) == 273132
+
+
+@pytest.mark.vcr
+def test_rasterio_feature(
+    app, mock_cmr_get_assets, rasterio_query_params, mn_geojson
+) -> None:
+    """Test /feature endpoint for rasterio backend"""
+    with pytest.warns(
+        (PendingDeprecationWarning, NotGeoreferencedWarning),
+        match=r"is_tiled|no geotransform",
+    ):
+        response = app.post(
+            "/feature",
+            params={
+                **rasterio_query_params,
+                "format": "tif",
+                "width": 100,
+                "height": 100,
+            },
+            json=mn_geojson,
+        )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+
+@pytest.mark.vcr
+def test_rasterio_part(
+    app,
+    mock_cmr_get_assets,
+    rasterio_query_params,
+    mn_bounds: Tuple[float, float, float, float],
+) -> None:
+    """Test /part endpoint for rasterio backend"""
+
+    with pytest.warns(
+        (PendingDeprecationWarning, NotGeoreferencedWarning),
+        match=r"is_tiled|no geotransform",
+    ):
+        response = app.get(
+            f"/bbox/{','.join(str(coord) for coord in mn_bounds)}/100x100.tif",
+            params={
+                **rasterio_query_params,
+                "format": "tif",
+            },
+        )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+
+@pytest.mark.vcr
+def test_xarray_statistics(
+    app, mock_cmr_get_assets, xarray_query_params, arctic_geojson
+):
+    """Test /statistics endpoint"""
+    response = app.post(
+        "/statistics",
+        params=xarray_query_params,
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/geo+json"
+    resp = response.json()
+    stats = resp["properties"]["statistics"]
+    assert len(stats) == 1
+
+    # numbers corroborated by QGIS zonal stats for this file and polygon
+    variable = xarray_query_params["variable"]
+    assert stats[variable]["median"] == 0.79
+    assert stats[variable]["sum"] == 2376.73
+    assert round(stats[variable]["mean"], 3) == 0.523
+
+
+@pytest.mark.vcr
+def test_xarray_feature(
+    app, mock_cmr_get_assets, xarray_query_params, arctic_geojson
+) -> None:
+    """Test /feature endpoint for xarray backend"""
+    response = app.post(
+        "/feature",
+        params={
+            **xarray_query_params,
+            "format": "tif",
+        },
+        json=arctic_geojson,
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+
+@pytest.mark.vcr
+def test_xarray_part(
+    app,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_bounds: Tuple[float, float, float, float],
+) -> None:
+    """Test /part endpoint for xarray backend"""
+    response = app.get(
+        f"/bbox/{','.join(str(coord) for coord in arctic_bounds)}.tif",
+        params={
+            **xarray_query_params,
+            "format": "tif",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/tiff; application=geotiff"
