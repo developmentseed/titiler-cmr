@@ -1,18 +1,23 @@
 """Timeseries extension for titiler.cmr"""
 
 import asyncio
+import io
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from enum import Enum
+from types import DynamicClassAttribute
 from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple
 from urllib.parse import urlencode
 
 import httpx
 from attrs import define
 from dateutil.relativedelta import relativedelta
-from fastapi import Body, Depends, Path, Query, Request
+from fastapi import Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
+from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature
+from PIL import Image
 from pydantic import BaseModel
 
 from titiler.cmr.dependencies import ConceptID
@@ -22,6 +27,35 @@ from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSP
 from titiler.core.factory import FactoryExtension
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
+
+timeseries_img_endpoint_params: Dict[str, Any] = {
+    "responses": {
+        200: {
+            "content": {
+                "image/gif": {},
+            },
+            "description": "Return an image.",
+        }
+    },
+    "response_class": Response,
+}
+
+
+class TimeseriesMediaType(str, Enum):
+    """Responses Media types formerly known as MIME types."""
+
+    gif = "image/gif"
+
+
+class TimeseriesImageType(str, Enum):
+    """Available Output image type."""
+
+    gif = "gif"
+
+    @DynamicClassAttribute
+    def mediatype(self):
+        """Return image media type."""
+        return TimeseriesMediaType[self._name_].value
 
 
 @dataclass
@@ -318,3 +352,90 @@ class TimeseriesExtension(FactoryExtension):
             return TimeseriesTileJSON(
                 timeseries_tilejsons=dict(zip(datetime_strs, results))
             )
+
+        @factory.router.get(
+            "/timeseries/bbox/{minx},{miny},{maxx},{maxy}.{format}",
+            tags=["Timeseries", "images"],
+            **timeseries_img_endpoint_params,
+        )
+        @factory.router.get(
+            "/timeseries/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}",
+            tags=["Timeseries", "images"],
+            **timeseries_img_endpoint_params,
+        )
+        async def bbox_timeseries_image(
+            request: Request,
+            minx: Annotated[float, Path(description="Bounding box min X")],
+            miny: Annotated[float, Path(description="Bounding box min Y")],
+            maxx: Annotated[float, Path(description="Bounding box max X")],
+            maxy: Annotated[float, Path(description="Bounding box max Y")],
+            format: Annotated[
+                Optional[TimeseriesImageType],
+                "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
+            ] = None,
+            query=Depends(timeseries_query),
+            fps: Annotated[
+                int,
+                Query(gt=1, description="Frames per second for the gif"),
+            ] = 10,
+            coord_crs=Depends(CoordCRSParams),
+            dst_crs=Depends(DstCRSParams),
+            rasterio_params=Depends(factory.rasterio_dependency),
+            zarr_params=Depends(factory.zarr_dependency),
+            reader_params=Depends(factory.reader_dependency),
+            post_process=Depends(factory.process_dependency),
+            image_params=Depends(factory.img_part_dependency),
+            rescale=Depends(factory.rescale_dependency),
+            color_formula=Depends(factory.color_formula_dependency),
+            colormap=Depends(factory.colormap_dependency),
+            render_params=Depends(factory.render_dependency),
+        ):
+            """Create image from a bbox."""
+            # Construct the base URL for the original endpoint
+            base_url = str(
+                factory.url_for(
+                    request,
+                    "bbox_image",
+                    minx=minx,
+                    miny=miny,
+                    maxx=maxx,
+                    maxy=maxy,
+                    width=image_params.width,
+                    height=image_params.height,
+                    format="png",
+                )
+            )
+
+            # Create a list of URLs for each time interval
+            urls = []
+            for timeseries_query_params in query:
+                url = f"{base_url}?{urlencode({**request.query_params, **timeseries_query_params})}"
+                urls.append(url)
+
+            # Fetch all URLs concurrently
+            timestep_requests = await asyncio.gather(
+                *[timestep_request(url, method="GET", timeout=60) for url in urls]
+            )
+
+            pngs = [
+                Image.open(io.BytesIO(request.content)) for request in timestep_requests
+            ]
+
+            # Create a BytesIO object to hold the GIF
+            gif_bytes = io.BytesIO()
+
+            # Save images as a GIF
+            pngs[0].save(
+                gif_bytes,
+                format="GIF",
+                save_all=True,
+                append_images=pngs[1:],
+                loop=0,
+                duration=1000 // fps,
+            )
+
+            # Seek to the start
+            gif_bytes.seek(0)
+
+            # Create a streaming response to return the gif
+            return StreamingResponse(gif_bytes, media_type=TimeseriesMediaType.gif)
