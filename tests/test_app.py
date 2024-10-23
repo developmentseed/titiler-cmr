@@ -3,7 +3,10 @@
 from typing import Tuple
 
 import pytest
+from httpx import Response
 from rasterio.errors import NotGeoreferencedWarning
+
+from titiler.core.models.mapbox import TileJSON
 
 
 def test_landing(app):
@@ -230,3 +233,98 @@ def test_xarray_part(
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+
+def test_timeseries_statistics(
+    app,
+    mocker,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_geojson,
+) -> None:
+    """Test /timeseries/statistics endpoint
+
+    Since the /timeseries/statistics endpoint sends more requests to internal endpoints
+    we need to catch those requests and mock a response since we can't forward them to
+    the test client.
+    """
+    arctic_stats = arctic_geojson.copy()
+    arctic_stats["properties"]["statistics"] = {
+        "sea_ice_fraction": {
+            "min": 0,
+            "max": 1,
+        }
+    }
+
+    async def mock_timestep_request(url: str, **kwargs) -> Response:
+        return Response(
+            status_code=200,
+            json=arctic_stats,
+        )
+
+    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+
+    response = app.post(
+        "/timeseries/statistics",
+        params={
+            **xarray_query_params,
+            "start_datetime": "2024-10-11T00:00:00Z",
+            "end_datetime": "2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/geo+json"
+
+    assert set(response.json()["properties"]["statistics"].keys()) == {
+        "2024-10-11T00:00:00+00:00/2024-10-11T23:59:59+00:00",
+        "2024-10-12T00:00:00+00:00/2024-10-12T23:59:59+00:00",
+    }
+
+
+def test_timeseries_tilejson(
+    app,
+    mocker,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_geojson,
+) -> None:
+    """Test /timeseries/statistics endpoint
+
+    Since the /timeseries/statistics endpoint sends more requests to internal endpoints
+    we need to catch those requests and mock a response since we can't forward them to
+    the test client.
+    """
+    arctic_tilejson = TileJSON(
+        tiles=["https://testserver/{z}/{x}/{y}"],
+        minzoom=0,
+        maxzoom=1,
+    )
+
+    async def mock_timestep_request(url: str, **kwargs) -> Response:
+        return Response(
+            status_code=200,
+            json=arctic_tilejson.model_dump(exclude_none=True),
+        )
+
+    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+
+    response = app.get(
+        "/timeseries/WebMercatorQuad/tilejson.json",
+        params={
+            **xarray_query_params,
+            "start_datetime": "2024-10-11T00:00:00Z",
+            "end_datetime": "2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+
+    assert set(response.json()["timeseries_tilejsons"].keys()) == {
+        "2024-10-11T00:00:00+00:00/2024-10-11T23:59:59+00:00",
+        "2024-10-12T00:00:00+00:00/2024-10-12T23:59:59+00:00",
+    }
