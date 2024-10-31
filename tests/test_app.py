@@ -1,9 +1,18 @@
 """test titiler-cmr app."""
 
+import io
+from copy import deepcopy
+from pathlib import Path
 from typing import Tuple
 
 import pytest
+from fastapi.testclient import TestClient
+from httpx import Response
+from PIL import Image
 from rasterio.errors import NotGeoreferencedWarning
+
+from titiler.cmr.timeseries import TimeseriesMediaType
+from titiler.core.models.mapbox import TileJSON
 
 
 def test_landing(app):
@@ -182,7 +191,6 @@ def test_xarray_statistics(
         params=xarray_query_params,
         json=arctic_geojson,
     )
-
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/geo+json"
     resp = response.json()
@@ -220,13 +228,179 @@ def test_xarray_part(
     xarray_query_params,
     arctic_bounds: Tuple[float, float, float, float],
 ) -> None:
-    """Test /part endpoint for xarray backend"""
+    """Test /bbox endpoint for xarray backend"""
     response = app.get(
         f"/bbox/{','.join(str(coord) for coord in arctic_bounds)}.tif",
         params={
             **xarray_query_params,
-            "format": "tif",
         },
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+    size = (10, 10)
+    with pytest.warns():
+        response = app.get(
+            f"/bbox/{','.join(str(coord) for coord in arctic_bounds)}/{'x'.join(str(x) for x in size)}.png",
+            params={
+                **xarray_query_params,
+            },
+        )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+
+    image_data = io.BytesIO(response.content)
+    Image.open(image_data)
+
+    # Check dimensions
+    # assert image.size == size, f"Expected image size {size}, but got {image.size}"
+
+
+def test_timeseries_statistics(
+    app: TestClient,
+    mocker,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_geojson,
+) -> None:
+    """Test /timeseries/statistics endpoint
+
+    Since the /timeseries/statistics endpoint sends more requests to internal endpoints
+    we need to catch those requests and mock a response since we can't forward them to
+    the test client.
+    """
+    arctic_stats = deepcopy(arctic_geojson)
+    arctic_stats["properties"]["statistics"] = {
+        "sea_ice_fraction": {
+            "min": 0.0,
+            "max": 1.0,
+            "mean": 0.3,
+            "count": 4493.0,
+            "sum": 1463.7,
+            "std": 0.3,
+            "median": 0.0,
+            "majority": 0.0,
+            "minority": 0.28,
+            "unique": 87.0,
+            "histogram": [
+                [2322, 38, 56, 300, 536, 426, 427, 388],
+                [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
+            ],
+            "valid_percent": 93.72,
+            "masked_pixels": 301.0,
+            "valid_pixels": 4493.0,
+            "percentile_2": 0.0,
+            "percentile_98": 0.99,
+        }
+    }
+
+    async def mock_timestep_request(url: str, **kwargs) -> Response:
+        return Response(
+            status_code=200,
+            json=arctic_stats,
+        )
+
+    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+
+    response = app.post(
+        "/timeseries/statistics",
+        params={
+            **xarray_query_params,
+            "start_datetime": "2024-10-11T00:00:00Z",
+            "end_datetime": "2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/geo+json"
+
+    assert set(response.json()["properties"]["statistics"].keys()) == {
+        "2024-10-11T00:00:00+00:00/2024-10-11T23:59:59+00:00",
+        "2024-10-12T00:00:00+00:00/2024-10-12T23:59:59+00:00",
+    }
+
+
+def test_timeseries_tilejson(
+    app,
+    mocker,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_geojson,
+) -> None:
+    """Test /timeseries/tilejson endpoint
+
+    Since the /timeseries/tilejson endpoint sends more requests to internal endpoints
+    we need to catch those requests and mock a response since we can't forward them to
+    the test client.
+    """
+    arctic_tilejson = TileJSON(
+        tiles=["https://testserver/{z}/{x}/{y}"],
+        minzoom=0,
+        maxzoom=1,
+    )
+
+    async def mock_timestep_request(url: str, **kwargs) -> Response:
+        return Response(
+            status_code=200,
+            json=arctic_tilejson.model_dump(exclude_none=True),
+        )
+
+    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+
+    response = app.get(
+        "/timeseries/WebMercatorQuad/tilejson.json",
+        params={
+            **xarray_query_params,
+            "start_datetime": "2024-10-11T00:00:00Z",
+            "end_datetime": "2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+
+    assert set(response.json().keys()) == {
+        "2024-10-11T00:00:00+00:00/2024-10-11T23:59:59+00:00",
+        "2024-10-12T00:00:00+00:00/2024-10-12T23:59:59+00:00",
+    }
+
+
+def test_timeseries_gif(
+    app,
+    mocker,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_bounds,
+) -> None:
+    """Test /timeseries/bbox endpoint
+
+    Since the /timeseries/bbox endpoint sends more requests to internal endpoints
+    we need to catch those requests and mock a response since we can't forward them to
+    the test client.
+    """
+    png = Path(__file__).resolve().parent.parent / "titiler-cmr.png"
+    arctic_png_content = png.read_bytes()
+
+    async def mock_timestep_request(url: str, **kwargs) -> Response:
+        return Response(
+            status_code=200,
+            content=arctic_png_content,
+        )
+
+    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+
+    response = app.get(
+        f"/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",
+        params={
+            **xarray_query_params,
+            "start_datetime": "2024-10-11T00:00:00Z",
+            "end_datetime": "2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == TimeseriesMediaType.gif

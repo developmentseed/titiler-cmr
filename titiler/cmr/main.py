@@ -12,6 +12,7 @@ from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
 from titiler.cmr.settings import ApiSettings, AuthSettings
+from titiler.cmr.timeseries import TimeseriesExtension
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
@@ -83,5 +84,6 @@ if settings.debug:
 endpoints = Endpoints(
     title=settings.name,
     templates=templates,
+    extensions=[TimeseriesExtension()],
 )
 app.include_router(endpoints.router)

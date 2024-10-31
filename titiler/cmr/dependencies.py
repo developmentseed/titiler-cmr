@@ -88,13 +88,16 @@ def _parse_date(date: str) -> python_datetime.datetime:
         raise InvalidDatetime(f"Invalid datetime {date}") from e
 
 
+ConceptID = Annotated[
+    str,
+    Query(
+        description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
+    ),
+]
+
+
 def cmr_query(
-    concept_id: Annotated[
-        str,
-        Query(
-            description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
-        ),
-    ],
+    concept_id: ConceptID,
     datetime: Annotated[
         Optional[str],
         Query(

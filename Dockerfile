@@ -9,7 +9,7 @@ COPY titiler/ titiler/
 COPY README.md README.md
 COPY LICENSE LICENSE
 
-RUN uv sync --frozen --extra uvicorn
+RUN apt-get update && apt-get -y --no-install-recommends install libexpat1 && uv sync --frozen --extra uvicorn
 
 ARG EARTHDATA_USERNAME
 ARG EARTHDATA_PASSWORD
@@ -26,5 +26,5 @@ RUN if [ -z "$EARTHDATA_USERNAME" ] || [ -z "$EARTHDATA_PASSWORD" ]; then \
 # http://www.uvicorn.org/settings/
 ENV HOST 0.0.0.0
 ENV PORT 80
-CMD uv run uvicorn titiler.cmr.main:app --host ${HOST} --port ${PORT} --log-level debug
+CMD uv run uvicorn titiler.cmr.main:app --host ${HOST} --port ${PORT} --log-level debug --reload
 

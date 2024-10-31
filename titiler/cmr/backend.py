@@ -174,12 +174,16 @@ class CMRBackend(BaseBackend):
     ) -> List[Asset]:
         """Find assets."""
         xmin, ymin, xmax, ymax = (round(n, 8) for n in [xmin, ymin, xmax, ymax])
-        results = earthaccess.search_data(
-            bounding_box=(xmin, ymin, xmax, ymax),
-            count=limit,
-            **kwargs,
-        )
         assets: List[Asset] = []
+        try:
+            results = earthaccess.search_data(
+                bounding_box=(xmin, ymin, xmax, ymax),
+                count=limit,
+                **kwargs,
+            )
+        except IndexError:
+            return assets
+
         for r in results:
             if bands_regex:
                 links = r.data_links(access=access)
