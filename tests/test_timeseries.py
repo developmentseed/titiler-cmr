@@ -255,3 +255,19 @@ def test_timeseries_query_unbounded_intervals(
     )
 
     assert len(unbounded_query) == 40
+
+
+def test_timeseries_mixed_datetime(
+    xarray_query_params: Dict[str, str],
+    arctic_bounds: Tuple[float, float, float, float],
+) -> None:
+    """Test comma-separated mixed points and intervals"""
+    mixed_query = timeseries_cmr_query(
+        concept_id=xarray_query_params["concept_id"],
+        timeseries_params=TimeseriesParams(
+            datetime="2023-01-01T00:00:00Z,2024-01-01T00:00:00Z/2024-01-05T00:00:00Z",
+            step="P1D",
+            temporal_mode="point",
+        ),
+    )
+    assert len(mixed_query) == 6

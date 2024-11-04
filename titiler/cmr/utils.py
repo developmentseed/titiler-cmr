@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from typing import Any, List, Optional, Sequence, Tuple, Type, Union
 
-from ciso8601 import parse_rfc3339
+from isodate import parse_datetime as _parse_datetime
 
 from titiler.cmr.errors import InvalidDatetime
 
@@ -40,7 +40,7 @@ def retry(
 
 def _parse_date(date: str) -> datetime:
     try:
-        return parse_rfc3339(date)
+        return _parse_datetime(date)
     except Exception as e:
         raise InvalidDatetime(f"Invalid datetime {date}") from e
 

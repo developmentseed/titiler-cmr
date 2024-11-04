@@ -25,7 +25,6 @@ dependencies = [
     "titiler.core>=0.18.0,<0.19",
     "titiler.mosaic>=0.18.0,<0.19",
     "cftime~=1.6.4",
-    "ciso8601~=2.3",
     "earthaccess~=0.11.0",
     "fsspec~=2024.9.0",
     "h5netcdf~=1.1.0",
