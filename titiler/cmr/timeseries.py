@@ -201,6 +201,7 @@ def build_request_urls(
             **_params.model_dump(),
         }
         url = f"{base_url}?{urlencode(request_params)}"
+        print(url)
         urls.append(url)
 
     return urls
