@@ -1,5 +1,7 @@
 """test titiler-pgstac dependencies."""
 
+from datetime import datetime, timezone
+
 import pytest
 from starlette.requests import Request
 
@@ -105,20 +107,32 @@ def test_output_type():
     assert dependencies.OutputType(req, f="json") == MediaType.json
 
 
+test_datetime = datetime(year=2018, month=2, day=12, hour=9, tzinfo=timezone.utc)
+
+
 @pytest.mark.parametrize(
     "temporal,res",
     [
         (
             "2018-02-12T09:00:00Z",
-            ("2018-02-12T09:00:00+00:00", "2018-02-13T09:00:00+00:00"),
+            test_datetime,
         ),
-        ("2018-02-12T09:00:00Z/", ("2018-02-12T09:00:00+00:00", None)),
-        ("2018-02-12T09:00:00Z/..", ("2018-02-12T09:00:00+00:00", None)),
-        ("/2018-02-12T09:00:00Z", (None, "2018-02-12T09:00:00+00:00")),
-        ("../2018-02-12T09:00:00Z", (None, "2018-02-12T09:00:00+00:00")),
+        (
+            "2018-02-12T09:00:00Z/",
+            (test_datetime, None),
+        ),
+        (
+            "2018-02-12T09:00:00Z/..",
+            (test_datetime, None),
+        ),
+        ("/2018-02-12T09:00:00Z", (None, test_datetime)),
+        ("../2018-02-12T09:00:00Z", (None, test_datetime)),
         (
             "2018-02-12T09:00:00Z/2019-02-12T09:00:00Z",
-            ("2018-02-12T09:00:00+00:00", "2019-02-12T09:00:00+00:00"),
+            (
+                test_datetime,
+                datetime(year=2019, month=2, day=12, hour=9, tzinfo=timezone.utc),
+            ),
         ),
     ],
 )

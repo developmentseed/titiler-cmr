@@ -306,8 +306,7 @@ def test_timeseries_statistics(
         "/timeseries/statistics",
         params={
             **xarray_query_params,
-            "start_datetime": "2024-10-11T00:00:00Z",
-            "end_datetime": "2024-10-12T23:59:59Z",
+            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
         json=arctic_geojson,
@@ -353,8 +352,7 @@ def test_timeseries_tilejson(
         "/timeseries/WebMercatorQuad/tilejson.json",
         params={
             **xarray_query_params,
-            "start_datetime": "2024-10-11T00:00:00Z",
-            "end_datetime": "2024-10-12T23:59:59Z",
+            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
     )
@@ -396,11 +394,24 @@ def test_timeseries_gif(
         f"/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",
         params={
             **xarray_query_params,
-            "start_datetime": "2024-10-11T00:00:00Z",
-            "end_datetime": "2024-10-12T23:59:59Z",
+            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
     )
 
     assert response.status_code == 200
     assert response.headers["content-type"] == TimeseriesMediaType.gif
+
+
+def test_unbounded_start(app, xarray_query_params) -> None:
+    """Make sure a datetime interval with an unbounded start returns a 400"""
+    response = app.get(
+        "/timeseries",
+        params={
+            **xarray_query_params,
+            "datetime": "../2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 400

@@ -2,9 +2,8 @@
 
 import asyncio
 import io
-import re
 from dataclasses import dataclass, fields
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from types import DynamicClassAttribute
 from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, Union
@@ -13,17 +12,19 @@ from urllib.parse import urlencode
 import earthaccess
 import httpx
 from attrs import define
-from dateutil.relativedelta import relativedelta
 from fastapi import Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature, FeatureCollection
 from geojson_pydantic.geometries import Geometry
+from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel
 
 from titiler.cmr.dependencies import ConceptID
+from titiler.cmr.errors import InvalidDatetime
 from titiler.cmr.factory import Endpoints
+from titiler.cmr.utils import parse_datetime
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import FactoryExtension
@@ -81,95 +82,84 @@ TimeseriesStatisticsGeoJSON = Union[
 TimeseriesTileJSON = Dict[str, TileJSON]
 
 
+class TemporalMode(str, Enum):
+    """Temporal modes for queries.
+
+    point: queries will be sent for single points in time
+    interval: queries will cover the time between two points
+    """
+
+    point = "point"
+    interval = "interval"
+
+
 @dataclass
 class TimeseriesParams(DefaultDependency):
     """Timeseries parameters"""
 
-    start_datetime: Annotated[
-        Optional[str],
+    datetime: Annotated[
+        str,
         Query(
-            description="Start datetime for timeseries request",
+            description="Either a date-time, an interval, or a comma-separated list of date-times or intervals."
+            "Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format."
+            "Half-bounded intervals are allowed as long as you provide a start date.",
+            openapi_examples={
+                "A date-time": {"value": "2018-02-12T09:00:00Z"},
+                "A bounded interval": {
+                    "value": "2018-02-12T09:00:00Z/2018-03-18T09:00:00Z"
+                },
+                "Half-bounded intervals (start)": {"value": "2018-02-12T09:00:00Z/.."},
+                "A list of date-times": {
+                    "value": "2018-02-12T09:00:00Z,2019-01-12T09:00:00Z"
+                },
+                "A list of intervals": {
+                    "value": "2018-02-12T09:00:00Z/2018-03-18T09:00:00Z,2018-04-12T09:00:00Z/2018-05-09T00:00:00Z"
+                },
+            },
         ),
-    ] = None
-    end_datetime: Annotated[
-        Optional[str],
-        Query(
-            description="End datetime for timeseries request",
-        ),
-    ] = None
+    ]
     step: Annotated[
         Optional[str],
         Query(
             description="Time step between timeseries intervals, expressed as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)"
         ),
     ] = None
-    step_idx: Annotated[
-        Optional[int],
-        Query(description="Optional (zero-indexed) index of the desired time step"),
-    ] = None
-    exact: Annotated[
-        Optional[bool],
+    temporal_mode: Annotated[
+        Literal[TemporalMode.point, TemporalMode.interval],
         Query(
             description="If true, queries will be made for a point-in-time at each step. If false, queries will be made for the entire interval between steps"
         ),
-    ] = None
-    datetimes: Annotated[
-        Optional[str],
-        Query(
-            description="Optional list of comma-separated specific time points or time intervals to summarize over"
-        ),
-    ] = None
+    ] = TemporalMode.interval
 
 
 timeseries_field_names = [field.name for field in fields(TimeseriesParams)]
 
 
-def parse_duration(duration: str) -> relativedelta:
-    """Parse ISO 8601 duration string to relativedelta."""
-    match = re.match(
-        r"P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?",
-        duration,
-    )
-    if not match or not any(m for m in match.groups()):
-        raise ValueError(f"{duration} is an invalid duration format")
-
-    years, months, weeks, days, hours, minutes, seconds = [
-        float(g) if g else 0 for g in match.groups()
-    ]
-    return relativedelta(
-        years=int(years),
-        months=int(months),
-        weeks=int(weeks),
-        days=int(days),
-        hours=int(hours),
-        minutes=int(minutes),
-        seconds=int(seconds),
-        microseconds=int((seconds % 1) * 1e6),
-    )
-
-
 def generate_datetime_ranges(
-    start_datetime: datetime, end_datetime: datetime, step: str, exact: bool = False
+    start_datetime: datetime,
+    end_datetime: datetime,
+    step: str,
+    temporal_mode: Literal[
+        TemporalMode.interval, TemporalMode.point
+    ] = TemporalMode.interval,
 ) -> List[Union[Tuple[datetime], Tuple[datetime, datetime]]]:
     """Generate datetime ranges"""
-    start = start_datetime
-    end = end_datetime
     step_delta = parse_duration(step)
 
     ranges: List[Union[Tuple[datetime], Tuple[datetime, datetime]]] = []
-    current = start
+    current = start_datetime
 
     step_timedelta = (current + step_delta) - current
     is_small_timestep = step_timedelta <= timedelta(seconds=1)
 
-    while current < end:
-        if exact:
-            # For exact case, return a tuple with just one exact datetime
+    while current < end_datetime:
+        if temporal_mode == TemporalMode.point:
+            # For points in time case, return a tuple with just one exact datetime
             next_step = current + step_delta
             ranges.append((current,))
         else:
-            next_step = min(current + step_delta, end)
-            if next_step == end:
+            next_step = min(current + step_delta, end_datetime)
+            if next_step == end_datetime:
                 ranges.append((current, next_step))
                 break
 
@@ -182,11 +172,11 @@ def generate_datetime_ranges(
 
         current = next_step
 
-        if current == end:
-            ranges.append((end,))
+        if current == end_datetime:
+            ranges.append((end_datetime,))
 
     if not ranges:
-        return [(start, end)]
+        return [(start_datetime, end_datetime)]
 
     return ranges
 
@@ -243,7 +233,7 @@ class CMRQueryParameters(BaseModel):
 TimeseriesCMRQueryParameters = List[CMRQueryParameters]
 
 
-def timeseries_query(
+def timeseries_cmr_query(
     concept_id: ConceptID,
     timeseries_params: TimeseriesParams = Depends(TimeseriesParams),
     minx: Optional[float] = None,
@@ -256,85 +246,75 @@ def timeseries_query(
     If no step is provided with timeseries_params, a query will be sent to CMR
     to identify all unique timesteps in granules between the provided start/stop_datetime.
     """
-    # if a comma-separated list of datetimes is provided, just use those
-    if timeseries_params.datetimes:
-        datetime_params = timeseries_params.datetimes.split(",")
+    datetime_inputs = timeseries_params.datetime.split(",")
 
-    # if a start, end, and step are provided use the generate_datetime_ranges function
-    elif (
-        timeseries_params.start_datetime
-        and timeseries_params.end_datetime
-        and timeseries_params.step
-    ):
-        datetime_ranges = generate_datetime_ranges(
-            start_datetime=datetime.fromisoformat(
-                timeseries_params.start_datetime.replace("Z", "+00:00")
-            ),
-            end_datetime=datetime.fromisoformat(
-                timeseries_params.end_datetime.replace("Z", "+00:00")
-            ),
-            step=timeseries_params.step,
-            exact=timeseries_params.exact
-            if timeseries_params.exact is not None
-            else False,
-        )
+    datetime_params = []
 
-        datetime_params = [
-            "/".join([t.isoformat() for t in datetime_range])
-            for datetime_range in datetime_ranges
-        ]
-
-    # if a start and end are provided but no step, query CMR to identify unique datetimes from
-    # a granule search
-    elif (
-        timeseries_params.start_datetime
-        and timeseries_params.end_datetime
-        and not timeseries_params.step
-    ):
-        # query CMR for this concept id and the full date range, return exact datetime intervals
-        # for all granules returned by the search
-        search_params: Dict[str, Any] = {
-            "temporal": (
-                timeseries_params.start_datetime,
-                timeseries_params.end_datetime,
-            )
-        }
-
-        # add bounding box filter if provided
-        if minx and miny and maxx and maxy:
-            bbox = (minx, miny, maxx, maxy)
-            search_params["bounding_box"] = bbox
-
+    for datetime_input in datetime_inputs:
         try:
-            granules = earthaccess.search_data(
-                concept_id=concept_id,
-                **search_params,
-            )
-        # if there are no results we get an IndexError which we should just treat as an empty list
-        except IndexError:
-            return []
+            datetime_, start, end = parse_datetime(datetime_input)
+        except InvalidDatetime as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"{timeseries_params.datetime} is an invalid datetime input",
+            ) from e
 
-        print(
-            f"found {len(granules)} granules between "
-            f"{timeseries_params.start_datetime} and {timeseries_params.end_datetime}"
-        )
-        datetime_params = []
-        for granule in granules:
-            temporal_extent = granule["umm"]["TemporalExtent"]["RangeDateTime"]
-            start = datetime.fromisoformat(
-                temporal_extent["BeginningDateTime"].replace("Z", "+00:00")
-            )
-            end = datetime.fromisoformat(
-                temporal_extent["EndingDateTime"].replace("Z", "+00:00")
-            )
-            midpoint = start + (end - start) / 2
-            datetime_params.append(midpoint.isoformat())
+        if datetime_:
+            datetime_params.append(datetime_.isoformat())
 
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail="you must provide at least start_datetime and end_datetime, or specific datetimes",
-        )
+        elif start and timeseries_params.step:
+            datetime_ranges = generate_datetime_ranges(
+                start_datetime=start,
+                end_datetime=end or datetime.now(tz=timezone.utc),
+                step=timeseries_params.step,
+                temporal_mode=timeseries_params.temporal_mode,
+            )
+
+            datetime_params.extend(
+                [
+                    "/".join([t.isoformat() for t in datetime_range])
+                    for datetime_range in datetime_ranges
+                ]
+            )
+
+        # if a start (and possibly end) are provided but no step, query CMR to identify unique
+        # datetimes from a granule search
+        elif start and not timeseries_params.step:
+            # query CMR for this concept id and the full date range, return exact datetime intervals
+            # for all granules returned by the search
+            search_params: Dict[str, Any] = {"temporal": (start, end)}
+
+            # add bounding box filter if provided
+            if minx and miny and maxx and maxy:
+                bbox = (minx, miny, maxx, maxy)
+                search_params["bounding_box"] = bbox
+
+            try:
+                granules = earthaccess.search_data(
+                    concept_id=concept_id,
+                    **search_params,
+                )
+            # if there are no results we get an IndexError which we should just treat as an empty list
+            except IndexError:
+                return []
+
+            for granule in granules:
+                temporal_extent = granule["umm"]["TemporalExtent"]["RangeDateTime"]
+                start = datetime.fromisoformat(
+                    temporal_extent["BeginningDateTime"].replace("Z", "+00:00")
+                )
+                end = datetime.fromisoformat(
+                    temporal_extent["EndingDateTime"].replace("Z", "+00:00")
+                )
+                midpoint = start + (end - start) / 2
+                datetime_params.append(midpoint.isoformat())
+
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="you must provide a datetime interval with a defined start time or a "
+                "list of comma-separated datetime strings",
+            )
 
     return [
         CMRQueryParameters(
@@ -345,7 +325,7 @@ def timeseries_query(
     ]
 
 
-def timeseries_query_no_bbox(
+def timeseries_cmr_query_no_bbox(
     concept_id: ConceptID,
     timeseries_params=Depends(TimeseriesParams),
 ) -> List[CMRQueryParameters]:
@@ -354,7 +334,7 @@ def timeseries_query_no_bbox(
     Needed this because FastAPI would expect bbox in the POST request body for
     the /timeseries/statistics endpoint when using Depends(timeseries_query)
     """
-    return timeseries_query(
+    return timeseries_cmr_query(
         concept_id, timeseries_params, minx=None, miny=None, maxx=None, maxy=None
     )
 
@@ -381,7 +361,7 @@ class TimeseriesExtension(FactoryExtension):
             tags=["Timeseries"],
         )
         def get_timeseries_parameters(
-            query=Depends(timeseries_query),
+            query=Depends(timeseries_cmr_query),
         ):
             return query
 
@@ -407,7 +387,7 @@ class TimeseriesExtension(FactoryExtension):
                 Union[FeatureCollection, Feature],
                 Body(description="GeoJSON Feature or FeatureCollection.", embed=False),
             ],
-            query=Depends(timeseries_query_no_bbox),
+            query=Depends(timeseries_cmr_query_no_bbox),
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(factory.rasterio_dependency),
@@ -464,7 +444,7 @@ class TimeseriesExtension(FactoryExtension):
                 Literal[tuple(factory.supported_tms.list())],
                 Path(description="Identifier for a supported TileMatrixSet"),
             ],
-            query=Depends(timeseries_query),
+            query=Depends(timeseries_cmr_query),
             tile_format: Annotated[
                 Optional[ImageType],
                 Query(
@@ -537,7 +517,7 @@ class TimeseriesExtension(FactoryExtension):
                 Optional[TimeseriesImageType],
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = TimeseriesImageType.gif,
-            query=Depends(timeseries_query),
+            query=Depends(timeseries_cmr_query),
             fps: Annotated[
                 int,
                 Query(gt=1, description="Frames per second for the gif"),

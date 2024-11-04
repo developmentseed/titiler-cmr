@@ -1,4 +1,4 @@
-"""tipg.errors: Error classes."""
+"""titiler.cmr.errors: Error classes."""
 
 import logging
 

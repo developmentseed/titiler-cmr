@@ -1,17 +1,15 @@
 """titiler-cmr dependencies."""
 
-import datetime as python_datetime
 from dataclasses import dataclass
 from typing import Any, Dict, List, Literal, Optional, Union, get_args
 
-from ciso8601 import parse_rfc3339
 from fastapi import Query
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from typing_extensions import Annotated
 
 from titiler.cmr.enums import MediaType
-from titiler.cmr.errors import InvalidDatetime
+from titiler.cmr.utils import parse_datetime
 from titiler.core.dependencies import DefaultDependency
 
 ResponseType = Literal["json", "html"]
@@ -81,13 +79,6 @@ def OutputType(
     return accept_media_type(request.headers.get("accept", ""), accepted_media)
 
 
-def _parse_date(date: str) -> python_datetime.datetime:
-    try:
-        return parse_rfc3339(date)
-    except Exception as e:
-        raise InvalidDatetime(f"Invalid datetime {date}") from e
-
-
 ConceptID = Annotated[
     str,
     Query(
@@ -117,34 +108,8 @@ def cmr_query(
     query: Dict[str, Any] = {"concept_id": concept_id}
 
     if datetime:
-        dt = datetime.split("/")
-        if len(dt) == 1:
-            start_datetime = _parse_date(dt[0])
-            end_datetime = start_datetime + python_datetime.timedelta(days=1)
-            query["temporal"] = (
-                start_datetime.isoformat(),
-                end_datetime.isoformat(),
-            )
-
-        elif len(dt) == 2:
-            dates: List[Optional[str]] = [None, None]
-            dates[0] = dt[0] if dt[0] not in ["..", ""] else None
-            dates[1] = dt[1] if dt[1] not in ["..", ""] else None
-
-            # TODO: once https://github.com/nsidc/earthaccess/pull/451 is publish
-            # we can move to Datetime object instead of String
-            start: Optional[str] = None
-            end: Optional[str] = None
-
-            if dates[0]:
-                start = _parse_date(dates[0]).isoformat()
-
-            if dates[1]:
-                end = _parse_date(dates[1]).isoformat()
-
-            query["temporal"] = (start, end)
-        else:
-            raise InvalidDatetime("Invalid datetime: {datetime}")
+        datetime_, start, end = parse_datetime(datetime)
+        query["temporal"] = datetime_ if datetime_ else (start, end)
 
     return query
 

@@ -1,14 +1,12 @@
 """Tests for the timeseries extension"""
 
-import pytest
 from fastapi import FastAPI
 
 from titiler.cmr.factory import Endpoints
 from titiler.cmr.timeseries import TimeseriesExtension
 
 
-@pytest.mark.asyncio
-async def test_timeseries_extension() -> None:
+def test_timeseries_extension() -> None:
     """Test timeseries extension endpoints"""
     tiler = Endpoints()
     tiler_plus_timeseries = Endpoints(extensions=[TimeseriesExtension()])

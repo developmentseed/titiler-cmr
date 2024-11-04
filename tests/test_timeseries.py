@@ -4,35 +4,15 @@ from datetime import datetime
 from typing import Dict, Tuple
 
 import pytest
-from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
+from freezegun import freeze_time
 
-# Import your functions here
 from titiler.cmr.timeseries import (
+    TemporalMode,
     TimeseriesParams,
     generate_datetime_ranges,
-    parse_duration,
-    timeseries_query,
+    timeseries_cmr_query,
 )
-
-
-def test_parse_duration():
-    """Test durations"""
-    assert parse_duration("P1Y") == relativedelta(years=1)
-    assert parse_duration("P2M") == relativedelta(months=2)
-    assert parse_duration("P3D") == relativedelta(days=3)
-    assert parse_duration("PT4H") == relativedelta(hours=4)
-    assert parse_duration("PT5M") == relativedelta(minutes=5)
-    assert parse_duration("PT6S") == relativedelta(seconds=6)
-    assert parse_duration("PT1S") == relativedelta(seconds=1)
-    assert parse_duration("P1Y2M3DT4H5M6S") == relativedelta(
-        years=1, months=2, days=3, hours=4, minutes=5, seconds=6
-    )
-
-    with pytest.raises(ValueError):
-        parse_duration("P1G")
-    with pytest.raises(ValueError):
-        parse_duration("invalid")
 
 
 def test_generate_datetime_ranges():
@@ -87,17 +67,17 @@ def test_generate_datetime_ranges():
     assert len(large_step_ranges) == 1
     assert large_step_ranges[0] == (start, datetime(2023, 1, 2))
 
-    # Test exact=True
+    # Test point-in-time mode
     exact_end_datetime = datetime(2023, 5, 1)
     exact_ranges = generate_datetime_ranges(
-        start, exact_end_datetime, "P1M", exact=True
+        start, exact_end_datetime, "P1M", temporal_mode=TemporalMode.point
     )
     assert len(exact_ranges) == 5
     assert exact_ranges[-1] == (exact_end_datetime,)
 
     exact_end_datetime = datetime(2023, 10, 25)
     exact_ranges = generate_datetime_ranges(
-        start, exact_end_datetime, "P1W", exact=True
+        start, exact_end_datetime, "P1W", temporal_mode=TemporalMode.point
     )
     assert len(exact_ranges) == 43
 
@@ -185,31 +165,28 @@ def test_timeseries_query(
 ) -> None:
     """Test timeseries_query"""
     start_datetime, end_datetime = xarray_query_params["datetime"].split("/")
-    query = timeseries_query(
+    query = timeseries_cmr_query(
         concept_id=xarray_query_params["concept_id"],
         timeseries_params=TimeseriesParams(
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
+            datetime=xarray_query_params["datetime"],
             step="P1D",
         ),
     )
     assert len(query) == 1
 
-    query = timeseries_query(
+    query = timeseries_cmr_query(
         concept_id=xarray_query_params["concept_id"],
         timeseries_params=TimeseriesParams(
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
+            datetime=xarray_query_params["datetime"],
             step="PT1H",
         ),
     )
     assert len(query) == 24
 
-    query = timeseries_query(
+    query = timeseries_cmr_query(
         concept_id=xarray_query_params["concept_id"],
         timeseries_params=TimeseriesParams(
-            start_datetime=start_datetime,
-            end_datetime="2024-10-31T23:59:59Z",
+            datetime=f"{start_datetime}/2024-10-31T23:59:59Z",
             step="P1W",
         ),
     )
@@ -217,22 +194,20 @@ def test_timeseries_query(
 
     # no step parameter will force a CMR query to get unique
     # datetimes from available granules
-    query = timeseries_query(
+    query = timeseries_cmr_query(
         concept_id=xarray_query_params["concept_id"],
         timeseries_params=TimeseriesParams(
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
+            datetime=xarray_query_params["datetime"],
         ),
     )
     assert len(query) == 1
 
     # query CMR to get the actual timesteps from a collection
     geographically_limited_concept_id = "C2623694361-GES_DISC"
-    query = timeseries_query(
+    query = timeseries_cmr_query(
         concept_id=geographically_limited_concept_id,
         timeseries_params=TimeseriesParams(
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
+            datetime=xarray_query_params["datetime"],
         ),
         minx=-100,
         miny=30,
@@ -242,11 +217,10 @@ def test_timeseries_query(
     assert len(query) == 8
 
     # run a bbox query that returns no granules
-    query = timeseries_query(
+    query = timeseries_cmr_query(
         concept_id=geographically_limited_concept_id,
         timeseries_params=TimeseriesParams(
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
+            datetime=xarray_query_params["datetime"],
         ),
         minx=1,
         miny=1,
@@ -255,20 +229,29 @@ def test_timeseries_query(
     )
     assert len(query) == 0
 
-    # expect an error if only start_datetime or end_datetime provided
+
+@freeze_time("2024-10-01T00:00:00Z")
+def test_timeseries_query_unbounded_intervals(
+    xarray_query_params: Dict[str, str],
+    arctic_bounds: Tuple[float, float, float, float],
+) -> None:
+    """Test unbounded intervals"""
+    # expect an error if an interval is provided with an unbounded start datetime
     with pytest.raises(HTTPException):
-        timeseries_query(
-            concept_id=geographically_limited_concept_id,
+        timeseries_cmr_query(
+            concept_id=xarray_query_params["concept_id"],
             timeseries_params=TimeseriesParams(
-                start_datetime="2024-01-01T00:00:00Z",
+                datetime="../2024-01-01T00:00:00Z",
                 step="P1W",
             ),
         )
-    with pytest.raises(HTTPException):
-        timeseries_query(
-            concept_id=geographically_limited_concept_id,
-            timeseries_params=TimeseriesParams(
-                end_datetime="2024-01-01T00:00:00Z",
-                step="P1W",
-            ),
-        )
+
+    unbounded_query = timeseries_cmr_query(
+        concept_id=xarray_query_params["concept_id"],
+        timeseries_params=TimeseriesParams(
+            datetime="2024-01-01T00:00:00Z/..",
+            step="P1W",
+        ),
+    )
+
+    assert len(unbounded_query) == 40

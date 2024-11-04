@@ -222,18 +222,6 @@ wheels = [
 ]
 
 [[package]]
-name = "asgi-lifespan"
-version = "2.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "sniffio" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6a/da/e7908b54e0f8043725a990bf625f2041ecf6bfe8eb7b19407f1c00b630f7/asgi-lifespan-2.1.0.tar.gz", hash = "sha256:5e2effaf0bfe39829cf2d64e7ecc47c7d86d676a6599f7afba378c31f5e3a308", size = 15627 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/f5/c36551e93acba41a59939ae6a0fb77ddb3f2e8e8caa716410c65f7341f72/asgi_lifespan-2.1.0-py3-none-any.whl", hash = "sha256:ed840706680e28428c01e14afb3875d7d76d3206f3d5b2f2294e059b5c23804f", size = 10895 },
-]
-
-[[package]]
 name = "asttokens"
 version = "2.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1005,6 +993,18 @@ wheels = [
 ]
 
 [[package]]
+name = "freezegun"
+version = "1.5.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "python-dateutil" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2c/ef/722b8d71ddf4d48f25f6d78aa2533d505bf3eec000a7cacb8ccc8de61f2f/freezegun-1.5.1.tar.gz", hash = "sha256:b29dedfcda6d5e8e083ce71b2b542753ad48cfec44037b3fc79702e2980a89e9", size = 33697 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/51/0b/0d7fee5919bccc1fdc1c2a7528b98f65c6f69b223a3fd8f809918c142c36/freezegun-1.5.1-py3-none-any.whl", hash = "sha256:bf111d7138a8abe55ab48a71755673dbaa4ab87f4cff5634a4442dfec34c15f1", size = 17569 },
+]
+
+[[package]]
 name = "frozenlist"
 version = "1.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1241,6 +1241,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f7/21/48db7d9dd622b9692575004c7c98f85f5629428f58596c59606d36c51b58/ipython-8.28.0.tar.gz", hash = "sha256:0d0d15ca1e01faeb868ef56bc7ee5a0de5bd66885735682e8a322ae289a13d1a", size = 5495762 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f4/3a/5d8680279ada9571de8469220069d27024ee47624af534e537c9ff49a450/ipython-8.28.0-py3-none-any.whl", hash = "sha256:530ef1e7bb693724d3cdc37287c80b07ad9b25986c007a53aa1857272dac3f35", size = 819456 },
+]
+
+[[package]]
+name = "isodate"
+version = "0.7.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/54/4d/e940025e2ce31a8ce1202635910747e5a87cc3a6a6bb2d00973375014749/isodate-0.7.2.tar.gz", hash = "sha256:4cd1aa0f43ca76f4a6c6c0292a85f40b35ec2e43e315b59f06e6d32171a953e6", size = 29705 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/aa/0aca39a37d3c7eb941ba736ede56d689e7be91cab5d9ca846bde3999eba6/isodate-0.7.2-py3-none-any.whl", hash = "sha256:28009937d8031054830160fce6d409ed342816b543597cece116d966c6d99e15", size = 22320 },
 ]
 
 [[package]]
@@ -3235,7 +3244,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
-version = "0.1.dev82+g96c28d6.d20241031"
+version = "0.1.dev82+g72f6e94.d20241104"
 source = { editable = "." }
 dependencies = [
     { name = "cftime" },
@@ -3245,6 +3254,7 @@ dependencies = [
     { name = "geojson-pydantic" },
     { name = "h5netcdf" },
     { name = "httpx" },
+    { name = "isodate" },
     { name = "orjson" },
     { name = "pillow" },
     { name = "pydantic" },
@@ -3261,14 +3271,12 @@ dependencies = [
 [package.optional-dependencies]
 dev = [
     { name = "folium" },
-    { name = "httpx" },
     { name = "jupyterlab" },
     { name = "matplotlib" },
     { name = "pre-commit" },
 ]
 test = [
-    { name = "asgi-lifespan" },
-    { name = "httpx" },
+    { name = "freezegun" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
@@ -3281,17 +3289,16 @@ uvicorn = [
 
 [package.metadata]
 requires-dist = [
-    { name = "asgi-lifespan", marker = "extra == 'test'", specifier = ">=2.1.0" },
     { name = "cftime", specifier = "~=1.6.4" },
     { name = "ciso8601", specifier = "~=2.3" },
     { name = "earthaccess", specifier = "~=0.11.0" },
     { name = "folium", marker = "extra == 'dev'" },
+    { name = "freezegun", marker = "extra == 'test'", specifier = ">=1.5.1" },
     { name = "fsspec", specifier = "~=2024.9.0" },
     { name = "geojson-pydantic", specifier = ">=1.1.1" },
     { name = "h5netcdf", specifier = "~=1.1.0" },
     { name = "httpx", specifier = ">=0.27.2" },
-    { name = "httpx", marker = "extra == 'dev'" },
-    { name = "httpx", marker = "extra == 'test'", specifier = ">=0.27.2" },
+    { name = "isodate", specifier = ">=0.7.2" },
     { name = "jupyterlab", marker = "extra == 'dev'", specifier = ">=4.2.5" },
     { name = "matplotlib", marker = "extra == 'dev'" },
     { name = "orjson", specifier = "~=3.10.7" },
