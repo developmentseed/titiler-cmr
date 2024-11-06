@@ -1,4 +1,17 @@
-"""Timeseries extension for titiler.cmr"""
+"""Timeseries extension for titiler.cmr
+
+The /timeseries endpoints provide an API for retrieving data for a timeseries that
+would otherwise need to be sent as a set of independent requests.
+
+The /timeseries endpoints follow this basic pattern to assemble results for a timeseries:
+- The 'datetime' parameter (required) is combined with the optional 'step'
+  and 'temporal_mode' parameters to produce a list of specific datetime parameters
+  that can be passed to the lower-level endpoints.
+- The /timeseries endoint will construct a list of GET or POST requests to the
+  lower-level endpoint and execute them asynchronously over HTTP
+- The results are results are combined into a format appropriate for the endpoint's
+  response type (e.g. PNGs combined into a GIF for the /timeseries/bbox endpoint).
+"""
 
 import asyncio
 import io
@@ -33,6 +46,7 @@ from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
 
+# this section should eventually get moved to titiler.extensions.timeseries
 timeseries_img_endpoint_params: Dict[str, Any] = {
     "responses": {
         200: {
@@ -46,6 +60,7 @@ timeseries_img_endpoint_params: Dict[str, Any] = {
 }
 
 
+# TODO: remove after upgrading to titiler>=0.19
 class TimeseriesMediaType(str, Enum):
     """Responses Media types formerly known as MIME types."""
 
@@ -224,6 +239,7 @@ async def timestep_request(
         return response
 
 
+# The rest is titiler-cmr specific
 class CMRQueryParameters(BaseModel):
     """parameters for CMR queries"""
 
@@ -371,6 +387,7 @@ class TimeseriesExtension(FactoryExtension):
 
         @factory.router.post(
             "/timeseries/statistics",
+            summary="Summary statistics for each point/interval along a timeseries",
             response_model=TimeseriesStatisticsGeoJSON,
             response_model_exclude_none=True,
             response_class=GeoJSONResponse,
@@ -399,6 +416,9 @@ class TimeseriesExtension(FactoryExtension):
             histogram_params=Depends(factory.histogram_dependency),
             image_params=Depends(factory.img_part_dependency),
         ):
+            """For all points/intervals along a timeseries, calculate summary statistics
+            for the pixels that intersect a GeoJSON feature.
+            """
             urls = build_request_urls(
                 base_url=str(factory.url_for(request, "geojson_statistics")),
                 request=request,
@@ -432,6 +452,7 @@ class TimeseriesExtension(FactoryExtension):
 
         @factory.router.get(
             "/timeseries/{tileMatrixSetId}/tilejson.json",
+            summary="TileJSON for all points/intervals along a timeseries",
             response_model=TimeseriesTileJSON,
             responses={
                 200: {"description": "Return a set of tilejsons for a timeseries"}
@@ -475,6 +496,7 @@ class TimeseriesExtension(FactoryExtension):
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
         ) -> TimeseriesTileJSON:
+            """Get a set of tilejsons for all points/intervals along a timeseries."""
             urls = build_request_urls(
                 base_url=str(
                     factory.url_for(
@@ -500,12 +522,16 @@ class TimeseriesExtension(FactoryExtension):
 
         @factory.router.get(
             "/timeseries/bbox/{minx},{miny},{maxx},{maxy}.{format}",
-            tags=["Timeseries", "images"],
+            tags=["Timeseries", "Images"],
+            operation_id="timeseries_gif_default_size",
+            summary="Create an animation from a timeseries of PNGs (default size)",
             **timeseries_img_endpoint_params,
         )
         @factory.router.get(
             "/timeseries/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}",
-            tags=["Timeseries", "images"],
+            tags=["Timeseries", "Images"],
+            operation_id="timeseries_gif_custom_size",
+            summary="Create an animation from a timeseries of PNGs (custom size)",
             **timeseries_img_endpoint_params,
         )
         async def bbox_timeseries_image(
@@ -535,7 +561,11 @@ class TimeseriesExtension(FactoryExtension):
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
         ):
-            """Create image from a bbox."""
+            """Create an animation along a timeseries for a bbox.
+
+            Currently only the `GIF` format is supported but `MP4` is on the roadmap.
+            """
+
             path_params = {
                 "minx": minx,
                 "miny": miny,

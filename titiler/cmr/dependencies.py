@@ -82,7 +82,11 @@ def OutputType(
 ConceptID = Annotated[
     str,
     Query(
-        description="A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>"
+        description="""A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>
+- concept-type-prefix is a single capital letter prefix indicating the concept type. "C" is used for collections
+- unique-number is a single number assigned by the CMR during ingest.
+- provider-id is the short name for the provider. i.e. "LPDAAC_ECS"
+        """
     ),
 ]
 

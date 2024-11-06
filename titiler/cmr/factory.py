@@ -478,6 +478,7 @@ class Endpoints(BaseTilerFactory):
                     description="Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
                 ),
             ],
+            query=Depends(cmr_query),
             scale: Annotated[  # type: ignore
                 conint(gt=0, le=4), "Tile size scale. 1=256x256, 2=512x512..."
             ] = 1,
@@ -485,7 +486,6 @@ class Endpoints(BaseTilerFactory):
                 Optional[ImageType],
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = None,
-            query=Depends(cmr_query),
             zarr_params=Depends(self.zarr_dependency),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
@@ -563,6 +563,7 @@ class Endpoints(BaseTilerFactory):
                 Literal[tuple(self.supported_tms.list())],
                 Path(description="Identifier for a supported TileMatrixSet"),
             ],
+            query=Depends(cmr_query),
             tile_format: Annotated[
                 Optional[ImageType],
                 Query(
@@ -583,7 +584,6 @@ class Endpoints(BaseTilerFactory):
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-            query=Depends(cmr_query),
             zarr_params=Depends(self.zarr_dependency),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
@@ -655,6 +655,7 @@ class Endpoints(BaseTilerFactory):
                 Literal[tuple(self.supported_tms.list())],
                 Path(description="Identifier for a supported TileMatrixSet"),
             ],
+            query=Depends(cmr_query),
             minzoom: Annotated[
                 Optional[int],
                 Query(description="Overwrite default minzoom."),
@@ -663,7 +664,6 @@ class Endpoints(BaseTilerFactory):
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-            query=Depends(cmr_query),
             zarr_params=Depends(self.zarr_dependency),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
@@ -721,12 +721,12 @@ class Endpoints(BaseTilerFactory):
         # GET endpoints
         @self.router.get(
             "/bbox/{minx},{miny},{maxx},{maxy}.{format}",
-            tags=["images"],
+            tags=["Images"],
             **img_endpoint_params,
         )
         @self.router.get(
             "/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}",
-            tags=["images"],
+            tags=["Images"],
             **img_endpoint_params,
         )
         def bbox_image(
@@ -735,13 +735,13 @@ class Endpoints(BaseTilerFactory):
             miny: Annotated[float, Path(description="Bounding box min Y")],
             maxx: Annotated[float, Path(description="Bounding box max X")],
             maxy: Annotated[float, Path(description="Bounding box max Y")],
+            query=Depends(cmr_query),
             format: Annotated[
                 ImageType,
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = None,
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
-            query=Depends(cmr_query),
             rasterio_params=Depends(self.rasterio_dependency),
             zarr_params=Depends(self.zarr_dependency),
             reader_params=Depends(self.reader_dependency),
@@ -809,17 +809,17 @@ class Endpoints(BaseTilerFactory):
 
         @self.router.post(
             "/feature",
-            tags=["images"],
+            tags=["Images"],
             **img_endpoint_params,
         )
         @self.router.post(
             "/feature.{format}",
-            tags=["images"],
+            tags=["Images"],
             **img_endpoint_params,
         )
         @self.router.post(
             "/feature/{width}x{height}.{format}",
-            tags=["images"],
+            tags=["Images"],
             **img_endpoint_params,
         )
         def feature_image(
@@ -828,13 +828,13 @@ class Endpoints(BaseTilerFactory):
                 Union[FeatureCollection, Feature],
                 Body(description="GeoJSON Feature or FeatureCollection."),
             ],
+            query=Depends(cmr_query),
             format: Annotated[
                 ImageType,
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = None,
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
-            query=Depends(cmr_query),
             rasterio_params=Depends(self.rasterio_dependency),
             zarr_params=Depends(self.zarr_dependency),
             reader_params=Depends(self.reader_dependency),
