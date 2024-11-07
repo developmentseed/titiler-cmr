@@ -79,7 +79,7 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '16.x'
 
       - name: Install cdk
         run: npm install -g
