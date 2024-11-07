@@ -2,6 +2,7 @@
 
 import os
 import re
+from datetime import datetime
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypedDict, Union
 
 import attr
@@ -174,12 +175,23 @@ class CMRBackend(BaseBackend):
     ) -> List[Asset]:
         """Find assets."""
         xmin, ymin, xmax, ymax = (round(n, 8) for n in [xmin, ymin, xmax, ymax])
-        results = earthaccess.search_data(
-            bounding_box=(xmin, ymin, xmax, ymax),
-            count=limit,
-            **kwargs,
-        )
         assets: List[Asset] = []
+
+        # earthaccess.search_data interprets a single datetime object as an unbounded interval
+        # so pass the one datetime as a tuple to perform the actual temporal intersection query
+        # with a single point in time
+        if temporal := kwargs.get("temporal"):
+            if isinstance(temporal, datetime):
+                kwargs["temporal"] = (temporal, temporal)
+        try:
+            results = earthaccess.search_data(
+                bounding_box=(xmin, ymin, xmax, ymax),
+                count=limit,
+                **kwargs,
+            )
+        except IndexError:
+            return assets
+
         for r in results:
             if bands_regex:
                 links = r.data_links(access=access)
