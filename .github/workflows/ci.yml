@@ -34,7 +34,7 @@ jobs:
         python-version: ['3.10', '3.11', '3.12']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
@@ -77,17 +77,17 @@ jobs:
           aws-region: us-west-2
 
       - name: Set up node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '14.x'
+          node-version: '20.x'
 
       - name: Install cdk
         run: npm install -g
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
