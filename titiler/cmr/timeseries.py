@@ -142,7 +142,8 @@ class TimeseriesParams(DefaultDependency):
     temporal_mode: Annotated[
         Literal[TemporalMode.point, TemporalMode.interval],
         Query(
-            description="If true, queries will be made for a point-in-time at each step. If false, queries will be made for the entire interval between steps"
+            description="Point: CMR queries will be made for specific moments in time. "
+            "Interval: CMR queries will be made for the intervals between the points along the timeseries and results will be mosaiced into a single array before summarization."
         ),
     ] = TemporalMode.interval
 
