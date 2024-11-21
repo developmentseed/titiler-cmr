@@ -1,6 +1,7 @@
 """test titiler-cmr app."""
 
 import io
+import warnings
 from copy import deepcopy
 from pathlib import Path
 from typing import Tuple
@@ -9,6 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 from httpx import Response
 from PIL import Image
+from rasterio.errors import NotGeoreferencedWarning
 
 from titiler.cmr.timeseries import TimeseriesMediaType
 from titiler.core.models.mapbox import TileJSON
@@ -107,18 +109,21 @@ def test_rasterio_statistics(app, mock_cmr_get_assets, mn_geojson):
     band = "Fmask"
     datetime_range = "2024-10-09T00:00:01Z/2024-10-09T23:59:59Z"
 
-    response = app.post(
-        "/statistics",
-        params={
-            "concept_id": concept_id,
-            "datetime": datetime_range,
-            "backend": "rasterio",
-            "bands_regex": band,
-            "bands": band,
-            "dst_crs": "epsg:32615",
-        },
-        json=mn_geojson,
-    )
+    with warnings.catch_warnings(record=True):
+        warnings.simplefilter("ignore", NotGeoreferencedWarning)
+
+        response = app.post(
+            "/statistics",
+            params={
+                "concept_id": concept_id,
+                "datetime": datetime_range,
+                "backend": "rasterio",
+                "bands_regex": band,
+                "bands": band,
+                "dst_crs": "epsg:32615",
+            },
+            json=mn_geojson,
+        )
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/geo+json"
@@ -138,16 +143,19 @@ def test_rasterio_feature(
     app, mock_cmr_get_assets, rasterio_query_params, mn_geojson
 ) -> None:
     """Test /feature endpoint for rasterio backend"""
-    response = app.post(
-        "/feature",
-        params={
-            **rasterio_query_params,
-            "format": "tif",
-            "width": 100,
-            "height": 100,
-        },
-        json=mn_geojson,
-    )
+    with warnings.catch_warnings(record=True):
+        warnings.simplefilter("ignore", NotGeoreferencedWarning)
+
+        response = app.post(
+            "/feature",
+            params={
+                **rasterio_query_params,
+                "format": "tif",
+                "width": 100,
+                "height": 100,
+            },
+            json=mn_geojson,
+        )
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
 
@@ -161,13 +169,15 @@ def test_rasterio_part(
 ) -> None:
     """Test /part endpoint for rasterio backend"""
 
-    response = app.get(
-        f"/bbox/{','.join(str(coord) for coord in mn_bounds)}/100x100.tif",
-        params={
-            **rasterio_query_params,
-            "format": "tif",
-        },
-    )
+    with warnings.catch_warnings(record=True):
+        warnings.simplefilter("ignore", NotGeoreferencedWarning)
+        response = app.get(
+            f"/bbox/{','.join(str(coord) for coord in mn_bounds)}/100x100.tif",
+            params={
+                **rasterio_query_params,
+                "format": "tif",
+            },
+        )
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
 
