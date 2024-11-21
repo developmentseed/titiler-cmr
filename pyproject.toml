@@ -126,6 +126,9 @@ namespace_packages = true
 explicit_package_bases = true
 
 [tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::rasterio.errors.NotGeoreferencedWarning",
+]
 markers = "vcr: records network activity"
 addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml"
 
