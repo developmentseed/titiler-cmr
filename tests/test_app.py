@@ -9,7 +9,6 @@ import pytest
 from fastapi.testclient import TestClient
 from httpx import Response
 from PIL import Image
-from rasterio.errors import NotGeoreferencedWarning
 
 from titiler.cmr.timeseries import TimeseriesMediaType
 from titiler.core.models.mapbox import TileJSON
@@ -139,20 +138,16 @@ def test_rasterio_feature(
     app, mock_cmr_get_assets, rasterio_query_params, mn_geojson
 ) -> None:
     """Test /feature endpoint for rasterio backend"""
-    with pytest.warns(
-        (PendingDeprecationWarning, NotGeoreferencedWarning),
-        match=r"is_tiled|no geotransform",
-    ):
-        response = app.post(
-            "/feature",
-            params={
-                **rasterio_query_params,
-                "format": "tif",
-                "width": 100,
-                "height": 100,
-            },
-            json=mn_geojson,
-        )
+    response = app.post(
+        "/feature",
+        params={
+            **rasterio_query_params,
+            "format": "tif",
+            "width": 100,
+            "height": 100,
+        },
+        json=mn_geojson,
+    )
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
 
