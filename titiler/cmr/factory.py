@@ -3,13 +3,13 @@
 import json
 import os
 import re
-from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
 from urllib.parse import urlencode
 
 import jinja2
 import numpy
 import orjson
+from attrs import define, field
 from fastapi import Body, Depends, Path, Query
 from fastapi.responses import ORJSONResponse
 from geojson_pydantic import Feature, FeatureCollection
@@ -34,7 +34,7 @@ from titiler.cmr.dependencies import (
     cmr_query,
 )
 from titiler.cmr.enums import MediaType
-from titiler.cmr.reader import MultiFilesBandsReader, ZarrReader
+from titiler.cmr.reader import MultiFilesBandsReader, xarray_open_dataset
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import (
     CoordCRSParams,
@@ -44,12 +44,13 @@ from titiler.core.dependencies import (
     PartFeatureParams,
     StatisticsParams,
 )
-from titiler.core.factory import BaseTilerFactory, img_endpoint_params
+from titiler.core.factory import TilerFactory, img_endpoint_params
 from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
 from titiler.core.utils import render_image
+from titiler.xarray.io import Reader as XarrayReader
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader([jinja2.PackageLoader(__package__, "templates")])
@@ -109,6 +110,7 @@ def parse_reader_options(
     rasterio_params: RasterioParams,
     zarr_params: ZarrParams,
     reader_params: ReaderParams,
+    image_params: Optional[PartFeatureParams] = None,
 ) -> Tuple[Type[BaseReader], Dict[str, Any], Dict[str, Any]]:
     """Convert rasterio and zarr parameters into a reader and a set of reader_options and read_options"""
 
@@ -120,10 +122,11 @@ def parse_reader_options(
     resampling_method = rasterio_params.resampling_method or "nearest"
 
     if reader_params.backend == "xarray":
-        reader = ZarrReader
+        reader = XarrayReader
         read_options = {}
 
         options = {
+            "opener": xarray_open_dataset,
             "variable": zarr_params.variable,
             "decode_times": zarr_params.decode_times,
             "drop_dim": zarr_params.drop_dim,
@@ -162,11 +165,14 @@ def parse_reader_options(
             read_options = {k: v for k, v in options.items() if v is not None}
             reader_options = {}
 
+    if image_params:
+        read_options.update(image_params.as_dict())
+
     return reader, read_options, reader_options
 
 
-@dataclass
-class Endpoints(BaseTilerFactory):
+@define(kw_only=True)
+class Endpoints(TilerFactory):
     """Endpoints Factory."""
 
     reader: Optional[Type[BaseReader]] = field(default=None)  # type: ignore
@@ -179,6 +185,7 @@ class Endpoints(BaseTilerFactory):
     histogram_dependency: Type[DefaultDependency] = HistogramParams
     img_part_dependency: Type[DefaultDependency] = PartFeatureParams
 
+    optional_headers: List[OptionalHeader] = field(factory=list)
     templates: Jinja2Templates = DEFAULT_TEMPLATES
 
     title: str = "TiTiler-CMR"
@@ -545,7 +552,7 @@ class Endpoints(BaseTilerFactory):
                 image,
                 output_format=format,
                 colormap=colormap,
-                **render_params,
+                **render_params.as_dict(),
             )
 
             return Response(content, media_type=media_type)
@@ -757,6 +764,7 @@ class Endpoints(BaseTilerFactory):
                 rasterio_params=rasterio_params,
                 zarr_params=zarr_params,
                 reader_params=reader_params,
+                image_params=image_params,
             )
 
             with CMRBackend(
@@ -771,8 +779,6 @@ class Endpoints(BaseTilerFactory):
                             "align_bounds_with_dataset": True,
                         }
                     )
-
-                    read_options.update(image_params)
 
                 image, assets = src_dst.part(
                     bbox=[minx, miny, maxx, maxy],
@@ -797,7 +803,7 @@ class Endpoints(BaseTilerFactory):
                 image,
                 output_format=format,
                 colormap=colormap or dst_colormap,
-                **render_params,
+                **render_params.as_dict(),
             )
 
             headers: Dict[str, str] = {}
@@ -850,6 +856,7 @@ class Endpoints(BaseTilerFactory):
                 rasterio_params=rasterio_params,
                 zarr_params=zarr_params,
                 reader_params=reader_params,
+                image_params=image_params,
             )
 
             with CMRBackend(
@@ -865,7 +872,7 @@ class Endpoints(BaseTilerFactory):
                         }
                     )
 
-                    read_options.update(image_params)
+                    read_options.update(image_params.as_dict())
 
                 image, assets = src_dst.feature(
                     geojson.model_dump(exclude_none=True),
@@ -888,7 +895,7 @@ class Endpoints(BaseTilerFactory):
                 image,
                 output_format=format,
                 colormap=colormap,
-                **render_params,
+                **render_params.as_dict(),
             )
 
             headers: Dict[str, str] = {}
@@ -940,6 +947,7 @@ class Endpoints(BaseTilerFactory):
                 rasterio_params=rasterio_params,
                 zarr_params=zarr_params,
                 reader_params=reader_params,
+                image_params=image_params,
             )
 
             with CMRBackend(
@@ -958,7 +966,7 @@ class Endpoints(BaseTilerFactory):
                             }
                         )
 
-                        read_options.update(image_params)
+                        read_options.update(image_params.as_dict(exclude_none=True))
 
                     image, _ = src_dst.feature(
                         shape,
@@ -977,12 +985,14 @@ class Endpoints(BaseTilerFactory):
                         image = post_process(image)
 
                     # set band name for statistics method
-                    if not image.band_names and reader_params.backend == "xarray":
+                    if reader_params.backend == "xarray" and (
+                        image.band_names == ["value"] or not image.band_names
+                    ):
                         image.band_names = [zarr_params.variable]
 
                     stats = image.statistics(
-                        **stats_params,
-                        hist_options={**histogram_params},
+                        **stats_params.as_dict(),
+                        hist_options=histogram_params.as_dict(),
                         coverage=coverage_array,
                     )
 

@@ -3,10 +3,9 @@
 Originaly from titiler-xarray
 """
 
-import contextlib
 import pickle
-import re
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, Optional, Type
+from urllib.parse import urlparse
 
 import attr
 import earthaccess
@@ -16,47 +15,15 @@ import s3fs
 import xarray
 from cachetools import TTLCache
 from morecantile import TileMatrixSet
-from rasterio.crs import CRS
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
-from rio_tiler.io.xarray import XarrayReader
-from rio_tiler.types import BBox
 
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
 cache_config = CacheSettings()
 cache_client: Any = TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl)
-
-
-def parse_protocol(src_path: str, reference: Optional[bool] = False):
-    """
-    Parse protocol from path.
-    """
-    match = re.match(r"^(s3|https|http)", src_path)
-    protocol = "file"
-    if match:
-        protocol = match.group(0)
-
-    # override protocol if reference
-    if reference:
-        protocol = "reference"
-
-    return protocol
-
-
-def xarray_engine(src_path: str):
-    """
-    Parse xarray engine from path.
-    """
-    #  ".hdf", ".hdf5", ".h5" will be supported once we have tests + expand the type permitted for the group parameter
-    H5NETCDF_EXTENSIONS = [".nc", ".nc4"]
-    lower_filename = src_path.lower()
-    if any(lower_filename.endswith(ext) for ext in H5NETCDF_EXTENSIONS):
-        return "h5netcdf"
-    else:
-        return "zarr"
 
 
 def get_filesystem(
@@ -100,20 +67,26 @@ def get_filesystem(
 def xarray_open_dataset(
     src_path: str,
     group: Optional[Any] = None,
-    reference: Optional[bool] = False,
     decode_times: Optional[bool] = True,
-    consolidated: Optional[bool] = True,
     s3_credentials: Optional[Dict] = None,
 ) -> xarray.Dataset:
-    """Open dataset."""
+    """Modified version of titiler.xarray.io.xarray_open_dataset with
+    custom handler for earthaccess authentication over https
+    """
     # Generate cache key and attempt to fetch the dataset from cache
     cache_key = f"{src_path}_{group}" if group is not None else src_path
     data_bytes = cache_client.get(cache_key, None)
     if data_bytes:
         return pickle.loads(data_bytes)
 
-    protocol = parse_protocol(src_path, reference=reference)
-    xr_engine = xarray_engine(src_path)
+    parsed = urlparse(src_path)
+    protocol = parsed.scheme or "file"
+
+    if any(src_path.lower().endswith(ext) for ext in [".nc", ".nc4"]):
+        xr_engine = "h5netcdf"
+    else:
+        xr_engine = "zarr"
+
     file_handler = get_filesystem(
         src_path, protocol, xr_engine, s3_credentials=s3_credentials
     )
@@ -126,25 +99,23 @@ def xarray_open_dataset(
     }
 
     # Argument if we're opening a datatree
-    if isinstance(group, int):
+    if group is not None:
         xr_open_args["group"] = group
 
     # NetCDF arguments
     if xr_engine == "h5netcdf":
-        xr_open_args["engine"] = "h5netcdf"
-        xr_open_args["lock"] = False
+        xr_open_args.update(
+            {
+                "engine": "h5netcdf",
+                "lock": False,
+            }
+        )
 
+        ds = xarray.open_dataset(file_handler, **xr_open_args)
+
+    # Fallback to Zarr
     else:
-        # Zarr arguments
-        xr_open_args["engine"] = "zarr"
-        xr_open_args["consolidated"] = consolidated
-
-    # Additional arguments when dealing with a reference file.
-    if reference:
-        xr_open_args["consolidated"] = False
-        xr_open_args["backend_kwargs"] = {"consolidated": False}
-
-    ds = xarray.open_dataset(file_handler, **xr_open_args)
+        ds = xarray.open_zarr(file_handler, **xr_open_args)
 
     # Serialize the dataset to bytes using pickle
     cache_client[cache_key] = pickle.dumps(ds)
@@ -212,84 +183,6 @@ def get_variable(
             da = da.isel(time=0)
 
     return da
-
-
-@attr.s
-class ZarrReader(XarrayReader):
-    """ZarrReader: Open Zarr file and access DataArray."""
-
-    src_path: str = attr.ib()
-    variable: str = attr.ib()
-
-    # xarray.Dataset options
-    reference: bool = attr.ib(default=False)
-    decode_times: bool = attr.ib(default=False)
-    group: Optional[Any] = attr.ib(default=None)
-    consolidated: Optional[bool] = attr.ib(default=True)
-    s3_credentials: Optional[Dict] = attr.ib(default=None)
-
-    # xarray.DataArray options
-    time_slice: Optional[str] = attr.ib(default=None)
-    drop_dim: Optional[str] = attr.ib(default=None)
-
-    tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
-    geographic_crs: CRS = attr.ib(default=WGS84_CRS)
-
-    ds: xarray.Dataset = attr.ib(init=False)
-    input: xarray.DataArray = attr.ib(init=False)
-
-    bounds: BBox = attr.ib(init=False)
-    crs: CRS = attr.ib(init=False)
-
-    _minzoom: int = attr.ib(init=False, default=None)
-    _maxzoom: int = attr.ib(init=False, default=None)
-
-    _dims: List = attr.ib(init=False, factory=list)
-    _ctx_stack = attr.ib(init=False, factory=contextlib.ExitStack)
-
-    def __attrs_post_init__(self):
-        """Set bounds and CRS."""
-        self.ds = self._ctx_stack.enter_context(
-            xarray_open_dataset(
-                self.src_path,
-                group=self.group,
-                reference=self.reference,
-                consolidated=self.consolidated,
-                s3_credentials=self.s3_credentials,
-            ),
-        )
-        self.input = get_variable(
-            self.ds,
-            self.variable,
-            time_slice=self.time_slice,
-            drop_dim=self.drop_dim,
-        )
-
-        self.bounds = tuple(self.input.rio.bounds())
-        self.crs = self.input.rio.crs
-
-        self._dims = [
-            d
-            for d in self.input.dims
-            if d not in [self.input.rio.x_dim, self.input.rio.y_dim]
-        ]
-
-    @classmethod
-    def list_variables(
-        cls,
-        src_path: str,
-        group: Optional[Any] = None,
-        reference: Optional[bool] = False,
-        consolidated: Optional[bool] = True,
-    ) -> List[str]:
-        """List available variable in a dataset."""
-        with xarray_open_dataset(
-            src_path,
-            group=group,
-            reference=reference,
-            consolidated=consolidated,
-        ) as ds:
-            return list(ds.data_vars)  # type: ignore
 
 
 @attr.s

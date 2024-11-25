@@ -22,8 +22,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
-    "titiler.core>=0.18.0,<0.19",
-    "titiler.mosaic>=0.18.0,<0.19",
+    "titiler.core>=0.19.0,<0.20",
+    "titiler.mosaic>=0.19.0,<0.20",
+    "titiler.xarray>=0.19.0,<0.20",
     "cftime~=1.6.4",
     "earthaccess~=0.11.0",
     "fsspec~=2024.9.0",
@@ -31,7 +32,7 @@ dependencies = [
     "orjson~=3.10.7",
     "pydantic-settings~=2.0",
     "pydantic>=2.4,<3.0",
-    "rio_tiler[s3]>=6.4.0,<7.0",
+    "rio_tiler[s3]>=7.2.0,<8.0",
     "rioxarray~=0.13.4",
     "s3fs~=2024.9.0",
     "xarray~=2024.9.0",
@@ -125,6 +126,9 @@ namespace_packages = true
 explicit_package_bases = true
 
 [tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::rasterio.errors.NotGeoreferencedWarning",
+]
 markers = "vcr: records network activity"
 addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml"
 
