@@ -203,21 +203,25 @@ def build_request_urls(
     param_list: List[BaseModel],
 ):
     """Build lower-level request URLs from a base_url, a request, and a list of
-    additional query parameters
+    additional query parameters. Preserves multiple values for the same parameter.
     """
     urls = []
-    non_timeseries_params = {
-        key: value
-        for key, value in request.query_params.items()
+
+    # Convert query_params to list of tuples, excluding timeseries fields
+    non_timeseries_params = [
+        (key, value)
+        for key, value in request.query_params.multi_items()
         if key not in timeseries_field_names
-    }
+    ]
+
     for _params in param_list:
-        request_params = {
-            **non_timeseries_params,
-            **_params.model_dump(),
-        }
-        url = f"{base_url}?{urlencode(request_params)}"
-        print(url)
+        model_params = [
+            (str(key), str(value)) for key, value in _params.model_dump().items()
+        ]
+
+        url = (
+            f"{base_url}?{urlencode(non_timeseries_params + model_params, doseq=True)}"
+        )
         urls.append(url)
 
     return urls
