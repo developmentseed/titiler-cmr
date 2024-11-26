@@ -636,7 +636,8 @@ class Endpoints(TilerFactory):
                 auth=request.app.state.cmr_auth,
             ) as src_dst:
                 minx, miny, maxx, maxy = zip(
-                    [-180, -90, 180, 90], list(src_dst.geographic_bounds)
+                    [-180, -90, 180, 90],
+                    src_dst.get_geographic_bounds(crs=src_dst.geographic_crs),
                 )
                 bounds = [max(minx), max(miny), min(maxx), min(maxy)]
 
