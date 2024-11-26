@@ -102,6 +102,22 @@ def test_conformance(app):
 
 
 @pytest.mark.vcr
+def test_rasterio_tilejson(app, rasterio_query_params):
+    """Test /tilejson.json endpoint for rasterio backend"""
+
+    response = app.get(
+        "/WebMercatorQuad/tilejson.json",
+        params={
+            **rasterio_query_params,
+            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+
+
+@pytest.mark.vcr
 def test_rasterio_statistics(app, mock_cmr_get_assets, mn_geojson):
     """Test /statistics endpoint for a polygon that straddles the boundary between two HLS granules"""
 
@@ -180,6 +196,22 @@ def test_rasterio_part(
         )
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+
+@pytest.mark.vcr
+def test_xarray_tilejson(app, xarray_query_params):
+    """Test /tilejson.json endpoint for xarray backend"""
+
+    response = app.get(
+        "/WebMercatorQuad/tilejson.json",
+        params={
+            **xarray_query_params,
+            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
 
 
 @pytest.mark.vcr
