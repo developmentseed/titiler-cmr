@@ -116,6 +116,9 @@ def test_rasterio_tilejson(app, rasterio_query_params):
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
 
+    tilejson = response.json()
+    assert tilejson["bounds"] == [-180.0, -90.0, 180.0, 90.0]
+
 
 @pytest.mark.vcr
 def test_rasterio_statistics(app, mock_cmr_get_assets, mn_geojson):
@@ -212,6 +215,9 @@ def test_xarray_tilejson(app, xarray_query_params):
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
+
+    tilejson = response.json()
+    assert tilejson["bounds"] == [-180.0, -90.0, 180.0, 90.0]
 
 
 @pytest.mark.vcr
