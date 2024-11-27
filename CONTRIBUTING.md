@@ -45,3 +45,13 @@ Record the new responses and commit them to the repository.
 ```bash
 uv run pytest -v -s --record-mode new_episodes
 ```
+
+## Benchmarks
+
+[`tests/test_timeseries_benchmark.py`](./tests/test_timeseries_benchmark.py) is used to evaluate the limits of `/timeseries` requests.
+
+To run the benchmarks:
+
+```bash
+uv run pytest -vv --benchmark-only
+```

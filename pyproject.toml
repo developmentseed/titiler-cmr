@@ -54,6 +54,8 @@ dev = [
     "jupyterlab>=4.2.5",
     "matplotlib",
     "pre-commit",
+    "jupyterlab_code_formatter",
+    "ruff>=0.8.0",
 ]
 test = [
     "pytest>=8.3.3",
@@ -62,6 +64,7 @@ test = [
     "pytest-mock>=3.14.0",
     "pytest-recording>=0.13.2",
     "freezegun>=1.5.1",
+    "pytest-benchmark>=5.1.0",
 ]
 
 [project.urls]
@@ -131,5 +134,5 @@ filterwarnings = [
     "ignore::rasterio.errors.NotGeoreferencedWarning",
 ]
 markers = "vcr: records network activity"
-addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml"
+addopts = "--benchmark-skip -Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml"
 
