@@ -41,6 +41,7 @@ plugins:
   - search
   - mkdocs-jupyter:
       include_source: True
+      execute: True
 
 theme:
   name: material

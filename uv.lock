@@ -1235,7 +1235,7 @@ wheels = [
 
 [[package]]
 name = "ipython"
-version = "8.30.0"
+version = "8.28.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -1250,9 +1250,9 @@ dependencies = [
     { name = "traitlets" },
     { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d8/8b/710af065ab8ed05649afa5bd1e07401637c9ec9fb7cfda9eac7e91e9fbd4/ipython-8.30.0.tar.gz", hash = "sha256:cb0a405a306d2995a5cbb9901894d240784a9f341394c6ba3f4fe8c6eb89ff6e", size = 5592205 }
+sdist = { url = "https://files.pythonhosted.org/packages/f7/21/48db7d9dd622b9692575004c7c98f85f5629428f58596c59606d36c51b58/ipython-8.28.0.tar.gz", hash = "sha256:0d0d15ca1e01faeb868ef56bc7ee5a0de5bd66885735682e8a322ae289a13d1a", size = 5495762 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1d/f3/1332ba2f682b07b304ad34cad2f003adcfeb349486103f4b632335074a7c/ipython-8.30.0-py3-none-any.whl", hash = "sha256:85ec56a7e20f6c38fce7727dcca699ae4ffc85985aa7b23635a8008f918ae321", size = 820765 },
+    { url = "https://files.pythonhosted.org/packages/f4/3a/5d8680279ada9571de8469220069d27024ee47624af534e537c9ff49a450/ipython-8.28.0-py3-none-any.whl", hash = "sha256:530ef1e7bb693724d3cdc37287c80b07ad9b25986c007a53aa1857272dac3f35", size = 819456 },
 ]
 
 [[package]]
@@ -3633,7 +3633,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
-version = "0.1.3.dev6+gdf20960.d20241203"
+version = "0.1.3.dev6+gabe6317.d20241203"
 source = { editable = "." }
 dependencies = [
     { name = "cftime" },
@@ -3667,6 +3667,7 @@ uvicorn = [
 dev = [
     { name = "folium" },
     { name = "freezegun" },
+    { name = "ipython" },
     { name = "jupyterlab" },
     { name = "jupyterlab-code-formatter" },
     { name = "matplotlib" },
@@ -3714,6 +3715,7 @@ requires-dist = [
 dev = [
     { name = "folium", specifier = ">=0.17.0" },
     { name = "freezegun", specifier = ">=1.5.1" },
+    { name = "ipython", specifier = "==8.28.0" },
     { name = "jupyterlab", specifier = ">=4.2.5" },
     { name = "jupyterlab-code-formatter", specifier = ">=3.0.2" },
     { name = "matplotlib", specifier = ">=3.9.2" },
