@@ -4,7 +4,25 @@
   --md-primary-fg-color: #cf3f02;
   --md-default-fg-color: #443f3f;
   --boxShadowD: 0px 12px 24px 0px rgba(68, 63, 63, 0.08),
+  /* xarray display settings */
+  --xr-background-color: #ffffff;
+  --xr-font-color: #24292e;
+  --xr-border-color: #e1e4e8;
+  --xr-background-color-row-even: #f6f8fa;
+  --xr-background-color-row-odd: #ffffff;
     0px 0px 4px 0px rgba(68, 63, 63, 0.08);
+}
+[data-md-color-scheme="slate"] {
+  /* xarray display settings */
+  --xr-background-color: #1e1e1e;
+  --xr-font-color: #d4d4d4;
+  --xr-font-color0: #ffffff;
+  --xr-font-color1: #d4d4d4;
+  --xr-font-color2: #a0a0a0;
+  --xr-font-color3: #a0a0a0;
+  --xr-border-color: #404040;
+  --xr-background-color-row-even: #252525;
+  --xr-background-color-row-odd: #1e1e1e;
 }
 body {
   margin: 0;
@@ -38,6 +56,12 @@ h6 {
   font-size: 0.75rem;
   font-weight: bold;
 }
+
+/* Fix xarray dataset HTML representation in jupyter notebook renderings. */
+/* See https://github.com/danielfrg/mkdocs-jupyter/issues/164 for conversation */
+
+/* Reinstate the display off-switch for xarray dataset views. */
+/* See https://github.com/damianavila/RISE/issues/594 for inspiration. */
 .md-typeset pre.xr-text-repr-fallback {
   display: none;
 }
@@ -74,4 +98,17 @@ h6 {
   width: auto;
   font-weight: normal;
   grid-column: 1;
+}
+
+.jupyter-wrapper .jp-OutputArea-output .xr-attrs dd {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.jupyter-wrapper .jp-OutputArea-output .xr-attrs dd:hover {
+  overflow: auto;
+  width: auto;
+  z-index: 1;
 }
