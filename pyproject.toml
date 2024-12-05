@@ -73,6 +73,7 @@ dev = [
     "markdown-callouts>=0.4.0",
     "pandas>=2.2.3",
     "plotly>=5.24.1",
+    "ipywidgets>=8.1.5",
 ]
 
 [project.urls]
