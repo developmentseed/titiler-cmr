@@ -28,20 +28,19 @@ An API for creating image tiles from CMR queries.
 
 ## Installation
 
-To install from sources and run for development:
+To install from sources and run for development, [install `uv`](https://docs.astral.sh/uv/getting-started/installation/) then:
 
 ```bash
 git clone https://github.com/developmentseed/titiler-cmr.git
 cd titiler-cmr
 
-python -m pip install -U pip
-python -m pip install uvicorn -e .[dev,test]
+uv sync --all-extras
 ```
 
 ## Authentication for data read access
 
 `titiler-cmr` can read data either over `HTTP` (external) or directly from `AWS S3` (direct) depending on the app configuration.
-The behavior of the application is controlled by the S3 authentication settings in [`settings.py`](./titiler/cmr/settings.py), which you can set either with environment variables (`TITILER_CMR_S3_AUTH_ACCESS`, `TITILER_CMR_S3_AUTH_STRATEGY`) or in an environment file (`.env`).
+The behavior of the application is controlled by the S3 authentication settings in `settings.py`, which you can set either with environment variables (`TITILER_CMR_S3_AUTH_ACCESS`, `TITILER_CMR_S3_AUTH_STRATEGY`) or in an environment file (`.env`).
 
 ### Direct from S3
 
@@ -77,7 +76,7 @@ echo "machine urs.earthdata.nasa.gov login ${EARTHDATA_USERNAME} password ${EART
 
 ## Docker deployment
 
-You can run the application in a docker container using the [docker-compose.yml](./docker-compose.yml).
+You can run the application in a docker container using the docker-compose.yml file.
 The docker container is configured to read the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment variables so make sure set those before starting the docker network.
 
 ```bash

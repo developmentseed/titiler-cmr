@@ -48,10 +48,20 @@ uv run pytest -v -s --record-mode new_episodes
 
 ## Benchmarks
 
-[`tests/test_timeseries_benchmark.py`](./tests/test_timeseries_benchmark.py) is used to evaluate the limits of `/timeseries` requests.
+`tests/test_timeseries_benchmark.py` is used to evaluate the performance and limits of `/timeseries` requests.
 
 To run the benchmarks:
 
 ```bash
-uv run pytest -vv --benchmark-only
+uv run pytest -vv --benchmark-only --benchmark-json benchmark.json
+```
+
+## Documentation
+
+The documentation is generated using `mkdocs` and gets built and deployed to Github Pages when new tags are released and on pushes to the `develop` branch.
+
+To preview the documentation in your browser you can run:
+
+```bash
+uv run mkdocs serve -o
 ```

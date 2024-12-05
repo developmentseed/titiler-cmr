@@ -53,11 +53,11 @@ CONCEPT_CONFIGS = {
     warmup=False,
 )
 @pytest.mark.parametrize(
-    ["concept_config_id", "bbox_size"],
+    ["concept_config_id", "bbox_dims"],
     [
-        ("GAMSSA", f"{bbox_size[0]}x{bbox_size[1]}")
-        for bbox_size in [
-            # (64, 64),
+        ("GAMSSA", f"{bbox_dims[0]}x{bbox_dims[1]}")
+        for bbox_dims in [
+            (64, 64),
             (128, 128),
             (360, 180),
         ]
@@ -69,32 +69,35 @@ CONCEPT_CONFIGS = {
         10,
         100,
         500,
+        750,
         1000,
     ],
 )
 @pytest.mark.parametrize(
-    "img_size",
+    "img_dims",
     [
         f"{2**i}x{2**i}"
         for i in [
-            # 9,
-            # 10,
-            11,
+            9,
+            10,
+            # 11,
         ]
     ],
 )
-def test_gif_timepoints(
+def test_bbox(
     benchmark,
     concept_config_id: str,
-    bbox_size: str,
+    bbox_dims: str,
     num_timepoints: int,
-    img_size: str,
+    img_dims: str,
 ):
     """Benchmark GIF generation with different numbers of timepoints."""
     concept_config = CONCEPT_CONFIGS.get(concept_config_id)
     if not concept_config:
         raise ValueError(f"there is no ConceptConfig with key {concept_config_id}")
-    _bbox_size = [float(x) for x in bbox_size.split("x")]
+
+    _img_size = [int(x) for x in img_dims.split("x")]
+    _bbox_size = [float(x) for x in bbox_dims.split("x")]
     x_len, y_len = _bbox_size
     bbox = (-1 * x_len / 2, -1 * y_len / 2, x_len / 2, y_len / 2)
     bbox_str = ",".join(map(str, bbox))
@@ -102,7 +105,7 @@ def test_gif_timepoints(
     error_count = 0
     success_count = 0
 
-    url = f"{API_URL}/timeseries/bbox/{bbox_str}/{img_size}.gif"
+    url = f"{API_URL}/timeseries/bbox/{bbox_str}/{img_dims}.gif"
 
     end_datetime = (
         concept_config.start_datetime
@@ -145,15 +148,19 @@ def test_gif_timepoints(
 
     benchmark.extra_info.update(
         {
+            "concept_config_id": concept_config_id,
+            "img_size": _img_size[0] * _img_size[1],
+            "bbox_size": _bbox_size[0] * _bbox_size[1],
+            "num_timepoints": num_timepoints,
             "response_size": result,
             "error_count": error_count,
             "success_count": success_count,
-            "error_rate": f"{(error_count / (error_count + success_count)) * 100:.2f}%",
+            "error_rate": (error_count / (error_count + success_count)),
         }
     )
 
     benchmark.name = (
-        f"{concept_config_id}-{num_timepoints}-bbox:{bbox_size[0]}_{bbox_size[1]}-img:{img_size[0]}x{img_size[1]}",
+        f"{concept_config_id}-{num_timepoints}-bbox:{bbox_dims}-img:{img_dims}",
     )
 
 
@@ -163,14 +170,13 @@ def test_gif_timepoints(
     warmup=False,
 )
 @pytest.mark.parametrize(
-    ["concept_config_id", "bbox_size"],
+    ["concept_config_id", "bbox_dims"],
     [
-        ("GAMSSA", f"{bbox_size[0]}x{bbox_size[1]}")
-        for bbox_size in [
-            # (16, 16),
+        ("GAMSSA", f"{bbox_dims[0]}x{bbox_dims[1]}")
+        for bbox_dims in [
             (64, 64),
-            # (128, 128),
-            # (360, 180),
+            (128, 128),
+            (360, 180),
         ]
     ],
 )
@@ -179,14 +185,16 @@ def test_gif_timepoints(
     [
         10,
         100,
+        500,
         1000,
+        1500,
         2000,
     ],
 )
 def test_statistics(
     benchmark,
     concept_config_id: str,
-    bbox_size: str,
+    bbox_dims: str,
     num_timepoints: int,
 ):
     """Benchmark statistics endpoint with different numbers of timepoints."""
@@ -195,7 +203,7 @@ def test_statistics(
     if not concept_config:
         raise ValueError(f"there is no ConceptConfig with key {concept_config_id}")
 
-    _bbox_size = [float(x) for x in bbox_size.split("x")]
+    _bbox_size = [float(x) for x in bbox_dims.split("x")]
     x_len, y_len = _bbox_size
     bbox = (-1 * x_len / 2, -1 * y_len / 2, x_len / 2, y_len / 2)
 
@@ -261,13 +269,16 @@ def test_statistics(
 
     benchmark.extra_info.update(
         {
+            "concept_config_id": concept_config_id,
+            "bbox_size": x_len * y_len,
+            "num_timepoints": num_timepoints,
             "response_size": result,
             "error_count": error_count,
             "success_count": success_count,
-            "error_rate": f"{(error_count / (error_count + success_count)) * 100:.2f}%",
+            "error_rate": (error_count / (error_count + success_count)),
         }
     )
 
     benchmark.name = (
-        f"{concept_config_id}-{num_timepoints}-bbox:{bbox_size[0]}_{bbox_size[1]}",
+        f"{concept_config_id}-{num_timepoints}-bbox:{bbox_dims[0]}_{bbox_dims[1]}",
     )

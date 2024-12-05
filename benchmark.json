@@ -1,0 +1,2790 @@
+{
+    "machine_info": {
+        "node": "quercus",
+        "processor": "x86_64",
+        "machine": "x86_64",
+        "python_compiler": "Clang 18.1.8 ",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.11.9",
+        "python_version": "3.11.9",
+        "python_build": [
+            "main",
+            "Aug 14 2024 05:07:28"
+        ],
+        "release": "6.8.0-49-generic",
+        "system": "Linux",
+        "cpu": {
+            "python_version": "3.11.9.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "X86_64",
+            "bits": 64,
+            "count": 16,
+            "arch_string_raw": "x86_64",
+            "vendor_id_raw": "AuthenticAMD",
+            "brand_raw": "AMD Ryzen 7 7840U w/ Radeon  780M Graphics",
+            "hz_advertised_friendly": "400.0000 MHz",
+            "hz_actual_friendly": "400.0000 MHz",
+            "hz_advertised": [
+                400000000,
+                0
+            ],
+            "hz_actual": [
+                400000000,
+                0
+            ],
+            "stepping": 1,
+            "model": 116,
+            "family": 25,
+            "flags": [
+                "3dnowext",
+                "3dnowprefetch",
+                "abm",
+                "adx",
+                "aes",
+                "amd_lbr_v2",
+                "aperfmperf",
+                "apic",
+                "arat",
+                "avx",
+                "avx2",
+                "avx512_bf16",
+                "avx512_bitalg",
+                "avx512_vbmi2",
+                "avx512_vnni",
+                "avx512_vpopcntdq",
+                "avx512bitalg",
+                "avx512bw",
+                "avx512cd",
+                "avx512dq",
+                "avx512f",
+                "avx512ifma",
+                "avx512vbmi",
+                "avx512vbmi2",
+                "avx512vl",
+                "avx512vnni",
+                "avx512vpopcntdq",
+                "bmi1",
+                "bmi2",
+                "bpext",
+                "cat_l3",
+                "cdp_l3",
+                "clflush",
+                "clflushopt",
+                "clwb",
+                "clzero",
+                "cmov",
+                "cmp_legacy",
+                "constant_tsc",
+                "cpb",
+                "cppc",
+                "cpuid",
+                "cqm",
+                "cqm_llc",
+                "cqm_mbm_local",
+                "cqm_mbm_total",
+                "cqm_occup_llc",
+                "cr8_legacy",
+                "cx16",
+                "cx8",
+                "dbx",
+                "de",
+                "decodeassists",
+                "erms",
+                "extapic",
+                "extd_apicid",
+                "f16c",
+                "flush_l1d",
+                "flushbyasid",
+                "fma",
+                "fpu",
+                "fsgsbase",
+                "fsrm",
+                "fxsr",
+                "fxsr_opt",
+                "gfni",
+                "ht",
+                "hw_pstate",
+                "ibpb",
+                "ibrs",
+                "ibrs_enhanced",
+                "ibs",
+                "invpcid",
+                "irperf",
+                "lahf_lm",
+                "lbrv",
+                "lm",
+                "mba",
+                "mca",
+                "mce",
+                "misalignsse",
+                "mmx",
+                "mmxext",
+                "monitor",
+                "movbe",
+                "msr",
+                "mtrr",
+                "mwaitx",
+                "nonstop_tsc",
+                "nopl",
+                "npt",
+                "nrip_save",
+                "nx",
+                "ospke",
+                "osvw",
+                "osxsave",
+                "overflow_recov",
+                "pae",
+                "pat",
+                "pausefilter",
+                "pci_l2i",
+                "pclmulqdq",
+                "pdpe1gb",
+                "perfctr_core",
+                "perfctr_llc",
+                "perfctr_nb",
+                "perfmon_v2",
+                "pfthreshold",
+                "pge",
+                "pku",
+                "pni",
+                "popcnt",
+                "pqe",
+                "pqm",
+                "pse",
+                "pse36",
+                "rapl",
+                "rdpid",
+                "rdpru",
+                "rdrand",
+                "rdrnd",
+                "rdseed",
+                "rdt_a",
+                "rdtscp",
+                "rep_good",
+                "sep",
+                "sha",
+                "sha_ni",
+                "skinit",
+                "smap",
+                "smca",
+                "smep",
+                "ssbd",
+                "sse",
+                "sse2",
+                "sse4_1",
+                "sse4_2",
+                "sse4a",
+                "ssse3",
+                "stibp",
+                "succor",
+                "svm",
+                "svm_lock",
+                "syscall",
+                "tce",
+                "topoext",
+                "tsc",
+                "tsc_scale",
+                "umip",
+                "user_shstk",
+                "v_spec_ctrl",
+                "v_vmsave_vmload",
+                "vaes",
+                "vgif",
+                "vmcb_clean",
+                "vme",
+                "vmmcall",
+                "vnmi",
+                "vpclmulqdq",
+                "wbnoinvd",
+                "wdt",
+                "x2apic",
+                "x2avic",
+                "xgetbv1",
+                "xsave",
+                "xsavec",
+                "xsaveerptr",
+                "xsaveopt",
+                "xsaves"
+            ],
+            "l3_cache_size": 1048576,
+            "l2_cache_size": 8388608,
+            "l1_data_cache_size": 262144,
+            "l1_instruction_cache_size": 262144,
+            "l2_cache_line_size": 1024,
+            "l2_cache_associativity": 6
+        }
+    },
+    "commit_info": {
+        "id": "350afb0d8ec5a605f9d71bd379c6c74aa229cb4d",
+        "time": "2024-12-03T20:32:03-06:00",
+        "author_time": "2024-12-03T20:32:03-06:00",
+        "dirty": true,
+        "project": "titiler-cmr",
+        "branch": "feat/test-performance"
+    },
+    "benchmarks": [
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-10-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-10-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "512x512-10-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 4096.0,
+                "num_timepoints": 10,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.6762641500008613,
+                "max": 4.649988670998937,
+                "mean": 3.472775580332988,
+                "stddev": 1.0404794264342603,
+                "rounds": 3,
+                "median": 3.092073919999166,
+                "iqr": 1.4802933907485567,
+                "q1": 2.7802165925004374,
+                "q3": 4.260509983248994,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.6762641500008613,
+                "hd15iqr": 4.649988670998937,
+                "ops": 0.2879541095782857,
+                "total": 10.418326740998964,
+                "data": [
+                    4.649988670998937,
+                    2.6762641500008613,
+                    3.092073919999166
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-10-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-10-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "512x512-10-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 16384.0,
+                "num_timepoints": 10,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.7044744179984264,
+                "max": 2.983990239999912,
+                "mean": 2.8398957056657914,
+                "stddev": 0.13995961057783177,
+                "rounds": 3,
+                "median": 2.8312224589990365,
+                "iqr": 0.20963686650111413,
+                "q1": 2.736161428248579,
+                "q3": 2.945798294749693,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.7044744179984264,
+                "hd15iqr": 2.983990239999912,
+                "ops": 0.35212560729076414,
+                "total": 8.519687116997375,
+                "data": [
+                    2.983990239999912,
+                    2.7044744179984264,
+                    2.8312224589990365
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-10-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-10-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "512x512-10-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 64800.0,
+                "num_timepoints": 10,
+                "response_size": 1928,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.764505564000501,
+                "max": 3.658181793998665,
+                "mean": 3.1539429730000847,
+                "stddev": 0.4577650316086357,
+                "rounds": 3,
+                "median": 3.039141561001088,
+                "iqr": 0.6702571724986228,
+                "q1": 2.833164563250648,
+                "q3": 3.5034217357492707,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.764505564000501,
+                "hd15iqr": 3.658181793998665,
+                "ops": 0.31706343727857034,
+                "total": 9.461828919000254,
+                "data": [
+                    2.764505564000501,
+                    3.039141561001088,
+                    3.658181793998665
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-100-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-100-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "512x512-100-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 4096.0,
+                "num_timepoints": 100,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.781098633000511,
+                "max": 13.046704094000233,
+                "mean": 8.207920769666694,
+                "stddev": 4.309905359266763,
+                "rounds": 3,
+                "median": 6.795959581999341,
+                "iqr": 6.199204095749792,
+                "q1": 5.284813870250218,
+                "q3": 11.48401796600001,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 4.781098633000511,
+                "hd15iqr": 13.046704094000233,
+                "ops": 0.12183353471144773,
+                "total": 24.623762309000085,
+                "data": [
+                    6.795959581999341,
+                    13.046704094000233,
+                    4.781098633000511
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-100-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-100-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "512x512-100-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 16384.0,
+                "num_timepoints": 100,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.84463229100038,
+                "max": 5.137971834999917,
+                "mean": 4.964175373333394,
+                "stddev": 0.15401166804918737,
+                "rounds": 3,
+                "median": 4.9099219939998875,
+                "iqr": 0.2200046579996524,
+                "q1": 4.860954716750257,
+                "q3": 5.080959374749909,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 4.84463229100038,
+                "hd15iqr": 5.137971834999917,
+                "ops": 0.20144332639249807,
+                "total": 14.892526120000184,
+                "data": [
+                    4.84463229100038,
+                    5.137971834999917,
+                    4.9099219939998875
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-100-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-100-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "512x512-100-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 64800.0,
+                "num_timepoints": 100,
+                "response_size": 1928,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.175636752999708,
+                "max": 7.0353086670002085,
+                "mean": 6.558348499333685,
+                "stddev": 0.4375168838148752,
+                "rounds": 3,
+                "median": 6.464100078001138,
+                "iqr": 0.6447539355003755,
+                "q1": 6.247752584250065,
+                "q3": 6.892506519750441,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 6.175636752999708,
+                "hd15iqr": 7.0353086670002085,
+                "ops": 0.1524774110588356,
+                "total": 19.675045498001055,
+                "data": [
+                    7.0353086670002085,
+                    6.464100078001138,
+                    6.175636752999708
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-500-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-500-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "512x512-500-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 4096.0,
+                "num_timepoints": 500,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 24.440546390000236,
+                "max": 26.00800628899924,
+                "mean": 25.349606727333594,
+                "stddev": 0.8132378201278186,
+                "rounds": 3,
+                "median": 25.600267503001305,
+                "iqr": 1.1755949242492534,
+                "q1": 24.730476668250503,
+                "q3": 25.906071592499757,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 24.440546390000236,
+                "hd15iqr": 26.00800628899924,
+                "ops": 0.03944834374577239,
+                "total": 76.04882018200078,
+                "data": [
+                    26.00800628899924,
+                    25.600267503001305,
+                    24.440546390000236
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-500-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-500-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "512x512-500-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 16384.0,
+                "num_timepoints": 500,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 14.173709524000515,
+                "max": 29.252816469001118,
+                "mean": 22.216120624667383,
+                "stddev": 7.589694588539599,
+                "rounds": 3,
+                "median": 23.221835881000516,
+                "iqr": 11.309330208750453,
+                "q1": 16.435741113250515,
+                "q3": 27.745071322000967,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 14.173709524000515,
+                "hd15iqr": 29.252816469001118,
+                "ops": 0.04501235912851782,
+                "total": 66.64836187400215,
+                "data": [
+                    29.252816469001118,
+                    14.173709524000515,
+                    23.221835881000516
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-500-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-500-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "512x512-500-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 64800.0,
+                "num_timepoints": 500,
+                "response_size": 1928,
+                "error_count": 2,
+                "success_count": 3,
+                "error_rate": 0.4
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 21.42440607699973,
+                "max": 30.383921959000872,
+                "mean": 27.01032454133383,
+                "stddev": 4.872268929369786,
+                "rounds": 3,
+                "median": 29.222645588000887,
+                "iqr": 6.7196369115008565,
+                "q1": 23.37396595475002,
+                "q3": 30.093602866250876,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 21.42440607699973,
+                "hd15iqr": 30.383921959000872,
+                "ops": 0.037022879842472926,
+                "total": 81.03097362400149,
+                "data": [
+                    30.383921959000872,
+                    29.222645588000887,
+                    21.42440607699973
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-750-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-750-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 750,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "512x512-750-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 4096.0,
+                "num_timepoints": 750,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 15.459587037003075,
+                "max": 17.76094712000122,
+                "mean": 16.368371570334904,
+                "stddev": 1.2245835490152441,
+                "rounds": 3,
+                "median": 15.884580554000422,
+                "iqr": 1.7260200622486082,
+                "q1": 15.565835416252412,
+                "q3": 17.29185547850102,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 15.459587037003075,
+                "hd15iqr": 17.76094712000122,
+                "ops": 0.061093432275959716,
+                "total": 49.10511471100472,
+                "data": [
+                    17.76094712000122,
+                    15.884580554000422,
+                    15.459587037003075
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-750-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-750-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 750,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "512x512-750-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 16384.0,
+                "num_timepoints": 750,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 18.420638723000593,
+                "max": 20.130349731000024,
+                "mean": 19.103125923332602,
+                "stddev": 0.9054890551776175,
+                "rounds": 3,
+                "median": 18.758389315997192,
+                "iqr": 1.2822832559995732,
+                "q1": 18.505076371249743,
+                "q3": 19.787359627249316,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 18.420638723000593,
+                "hd15iqr": 20.130349731000024,
+                "ops": 0.052347453710630557,
+                "total": 57.30937776999781,
+                "data": [
+                    20.130349731000024,
+                    18.758389315997192,
+                    18.420638723000593
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-750-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-750-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 750,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "512x512-750-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 64800.0,
+                "num_timepoints": 750,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 30.361974686002213,
+                "max": 30.429522341997654,
+                "mean": 30.388053610666248,
+                "stddev": 0.0363084848150388,
+                "rounds": 3,
+                "median": 30.372663803998876,
+                "iqr": 0.05066074199658033,
+                "q1": 30.36464696550138,
+                "q3": 30.41530770749796,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 30.361974686002213,
+                "hd15iqr": 30.429522341997654,
+                "ops": 0.03290766867835848,
+                "total": 91.16416083199874,
+                "data": [
+                    30.361974686002213,
+                    30.372663803998876,
+                    30.429522341997654
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-1000-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-1000-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "512x512-1000-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 4096.0,
+                "num_timepoints": 1000,
+                "response_size": 0,
+                "error_count": 2,
+                "success_count": 3,
+                "error_rate": 0.4
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 20.485480123999878,
+                "max": 20.725629796001158,
+                "mean": 20.599819303332577,
+                "stddev": 0.1204851007918329,
+                "rounds": 3,
+                "median": 20.58834798999669,
+                "iqr": 0.1801122540009601,
+                "q1": 20.51119709049908,
+                "q3": 20.69130934450004,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 20.485480123999878,
+                "hd15iqr": 20.725629796001158,
+                "ops": 0.04854411513397222,
+                "total": 61.79945790999773,
+                "data": [
+                    20.725629796001158,
+                    20.58834798999669,
+                    20.485480123999878
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-1000-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-1000-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "512x512-1000-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 16384.0,
+                "num_timepoints": 1000,
+                "response_size": 945,
+                "error_count": 2,
+                "success_count": 3,
+                "error_rate": 0.4
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 20.53080041499925,
+                "max": 24.361714484002732,
+                "mean": 21.836240904334165,
+                "stddev": 2.1875411326770546,
+                "rounds": 3,
+                "median": 20.616207814000518,
+                "iqr": 2.873185551752613,
+                "q1": 20.552152264749566,
+                "q3": 23.42533781650218,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 20.53080041499925,
+                "hd15iqr": 24.361714484002732,
+                "ops": 0.045795428085862296,
+                "total": 65.5087227130025,
+                "data": [
+                    20.616207814000518,
+                    20.53080041499925,
+                    24.361714484002732
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[512x512-1000-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[512x512-1000-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "512x512",
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "512x512-1000-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 262144,
+                "bbox_size": 64800.0,
+                "num_timepoints": 1000,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 18.803244327002176,
+                "max": 20.785655646999658,
+                "mean": 19.606433276000946,
+                "stddev": 1.043330969184409,
+                "rounds": 3,
+                "median": 19.230399854001007,
+                "iqr": 1.4868084899981113,
+                "q1": 18.910033208751884,
+                "q3": 20.396841698749995,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 18.803244327002176,
+                "hd15iqr": 20.785655646999658,
+                "ops": 0.05100366731281205,
+                "total": 58.81929982800284,
+                "data": [
+                    19.230399854001007,
+                    18.803244327002176,
+                    20.785655646999658
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-10-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-10-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1024x1024-10-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 4096.0,
+                "num_timepoints": 10,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.438155875002849,
+                "max": 2.8074731580018124,
+                "mean": 2.6708373036684256,
+                "stddev": 0.20252747503001722,
+                "rounds": 3,
+                "median": 2.766882878000615,
+                "iqr": 0.2769879622492226,
+                "q1": 2.5203376257522905,
+                "q3": 2.797325588001513,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.438155875002849,
+                "hd15iqr": 2.8074731580018124,
+                "ops": 0.37441442001221437,
+                "total": 8.012511911005276,
+                "data": [
+                    2.438155875002849,
+                    2.8074731580018124,
+                    2.766882878000615
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-10-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-10-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1024x1024-10-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 16384.0,
+                "num_timepoints": 10,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.3593914699995366,
+                "max": 3.2470585080009187,
+                "mean": 2.723805594334408,
+                "stddev": 0.46466171924938304,
+                "rounds": 3,
+                "median": 2.5649668050027685,
+                "iqr": 0.6657502785010365,
+                "q1": 2.4107853037503446,
+                "q3": 3.076535582251381,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.3593914699995366,
+                "hd15iqr": 3.2470585080009187,
+                "ops": 0.3671333967739945,
+                "total": 8.171416783003224,
+                "data": [
+                    2.5649668050027685,
+                    3.2470585080009187,
+                    2.3593914699995366
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-10-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-10-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1024x1024-10-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 64800.0,
+                "num_timepoints": 10,
+                "response_size": 1928,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.7934867390031286,
+                "max": 2.867987539000751,
+                "mean": 2.8282046246689183,
+                "stddev": 0.03750777501548596,
+                "rounds": 3,
+                "median": 2.823139596002875,
+                "iqr": 0.055875599998216785,
+                "q1": 2.800899953253065,
+                "q3": 2.856775553251282,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.7934867390031286,
+                "hd15iqr": 2.867987539000751,
+                "ops": 0.35358120529099424,
+                "total": 8.484613874006754,
+                "data": [
+                    2.7934867390031286,
+                    2.867987539000751,
+                    2.823139596002875
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-100-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-100-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1024x1024-100-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 4096.0,
+                "num_timepoints": 100,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.111528034998628,
+                "max": 5.625072792998253,
+                "mean": 4.6188509229990204,
+                "stddev": 0.8714238803800621,
+                "rounds": 3,
+                "median": 4.119951941000181,
+                "iqr": 1.135158568499719,
+                "q1": 4.113634011499016,
+                "q3": 5.248792579998735,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 4.111528034998628,
+                "hd15iqr": 5.625072792998253,
+                "ops": 0.21650406490077836,
+                "total": 13.856552768997062,
+                "data": [
+                    5.625072792998253,
+                    4.119951941000181,
+                    4.111528034998628
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-100-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-100-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1024x1024-100-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 16384.0,
+                "num_timepoints": 100,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.679930856000283,
+                "max": 14.01814330200068,
+                "mean": 7.988053059332742,
+                "stddev": 5.230428799537573,
+                "rounds": 3,
+                "median": 5.266085019997263,
+                "iqr": 7.003659334500298,
+                "q1": 4.826469396999528,
+                "q3": 11.830128731499826,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 4.679930856000283,
+                "hd15iqr": 14.01814330200068,
+                "ops": 0.12518695013319453,
+                "total": 23.964159177998226,
+                "data": [
+                    4.679930856000283,
+                    14.01814330200068,
+                    5.266085019997263
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-100-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-100-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1024x1024-100-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 64800.0,
+                "num_timepoints": 100,
+                "response_size": 1928,
+                "error_count": 3,
+                "success_count": 2,
+                "error_rate": 0.6
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 27.50316549800118,
+                "max": 30.36109884799953,
+                "mean": 29.40559776666608,
+                "stddev": 1.647560245761566,
+                "rounds": 3,
+                "median": 30.352528953997535,
+                "iqr": 2.1434500124987608,
+                "q1": 28.21550636200027,
+                "q3": 30.35895637449903,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 27.50316549800118,
+                "hd15iqr": 30.36109884799953,
+                "ops": 0.03400713047682339,
+                "total": 88.21679329999824,
+                "data": [
+                    27.50316549800118,
+                    30.352528953997535,
+                    30.36109884799953
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-500-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-500-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1024x1024-500-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 4096.0,
+                "num_timepoints": 500,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 11.777798889001133,
+                "max": 13.834448600999167,
+                "mean": 12.888307370999732,
+                "stddev": 1.0381302686140677,
+                "rounds": 3,
+                "median": 13.052674622998893,
+                "iqr": 1.5424872839985255,
+                "q1": 12.096517822500573,
+                "q3": 13.639005106499098,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 11.777798889001133,
+                "hd15iqr": 13.834448600999167,
+                "ops": 0.07758970757091986,
+                "total": 38.66492211299919,
+                "data": [
+                    11.777798889001133,
+                    13.834448600999167,
+                    13.052674622998893
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-500-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-500-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1024x1024-500-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 16384.0,
+                "num_timepoints": 500,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 13.617231740001444,
+                "max": 14.10073061300136,
+                "mean": 13.80738402233328,
+                "stddev": 0.2577393819399627,
+                "rounds": 3,
+                "median": 13.704189713997039,
+                "iqr": 0.3626241547499376,
+                "q1": 13.638971233500342,
+                "q3": 14.00159538825028,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 13.617231740001444,
+                "hd15iqr": 14.10073061300136,
+                "ops": 0.0724250153673217,
+                "total": 41.42215206699984,
+                "data": [
+                    13.704189713997039,
+                    13.617231740001444,
+                    14.10073061300136
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-500-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-500-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1024x1024-500-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 64800.0,
+                "num_timepoints": 500,
+                "response_size": 1928,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 21.032258834999084,
+                "max": 21.682508312998834,
+                "mean": 21.307210980332457,
+                "stddev": 0.3365382049268833,
+                "rounds": 3,
+                "median": 21.20686579299945,
+                "iqr": 0.4876871084998129,
+                "q1": 21.075910574499176,
+                "q3": 21.56359768299899,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 21.032258834999084,
+                "hd15iqr": 21.682508312998834,
+                "ops": 0.04693246811715744,
+                "total": 63.92163294099737,
+                "data": [
+                    21.682508312998834,
+                    21.20686579299945,
+                    21.032258834999084
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-750-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-750-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 750,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1024x1024-750-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 4096.0,
+                "num_timepoints": 750,
+                "response_size": 490,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 15.88716464600293,
+                "max": 17.946963080001296,
+                "mean": 16.621689549335617,
+                "stddev": 1.1499697181653914,
+                "rounds": 3,
+                "median": 16.030940922002628,
+                "iqr": 1.5448488254987751,
+                "q1": 15.923108715002854,
+                "q3": 17.46795754050163,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 15.88716464600293,
+                "hd15iqr": 17.946963080001296,
+                "ops": 0.06016235576003588,
+                "total": 49.865068648006854,
+                "data": [
+                    17.946963080001296,
+                    15.88716464600293,
+                    16.030940922002628
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-750-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-750-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 750,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1024x1024-750-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 16384.0,
+                "num_timepoints": 750,
+                "response_size": 945,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 18.973080087002018,
+                "max": 26.642350032998365,
+                "mean": 22.548190326334105,
+                "stddev": 3.8608916895315866,
+                "rounds": 3,
+                "median": 22.029140859001927,
+                "iqr": 5.751952459497261,
+                "q1": 19.737095280001995,
+                "q3": 25.489047739499256,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 18.973080087002018,
+                "hd15iqr": 26.642350032998365,
+                "ops": 0.0443494571194965,
+                "total": 67.64457097900231,
+                "data": [
+                    26.642350032998365,
+                    18.973080087002018,
+                    22.029140859001927
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-750-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-750-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 750,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1024x1024-750-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 64800.0,
+                "num_timepoints": 750,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 30.363313828001992,
+                "max": 30.387318707002123,
+                "mean": 30.375079211001623,
+                "stddev": 0.012009460491875835,
+                "rounds": 3,
+                "median": 30.374605098000757,
+                "iqr": 0.01800365925009828,
+                "q1": 30.366136645501683,
+                "q3": 30.38414030475178,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 30.363313828001992,
+                "hd15iqr": 30.387318707002123,
+                "ops": 0.03292172484731522,
+                "total": 91.12523763300487,
+                "data": [
+                    30.374605098000757,
+                    30.387318707002123,
+                    30.363313828001992
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-1000-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-1000-GAMSSA-64x64]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1024x1024-1000-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 4096.0,
+                "num_timepoints": 1000,
+                "response_size": 490,
+                "error_count": 3,
+                "success_count": 2,
+                "error_rate": 0.6
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 20.570996733000356,
+                "max": 29.91171887499877,
+                "mean": 25.13528587066685,
+                "stddev": 4.673973288180804,
+                "rounds": 3,
+                "median": 24.92314200400142,
+                "iqr": 7.005541606498809,
+                "q1": 21.659033050750622,
+                "q3": 28.66457465724943,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 20.570996733000356,
+                "hd15iqr": 29.91171887499877,
+                "ops": 0.03978470764746745,
+                "total": 75.40585761200055,
+                "data": [
+                    24.92314200400142,
+                    20.570996733000356,
+                    29.91171887499877
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-1000-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-1000-GAMSSA-128x128]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1024x1024-1000-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 16384.0,
+                "num_timepoints": 1000,
+                "response_size": 0,
+                "error_count": 3,
+                "success_count": 2,
+                "error_rate": 0.6
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 18.906731181003124,
+                "max": 28.23193648799861,
+                "mean": 22.539321441334323,
+                "stddev": 4.992258015631224,
+                "rounds": 3,
+                "median": 20.479296655001235,
+                "iqr": 6.993903980246614,
+                "q1": 19.299872549502652,
+                "q3": 26.293776529749266,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 18.906731181003124,
+                "hd15iqr": 28.23193648799861,
+                "ops": 0.04436690796583272,
+                "total": 67.61796432400297,
+                "data": [
+                    28.23193648799861,
+                    20.479296655001235,
+                    18.906731181003124
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "gif-timepoints",
+            "name": "test_bbox[1024x1024-1000-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_bbox[1024x1024-1000-GAMSSA-360x180]",
+            "params": {
+                "img_dims": "1024x1024",
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1024x1024-1000-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "img_size": 1048576,
+                "bbox_size": 64800.0,
+                "num_timepoints": 1000,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 21.644997601997602,
+                "max": 30.44292464799946,
+                "mean": 26.344297563999135,
+                "stddev": 4.429614656656653,
+                "rounds": 3,
+                "median": 26.94497044200034,
+                "iqr": 6.598445284501395,
+                "q1": 22.969990811998287,
+                "q3": 29.56843609649968,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 21.644997601997602,
+                "hd15iqr": 30.44292464799946,
+                "ops": 0.03795887886441704,
+                "total": 79.0328926919974,
+                "data": [
+                    26.94497044200034,
+                    30.44292464799946,
+                    21.644997601997602
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[10-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[10-GAMSSA-64x64]",
+            "params": {
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "10-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 4096.0,
+                "num_timepoints": 10,
+                "response_size": 7196,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.537828566000826,
+                "max": 2.7796284629985166,
+                "mean": 2.694152645332603,
+                "stddev": 0.13557803908756547,
+                "rounds": 3,
+                "median": 2.7650009069984662,
+                "iqr": 0.181349922748268,
+                "q1": 2.594621651250236,
+                "q3": 2.775971573998504,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.537828566000826,
+                "hd15iqr": 2.7796284629985166,
+                "ops": 0.3711742175160036,
+                "total": 8.082457935997809,
+                "data": [
+                    2.7796284629985166,
+                    2.7650009069984662,
+                    2.537828566000826
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[10-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[10-GAMSSA-128x128]",
+            "params": {
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "10-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 16384.0,
+                "num_timepoints": 10,
+                "response_size": 6984,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.7888811039993016,
+                "max": 2.8616662499989616,
+                "mean": 2.831521455666613,
+                "stddev": 0.03796740160165644,
+                "rounds": 3,
+                "median": 2.844017013001576,
+                "iqr": 0.05458885949974501,
+                "q1": 2.80266508124987,
+                "q3": 2.857253940749615,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 2.7888811039993016,
+                "hd15iqr": 2.8616662499989616,
+                "ops": 0.3531670219198725,
+                "total": 8.494564366999839,
+                "data": [
+                    2.8616662499989616,
+                    2.844017013001576,
+                    2.7888811039993016
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[10-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[10-GAMSSA-360x180]",
+            "params": {
+                "num_timepoints": 10,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "10-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 64800.0,
+                "num_timepoints": 10,
+                "response_size": 6963,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 3.512173333001556,
+                "max": 3.695781206999527,
+                "mean": 3.6270546523337543,
+                "stddev": 0.10012821567656928,
+                "rounds": 3,
+                "median": 3.67320941700018,
+                "iqr": 0.1377059054984784,
+                "q1": 3.552432354001212,
+                "q3": 3.6901382594996903,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 3.512173333001556,
+                "hd15iqr": 3.695781206999527,
+                "ops": 0.27570579874129286,
+                "total": 10.881163957001263,
+                "data": [
+                    3.695781206999527,
+                    3.67320941700018,
+                    3.512173333001556
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[100-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[100-GAMSSA-64x64]",
+            "params": {
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "100-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 4096.0,
+                "num_timepoints": 100,
+                "response_size": 61768,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.320701942000596,
+                "max": 5.76642917099889,
+                "mean": 4.869768751332837,
+                "stddev": 0.783037542922076,
+                "rounds": 3,
+                "median": 4.522175140999025,
+                "iqr": 1.0842954217487204,
+                "q1": 4.371070241750203,
+                "q3": 5.455365663498924,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 4.320701942000596,
+                "hd15iqr": 5.76642917099889,
+                "ops": 0.20534855987284895,
+                "total": 14.609306253998511,
+                "data": [
+                    4.320701942000596,
+                    5.76642917099889,
+                    4.522175140999025
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[100-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[100-GAMSSA-128x128]",
+            "params": {
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "100-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 16384.0,
+                "num_timepoints": 100,
+                "response_size": 62767,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.649883670001145,
+                "max": 5.501263178000954,
+                "mean": 5.051295679999991,
+                "stddev": 0.4277616079334868,
+                "rounds": 3,
+                "median": 5.002740191997873,
+                "iqr": 0.6385346309998567,
+                "q1": 4.738097800500327,
+                "q3": 5.376632431500184,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 4.649883670001145,
+                "hd15iqr": 5.501263178000954,
+                "ops": 0.1979690090127533,
+                "total": 15.153887039999972,
+                "data": [
+                    5.501263178000954,
+                    5.002740191997873,
+                    4.649883670001145
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[100-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[100-GAMSSA-360x180]",
+            "params": {
+                "num_timepoints": 100,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "100-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 64800.0,
+                "num_timepoints": 100,
+                "response_size": 62527,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.757599207001476,
+                "max": 6.244481890000316,
+                "mean": 6.070776111334756,
+                "stddev": 0.27175877708420554,
+                "rounds": 3,
+                "median": 6.210247237002477,
+                "iqr": 0.3651620122491295,
+                "q1": 5.8707612145017265,
+                "q3": 6.235923226750856,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 5.757599207001476,
+                "hd15iqr": 6.244481890000316,
+                "ops": 0.1647235842107401,
+                "total": 18.21232833400427,
+                "data": [
+                    6.244481890000316,
+                    5.757599207001476,
+                    6.210247237002477
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[500-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[500-GAMSSA-64x64]",
+            "params": {
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "500-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 4096.0,
+                "num_timepoints": 500,
+                "response_size": 306663,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 11.4477430620027,
+                "max": 12.744465887000842,
+                "mean": 11.923014582001391,
+                "stddev": 0.7143198540396106,
+                "rounds": 3,
+                "median": 11.576834797000629,
+                "iqr": 0.9725421187486063,
+                "q1": 11.480015995752183,
+                "q3": 12.452558114500789,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 11.4477430620027,
+                "hd15iqr": 12.744465887000842,
+                "ops": 0.08387140627250164,
+                "total": 35.76904374600417,
+                "data": [
+                    11.4477430620027,
+                    11.576834797000629,
+                    12.744465887000842
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[500-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[500-GAMSSA-128x128]",
+            "params": {
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "500-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 16384.0,
+                "num_timepoints": 500,
+                "response_size": 308446,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 11.493099167000764,
+                "max": 15.819099819000257,
+                "mean": 13.03108136233277,
+                "stddev": 2.4187834548105376,
+                "rounds": 3,
+                "median": 11.78104510099729,
+                "iqr": 3.24450048899962,
+                "q1": 11.565085650499896,
+                "q3": 14.809586139499515,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 11.493099167000764,
+                "hd15iqr": 15.819099819000257,
+                "ops": 0.0767396022014388,
+                "total": 39.09324408699831,
+                "data": [
+                    11.493099167000764,
+                    11.78104510099729,
+                    15.819099819000257
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[500-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[500-GAMSSA-360x180]",
+            "params": {
+                "num_timepoints": 500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "500-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 64800.0,
+                "num_timepoints": 500,
+                "response_size": 309160,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 12.327743481997459,
+                "max": 16.476221376997273,
+                "mean": 13.793827778998093,
+                "stddev": 2.3263756034005345,
+                "rounds": 3,
+                "median": 12.577518477999547,
+                "iqr": 3.111358421249861,
+                "q1": 12.39018723099798,
+                "q3": 15.501545652247842,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 12.327743481997459,
+                "hd15iqr": 16.476221376997273,
+                "ops": 0.07249619293656531,
+                "total": 41.38148333699428,
+                "data": [
+                    12.577518477999547,
+                    12.327743481997459,
+                    16.476221376997273
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[1000-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[1000-GAMSSA-64x64]",
+            "params": {
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1000-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 4096.0,
+                "num_timepoints": 1000,
+                "response_size": 613062,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 20.52493907200187,
+                "max": 21.493509643001744,
+                "mean": 20.864558685001004,
+                "stddev": 0.5452675564822126,
+                "rounds": 3,
+                "median": 20.5752273399994,
+                "iqr": 0.7264279282499047,
+                "q1": 20.537511139001253,
+                "q3": 21.263939067251158,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 20.52493907200187,
+                "hd15iqr": 21.493509643001744,
+                "ops": 0.0479281644580805,
+                "total": 62.593676055003016,
+                "data": [
+                    21.493509643001744,
+                    20.52493907200187,
+                    20.5752273399994
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[1000-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[1000-GAMSSA-128x128]",
+            "params": {
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1000-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 16384.0,
+                "num_timepoints": 1000,
+                "response_size": 615452,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 21.411222347000148,
+                "max": 22.50727820099928,
+                "mean": 21.81581899533315,
+                "stddev": 0.6017077395806193,
+                "rounds": 3,
+                "median": 21.528956438000023,
+                "iqr": 0.8220418904993494,
+                "q1": 21.440655869750117,
+                "q3": 22.262697760249466,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 21.411222347000148,
+                "hd15iqr": 22.50727820099928,
+                "ops": 0.04583829743975784,
+                "total": 65.44745698599945,
+                "data": [
+                    22.50727820099928,
+                    21.411222347000148,
+                    21.528956438000023
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[1000-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[1000-GAMSSA-360x180]",
+            "params": {
+                "num_timepoints": 1000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1000-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 64800.0,
+                "num_timepoints": 1000,
+                "response_size": 617102,
+                "error_count": 0,
+                "success_count": 5,
+                "error_rate": 0.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 20.8096047479994,
+                "max": 21.34950111299986,
+                "mean": 21.138867514332862,
+                "stddev": 0.2888367718991227,
+                "rounds": 3,
+                "median": 21.257496681999328,
+                "iqr": 0.4049222737503442,
+                "q1": 20.921577731499383,
+                "q3": 21.326500005249727,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 20.8096047479994,
+                "hd15iqr": 21.34950111299986,
+                "ops": 0.04730622391771775,
+                "total": 63.41660254299859,
+                "data": [
+                    20.8096047479994,
+                    21.257496681999328,
+                    21.34950111299986
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[1500-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[1500-GAMSSA-64x64]",
+            "params": {
+                "num_timepoints": 1500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "1500-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 4096.0,
+                "num_timepoints": 1500,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 17.30181671399987,
+                "max": 18.128926419998606,
+                "mean": 17.783655005332548,
+                "stddev": 0.43013428169722323,
+                "rounds": 3,
+                "median": 17.92022188199917,
+                "iqr": 0.6203322794990527,
+                "q1": 17.456418005999694,
+                "q3": 18.076750285498747,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 17.30181671399987,
+                "hd15iqr": 18.128926419998606,
+                "ops": 0.056231410230357215,
+                "total": 53.350965015997645,
+                "data": [
+                    17.30181671399987,
+                    18.128926419998606,
+                    17.92022188199917
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[1500-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[1500-GAMSSA-128x128]",
+            "params": {
+                "num_timepoints": 1500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "1500-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 16384.0,
+                "num_timepoints": 1500,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 16.54378193299999,
+                "max": 18.23207606000142,
+                "mean": 17.44978994700068,
+                "stddev": 0.8509198531043681,
+                "rounds": 3,
+                "median": 17.573511848000635,
+                "iqr": 1.2662205952510703,
+                "q1": 16.801214411750152,
+                "q3": 18.067435007001222,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 16.54378193299999,
+                "hd15iqr": 18.23207606000142,
+                "ops": 0.05730728008974588,
+                "total": 52.349369841002044,
+                "data": [
+                    18.23207606000142,
+                    16.54378193299999,
+                    17.573511848000635
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[1500-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[1500-GAMSSA-360x180]",
+            "params": {
+                "num_timepoints": 1500,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "1500-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 64800.0,
+                "num_timepoints": 1500,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 17.811338766998233,
+                "max": 19.431254936000187,
+                "mean": 18.42617586066505,
+                "stddev": 0.8776381383239933,
+                "rounds": 3,
+                "median": 18.03593387899673,
+                "iqr": 1.2149371267514653,
+                "q1": 17.867487544997857,
+                "q3": 19.082424671749322,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 17.811338766998233,
+                "hd15iqr": 19.431254936000187,
+                "ops": 0.05427062064108116,
+                "total": 55.27852758199515,
+                "data": [
+                    18.03593387899673,
+                    17.811338766998233,
+                    19.431254936000187
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[2000-GAMSSA-64x64]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[2000-GAMSSA-64x64]",
+            "params": {
+                "num_timepoints": 2000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "64x64"
+            },
+            "param": "2000-GAMSSA-64x64",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 4096.0,
+                "num_timepoints": 2000,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 26.2766561440003,
+                "max": 26.619563686999754,
+                "mean": 26.40603413200006,
+                "stddev": 0.18629951806939626,
+                "rounds": 3,
+                "median": 26.321882565000124,
+                "iqr": 0.2571806572495916,
+                "q1": 26.287962749250255,
+                "q3": 26.545143406499847,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 26.2766561440003,
+                "hd15iqr": 26.619563686999754,
+                "ops": 0.037870132069099824,
+                "total": 79.21810239600018,
+                "data": [
+                    26.2766561440003,
+                    26.321882565000124,
+                    26.619563686999754
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[2000-GAMSSA-128x128]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[2000-GAMSSA-128x128]",
+            "params": {
+                "num_timepoints": 2000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "128x128"
+            },
+            "param": "2000-GAMSSA-128x128",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 16384.0,
+                "num_timepoints": 2000,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 26.195893177999096,
+                "max": 27.021796289998747,
+                "mean": 26.481817540998843,
+                "stddev": 0.4679067331072669,
+                "rounds": 3,
+                "median": 26.227763154998684,
+                "iqr": 0.619427333999738,
+                "q1": 26.203860672248993,
+                "q3": 26.82328800624873,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 26.195893177999096,
+                "hd15iqr": 27.021796289998747,
+                "ops": 0.037761758551950284,
+                "total": 79.44545262299653,
+                "data": [
+                    26.195893177999096,
+                    27.021796289998747,
+                    26.227763154998684
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "statistics",
+            "name": "test_statistics[2000-GAMSSA-360x180]",
+            "fullname": "tests/test_timeseries_benchmark.py::test_statistics[2000-GAMSSA-360x180]",
+            "params": {
+                "num_timepoints": 2000,
+                "concept_config_id": "GAMSSA",
+                "bbox_dims": "360x180"
+            },
+            "param": "2000-GAMSSA-360x180",
+            "extra_info": {
+                "concept_config_id": "GAMSSA",
+                "bbox_size": 64800.0,
+                "num_timepoints": 2000,
+                "response_size": 0,
+                "error_count": 5,
+                "success_count": 0,
+                "error_rate": 1.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 3,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 25.27614361200176,
+                "max": 28.67428267300056,
+                "mean": 26.662976409000596,
+                "stddev": 1.783062702967218,
+                "rounds": 3,
+                "median": 26.038502941999468,
+                "iqr": 2.548604295749101,
+                "q1": 25.466733444501187,
+                "q3": 28.01533774025029,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 25.27614361200176,
+                "hd15iqr": 28.67428267300056,
+                "ops": 0.03750519014307911,
+                "total": 79.98892922700179,
+                "data": [
+                    26.038502941999468,
+                    25.27614361200176,
+                    28.67428267300056
+                ],
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-12-04T18:40:06.865003+00:00",
+    "version": "5.1.0"
+}

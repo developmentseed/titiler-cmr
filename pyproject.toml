@@ -70,6 +70,9 @@ dev = [
     "mkdocs-material>=9.5.47",
     "mike>=2.1.3",
     "ipython==8.28.0",
+    "markdown-callouts>=0.4.0",
+    "pandas>=2.2.3",
+    "plotly>=5.24.1",
 ]
 
 [project.urls]
