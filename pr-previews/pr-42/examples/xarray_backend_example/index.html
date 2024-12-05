@@ -1432,27 +1432,435 @@ display(ds)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">earthaccess</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">get_fsspec_https_session</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> ds <span style="color: rgb(98,98,98)">=</span> xr<span style="color: rgb(98,98,98)">.</span>open_dataset(fs<span style="color: rgb(98,98,98)">.</span>open(results[<span style="color: rgb(98,98,98)">0</span>]<span style="color: rgb(98,98,98)">.</span>data_links(access<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">external</span><span style="color: rgb(175,0,0)">"</span>)[<span style="color: rgb(98,98,98)">0</span>]), engine<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">h5netcdf</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Data Variables:</span><span style="color: rgb(175,0,0)">"</span>)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Data Variables:
+analysed_sst
+analysis_error
+mask
+sea_ice_fraction
+dt_1km_data
+sst_anomaly
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewbox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewbox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/earthaccess/api.py:330</span>, in <span class="ansi-cyan-fg">get_fsspec_https_session</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    314</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">get_fsspec_https_session</span>() <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> AbstractFileSystem:
-<span class="ansi-green-intense-fg ansi-bold">    315</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""Returns a fsspec session that can be used to access datafiles across many different DAACs.</span>
-<span class="ansi-green-intense-fg ansi-bold">    316</span> 
-<span class="ansi-green-intense-fg ansi-bold">    317</span> <span style="color: rgb(175,0,0)">    Returns:</span>
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    328</span> <span style="color: rgb(175,0,0)">        ```</span>
-<span class="ansi-green-intense-fg ansi-bold">    329</span> <span style="color: rgb(175,0,0)">    """</span>
-<span class="ansi-green-fg">--&gt; 330</span>     session <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">earthaccess</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">__store__</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">get_fsspec_session</span>()
-<span class="ansi-green-intense-fg ansi-bold">    331</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> session
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
 
-<span class="ansi-red-fg">AttributeError</span>: 'NoneType' object has no attribute 'get_fsspec_session'</pre>
+html[theme=dark],
+html[data-theme=dark],
+body[data-theme=dark],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1F1F1F;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: inline-block;
+  opacity: 0;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:focus + label {
+  border: 2px solid var(--xr-font-color0);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: '►';
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: '▼';
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: '(';
+}
+
+.xr-dim-list:after {
+  content: ')';
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ',';
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt; Size: 29GB
+Dimensions:           (time: 1, lat: 17999, lon: 36000)
+Coordinates:
+  * time              (time) datetime64[ns] 8B 2024-10-12T09:00:00
+  * lat               (lat) float32 72kB -89.99 -89.98 -89.97 ... 89.98 89.99
+  * lon               (lon) float32 144kB -180.0 -180.0 -180.0 ... 180.0 180.0
+Data variables:
+    analysed_sst      (time, lat, lon) float64 5GB ...
+    analysis_error    (time, lat, lon) float64 5GB ...
+    mask              (time, lat, lon) float32 3GB ...
+    sea_ice_fraction  (time, lat, lon) float64 5GB ...
+    dt_1km_data       (time, lat, lon) timedelta64[ns] 5GB ...
+    sst_anomaly       (time, lat, lon) float64 5GB ...
+Attributes: (12/47)
+    Conventions:                CF-1.7
+    title:                      Daily MUR SST, Final product
+    summary:                    A merged, multi-sensor L4 Foundation SST anal...
+    references:                 http://podaac.jpl.nasa.gov/Multi-scale_Ultra-...
+    institution:                Jet Propulsion Laboratory
+    history:                    created at nominal 4-day latency; replaced nr...
+    ...                         ...
+    project:                    NASA Making Earth Science Data Records for Us...
+    publisher_name:             GHRSST Project Office
+    publisher_url:              http://www.ghrsst.org
+    publisher_email:            ghrsst-po@nceo.ac.uk
+    processing_level:           L4
+    cdm_data_type:              grid</pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input class="xr-section-summary-in" disabled="" id="section-158c96dd-5b1f-4036-ad13-9ba14efdf17b" type="checkbox"/><label class="xr-section-summary" for="section-158c96dd-5b1f-4036-ad13-9ba14efdf17b" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">time</span>: 1</li><li><span class="xr-has-index">lat</span>: 17999</li><li><span class="xr-has-index">lon</span>: 36000</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input checked="" class="xr-section-summary-in" id="section-c07d9f79-8571-4067-b6c5-7cdda20a42c1" type="checkbox"/><label class="xr-section-summary" for="section-c07d9f79-8571-4067-b6c5-7cdda20a42c1">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">time</span></div><div class="xr-var-dims">(time)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2024-10-12T09:00:00</div><input class="xr-var-attrs-in" id="attrs-361c3ace-b687-47e6-ad13-d24696090d07" type="checkbox"/><label for="attrs-361c3ace-b687-47e6-ad13-d24696090d07" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-b513c19d-8aea-4331-97e5-0f098cbb9c2e" type="checkbox"/><label for="data-b513c19d-8aea-4331-97e5-0f098cbb9c2e" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>reference time of sst field</dd><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>axis :</span></dt><dd>T</dd><dt><span>comment :</span></dt><dd>Nominal time of analyzed fields</dd></dl></div><div class="xr-var-data"><pre>array(['2024-10-12T09:00:00.000000000'], dtype='datetime64[ns]')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lat</span></div><div class="xr-var-dims">(lat)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">-89.99 -89.98 ... 89.98 89.99</div><input class="xr-var-attrs-in" id="attrs-484db6e1-1c72-48d1-8232-33843823d132" type="checkbox"/><label for="attrs-484db6e1-1c72-48d1-8232-33843823d132" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-16c4b4f4-f3c8-469a-bde6-c5800cd25f4b" type="checkbox"/><label for="data-16c4b4f4-f3c8-469a-bde6-c5800cd25f4b" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>latitude</dd><dt><span>standard_name :</span></dt><dd>latitude</dd><dt><span>axis :</span></dt><dd>Y</dd><dt><span>units :</span></dt><dd>degrees_north</dd><dt><span>valid_min :</span></dt><dd>-90.0</dd><dt><span>valid_max :</span></dt><dd>90.0</dd><dt><span>comment :</span></dt><dd>geolocations inherited from the input data without correction</dd></dl></div><div class="xr-var-data"><pre>array([-89.99, -89.98, -89.97, ...,  89.97,  89.98,  89.99], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lon</span></div><div class="xr-var-dims">(lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">-180.0 -180.0 ... 180.0 180.0</div><input class="xr-var-attrs-in" id="attrs-86da2ab1-7507-4143-a64c-4ac503e25cad" type="checkbox"/><label for="attrs-86da2ab1-7507-4143-a64c-4ac503e25cad" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-b76983eb-15d4-47ad-b91f-f7330286b737" type="checkbox"/><label for="data-b76983eb-15d4-47ad-b91f-f7330286b737" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>longitude</dd><dt><span>standard_name :</span></dt><dd>longitude</dd><dt><span>axis :</span></dt><dd>X</dd><dt><span>units :</span></dt><dd>degrees_east</dd><dt><span>valid_min :</span></dt><dd>-180.0</dd><dt><span>valid_max :</span></dt><dd>180.0</dd><dt><span>comment :</span></dt><dd>geolocations inherited from the input data without correction</dd></dl></div><div class="xr-var-data"><pre>array([-179.99, -179.98, -179.97, ...,  179.98,  179.99,  180.  ],
+      dtype=float32)</pre></div></li></ul></div></li><li class="xr-section-item"><input checked="" class="xr-section-summary-in" id="section-669b5eb0-88e2-40f8-aeea-5a1df0b75416" type="checkbox"/><label class="xr-section-summary" for="section-669b5eb0-88e2-40f8-aeea-5a1df0b75416">Data variables: <span>(6)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>analysed_sst</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-679107e5-89ab-44e8-926b-8f9470a4d6f0" type="checkbox"/><label for="attrs-679107e5-89ab-44e8-926b-8f9470a4d6f0" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-53a15123-88e2-4479-b6b8-b94e01d88139" type="checkbox"/><label for="data-53a15123-88e2-4479-b6b8-b94e01d88139" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>analysed sea surface temperature</dd><dt><span>standard_name :</span></dt><dd>sea_surface_foundation_temperature</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>-32767</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>"Final" version using Multi-Resolution Variational Analysis (MRVA) method for interpolation</dd><dt><span>source :</span></dt><dd>MODIS_T-JPL, MODIS_A-JPL, AVHRRMTB_G-NAVO, iQUAM-NOAA/NESDIS, Ice_Conc-OSISAF</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>analysis_error</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-5ee10ab4-2cd5-467c-92c3-9bc22553df7d" type="checkbox"/><label for="attrs-5ee10ab4-2cd5-467c-92c3-9bc22553df7d" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-9d791550-d586-46b2-a234-b4748cab4025" type="checkbox"/><label for="data-9d791550-d586-46b2-a234-b4748cab4025" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>estimated error standard deviation of analysed_sst</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>0</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>uncertainty in "analysed_sst"</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>mask</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-3bdbf6e5-31ee-42cd-9904-1b8b89a51166" type="checkbox"/><label for="attrs-3bdbf6e5-31ee-42cd-9904-1b8b89a51166" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-65f9b70d-8567-4344-84b9-52d1dc44af18" type="checkbox"/><label for="data-65f9b70d-8567-4344-84b9-52d1dc44af18" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>sea/land field composite mask</dd><dt><span>valid_min :</span></dt><dd>1</dd><dt><span>valid_max :</span></dt><dd>31</dd><dt><span>flag_masks :</span></dt><dd>[ 1  2  4  8 16]</dd><dt><span>flag_meanings :</span></dt><dd>open_sea land open_lake open_sea_with_ice_in_the_grid open_lake_with_ice_in_the_grid</dd><dt><span>comment :</span></dt><dd>mask can be used to further filter the data.</dd><dt><span>source :</span></dt><dd>GMT "grdlandmask", ice flag from sea_ice_fraction data</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float32]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>sea_ice_fraction</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-af8fdcdc-fded-40ac-8586-2da955afbc0c" type="checkbox"/><label for="attrs-af8fdcdc-fded-40ac-8586-2da955afbc0c" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-8e2b5739-6c1e-481e-be03-83fcf48eda3c" type="checkbox"/><label for="data-8e2b5739-6c1e-481e-be03-83fcf48eda3c" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>sea ice area fraction</dd><dt><span>standard_name :</span></dt><dd>sea_ice_area_fraction</dd><dt><span>valid_min :</span></dt><dd>0</dd><dt><span>valid_max :</span></dt><dd>100</dd><dt><span>source :</span></dt><dd>EUMETSAT OSI-SAF, copyright EUMETSAT</dd><dt><span>comment :</span></dt><dd>ice fraction is a dimensionless quantity between 0 and 1; it has been interpolated by a nearest neighbor approach; EUMETSAT OSI-SAF files used: ice_conc_nh_polstere-100_multi_202410121200.nc, ice_conc_sh_polstere-100_multi_202410121200.nc.</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>dt_1km_data</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">timedelta64[ns]</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-bee505ba-7121-4d44-919c-3ddd1da913d7" type="checkbox"/><label for="attrs-bee505ba-7121-4d44-919c-3ddd1da913d7" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-fc2efb6e-0353-4674-bb8e-f91422386230" type="checkbox"/><label for="data-fc2efb6e-0353-4674-bb8e-f91422386230" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>time to most recent 1km data</dd><dt><span>valid_min :</span></dt><dd>-127</dd><dt><span>valid_max :</span></dt><dd>127</dd><dt><span>source :</span></dt><dd>MODIS and VIIRS pixels ingested by MUR</dd><dt><span>comment :</span></dt><dd>The grid value is hours between the analysis time and the most recent MODIS or VIIRS 1km L2P datum within 0.01 degrees from the grid point.  "Fill value" indicates absence of such 1km data at the grid point.</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=timedelta64[ns]]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>sst_anomaly</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-d1d42cc0-dac1-4dd7-b526-6b01c301216c" type="checkbox"/><label for="attrs-d1d42cc0-dac1-4dd7-b526-6b01c301216c" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-d8b09816-cd88-4ec7-a415-04d2e56b5d6a" type="checkbox"/><label for="data-d8b09816-cd88-4ec7-a415-04d2e56b5d6a" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>SST anomaly from a seasonal SST climatology based on the MUR data over 2003-2014 period</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>-32767</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>anomaly reference to the day-of-year average between 2003 and 2014</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li></ul></div></li><li class="xr-section-item"><input class="xr-section-summary-in" id="section-dc739936-9b1a-4e9b-a8d2-2af888a25ed7" type="checkbox"/><label class="xr-section-summary" for="section-dc739936-9b1a-4e9b-a8d2-2af888a25ed7">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>time</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-13615cfb-a1f6-4fea-9183-d321380cc066" type="checkbox"><label for="index-13615cfb-a1f6-4fea-9183-d321380cc066" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2024-10-12 09:00:00'], dtype='datetime64[ns]', name='time', freq=None))</pre></div></input></li><li class="xr-var-item"><div class="xr-index-name"><div>lat</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-1ddd9d6c-65d4-4e62-b2fd-fecb3a943101" type="checkbox"><label for="index-1ddd9d6c-65d4-4e62-b2fd-fecb3a943101" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-89.98999786376953,  -89.9800033569336, -89.97000122070312,
+       -89.95999908447266, -89.94999694824219, -89.94000244140625,
+       -89.93000030517578, -89.91999816894531, -89.91000366210938,
+        -89.9000015258789,
+       ...
+         89.9000015258789,  89.91000366210938,  89.91999816894531,
+        89.93000030517578,  89.94000244140625,  89.94999694824219,
+        89.95999908447266,  89.97000122070312,   89.9800033569336,
+        89.98999786376953],
+      dtype='float32', name='lat', length=17999))</pre></div></input></li><li class="xr-var-item"><div class="xr-index-name"><div>lon</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-4437f14d-39da-4e93-8196-8d720da25810" type="checkbox"><label for="index-4437f14d-39da-4e93-8196-8d720da25810" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-179.99000549316406, -179.97999572753906, -179.97000122070312,
+        -179.9600067138672,  -179.9499969482422, -179.94000244140625,
+       -179.92999267578125,  -179.9199981689453, -179.91000366210938,
+       -179.89999389648438,
+       ...
+        179.91000366210938,   179.9199981689453,  179.92999267578125,
+        179.94000244140625,   179.9499969482422,   179.9600067138672,
+        179.97000122070312,  179.97999572753906,  179.99000549316406,
+                     180.0],
+      dtype='float32', name='lon', length=36000))</pre></div></input></li></ul></div></li><li class="xr-section-item"><input class="xr-section-summary-in" id="section-1042303b-86cb-4211-99b5-52847208a637" type="checkbox"/><label class="xr-section-summary" for="section-1042303b-86cb-4211-99b5-52847208a637">Attributes: <span>(47)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>Conventions :</span></dt><dd>CF-1.7</dd><dt><span>title :</span></dt><dd>Daily MUR SST, Final product</dd><dt><span>summary :</span></dt><dd>A merged, multi-sensor L4 Foundation SST analysis product from JPL.</dd><dt><span>references :</span></dt><dd>http://podaac.jpl.nasa.gov/Multi-scale_Ultra-high_Resolution_MUR-SST</dd><dt><span>institution :</span></dt><dd>Jet Propulsion Laboratory</dd><dt><span>history :</span></dt><dd>created at nominal 4-day latency; replaced nrt (1-day latency) version.</dd><dt><span>comment :</span></dt><dd>MUR = "Multi-scale Ultra-high Resolution"</dd><dt><span>license :</span></dt><dd>These data are available free of charge under data policy of JPL PO.DAAC.</dd><dt><span>id :</span></dt><dd>MUR-JPL-L4-GLOB-v04.1</dd><dt><span>naming_authority :</span></dt><dd>org.ghrsst</dd><dt><span>product_version :</span></dt><dd>04.1</dd><dt><span>uuid :</span></dt><dd>27665bc0-d5fc-11e1-9b23-0800200c9a66</dd><dt><span>gds_version_id :</span></dt><dd>2.0</dd><dt><span>netcdf_version_id :</span></dt><dd>4.1</dd><dt><span>date_created :</span></dt><dd>20241021T071625Z</dd><dt><span>start_time :</span></dt><dd>20241012T090000Z</dd><dt><span>stop_time :</span></dt><dd>20241012T090000Z</dd><dt><span>time_coverage_start :</span></dt><dd>20241011T210000Z</dd><dt><span>time_coverage_end :</span></dt><dd>20241012T210000Z</dd><dt><span>file_quality_level :</span></dt><dd>3</dd><dt><span>source :</span></dt><dd>MODIS_T-JPL, MODIS_A-JPL, AVHRRMTB_G-NAVO, iQUAM-NOAA/NESDIS, Ice_Conc-OSISAF</dd><dt><span>platform :</span></dt><dd>Terra, Aqua, MetOp-B, Buoys/Ships</dd><dt><span>sensor :</span></dt><dd>MODIS, AVHRR, in-situ</dd><dt><span>Metadata_Conventions :</span></dt><dd>Unidata Observation Dataset v1.0</dd><dt><span>metadata_link :</span></dt><dd>http://podaac.jpl.nasa.gov/ws/metadata/dataset/?format=iso&amp;shortName=MUR-JPL-L4-GLOB-v04.1</dd><dt><span>keywords :</span></dt><dd>Oceans &gt; Ocean Temperature &gt; Sea Surface Temperature</dd><dt><span>keywords_vocabulary :</span></dt><dd>NASA Global Change Master Directory (GCMD) Science Keywords</dd><dt><span>standard_name_vocabulary :</span></dt><dd>NetCDF Climate and Forecast (CF) Metadata Convention</dd><dt><span>southernmost_latitude :</span></dt><dd>-90.0</dd><dt><span>northernmost_latitude :</span></dt><dd>90.0</dd><dt><span>westernmost_longitude :</span></dt><dd>-180.0</dd><dt><span>easternmost_longitude :</span></dt><dd>180.0</dd><dt><span>spatial_resolution :</span></dt><dd>0.01 degrees</dd><dt><span>geospatial_lat_units :</span></dt><dd>degrees north</dd><dt><span>geospatial_lat_resolution :</span></dt><dd>0.01</dd><dt><span>geospatial_lon_units :</span></dt><dd>degrees east</dd><dt><span>geospatial_lon_resolution :</span></dt><dd>0.01</dd><dt><span>acknowledgment :</span></dt><dd>Please acknowledge the use of these data with the following statement:  These data were provided by JPL under support by NASA MEaSUREs program.</dd><dt><span>creator_name :</span></dt><dd>JPL MUR SST project</dd><dt><span>creator_email :</span></dt><dd>ghrsst@podaac.jpl.nasa.gov</dd><dt><span>creator_url :</span></dt><dd>http://mur.jpl.nasa.gov</dd><dt><span>project :</span></dt><dd>NASA Making Earth Science Data Records for Use in Research Environments (MEaSUREs) Program</dd><dt><span>publisher_name :</span></dt><dd>GHRSST Project Office</dd><dt><span>publisher_url :</span></dt><dd>http://www.ghrsst.org</dd><dt><span>publisher_email :</span></dt><dd>ghrsst-po@nceo.ac.uk</dd><dt><span>processing_level :</span></dt><dd>L4</dd><dt><span>cdm_data_type :</span></dt><dd>grid</dd></dl></div></li></ul></div></div>
 </div>
 </div>
 </div>
@@ -1671,7 +2079,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_f44483fb5799edfa82cfc391665115a8 {
+                #map_cfeed63790be3c343f9486f81c9bddfa {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -1685,14 +2093,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_f44483fb5799edfa82cfc391665115a8" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_cfeed63790be3c343f9486f81c9bddfa" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_f44483fb5799edfa82cfc391665115a8 = L.map(
-                "map_f44483fb5799edfa82cfc391665115a8",
+            var map_cfeed63790be3c343f9486f81c9bddfa = L.map(
+                "map_cfeed63790be3c343f9486f81c9bddfa",
                 {
                     center: [70.0, -40.0],
                     crs: L.CRS.EPSG3857,
@@ -1706,22 +2114,22 @@ m</div>
 
         
     
-            var tile_layer_943b8f8638f7b69f50a8ea64b70a19d1 = L.tileLayer(
+            var tile_layer_a51a4ce3468b2f16d767c3ed387c11eb = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_943b8f8638f7b69f50a8ea64b70a19d1.addTo(map_f44483fb5799edfa82cfc391665115a8);
+            tile_layer_a51a4ce3468b2f16d767c3ed387c11eb.addTo(map_cfeed63790be3c343f9486f81c9bddfa);
         
     
-            var tile_layer_3fd2c7d0978fd608bff3a4d93fd8d0cc = L.tileLayer(
+            var tile_layer_c34375fe3a8bf5a093ce67f0eaa7f4a6 = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C1996881146-POCLOUD\u0026datetime=2024-10-10T00%3A00%3A00%2B00%3A00\u0026backend=xarray\u0026variable=sea_ice_fraction\u0026rescale=0%2C1\u0026colormap_name=blues_r",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_3fd2c7d0978fd608bff3a4d93fd8d0cc.addTo(map_f44483fb5799edfa82cfc391665115a8);
+            tile_layer_c34375fe3a8bf5a093ce67f0eaa7f4a6.addTo(map_cfeed63790be3c343f9486f81c9bddfa);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
