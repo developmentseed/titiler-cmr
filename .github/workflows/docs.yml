@@ -37,7 +37,11 @@ jobs:
           git config --local user.email "actions@github.com"
       
       - name: Deploy docs
+        env:
+          EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}  
+          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}  
         run: |
+          echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             # For tags, deploy the tagged version
             VERSION=${GITHUB_REF#refs/tags/v}
@@ -45,10 +49,10 @@ jobs:
             
             # If this is the latest version, update the 'latest' alias
             LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-            if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
-              uv run mike alias --push $VERSION latest
-              uv run mike set-default --push latest
-            fi
+          if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
+            uv run mike alias --push $VERSION latest
+            uv run mike set-default --push latest
+          fi
           else
             # For develop branch, deploy to 'dev'
             uv run mike deploy --push --update-aliases dev
@@ -73,7 +77,11 @@ jobs:
       # Only build and deploy if PR is opened/synchronized/reopened
       - name: Build docs
         if: github.event.action != 'closed'
+        env:
+          EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}  
+          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}  
         run: |
+          echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
           uv run mkdocs build --site-dir site/pr-${{ github.event.pull_request.number }}
 
       - name: Deploy preview
