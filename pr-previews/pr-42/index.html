@@ -593,16 +593,63 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="benchmark.html" class="md-nav__link">
+    
+    
+      
         
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
   
   <span class="md-ellipsis">
     Performance Benchmarks
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Performance Benchmarks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="time_series_performance_benchmarks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Time series performance benchmarks
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -783,16 +830,15 @@
 <li>Example of AWS Lambda / ECS deployment (via CDK)</li>
 </ul>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>To install from sources and run for development:</p>
+<p>To install from sources and run for development, <a href="https://docs.astral.sh/uv/getting-started/installation/">install <code>uv</code></a> then:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/developmentseed/titiler-cmr.git
 <span class="nb">cd</span><span class="w"> </span>titiler-cmr
 
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pip
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>uvicorn<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev,test<span class="o">]</span>
+uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 </code></pre></div>
 <h2 id="authentication-for-data-read-access">Authentication for data read access<a class="headerlink" href="#authentication-for-data-read-access" title="Permanent link">&para;</a></h2>
 <p><code>titiler-cmr</code> can read data either over <code>HTTP</code> (external) or directly from <code>AWS S3</code> (direct) depending on the app configuration.
-The behavior of the application is controlled by the S3 authentication settings in <a href="./titiler/cmr/settings.py"><code>settings.py</code></a>, which you can set either with environment variables (<code>TITILER_CMR_S3_AUTH_ACCESS</code>, <code>TITILER_CMR_S3_AUTH_STRATEGY</code>) or in an environment file (<code>.env</code>).</p>
+The behavior of the application is controlled by the S3 authentication settings in <code>settings.py</code>, which you can set either with environment variables (<code>TITILER_CMR_S3_AUTH_ACCESS</code>, <code>TITILER_CMR_S3_AUTH_STRATEGY</code>) or in an environment file (<code>.env</code>).</p>
 <h3 id="direct-from-s3">Direct from S3<a class="headerlink" href="#direct-from-s3" title="Permanent link">&para;</a></h3>
 <p>When running in an AWS context (e.g. Lambda), you should configure the application to access the data directly from <code>S3</code>.
 You can do this in two ways:</p>
@@ -800,10 +846,10 @@ You can do this in two ways:</p>
 <li>Configure an AWS IAM role for your runtime environment that has read access to the NASA buckets so that <code>rasterio/GDAL</code> can find the AWS credentials when reading data</li>
 <li>Set the <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> environment variables so that the <code>earthaccess</code> package can issue temporary AWS credentials</li>
 </ul>
-<blockquote>
-<p>[!NOTE]
-Direct S3 access configuration will only work if the application is running in the same AWS region as the data are stored!</p>
-</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Direct S3 access configuration will only work if the application is running in the same AWS region as the data are stored!</p>
+</div>
 <h3 id="external-access">External access<a class="headerlink" href="#external-access" title="Permanent link">&para;</a></h3>
 <p>When running outside of the AWS context (e.g. locally) you will need to configure the application to access data over <code>HTTP</code>.
 You can do this by creating an Earthdata account, configuring your <code>.netrc</code> file with your Earthdata login credentials (which GDAL will find when trying to access data over the network), and setting a few environment variables:</p>
@@ -818,12 +864,12 @@ You can do this by creating an Earthdata account, configuring your <code>.netrc<
 <span class="c1"># write your .netrc file to the home directory</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;machine urs.earthdata.nasa.gov login </span><span class="si">${</span><span class="nv">EARTHDATA_USERNAME</span><span class="si">}</span><span class="s2"> password </span><span class="si">${</span><span class="nv">EARTHDATA_PASSWORD</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.netrc
 </code></pre></div>
-<blockquote>
-<p>[!NOTE]
-See <a href="https://uat.urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget">NASA's docs</a> for details</p>
-</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See <a href="https://uat.urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget">NASA's docs</a> for details</p>
+</div>
 <h2 id="docker-deployment">Docker deployment<a class="headerlink" href="#docker-deployment" title="Permanent link">&para;</a></h2>
-<p>You can run the application in a docker container using the <a href="./docker-compose.yml">docker-compose.yml</a>.
+<p>You can run the application in a docker container using the docker-compose.yml file.
 The docker container is configured to read the <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> environment variables so make sure set those before starting the docker network.</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build<span class="w"> </span>
 </code></pre></div>

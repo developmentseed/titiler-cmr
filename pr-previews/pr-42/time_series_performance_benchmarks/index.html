@@ -12,28 +12,26 @@
         <meta name="author" content="Development Seed">
       
       
-        <link rel="canonical" href="https://developmentseed.org/titiler-cmr/examples/xarray_backend_example/">
+        <link rel="canonical" href="https://developmentseed.org/titiler-cmr/time_series_performance_benchmarks/">
       
       
-        <link rel="prev" href="../..">
+        <link rel="prev" href="../release-notes/">
       
       
-        <link rel="next" href="../rasterio_backend_example/">
       
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.47">
     
     
       
-        <title>xarray backend: MUR SST - TiTiler.CMR</title>
+        <title>Time series performance benchmarks - TiTiler.CMR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -52,9 +50,9 @@
       
     
     
-      <link rel="stylesheet" href="../../overrides/stylesheets/extra.css">
+      <link rel="stylesheet" href="../overrides/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#xarray-backend-mur-sst" class="md-skip">
+        <a href="#time-series-performance-benchmarks" class="md-skip">
           Skip to content
         </a>
       
@@ -100,9 +98,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="TiTiler.CMR" class="md-header__button md-logo" aria-label="TiTiler.CMR" data-md-component="logo">
+    <a href=".." title="TiTiler.CMR" class="md-header__button md-logo" aria-label="TiTiler.CMR" data-md-component="logo">
       
-  <img src="../../assets/logo_no_text.png" alt="logo">
+  <img src="../assets/logo_no_text.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -119,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              xarray backend: MUR SST
+              Time series performance benchmarks
             
           </span>
         </div>
@@ -249,9 +247,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="TiTiler.CMR" class="md-nav__button md-logo" aria-label="TiTiler.CMR" data-md-component="logo">
+    <a href=".." title="TiTiler.CMR" class="md-nav__button md-logo" aria-label="TiTiler.CMR" data-md-component="logo">
       
-  <img src="../../assets/logo_no_text.png" alt="logo">
+  <img src="../assets/logo_no_text.png" alt="logo">
 
     </a>
     TiTiler.CMR
@@ -278,7 +276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -295,10 +293,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -311,11 +307,11 @@
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -329,7 +325,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Examples
@@ -340,30 +336,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    xarray backend: MUR SST
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../examples/xarray_backend_example/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -372,89 +348,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Requirements
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#identify-the-dataset" class="md-nav__link">
-    <span class="md-ellipsis">
-      Identify the dataset
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examine-a-granule" class="md-nav__link">
-    <span class="md-ellipsis">
-      Examine a granule
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#explore-the-available-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      Explore the available variables
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#define-a-query-for-titiler-cmr" class="md-nav__link">
-    <span class="md-ellipsis">
-      Define a query for titiler-cmr
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#display-tiles-in-an-interactive-map" class="md-nav__link">
-    <span class="md-ellipsis">
-      Display tiles in an interactive map
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#geojson-statistics" class="md-nav__link">
-    <span class="md-ellipsis">
-      GeoJSON Statistics
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -467,7 +360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rasterio_backend_example/" class="md-nav__link">
+      <a href="../examples/rasterio_backend_example/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -488,7 +381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../time_series_example/" class="md-nav__link">
+      <a href="../examples/time_series_example/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -516,7 +409,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -536,7 +429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../release-notes/" class="md-nav__link">
+      <a href="../release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -553,8 +446,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -563,11 +458,11 @@
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -581,7 +476,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Performance Benchmarks
@@ -592,10 +487,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../time_series_performance_benchmarks/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Time series performance benchmarks
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -604,6 +519,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#xarray-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      xarray backend
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xarray backend">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      statistics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bbox-animations" class="md-nav__link">
+    <span class="md-ellipsis">
+      bbox (animations)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -643,65 +611,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
+  <a href="#xarray-backend" class="md-nav__link">
     <span class="md-ellipsis">
-      Requirements
+      xarray backend
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xarray backend">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      statistics
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#identify-the-dataset" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#bbox-animations" class="md-nav__link">
     <span class="md-ellipsis">
-      Identify the dataset
+      bbox (animations)
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#examine-a-granule" class="md-nav__link">
-    <span class="md-ellipsis">
-      Examine a granule
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#explore-the-available-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      Explore the available variables
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#define-a-query-for-titiler-cmr" class="md-nav__link">
-    <span class="md-ellipsis">
-      Define a query for titiler-cmr
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#display-tiles-in-an-interactive-map" class="md-nav__link">
-    <span class="md-ellipsis">
-      Display tiles in an interactive map
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#geojson-statistics" class="md-nav__link">
-    <span class="md-ellipsis">
-      GeoJSON Statistics
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1159,22 +1097,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=cdeef4c6-75b0-44d9-90d4-c850b5d8908a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0644081c-161f-43fa-8a61-7dc0efb26d08">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="xarray-backend-mur-sst">xarray backend: MUR SST<a class="anchor-link" href="#xarray-backend-mur-sst">¶</a></h1><p>The MUR SST dataset has daily records for sea surface temperature and ice cover fraction. There is a netcdf file for each record.</p>
-<p>To run the titiler-cmr service locally you can fire up the docker network with this command:</p>
-<div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>up
-</pre></div>
-<h4 id="requirements">Requirements<a class="anchor-link" href="#requirements">¶</a></h4><p>To run some of the chunks in this notebook you will need to install a few packages: <code>earthaccess</code>, <code>folium</code>, <code>httpx</code>, <code>xarray</code></p>
+<h1 id="time-series-performance-benchmarks">Time series performance benchmarks<a class="anchor-link" href="#time-series-performance-benchmarks">¶</a></h1><p>The <code>titiler-cmr</code> API is deployed as a Lambda function in the SMCE VEDA AWS account. For small time series requests (&lt;500 time points) you can expect a response from any of the endpoints within ~20 seconds. For larger time series requests, you run the risk of bumping into Lambda concurrency or timeout limits. This report shows some results from the <code>test_timeseries_benchmarks.py</code> script that sends many requests with varying time series lengths as well as several other parameters that affect runtime.</p>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7d015182-5347-437a-8b66-d7d62212f0e3">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5678099f-dcd7-4c09-86e6-a1c2b4845d51">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1192,45 +1126,38 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
-
-<span class="kn">import</span> <span class="nn">earthaccess</span>
-<span class="kn">import</span> <span class="nn">httpx</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">GeoJson</span><span class="p">,</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
-
-<span class="c1"># titiler_endpoint = "http://localhost:8081"  # docker network endpoint</span>
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://dev-titiler-cmr.delta-backend.com"</span>  <span class="c1"># deployed endpoint</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">benchmark_analysis</span> <span class="k">as</span> <span class="nn">ba</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">import json
-from datetime import datetime, timezone
-
-import earthaccess
-import httpx
-import xarray as xr
-from folium import GeoJson, Map, TileLayer
-
-# titiler_endpoint = "http://localhost:8081"  # docker network endpoint
-titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"  # deployed endpoint</div>
+<div class="clipboard-copy-txt" id="cell-1">import benchmark_analysis as ba</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d375b5b7-9322-4f1e-8859-000ef8ac4898">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a335bfb6-bdd9-4bfd-84a2-dd805f44ac63">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="identify-the-dataset">Identify the dataset<a class="anchor-link" href="#identify-the-dataset">¶</a></h2><p>You can find the MUR SST dataset using the <code>earthaccess.search_datasets</code> function.</p>
+<h2 id="xarray-backend">xarray backend<a class="anchor-link" href="#xarray-backend">¶</a></h2><p>The following tests use the <a href="https://podaac.jpl.nasa.gov/dataset/GAMSSA_28km-ABOM-L4-GLOB-v01">GAMSSA 28km SST</a> dataset to evaluate the limits of the <code>/timeseries</code> endpoints for the <code>xarray</code> backend.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7e436954-d115-4c6a-8aee-40e276532aa0">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="statistics">statistics<a class="anchor-link" href="#statistics">¶</a></h3><p>Under the current deployment configuration <code>statistics</code> endpoint can process time series requests with up to ~1000 points. Requests that involve more than 1000 points are likely to fail.</p>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f3fcc9cd-6105-42fc-98bf-2de40910a79c">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7777354a-8ff9-4e5a-a518-5e72969aeefe">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1248,39 +1175,41 @@ titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"  # deployed endpo
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">datasets</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_datasets</span><span class="p">(</span><span class="n">doi</span><span class="o">=</span><span class="s2">"10.5067/GHGMR-4FJ04"</span><span class="p">)</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="n">concept_id</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">][</span><span class="s2">"concept-id"</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Concept-Id: "</span><span class="p">,</span> <span class="n">concept_id</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Abstract: "</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"umm"</span><span class="p">][</span><span class="s2">"Abstract"</span><span class="p">])</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ba</span><span class="o">.</span><span class="n">plot_error_rate_heatmap</span><span class="p">(</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">ba</span><span class="o">.</span><span class="n">dfs</span><span class="p">[</span><span class="s2">"statistics"</span><span class="p">],</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"num_timepoints"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"bbox_dims"</span><span class="p">,</span>
+    <span class="n">z</span><span class="o">=</span><span class="s2">"error_rate"</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="s2">"number of time points"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"bbox dimensions"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"error rate"</span><span class="p">},</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"error rate by bbox size and number of time points"</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">datasets = earthaccess.search_datasets(doi="10.5067/GHGMR-4FJ04")
-ds = datasets[0]
-
-concept_id = ds["meta"]["concept-id"]
-print("Concept-Id: ", concept_id)
-
-print("Abstract: ", ds["umm"]["Abstract"])</div>
+<div class="clipboard-copy-txt" id="cell-2">ba.plot_error_rate_heatmap(
+    df=ba.dfs["statistics"],
+    x="num_timepoints",
+    y="bbox_dims",
+    z="error_rate",
+    labels={"x": "number of time points", "y": "bbox dimensions", "color": "error rate"},
+    title="error rate by bbox size and number of time points",
+)</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2a4cffa6-0059-4033-a708-db60d743f0e3">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4da8f9c2-fe34-4d16-a72a-04b50decd2c5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="examine-a-granule">Examine a granule<a class="anchor-link" href="#examine-a-granule">¶</a></h2><p>Each granule contains a single day record for the entire globe and has a single data file.</p>
+<p>In general, the size of the area you want to analyze will have minimal impact on the runtime! This is because <code>titiler.xarray</code> has to read the entire granule into memory before subsetting, so reducing the size of the AOI</p>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1bde609a-26df-4f35-b7e1-9e1922e87808">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f4f2e7fd-c6ac-4ddc-8226-757867a4e083">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1298,47 +1227,35 @@ print("Abstract: ", ds["umm"]["Abstract"])</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_data</span><span class="p">(</span>
-    <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">concept_id</span><span class="o">=</span><span class="n">concept_id</span><span class="p">,</span>
-    <span class="n">temporal</span><span class="o">=</span><span class="p">(</span><span class="s2">"2024-10-12"</span><span class="p">,</span> <span class="s2">"2024-10-13"</span><span class="p">),</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ba</span><span class="o">.</span><span class="n">plot_line_with_error_bars</span><span class="p">(</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">ba</span><span class="o">.</span><span class="n">dfs</span><span class="p">[</span><span class="s2">"statistics"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">"bbox_size"</span><span class="p">,</span> <span class="s2">"num_timepoints"</span><span class="p">]),</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"bbox_dims"</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"statistics runtime"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Granules:"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of NetCDF URL: "</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data_links</span><span class="p">(</span><span class="n">access</span><span class="o">=</span><span class="s2">"external"</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">results = earthaccess.search_data(
-    count=1,
-    concept_id=concept_id,
-    temporal=("2024-10-12", "2024-10-13"),
-)
-print("Granules:")
-print(results)
-print()
-print("Example of NetCDF URL: ")
-for link in results[0].data_links(access="external"):
-    print(link)</div>
+<div class="clipboard-copy-txt" id="cell-3">ba.plot_line_with_error_bars(
+    df=ba.dfs["statistics"].sort_values(["bbox_size", "num_timepoints"]),
+    color="bbox_dims",
+    title="statistics runtime",
+)</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=eaa3f378-95fa-4c5a-9ccb-24b3064fb5a7">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e2d45d53-ebbc-4979-8d53-c8e904b0830a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="explore-the-available-variables">Explore the available variables<a class="anchor-link" href="#explore-the-available-variables">¶</a></h2><p>The NetCDF file can be opened with xarray using the <code>h5netcdf</code> engine. When running outside of AWS region us-west-2 you will need to access the data using "external" <code>https</code> links (rather than "direct" <code>s3</code> links). Those links will require authentication which is handled by <code>earthaccess</code> as long as you have your Earthdata credentials stored in the <code>~/.netrc</code> file!</p>
+<h3 id="bbox-animations">bbox (animations)<a class="anchor-link" href="#bbox-animations">¶</a></h3><p>Under the current deployment configuration the <code>bbox</code> endpoint can reliably process time series requests with up to ~500 points. Requests that involve more than 500 points may fail if the area of interest is very large.</p>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=61ec4071-bf37-421f-bf58-ac399f827052">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=68f76925-c623-4614-b36b-6a797b387ca9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1356,41 +1273,49 @@ for link in results[0].data_links(access="external"):
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">fs</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">get_fsspec_https_session</span><span class="p">()</span>
-
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data_links</span><span class="p">(</span><span class="n">access</span><span class="o">=</span><span class="s2">"external"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">engine</span><span class="o">=</span><span class="s2">"h5netcdf"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Data Variables:"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">var</span><span class="p">))</span>
-
-<span class="n">display</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">for</span> <span class="n">img_size</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ba</span><span class="o">.</span><span class="n">dfs</span><span class="p">[</span><span class="s2">"gif-timepoints"</span><span class="p">][</span><span class="s2">"img_size"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+    <span class="n">img_size_df</span> <span class="o">=</span> <span class="n">ba</span><span class="o">.</span><span class="n">dfs</span><span class="p">[</span><span class="s2">"gif-timepoints"</span><span class="p">][</span><span class="n">ba</span><span class="o">.</span><span class="n">dfs</span><span class="p">[</span><span class="s2">"gif-timepoints"</span><span class="p">][</span><span class="s2">"img_size"</span><span class="p">]</span> <span class="o">==</span> <span class="n">img_size</span><span class="p">]</span>
+    <span class="n">img_dims</span> <span class="o">=</span> <span class="n">img_size_df</span><span class="p">[</span><span class="s2">"img_dims"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">ba</span><span class="o">.</span><span class="n">plot_error_rate_heatmap</span><span class="p">(</span>
+        <span class="n">df</span><span class="o">=</span><span class="n">img_size_df</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s2">"num_timepoints"</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s2">"bbox_dims"</span><span class="p">,</span>
+        <span class="n">z</span><span class="o">=</span><span class="s2">"error_rate"</span><span class="p">,</span>
+        <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="s2">"number of time points"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="s2">"bbox dimensions"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"error rate"</span><span class="p">},</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"image size: </span><span class="si">{</span><span class="n">img_dims</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">fs = earthaccess.get_fsspec_https_session()
-
-ds = xr.open_dataset(fs.open(results[0].data_links(access="external")[0]), engine="h5netcdf")
-print("Data Variables:")
-for var in ds.data_vars:
-    print(str(var))
-
-display(ds)</div>
+<div class="clipboard-copy-txt" id="cell-4">for img_size in sorted(ba.dfs["gif-timepoints"]["img_size"].unique()):
+    img_size_df = ba.dfs["gif-timepoints"][ba.dfs["gif-timepoints"]["img_size"] == img_size]
+    img_dims = img_size_df["img_dims"].unique()[0]
+    fig = ba.plot_error_rate_heatmap(
+        df=img_size_df,
+        x="num_timepoints",
+        y="bbox_dims",
+        z="error_rate",
+        labels={"x": "number of time points", "y": "bbox dimensions", "color": "error rate"},
+        title=f"image size: {img_dims}",
+    )
+    fig.show()</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=885357ee-af17-4a07-a72e-b2aa7ce6cbed">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ccfd3480-0092-4845-9b4a-c688dbfd4aa6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="define-a-query-for-titiler-cmr">Define a query for titiler-cmr<a class="anchor-link" href="#define-a-query-for-titiler-cmr">¶</a></h2><p>To use titiler-cmr's endpoints for a NetCDF dataset like this we need to define a date range for the CMR query and a <code>variable</code> to analyze.</p>
+<p>The size of the area of interest increases the response time, especially for requests for higher resolution images.</p>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d13fbdbc-780c-469f-ad1e-14d622e3abc4">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=abd9e612-51f6-4ef5-8499-18b42a76ab28">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1408,309 +1333,17 @@ display(ds)</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="s2">"sea_ice_fraction"</span>
-<span class="n">datetime_</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-5">variable = "sea_ice_fraction"
-datetime_ = datetime(2024, 10, 10, tzinfo=timezone.utc).isoformat()</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bfe85de5-b1ed-4561-802b-d0bea58da1cf">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="display-tiles-in-an-interactive-map">Display tiles in an interactive map<a class="anchor-link" href="#display-tiles-in-an-interactive-map">¶</a></h2><p>The <code>/tilejson.json</code> endpoint will provide a parameterized <code>xyz</code> tile URL that can be added to an interactive map.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=00116c09-f16f-4246-8e52-00ef64579abb">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="s2">"concept_id"</span><span class="p">,</span> <span class="n">concept_id</span><span class="p">),</span>
-        <span class="c1"># Datetime in form of `start_date/end_date`</span>
-        <span class="p">(</span><span class="s2">"datetime"</span><span class="p">,</span> <span class="n">datetime_</span><span class="p">),</span>
-        <span class="c1"># titiler-cmr can work with both Zarr and COG dataset</span>
-        <span class="c1"># but we need to tell the endpoints in advance which backend</span>
-        <span class="c1"># to use</span>
-        <span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="s2">"xarray"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"variable"</span><span class="p">,</span> <span class="n">variable</span><span class="p">),</span>
-        <span class="c1"># We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)</span>
-        <span class="c1"># which will results in useless large scale query</span>
-        <span class="p">(</span><span class="s2">"minzoom"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"maxzoom"</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"rescale"</span><span class="p">,</span> <span class="s2">"0,1"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"colormap_name"</span><span class="p">,</span> <span class="s2">"blues_r"</span><span class="p">),</span>
-    <span class="p">)</span>
-<span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-6">r = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
-    params = (
-        ("concept_id", concept_id),
-        # Datetime in form of `start_date/end_date`
-        ("datetime", datetime_),
-        # titiler-cmr can work with both Zarr and COG dataset
-        # but we need to tell the endpoints in advance which backend
-        # to use
-        ("backend", "xarray"),
-        ("variable", variable),
-        # We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)
-        # which will results in useless large scale query
-        ("minzoom", 2),
-        ("maxzoom", 13),
-        ("rescale", "0,1"),
-        ("colormap_name", "blues_r"),
-    )
-).json()
-
-print(r)</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=328f9b97-7067-43d1-a918-62bb6470499c">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">bounds</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">"bounds"</span><span class="p">]</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span>
-    <span class="n">zoom_start</span><span class="o">=</span><span class="mi">3</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ba</span><span class="o">.</span><span class="n">plot_line_with_error_bars</span><span class="p">(</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">ba</span><span class="o">.</span><span class="n">dfs</span><span class="p">[</span><span class="s2">"gif-timepoints"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">"bbox_size"</span><span class="p">,</span> <span class="s2">"num_timepoints"</span><span class="p">]),</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"bbox_dims"</span><span class="p">,</span>
+    <span class="n">facet_row</span><span class="o">=</span><span class="s2">"img_dims"</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="n">TileLayer</span><span class="p">(</span>
-    <span class="n">tiles</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s2">"tiles"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-    <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">attr</span><span class="o">=</span><span class="s2">"NASA"</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-<span class="n">m</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">bounds = r["bounds"]
-m = Map(
-    location=(70, -40),
-    zoom_start=3
-)
-
-TileLayer(
-    tiles=r["tiles"][0],
-    opacity=1,
-    attr="NASA",
-).add_to(m)
-m</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b2a35be0-b281-4a30-82da-635eadf6d94e">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="geojson-statistics">GeoJSON Statistics<a class="anchor-link" href="#geojson-statistics">¶</a></h2><p>The <code>/statistics</code> endpoint can be used to get summary statistics for a geojson <code>Feature</code> or <code>FeatureCollection</code>.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=06d7ef8e-9410-4b35-9d05-e55b4e4972ba">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">geojson_dict</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"FeatureCollection"</span><span class="p">,</span>
-  <span class="s2">"features"</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
-      <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{},</span>
-      <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
-          <span class="p">[</span>
-            <span class="p">[</span>
-              <span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span>
-              <span class="mf">83.55979308678764</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span>
-              <span class="mf">75.0115425216471</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">14.483337068956956</span><span class="p">,</span>
-              <span class="mf">75.0115425216471</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">14.483337068956956</span><span class="p">,</span>
-              <span class="mf">83.55979308678764</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span>
-              <span class="mf">83.55979308678764</span>
-            <span class="p">]</span>
-          <span class="p">]</span>
-        <span class="p">],</span>
-        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Polygon"</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">]</span>
-<span class="p">}</span>
-
-<span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/statistics"</span><span class="p">,</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">(</span>
-        <span class="p">(</span><span class="s2">"concept_id"</span><span class="p">,</span> <span class="n">concept_id</span><span class="p">),</span>
-        <span class="c1"># Datetime in form of `start_date/end_date`</span>
-        <span class="p">(</span><span class="s2">"datetime"</span><span class="p">,</span> <span class="n">datetime_</span><span class="p">),</span>
-        <span class="c1"># titiler-cmr can work with both Zarr and COG dataset</span>
-        <span class="c1"># but we need to tell the endpoints in advance which backend</span>
-        <span class="c1"># to use</span>
-        <span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="s2">"xarray"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"variable"</span><span class="p">,</span> <span class="n">variable</span><span class="p">),</span>
-    <span class="p">),</span>
-    <span class="n">json</span><span class="o">=</span><span class="n">geojson_dict</span><span class="p">,</span>
-    <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-8">geojson_dict = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              -20.79973248834736,
-              83.55979308678764
-            ],
-            [
-              -20.79973248834736,
-              75.0115425216471
-            ],
-            [
-              14.483337068956956,
-              75.0115425216471
-            ],
-            [
-              14.483337068956956,
-              83.55979308678764
-            ],
-            [
-              -20.79973248834736,
-              83.55979308678764
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
-}
-
-r = httpx.post(
-    f"{titiler_endpoint}/statistics",
-    params=(
-        ("concept_id", concept_id),
-        # Datetime in form of `start_date/end_date`
-        ("datetime", datetime_),
-        # titiler-cmr can work with both Zarr and COG dataset
-        # but we need to tell the endpoints in advance which backend
-        # to use
-        ("backend", "xarray"),
-        ("variable", variable),
-    ),
-    json=geojson_dict,
-    timeout=60,
-).json()
-
-print(json.dumps(r, indent=2))</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7a38b762-ff68-40d3-84eb-0e37957381e0">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-9"></div>
+<div class="clipboard-copy-txt" id="cell-5">ba.plot_line_with_error_bars(
+    df=ba.dfs["gif-timepoints"].sort_values(["bbox_size", "num_timepoints"]),
+    color="bbox_dims",
+    facet_row="img_dims",
+)</div>
 </div>
 </div>
 </div>
@@ -1818,10 +1451,10 @@ print(json.dumps(r, indent=2))</div>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "navigation.indexes", "navigation.instant", "navigation.tracking", "search.suggest", "search.share"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "content.code.copy", "navigation.indexes", "navigation.instant", "navigation.tracking", "search.suggest", "search.share"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>

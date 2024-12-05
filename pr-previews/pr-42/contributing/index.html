@@ -483,6 +483,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -517,16 +526,63 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../benchmark.html" class="md-nav__link">
+    
+    
+      
         
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
   
   <span class="md-ellipsis">
     Performance Benchmarks
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Performance Benchmarks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../time_series_performance_benchmarks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Time series performance benchmarks
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -584,6 +640,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -634,9 +699,14 @@ Record the new responses and commit them to the repository.</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w"> </span>-s<span class="w"> </span>--record-mode<span class="w"> </span>new_episodes
 </code></pre></div>
 <h2 id="benchmarks">Benchmarks<a class="headerlink" href="#benchmarks" title="Permanent link">&para;</a></h2>
-<p><a href="./tests/test_timeseries_benchmark.py"><code>tests/test_timeseries_benchmark.py</code></a> is used to evaluate the limits of <code>/timeseries</code> requests.</p>
+<p><code>tests/test_timeseries_benchmark.py</code> is used to evaluate the performance and limits of <code>/timeseries</code> requests.</p>
 <p>To run the benchmarks:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-vv<span class="w"> </span>--benchmark-only
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-vv<span class="w"> </span>--benchmark-only<span class="w"> </span>--benchmark-json<span class="w"> </span>benchmark.json
+</code></pre></div>
+<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
+<p>The documentation is generated using <code>mkdocs</code> and gets built and deployed to Github Pages when new tags are released and on pushes to the <code>develop</code> branch.</p>
+<p>To preview the documentation in your browser you can run:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>-o
 </code></pre></div>
 
 
