@@ -975,7 +975,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e498822e">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7d821138">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1014,7 +1014,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=21cdd7bd">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d6e76282">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1034,18 +1034,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">import json
 from collections import defaultdict
-from typing import Dict</div>
+from typing import Any, Dict, List</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bdf59c16">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ffe29d10">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1074,7 +1074,7 @@ import plotly.express as px</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d8dc07b3">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=c78c5bd7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1092,13 +1092,16 @@ import plotly.express as px</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">process_benchmark_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">process_benchmark_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Read the benchmark json and convert into a dictionary of dataframes"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"../benchmark.json"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">benchmarks</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">"benchmarks"</span><span class="p">]</span>
 
-    <span class="n">records</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">records</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+        <span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="k">for</span> <span class="n">bench</span> <span class="ow">in</span> <span class="n">benchmarks</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">bench</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"concept_config_id"</span><span class="p">)</span>
         <span class="n">record</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">"mean_time"</span><span class="p">:</span> <span class="n">bench</span><span class="p">[</span><span class="s2">"stats"</span><span class="p">][</span><span class="s2">"mean"</span><span class="p">],</span>
             <span class="s2">"stddev"</span><span class="p">:</span> <span class="n">bench</span><span class="p">[</span><span class="s2">"stats"</span><span class="p">][</span><span class="s2">"stddev"</span><span class="p">],</span>
@@ -1106,33 +1109,35 @@ import plotly.express as px</div>
             <span class="o">**</span><span class="n">bench</span><span class="p">[</span><span class="s2">"params"</span><span class="p">],</span>
         <span class="p">}</span>
         <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bench</span><span class="p">[</span><span class="s2">"params"</span><span class="p">])</span>
-        <span class="n">records</span><span class="p">[</span><span class="n">bench</span><span class="p">[</span><span class="s2">"group"</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="n">records</span><span class="p">[</span><span class="n">bench</span><span class="p">[</span><span class="s2">"group"</span><span class="p">]][</span><span class="n">dataset</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
-    <span class="n">dfs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">"bbox_size"</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">records</span> <span class="ow">in</span> <span class="n">records</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">}</span>
+    <span class="n">dfs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">dataset_records</span> <span class="ow">in</span> <span class="n">records</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">_records</span> <span class="ow">in</span> <span class="n">dataset_records</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">_records</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">"bbox_size"</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">bbox_dims</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">[</span><span class="s2">"bbox_dims"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="p">)</span>
+            <span class="n">bbox_dims</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">"bbox_dims"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="p">)</span>
 
-        <span class="n">df</span><span class="p">[</span><span class="s2">"bbox_dims"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">[</span><span class="s2">"bbox_dims"</span><span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="n">bbox_dims</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">"bbox_dims"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">"bbox_dims"</span><span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="n">bbox_dims</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
 
-        <span class="n">dfs</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+            <span class="n">dfs</span><span class="p">[</span><span class="n">group</span><span class="p">][</span><span class="n">dataset</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
 
     <span class="k">return</span> <span class="n">dfs</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">def process_benchmark_data() -&gt; Dict[str, pd.DataFrame]:
+<div class="clipboard-copy-txt" id="cell-4">def process_benchmark_data() -&gt; Dict[str, Dict[str, pd.DataFrame]]:
     """Read the benchmark json and convert into a dictionary of dataframes"""
     with open("../benchmark.json", "r") as f:
         benchmarks = json.load(f)["benchmarks"]
 
-    records = defaultdict(list)
+    records: Dict[str, Dict[str, List[Dict[str, Any]]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
     for bench in benchmarks:
+        dataset = bench["extra_info"].pop("concept_config_id")
         record = {
             "mean_time": bench["stats"]["mean"],
             "stddev": bench["stats"]["stddev"],
@@ -1140,23 +1145,22 @@ import plotly.express as px</div>
             **bench["params"],
         }
         record.update(bench["params"])
-        records[bench["group"]].append(record)
+        records[bench["group"]][dataset].append(record)
 
-    dfs = {
-        group: pd.DataFrame(records).sort_values(by="bbox_size")
-        for group, records in records.items()
-    }
+    dfs: Dict[str, Dict[str, pd.DataFrame]] = defaultdict(dict)
+    for group, dataset_records in records.items():
+        for dataset, _records in dataset_records.items():
+            df = pd.DataFrame(_records).sort_values(by="bbox_size")
 
-    for group, df in dfs.items():
-        bbox_dims = sorted(
-            df["bbox_dims"].unique(), key=lambda x: float(x.split("x")[0]) * -1
-        )
+            bbox_dims = sorted(
+                df["bbox_dims"].unique(), key=lambda x: float(x.split("x")[0]) * -1
+            )
 
-        df["bbox_dims"] = pd.Categorical(
-            df["bbox_dims"], categories=bbox_dims, ordered=True
-        )
+            df["bbox_dims"] = pd.Categorical(
+                df["bbox_dims"], categories=bbox_dims, ordered=True
+            )
 
-        dfs[group] = df
+            dfs[group][dataset] = df
 
     return dfs</div>
 </div>
@@ -1165,7 +1169,7 @@ import plotly.express as px</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2d1331a0">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=871a2d8f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1220,7 +1224,7 @@ import plotly.express as px</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ccfc3f7b">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=24856e3f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1285,7 +1289,7 @@ import plotly.express as px</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fda18740">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e7fc181c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1327,11 +1331,13 @@ Cell <span class="ansi-green-fg">In[7], line 2</span>
 <span class="ansi-green-fg">----&gt; 2</span> dfs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">process_benchmark_data</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
 
 Cell <span class="ansi-green-fg">In[4], line 3</span>, in <span class="ansi-cyan-fg">process_benchmark_data</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">process_benchmark_data</span>() <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> Dict[<span style="color: rgb(0,135,0)">str</span>, pd<span style="color: rgb(98,98,98)">.</span>DataFrame]:
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">process_benchmark_data</span>() <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> Dict[<span style="color: rgb(0,135,0)">str</span>, Dict[<span style="color: rgb(0,135,0)">str</span>, pd<span style="color: rgb(98,98,98)">.</span>DataFrame]]:
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""Read the benchmark json and convert into a dictionary of dataframes"""</span>
 <span class="ansi-green-fg">----&gt; 3</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">../benchmark.json</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">r</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> f:
 <span class="ansi-green-intense-fg ansi-bold">      4</span>         benchmarks <span style="color: rgb(98,98,98)">=</span> json<span style="color: rgb(98,98,98)">.</span>load(f)[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">benchmarks</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     records <span style="color: rgb(98,98,98)">=</span> defaultdict(<span style="color: rgb(0,135,0)">list</span>)
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     records: Dict[<span style="color: rgb(0,135,0)">str</span>, Dict[<span style="color: rgb(0,135,0)">str</span>, List[Dict[<span style="color: rgb(0,135,0)">str</span>, Any]]]] <span style="color: rgb(98,98,98)">=</span> defaultdict(
+<span class="ansi-green-intense-fg ansi-bold">      7</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span>: defaultdict(<span style="color: rgb(0,135,0)">list</span>)
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     )
 
 File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/IPython/core/interactiveshell.py:324</span>, in <span class="ansi-cyan-fg">_modified_open</span><span class="ansi-blue-fg">(file, *args, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">    317</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> {<span style="color: rgb(98,98,98)">0</span>, <span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">2</span>}:

@@ -2,19 +2,22 @@
 
 import json
 from collections import defaultdict
-from typing import Dict
+from typing import Any, Dict, List
 
 import pandas as pd
 import plotly.express as px
 
 
-def process_benchmark_data() -> Dict[str, pd.DataFrame]:
+def process_benchmark_data() -> Dict[str, Dict[str, pd.DataFrame]]:
     """Read the benchmark json and convert into a dictionary of dataframes"""
     with open("../benchmark.json", "r") as f:
         benchmarks = json.load(f)["benchmarks"]
 
-    records = defaultdict(list)
+    records: Dict[str, Dict[str, List[Dict[str, Any]]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
     for bench in benchmarks:
+        dataset = bench["extra_info"].pop("concept_config_id")
         record = {
             "mean_time": bench["stats"]["mean"],
             "stddev": bench["stats"]["stddev"],
@@ -22,23 +25,22 @@ def process_benchmark_data() -> Dict[str, pd.DataFrame]:
             **bench["params"],
         }
         record.update(bench["params"])
-        records[bench["group"]].append(record)
+        records[bench["group"]][dataset].append(record)
 
-    dfs = {
-        group: pd.DataFrame(records).sort_values(by="bbox_size")
-        for group, records in records.items()
-    }
+    dfs: Dict[str, Dict[str, pd.DataFrame]] = defaultdict(dict)
+    for group, dataset_records in records.items():
+        for dataset, _records in dataset_records.items():
+            df = pd.DataFrame(_records).sort_values(by="bbox_size")
 
-    for group, df in dfs.items():
-        bbox_dims = sorted(
-            df["bbox_dims"].unique(), key=lambda x: float(x.split("x")[0]) * -1
-        )
+            bbox_dims = sorted(
+                df["bbox_dims"].unique(), key=lambda x: float(x.split("x")[0]) * -1
+            )
 
-        df["bbox_dims"] = pd.Categorical(
-            df["bbox_dims"], categories=bbox_dims, ordered=True
-        )
+            df["bbox_dims"] = pd.Categorical(
+                df["bbox_dims"], categories=bbox_dims, ordered=True
+            )
 
-        dfs[group] = df
+            dfs[group][dataset] = df
 
     return dfs
 
