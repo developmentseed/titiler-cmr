@@ -44,18 +44,28 @@ CONCEPT_CONFIGS = {
         temporal_mode=TemporalMode.point,
         zarr_params=ZarrParams(variable="analysed_sst"),
     ),
+    "MUR-SST": ConceptConfig(
+        concept_id="C1996881146-POCLOUD",
+        resolution_meters=1000,
+        backend="xarray",
+        start_datetime=datetime(2010, 1, 1),
+        step="P1D",
+        temporal_mode=TemporalMode.point,
+        zarr_params=ZarrParams(variable="analysed_sst"),
+    ),
 }
 
 
 @pytest.mark.benchmark(
-    group="gif-timepoints",
+    group="bbox",
     min_rounds=3,
     warmup=False,
 )
 @pytest.mark.parametrize(
     ["concept_config_id", "bbox_dims"],
     [
-        ("GAMSSA", f"{bbox_dims[0]}x{bbox_dims[1]}")
+        (id, f"{bbox_dims[0]}x{bbox_dims[1]}")
+        for id in CONCEPT_CONFIGS.keys()
         for bbox_dims in [
             (64, 64),
             (128, 128),
@@ -67,9 +77,7 @@ CONCEPT_CONFIGS = {
     "num_timepoints",
     [
         10,
-        100,
         500,
-        750,
         1000,
     ],
 )
@@ -80,7 +88,6 @@ CONCEPT_CONFIGS = {
         for i in [
             9,
             10,
-            # 11,
         ]
     ],
 )
@@ -172,10 +179,10 @@ def test_bbox(
 @pytest.mark.parametrize(
     ["concept_config_id", "bbox_dims"],
     [
-        ("GAMSSA", f"{bbox_dims[0]}x{bbox_dims[1]}")
+        (id, f"{bbox_dims[0]}x{bbox_dims[1]}")
+        for id in CONCEPT_CONFIGS.keys()
         for bbox_dims in [
             (64, 64),
-            (128, 128),
             (360, 180),
         ]
     ],
@@ -188,7 +195,6 @@ def test_bbox(
         500,
         1000,
         1500,
-        2000,
     ],
 )
 def test_statistics(

@@ -3692,7 +3692,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
-version = "0.1.3.dev11+gc50c464.d20241205"
+version = "0.1.3.dev13+g3fa0b95.d20241206"
 source = { editable = "." }
 dependencies = [
     { name = "cftime" },
