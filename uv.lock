@@ -3214,7 +3214,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
-version = "0.1.3.dev1+g697021c.d20241121"
+version = "0.1.3.dev5+g91fc6c7.d20241216"
 source = { editable = "." }
 dependencies = [
     { name = "cftime" },
@@ -3226,6 +3226,7 @@ dependencies = [
     { name = "isodate" },
     { name = "orjson" },
     { name = "pillow" },
+    { name = "psutil" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-dateutil" },
@@ -3273,6 +3274,7 @@ requires-dist = [
     { name = "orjson", specifier = "~=3.10.7" },
     { name = "pillow", specifier = ">=11.0.0" },
     { name = "pre-commit", marker = "extra == 'dev'" },
+    { name = "psutil", specifier = ">=6.0.0" },
     { name = "pydantic", specifier = ">=2.4,<3.0" },
     { name = "pydantic-settings", specifier = "~=2.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3.3" },

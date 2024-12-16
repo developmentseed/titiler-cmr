@@ -15,15 +15,19 @@ The /timeseries endpoints follow this basic pattern to assemble results for a ti
 
 import asyncio
 import io
+import logging
+import os
 from dataclasses import dataclass, fields
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from time import time
 from types import DynamicClassAttribute
 from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, Union
 from urllib.parse import urlencode
 
 import earthaccess
 import httpx
+import psutil
 from attrs import define
 from fastapi import Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
@@ -424,6 +428,12 @@ class TimeseriesExtension(FactoryExtension):
             """For all points/intervals along a timeseries, calculate summary statistics
             for the pixels that intersect a GeoJSON feature.
             """
+            start_time = time()
+            process = psutil.Process(os.getpid())
+
+            logging.info(
+                f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
+            )
             urls = build_request_urls(
                 base_url=str(factory.url_for(request, "geojson_statistics")),
                 request=request,
@@ -442,6 +452,17 @@ class TimeseriesExtension(FactoryExtension):
                 ]
             )
 
+            logging.info(
+                f"Time to fetch individual statistics: {time() - start_time:.2f}s"
+            )
+            logging.info(
+                f"Memory after fetching: {process.memory_info().rss / 1024 / 1024} MB"
+            )
+            logging.info(f"Number of statistics responses: {len(timestep_requests)}")
+            logging.info(
+                f"Starting stats reduction with {len(timestep_requests)} items"
+            )
+            combine_start = time()
             datetime_strs = [d.datetime for d in query]
             geojson.properties["statistics"] = {}
             for r, datetime_str in zip(timestep_requests, datetime_strs):
@@ -450,6 +471,11 @@ class TimeseriesExtension(FactoryExtension):
                         "properties"
                     ]["statistics"]
 
+            logging.info(f"Time to create output: {time() - combine_start:.2f}s")
+            logging.info(f"Total time: {time() - start_time:.2f}s")
+            logging.info(
+                f"Final memory usage: {process.memory_info().rss / 1024 / 1024} MB"
+            )
             return geojson
 
     def register_tilejson(self, factory: Endpoints):
@@ -570,6 +596,12 @@ class TimeseriesExtension(FactoryExtension):
 
             Currently only the `GIF` format is supported but `MP4` is on the roadmap.
             """
+            start_time = time()
+            process = psutil.Process(os.getpid())
+
+            logging.info(
+                f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
+            )
 
             path_params = {
                 "minx": minx,
@@ -603,6 +635,13 @@ class TimeseriesExtension(FactoryExtension):
                 *[timestep_request(url, method="GET", timeout=None) for url in urls]
             )
 
+            logging.info(f"Time to fetch PNGs: {time() - start_time:.2f}s")
+            logging.info(
+                f"Memory after fetching: {process.memory_info().rss / 1024 / 1024} MB"
+            )
+            logging.info(f"Number of PNG responses: {len(timestep_requests)}")
+
+            convert_start_time = time()
             pngs = []
             for r in timestep_requests:
                 if r.status_code == 200:
@@ -611,6 +650,17 @@ class TimeseriesExtension(FactoryExtension):
                     continue
                 else:
                     r.raise_for_status()
+
+            logging.info(f"Time to convert to PIL: {time() - convert_start_time:.2f}s")
+            logging.info(
+                f"Memory after PIL conversion: {process.memory_info().rss / 1024 / 1024} MB"
+            )
+            logging.info(
+                f"First image dimensions: {pngs[0].size if pngs else 'No images'}"
+            )
+
+            logging.info(f"Starting GIF creation with {len(pngs)} frames")
+            gif_start = time()
 
             gif_bytes = io.BytesIO()
 
@@ -624,5 +674,11 @@ class TimeseriesExtension(FactoryExtension):
             )
 
             gif_bytes.seek(0)
+
+            logging.info(f"Time to create GIF: {time() - gif_start:.2f}s")
+            logging.info(f"Total time: {time() - start_time:.2f}s")
+            logging.info(
+                f"Final memory usage: {process.memory_info().rss / 1024 / 1024} MB"
+            )
 
             return StreamingResponse(gif_bytes, media_type=TimeseriesMediaType.gif)

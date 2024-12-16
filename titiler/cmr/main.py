@@ -1,5 +1,7 @@
 """TiTiler+cmr FastAPI application."""
 
+import logging
+import os
 from contextlib import asynccontextmanager
 
 import earthaccess
@@ -28,6 +30,14 @@ templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 auth_config = AuthSettings()
+
+
+log_level = os.getenv("LOG_LEVEL", "INFO")
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()],
+)
 
 
 @asynccontextmanager
