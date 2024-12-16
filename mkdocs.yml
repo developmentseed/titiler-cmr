@@ -31,8 +31,6 @@ nav:
     - examples/time_series_example.ipynb
   - Development - Contributing: contributing.md
   - Release notes: release-notes.md
-  - Performance Benchmarks: 
-    - time_series_performance_benchmarks.ipynb
 
 watch:
   - titiler/cmr
