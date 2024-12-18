@@ -454,3 +454,18 @@ def test_unbounded_start(app, xarray_query_params) -> None:
     )
 
     assert response.status_code == 400
+
+
+def test_max_datetime(app, xarray_query_params) -> None:
+    """Make sure a request that yields too many sub-requests returns a 400"""
+
+    response = app.get(
+        "/timeseries",
+        params={
+            **xarray_query_params,
+            "datetime": "2008-10-12T00:00:01Z/2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 400

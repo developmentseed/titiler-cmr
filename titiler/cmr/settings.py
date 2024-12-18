@@ -14,6 +14,7 @@ class ApiSettings(BaseSettings):
     cors_origins: str = "*"
     cachecontrol: str = "public, max-age=3600"
     root_path: str = ""
+    time_series_max_requests: int = 995
     debug: bool = False
 
     model_config = {

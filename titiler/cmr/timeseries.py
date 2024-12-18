@@ -41,6 +41,7 @@ from pydantic import BaseModel
 from titiler.cmr.dependencies import ConceptID
 from titiler.cmr.errors import InvalidDatetime
 from titiler.cmr.factory import Endpoints
+from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import parse_datetime
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
@@ -49,6 +50,8 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
+
+settings = ApiSettings()
 
 # this section should eventually get moved to titiler.extensions.timeseries
 timeseries_img_endpoint_params: Dict[str, Any] = {
@@ -341,6 +344,13 @@ def timeseries_cmr_query(
                 detail="you must provide a datetime interval with a defined start time or a "
                 "list of comma-separated datetime strings",
             )
+
+    if len(datetime_params) > settings.time_series_max_requests:
+        raise HTTPException(
+            status_code=400,
+            detail=f"this request ({len(datetime_params)}) exceeds the maximum number of distinct "
+            f"time series points/intervals of {settings.time_series_max_requests}",
+        )
 
     return [
         CMRQueryParameters(
