@@ -3,6 +3,7 @@
 import io
 import warnings
 from copy import deepcopy
+from math import ceil
 from pathlib import Path
 from typing import Tuple
 
@@ -295,6 +296,7 @@ def test_xarray_part(
     assert image.size == size, f"Expected image size {size}, but got {image.size}"
 
 
+@pytest.mark.vcr
 def test_timeseries_statistics(
     app: TestClient,
     mocker,
@@ -464,6 +466,56 @@ def test_max_datetime(app, xarray_query_params) -> None:
         params={
             **xarray_query_params,
             "datetime": "2008-10-12T00:00:01Z/2024-10-12T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_limit(
+    app,
+    global_bounds,
+    global_geojson,
+):
+    """Make sure statistics requests that are too large return a 400"""
+    minx, miny, maxx, maxy = global_bounds
+    image_size = (maxx - minx) / 0.01 * (maxy - miny) / 0.01
+    size_limit = 1.5e10
+    n_days = ceil(size_limit / image_size)
+    response = app.post(
+        "/timeseries/statistics",
+        params={
+            "backend": "xarray",
+            "concept_id": "C1996881146-POCLOUD",
+            "variable": "analysed_sst",
+            "datetime": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
+            "step": "P1D",
+        },
+        json=global_geojson,
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.vcr
+def test_timeseries_bbox_limit(
+    app,
+    global_bounds,
+):
+    """Make sure time series image requests that are too large return a 400"""
+    minx, miny, maxx, maxy = global_bounds
+    image_size = (maxx - minx) / 0.01 * (maxy - miny) / 0.01
+    size_limit = 1e8
+    n_days = ceil(size_limit / image_size)
+    response = app.get(
+        f"/timeseries/bbox/{','.join(str(coord) for coord in global_bounds)}.gif",
+        params={
+            "backend": "xarray",
+            "concept_id": "C1996881146-POCLOUD",
+            "variable": "analysed_sst",
+            "datetime": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
             "step": "P1D",
         },
     )

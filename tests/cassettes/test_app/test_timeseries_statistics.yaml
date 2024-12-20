@@ -1,0 +1,142 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - earthaccess v0.11.0
+      authorization:
+      - DUMMY
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?has_granules=true&include_granule_counts=true&concept_id%5B%5D=C2036881735-POCLOUD&page_size=2000
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAO1a/W7byBF/lYX+SmBRIinZkowWLS3RMu/0VZF2LikOwYpcS0xIrsoPO7rAQF+j
+        r9cn6czuUqIs2fFd0zSHFjhA5+Xu7Ozsb2Z+M5vPtVWYZ7Vzo17LOf9YO2+1T+u1MGcxDP71cy1m
+        Oa2df66l7C7MQp5oYQCT9XotYBHLGfxxS6OM1Wu3PI1pXjuv0fU6Cn2aw+TmXRI0EprRhh+njSKO
+        Tz5kPKnVa+uU34UBS4W02mzaH02vBzC+opnm83gRJmwruMjKef6KJaenhq4myh1BzTwtYB7NMu6H
+        Yt8MNb6jaUgXEcNz1G5Mo33W0ttGy9R22+1GT4+Odo6Nto9KaLePjp4dHe0eGz3Vt6M/12tw6LvQ
+        l8q7pg7fu23d6FUWuma30+7oZtc40356++79bD69wZVwjZFY5o1MQ++2jV63Uz0eDJvtU1PvnJ3t
+        dP75AbZsaVGYfBRr1zyg1Nf4Gu6jiIuoyDS4s5z5cOXNoTV2Xeu92f0Ya9bFdKyN2tpwNL3Q7nSj
+        ibd7ZHGxAFB8YeXP8l6zNVwijbSsWGQsz8NkWV5xAh/umATD8Gruut7JiN2x6KR9UpF8Moz4gkYn
+        l7xIAoGHE5fRE7dIb6nPTjwWr1lK8yJlJ1ZCo00WZid3RkM/gckUdjx5NRy45muFsjylSYZQy7aI
+        rCBNC8A/wugAcJ9rPk98ts6lssfg91B/ctLpSyZ1XjCp/ZLtKtB9ZtLZSyZ1XzCpgvOHfaA/WnEM
+        9gdij3rBQ8UNHs0/6hQHUo/6yAM6CUKictESl3tr+6beOut2jc5eUNnGTwAZxLaaqZumprc0Q/dM
+        /bzdOm+fNsyW+Q6mLgFxRcQgEBYJBNRTUFVBEZDL06OeUWqQb9Yo3edRBL4K+8HZahB4EZ8DgPeI
+        JsuCLnEOg9X1mpX4YRTRdPMj29zzNBDeL50JvhJ0UvF77cIPuir+CNer4d1Rkkm3IvnOrTA4ie/o
+        R+jV/a06/TAvIzTczA1L0SagDLgfhqYwj9jWt8moTawiAweMQpoQ6dVkXER5qLksyXhKcFbpw+SV
+        VPt1nQTgkps6MZptErBlyhhJWcajQhgE1EkZzXkKG1XEX4DitCD8lowhr/GUR3y5wZOwNGTZhMZV
+        xTDokDaRG5aa7eINgXhDVLwhlXiz1RXkziF/QrQZlHAAkOs9zeh6un4u/mvouv5uN3EWgbAXqFyH
+        P6IFL9KE1XfmAzkzDMHZiqUi4zYGltWH0WkCMZ/NwTxFivI/10aQAyRCVnm+Pm827+/vGwseN5b8
+        rkGLJi1lNv0VTfOsuSjgdgGMWZOu+aLTaayD29oD+qAVBCHag0ZWnqfhosiVnytzMppGYNz8vYL8
+        +ywHie/zMEYMDVjmp+E6lwix1VwylHOJi3OJB3MJhGeigncDUyqNCmlUvavpHc1sHRgVfcGTvjKw
+        PNtzxraIAkqxCG6lohZLguNKjcS8ikp83bST4AtamYamn2qm8Wu1QmHvUbXE3xyoMpA7kdH2+3bD
+        9r5oZ+JVpUqAE/HXU0J95bYkk5MTObnc4Su6RUVP15s7k2FV1RnGiwzOlxNn8KSyj2eVWs6miHlt
+        eAX6ae1Ly7CO7wfAdSUFsT+hFHQKNdDnd6DzkqkVV9O582468awRSLriafgLT3IaqckDHtMwwdVD
+        xoFHpxv8/z6HKBsCk2HuBpSMMWNYc892HWsCUi7QWhDY5xAvIVaXbGLC03xVftuJqJ33ADz12htA
+        4bGvEE/Ed5se/64+u7w4Ll1D8SLvzbcB1EqCwzN8fnQXs5R/kBGfoK3OSX8DcSZIoTCIEKLaiCd1
+        Upk1EDzqnMzZsoB0RPSGeVoG72UKibWOVgS2Ffpj+Ilwy53F4RaLWIHkDU+jgJSTidSQQMJHN7Cj
+        KFxnPAzKyUOXiA8ui8Mx/cBT6xPg8Pys1ekCxULjDFjCYzwsT6e3l+B+gAm8IIR07dzsdUHTjmm2
+        zh7q+xrRnc0kCBJwHn83KG/2pwHEikSmQTx0vfb2YOQ6CbGyGjA/jMF+A2GWDAnJA2yqoo9C3Zyt
+        IdkBbKm6ih26HqqZGGwPUrIMU0rfc25sNIIfQuxgFSoAeIVbXnLEbs0GSVfE7Tv2pI/TPb4OfRif
+        9m1rgvzAY2lc/k08ezyz55Z3PbeFE0rOJGKEgd5mW8S9nl9affu5qeajqZfT6wnERme6vwE6rafo
+        kfRaqf0cfEjkWIzIcuiCLcMEb7Acfi5TgIlBMtgKGGoGa4ROeJsOUr02mnQwdQT+8adm6I1T/azT
+        3A8yFrgXICPfqKSaQVYNeNjg6RIluPAxLxnGMxUS4jeBMPKYJu2FXbH0N8RegiVQma/ItgQSrEFW
+        83N2y1LEh7RjqcVUiBJZnjjxOmJxCT5kJkqRCmvZJ3BfzghV3rJVlkKSnaUsCGX02OqQASmSbIRM
+        eIN0Olvrw+p3K54sgRSF+CtEXAG3Ah7Flsts/6xbWga4MHRNNw9y9SFxUje4NRO5nmNe+Ip8ahCm
+        4LwDSG6CTIGeTiK7ICrGQPSUTg8l9z3kBM1Er25dFP5HlkPgni4w3oLhbsNPqO5/tdZ3W0DEAwAL
+        RK3MmjlAnNY8xHy7dRKa+iuo+BtylwbwxXyFEJVNJTBgM2v5OyG1Q6EDDmqVgMQL+c3C57Y1EHys
+        BmybBseKKaDqgJvgOlWV535OVAmAYGqAPEcD4CmwCJTqQ8qAXRSrqMBQIkiN3zj2GzK3R8AMB8SZ
+        XE7nYxEI8dTFIt/yRgsm9Z2ZLWVXDrwM81WxaPg8bsozN/EUWipVIYJp7avsrYp4kUBiPqbnTZgV
+        gNtfDjUd2t5W0RvHvbZGzrtS1X2VlO0/rKOd1WdSt7zcO3sWSrB2eURzFRsVw/jqZh7aE0g9IzKY
+        9q/HNjDAg9MpR1+u0izLVaQ/UDLlxVrUCVfhckV21ODJuFj1929/JgEieaDqjR05mcD4dcZElC2L
+        fjLjoN2G/GdA33ekxmQ2HTn9ty+CGmgGSV0WBkdOceV5M5cwFZe2BR1ZpPxenS3g90nEaXDsTNVA
+        feAfqPPhIby5fei32Dw/Ep3uwjQHB9QCkRWAojV3bZ+sebwNNWQ5Xg3misuyYT/hOVENeTzGGCiR
+        0jNnn/LmKo/R/d3wF4Z8VN/S0fEFZKUDm11I26jSGQpGDLPYf4G0nxHIy3Z5EgQ5fPv3LXdcYsWA
+        UomjEV58aSptsz+t//iN7PazLD2RZyg6JZf2Ic14tixMd42hLjJTs3V+2js3zhpn7fY7gVa15no2
+        eOEa7MkskG74qAiU6L86AL2SgfX1lnU+0QME55BUrY42CgqfBbItR0A4sEBeYY0LKihdTvIVI1/q
+        b5FXF3z8mhTIxkFKLioi8E6Wrnkkw8yrqfNabEOWkn0+LiYbxFvBjl/ipseai5ImZ7KohCIlCTKS
+        gdmhrsyZWMIX2NJWbPQ25TFZU6gd7hhoeZtSIBQicJSDceiDx1D4v5QGIfYJMBffQ6pGZ8nCvJAx
+        R0jKVlC91gnU0bcYuMii4BtJhmMoyWFE7YiGVKfzgOJCxo+LRIXXrCyJXw0993XjUOd8BVexQo3Y
+        pzX2exK8PIgx2FEpr/oeqnmSrRmD84PjiFUJOSNxMyNBgaoIJQIKF55WZpjVGQmALidgEpD+QfDN
+        nfolfhoELoshiFQJVo0lElG3lSoHDgO8F0ABfiVPguIjmi4ZzkQEAJ4S7gNIEXs+h5ykqoEglGP3
+        NI1xjN3eglKoAXpDCKcWbXYowZSlUHRW4HsnaL7YCL0nU8tqQn08I4bZ6BCoxTK1uHIiJ5FnBLNj
+        oQAaVW+gvmcAOG9EP+FpuBifs03Co0BeuxsjUF4ZvV77NRlDDF3BKY0S62gNP0JjSNdBRzd6ZwbR
+        4KenY1dyxCUqnqr5h/Z0OLdmV04fsvBQJt4yFgMDs0YiqJSM+AXhDJufUGifYWgyTneF9nPhDNZA
+        EWb2PNM4N3uV4rx+8ISgCJ9UYq+wLh8tRlD8lWO/NvyJLXc9lGrzUHZF3v8Fya73VnUW+wwDk2pF
+        cPUWbc37V86NPcc5DjYdL6696VxURBV9J5ZrNX+YjZqKnewpPlsBMrCVNvUZTTikr/VqQ7ZZE9Bo
+        +fhUSixZ4xCpSJ38gP3RlK+LCK1GRnTBU+xsbeoEN8THEWxf+flBYblf2Rxm7O1p9/L11XRsk5k1
+        PCQ1x+iYfGJTGojLeWQ6QSvlNkRNQ7uJqco0UNKvCVCSj0+eRY2OGdTbSZjFe4C1Y1ntlE1jqeaf
+        j2grsPAyu8gN/03DoG0qppjNp33bdQ+BY1035aNdBS9PvBRVn4e+xb0fNj/kwXa9u+or5EAEd438
+        gbxh7GO0wYPOQB31GL+7M4imLuZJ4QwasAnA/27ivnUurqdvsVXZX1FkQZDeIFv4e69S03QR5jP4
+        woODN4aJaAVHZC0+o0GB/awhSvgpvc3/+fd/ABsIsW0PUfuuDCaK8aBYXBrRhFUfhLRerydiV8kP
+        w0Q8lO09TlyOptbes42TQGRPqOzIw4YHqrpbtQj2KbCpHsBhKSYckWX3FBJZRoQMlWbsvxUYGJ5T
+        tOxDH1MU7spJAF2i+XIYjQdz59JzJkNS3kcFrAffnrkr957mqzdhkK/+C+f/MYwUXztuAumxXqVI
+        IdNdmiduSRsfY9QtAGXaZDbbt4sYJpOSNUMxTVNNHALJygzkJ6AKMMTvC96Gbvwu0N3rNIyvgu0b
+        x5k/gvRNmIVQLGhOWQE4MV2yVJtvKT+wDUDCdwT2lt7WvwXYh/3pWHtjPCJmsnYBWyRLtidnHGaC
+        uRhZrr0Bmen3Bnb99wH2bsPofRW0Q1k8N/dvzwruqKgZx9va1vWpeHMjFcSb3xHajfbpN0H72Pam
+        M83at9eOk0lOX2mNbAUBD7K+N6gbjdbvA+qdr4P0m6v5XGs9gXUoRDcHZeQO7WLd94J2s61/E7Rj
+        L0Qz9X2L/SB66YK9VOCtelIaMb43lJu/j4D+tZj5/9nLr4/nF78pnl98b0j/fzz/34nnlaatu2Z+
+        eKteB7Dp8+j1MUiOvZwVcVx5b2zeGQ2j20BKpwxwPR5r2LWsNmjFjId6TXUlrSR45t+yXIYRUxP3
+        vvy18gSXsLw/uNTwH/DJMXXQibAYjFry32uiLPkQZzTMg9HKuxyYBUefVOs/u/kDNvn+BXUygJyS
+        NQAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      CMR-Hits:
+      - '1'
+      CMR-Request-Id:
+      - c150906c-41bc-4023-a5fe-5cda229ee2d2
+      CMR-Search-After:
+      - '[0.0,400.0,"GAMSSA_28km-ABOM-L4-GLOB-v01","1.0",2036881735,10]'
+      CMR-Took:
+      - '347'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-MD5:
+      - 21eb947ddb0ade0858051e3bcd2f35f2
+      Content-SHA1:
+      - dd34223b57ac0dcc523d8ffae7c64da973ec9e4b
+      Content-Type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.2; charset=utf-8
+      Date:
+      - Fri, 20 Dec 2024 20:41:03 GMT
+      Server:
+      - ServerTokens ProductOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding, User-Agent
+      Via:
+      - 1.1 7f30a4c61fd2c4e27ee212f1195d6f3c.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - P2g4JEoBfyux-0cT6Fvq6AGtO524nTsCS3OuJP_GuiYcOdcqet9u1w==
+      X-Amz-Cf-Pop:
+      - MSP50-P2
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - P2g4JEoBfyux-0cT6Fvq6AGtO524nTsCS3OuJP_GuiYcOdcqet9u1w==
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
