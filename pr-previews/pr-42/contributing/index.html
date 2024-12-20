@@ -475,15 +475,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#benchmarks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Benchmarks
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#documentation" class="md-nav__link">
     <span class="md-ellipsis">
       Documentation
@@ -565,15 +556,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#benchmarks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Benchmarks
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#documentation" class="md-nav__link">
     <span class="md-ellipsis">
       Documentation
@@ -630,11 +612,6 @@ with "pre-recorded" API responses. When adding new tests that incur actual netwo
 use the <code>@pytest.mark.vcr</code> decorator function to indicate <code>vcrpy</code> should be used.
 Record the new responses and commit them to the repository.</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w"> </span>-s<span class="w"> </span>--record-mode<span class="w"> </span>new_episodes
-</code></pre></div>
-<h2 id="benchmarks">Benchmarks<a class="headerlink" href="#benchmarks" title="Permanent link">&para;</a></h2>
-<p><code>tests/test_timeseries_benchmark.py</code> is used to evaluate the performance and limits of <code>/timeseries</code> requests.</p>
-<p>To run the benchmarks:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-vv<span class="w"> </span>--benchmark-only<span class="w"> </span>--benchmark-json<span class="w"> </span>benchmark.json
 </code></pre></div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <p>The documentation is generated using <code>mkdocs</code> and gets built and deployed to Github Pages when new tags are released and on pushes to the <code>develop</code> branch.</p>
