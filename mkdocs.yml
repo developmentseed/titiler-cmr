@@ -29,6 +29,8 @@ nav:
     - examples/xarray_backend_example.ipynb
     - examples/rasterio_backend_example.ipynb
     - examples/time_series_example.ipynb
+  - Deployment:
+    - deployment/time_series_api_limits.ipynb 
   - Development - Contributing: contributing.md
   - Release notes: release-notes.md
 
