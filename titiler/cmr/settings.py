@@ -15,7 +15,7 @@ class ApiSettings(BaseSettings):
     cachecontrol: str = "public, max-age=3600"
     root_path: str = ""
     time_series_max_requests: int = 995
-    time_series_max_image_size: float = 5.6e7
+    time_series_max_image_size: float = 5.625e7
     time_series_statistics_max_total_size: float = 1.5e10
     time_series_image_max_total_size: float = 1e8
     debug: bool = False
