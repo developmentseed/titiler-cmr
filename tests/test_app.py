@@ -3,12 +3,14 @@
 import io
 import warnings
 from copy import deepcopy
+from datetime import datetime, timedelta
 from math import ceil
 from pathlib import Path
 from typing import Tuple
 
 import pytest
 from fastapi.testclient import TestClient
+from geojson_pydantic import Feature, Polygon
 from httpx import Response
 from PIL import Image
 from rasterio.errors import NotGeoreferencedWarning
@@ -474,12 +476,12 @@ def test_max_datetime(app, xarray_query_params) -> None:
 
 
 @pytest.mark.vcr
-def test_timeseries_statistics_limit(
+def test_timeseries_statistics_image_size_limit(
     app,
     global_bounds,
     global_geojson,
 ):
-    """Make sure statistics requests that are too large return a 400"""
+    """Make sure statistics requests for too large of an AOI return a 400"""
     minx, miny, maxx, maxy = global_bounds
     image_size = (maxx - minx) / 0.01 * (maxy - miny) / 0.01
     size_limit = 1.5e10
@@ -497,6 +499,43 @@ def test_timeseries_statistics_limit(
     )
 
     assert response.status_code == 400
+    assert "The AOI for this request is too large" in response.text
+
+
+def test_timeseries_statistics_request_size_limit(
+    app,
+):
+    """Make sure statistics requests for too large of an AOI x time points return a 400"""
+    minx, miny, maxx, maxy = -40, -40, 0, 0
+    image_size = (maxx - minx) / 0.01 * (maxy - miny) / 0.01
+    size_limit = 1.5e10
+    n_days = ceil(size_limit / image_size)
+
+    start_datetime = datetime(year=2011, month=1, day=1, hour=0, minute=0, second=1)
+    end_datetime = start_datetime + timedelta(days=n_days)
+
+    large_geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(minx, miny, maxx, maxy),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/timeseries/statistics",
+        params={
+            "backend": "xarray",
+            "concept_id": "C1996881146-POCLOUD",
+            "variable": "analysed_sst",
+            "datetime": "/".join(
+                dt.isoformat() for dt in [start_datetime, end_datetime]
+            ),
+            "step": "P1D",
+        },
+        json=large_geojson,
+    )
+
+    assert response.status_code == 400
+    assert "This request is too large" in response.text
 
 
 @pytest.mark.vcr
