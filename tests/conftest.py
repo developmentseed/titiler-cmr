@@ -102,6 +102,22 @@ def arctic_geojson(arctic_bounds: Tuple[float, float, float, float]) -> Dict[str
 
 
 @pytest.fixture(scope="function")
+def global_bounds() -> Tuple[float, float, float, float]:
+    """bbox coordinates for the globe"""
+    return -180, -90, 180, 90
+
+
+@pytest.fixture(scope="function")
+def global_geojson(global_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
+    """geojson representation of the whole globe"""
+    return Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(*global_bounds),
+    ).model_dump(exclude_none=True)
+
+
+@pytest.fixture(scope="function")
 def mn_bounds() -> Tuple[float, float, float, float]:
     """bbox coordinates for an area in northern minnesota"""
     return -91.705, 48.179, -91.459, 48.3

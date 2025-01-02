@@ -41,7 +41,12 @@ from pydantic import BaseModel
 from titiler.cmr.dependencies import ConceptID
 from titiler.cmr.errors import InvalidDatetime
 from titiler.cmr.factory import Endpoints
-from titiler.cmr.utils import parse_datetime
+from titiler.cmr.settings import ApiSettings
+from titiler.cmr.utils import (
+    calculate_time_series_request_size,
+    get_geojson_bounds,
+    parse_datetime,
+)
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import FactoryExtension
@@ -49,6 +54,8 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
+
+settings = ApiSettings()
 
 # this section should eventually get moved to titiler.extensions.timeseries
 timeseries_img_endpoint_params: Dict[str, Any] = {
@@ -342,6 +349,13 @@ def timeseries_cmr_query(
                 "list of comma-separated datetime strings",
             )
 
+    if len(datetime_params) > settings.time_series_max_requests:
+        raise HTTPException(
+            status_code=400,
+            detail=f"this request ({len(datetime_params)}) exceeds the maximum number of distinct "
+            f"time series points/intervals of {settings.time_series_max_requests}",
+        )
+
     return [
         CMRQueryParameters(
             concept_id=concept_id,
@@ -430,6 +444,40 @@ class TimeseriesExtension(FactoryExtension):
             """
             start_time = time()
             process = psutil.Process(os.getpid())
+            logging.info("Checking size of time series request")
+
+            # check for unconstrained image reading operations
+            if reader_params.backend == "xarray" or (
+                not image_params.max_size
+                or not (image_params.height and image_params.width)
+            ):
+                # get bbox for geojson:
+                minx, miny, maxx, maxy = get_geojson_bounds(geojson)
+
+                request_size = calculate_time_series_request_size(
+                    concept_id=request.query_params["concept_id"],
+                    n_time_steps=len(query),
+                    minx=minx,
+                    miny=miny,
+                    maxx=maxx,
+                    maxy=maxy,
+                    coord_crs=coord_crs,
+                )
+
+                image_size = request_size / len(query)
+                if image_size > settings.time_series_max_image_size:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="The AOI for this request is too large for the /statistics endpoint for this dataset. "
+                        "Try again with either a smaller AOI",
+                    )
+
+                if request_size > settings.time_series_statistics_max_total_size:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"This request is too large for the /timeseries/statistics endpoint for this dataset. "
+                        f"Try again with either a smaller AOI or fewer time steps than {len(query)}",
+                    )
 
             logging.info(
                 f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
@@ -598,6 +646,36 @@ class TimeseriesExtension(FactoryExtension):
             """
             start_time = time()
             process = psutil.Process(os.getpid())
+
+            # check for unconstrained image reading operations
+            if reader_params.backend == "xarray" or (
+                not image_params.max_size
+                or not (image_params.height and image_params.width)
+            ):
+                request_size = calculate_time_series_request_size(
+                    concept_id=request.query_params["concept_id"],
+                    n_time_steps=len(query),
+                    minx=minx,
+                    miny=miny,
+                    maxx=maxx,
+                    maxy=maxy,
+                    coord_crs=coord_crs,
+                )
+
+                image_size = request_size / len(query)
+                if image_size > settings.time_series_max_image_size:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="The AOI for this request is too large for the /bbox endpoint for this dataset. "
+                        "Try again with either a smaller AOI",
+                    )
+
+                if request_size > settings.time_series_image_max_total_size:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"This request is too large for the /timeseries/bbox endpoint for this dataset. "
+                        f"Try again with either a smaller AOI or fewer time steps than {len(query)}",
+                    )
 
             logging.info(
                 f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"

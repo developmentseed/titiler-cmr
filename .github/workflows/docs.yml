@@ -1,0 +1,219 @@
+name: Documentation
+on:
+  push:
+    branches:
+      - develop
+    tags:
+      - 'v*'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Job for versioned deployments (runs on develop branch and tags)
+  deploy-versions:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for mike to work with tags
+      
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.5.*" 
+          enable-cache: true
+      - name: Sync
+        run: | 
+          uv sync --locked
+          git restore uv.lock
+      
+      - name: Configure Git
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+      
+      - name: Deploy docs
+        env:
+          EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}  
+          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}  
+        run: |
+          echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            # For tags, deploy the tagged version
+            VERSION=${GITHUB_REF#refs/tags/v}
+            uv run mike deploy --push $VERSION
+            
+            # If this is the latest version, update the 'latest' alias
+            LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
+          if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
+            uv run mike alias --push $VERSION latest
+            uv run mike set-default --push latest
+          fi
+          else
+            # For develop branch, deploy to 'dev'
+            uv run mike deploy --push --update-aliases dev
+          fi
+
+  # Job for PR previews
+  preview:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.5.*" 
+          enable-cache: true
+      - name: Sync
+        run: | 
+          uv sync 
+          git diff
+
+      # Only build and deploy if PR is opened/synchronized/reopened
+      - name: Build docs
+        if: github.event.action != 'closed'
+        env:
+          EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}  
+          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}  
+        run: |
+          echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
+          uv run mkdocs build --site-dir site/pr-${{ github.event.pull_request.number }}
+
+      - name: Deploy preview
+        id: deploy
+        if: github.event.action != 'closed'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Checkout gh-pages branch
+          git restore .
+          git fetch origin gh-pages --depth=1
+          git checkout gh-pages
+          
+          # Create preview directory if it doesn't exist
+          mkdir -p pr-previews
+          
+          # Copy new preview
+          rm -rf pr-previews/pr-${{ github.event.pull_request.number }}
+          cp -r site/pr-${{ github.event.pull_request.number }} pr-previews/
+          
+          # Check if there are actual changes in git
+          git add pr-previews
+          if git diff --staged --quiet; then
+            echo "No changes in documentation. Skipping deployment."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # If we get here, there are changes
+          git commit -m "Deploy preview for PR #${{ github.event.pull_request.number }}"
+          git push origin gh-pages
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+      - name: Post/Update PR Comment
+        if: github.event.action != 'closed'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log('Starting PR comment update...');
+            const has_changes = '${{ steps.deploy.outputs.has_changes }}' === 'true';
+            const preview_url = `https://${context.repo.owner}.github.io/${context.repo.repo}/pr-previews/pr-${context.payload.pull_request.number}/`;
+            const message = `📚 Documentation preview will be available at: ${preview_url}
+
+            Status: ${has_changes ? '✅ Preview is ready!' : '🔄 No changes in documentation since last update'}`;
+            
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            
+            const docComment = comments.data.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('Documentation preview will be available at:')
+            );
+            
+            if (docComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: docComment.id,
+                body: message
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: message
+              });
+            }
+
+      - name: Cleanup preview
+        if: github.event.action == 'closed'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Checkout gh-pages branch
+          git restore uv.lock
+          git fetch origin gh-pages --depth=1
+          git checkout gh-pages
+          
+          # Remove the preview directory for this PR
+          rm -rf pr-previews/pr-${{ github.event.pull_request.number }}
+          
+          # Commit and push if there are changes
+          git add pr-previews
+          git diff --staged --quiet || (git commit -m "Remove preview for PR #${{ github.event.pull_request.number }}" && git push origin gh-pages)
+
+  # Optional job to cleanup old PR previews
+  cleanup-old-previews:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      
+      - name: Get closed PRs
+        id: closed-prs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed'
+            });
+            return prs.data.map(pr => pr.number);
+          result-encoding: string
+      
+      - name: Cleanup old previews
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Get list of preview directories
+          cd pr-previews
+          for preview in pr-*; do
+            if [ -d "$preview" ]; then
+              PR_NUM=$(echo $preview | sed 's/pr-//')
+              if ! echo "${{ steps.closed-prs.outputs.result }}" | grep -q "$PR_NUM"; then
+                rm -rf "$preview"
+                echo "Removed old preview: $preview"
+              fi
+            fi
+          done
+          
+          # Commit and push if there are changes
+          git add .
+          git diff --staged --quiet || (git commit -m "Cleanup old PR previews" && git push origin gh-pages)
+

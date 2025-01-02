@@ -45,3 +45,13 @@ Record the new responses and commit them to the repository.
 ```bash
 uv run pytest -v -s --record-mode new_episodes
 ```
+
+## Documentation
+
+The documentation is generated using `mkdocs` and gets built and deployed to Github Pages when new tags are released and on pushes to the `develop` branch.
+
+To preview the documentation in your browser you can run:
+
+```bash
+uv run mkdocs serve -o
+```
