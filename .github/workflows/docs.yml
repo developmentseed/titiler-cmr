@@ -28,7 +28,7 @@ jobs:
           enable-cache: true
       - name: Sync
         run: | 
-          uv sync --locked
+          uv sync
           git restore uv.lock
       
       - name: Configure Git
