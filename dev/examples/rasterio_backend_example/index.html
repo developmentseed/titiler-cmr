@@ -1695,263 +1695,9 @@ print(r)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ReadTimeout</span>                               Traceback (most recent call last)
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:101</span>, in <span class="ansi-cyan-fg">map_httpcore_exceptions</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    100</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; 101</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">yield</span>
-<span class="ansi-green-intense-fg ansi-bold">    102</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:250</span>, in <span class="ansi-cyan-fg">HTTPTransport.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    249</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> map_httpcore_exceptions():
-<span class="ansi-green-fg">--&gt; 250</span>     resp <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_pool</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">req</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    252</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span style="color: rgb(0,135,0)">isinstance</span>(resp<span style="color: rgb(98,98,98)">.</span>stream, typing<span style="color: rgb(98,98,98)">.</span>Iterable)
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py:256</span>, in <span class="ansi-cyan-fg">ConnectionPool.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    255</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_close_connections(closing)
-<span class="ansi-green-fg">--&gt; 256</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> exc <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    258</span> <span style="color: rgb(95,135,135)"># Return the response. Note that in this case we still have to manage</span>
-<span class="ansi-green-intense-fg ansi-bold">    259</span> <span style="color: rgb(95,135,135)"># the point at which the response is closed.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py:236</span>, in <span class="ansi-cyan-fg">ConnectionPool.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    234</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    235</span>     <span style="color: rgb(95,135,135)"># Send the request on the assigned connection.</span>
-<span class="ansi-green-fg">--&gt; 236</span>     response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">connection</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    237</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">pool_request</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">request</span>
-<span class="ansi-green-intense-fg ansi-bold">    238</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    239</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> ConnectionNotAvailable:
-<span class="ansi-green-intense-fg ansi-bold">    240</span>     <span style="color: rgb(95,135,135)"># In some cases a connection may initially be available to</span>
-<span class="ansi-green-intense-fg ansi-bold">    241</span>     <span style="color: rgb(95,135,135)"># handle a request, but then become unavailable.</span>
-<span class="ansi-green-intense-fg ansi-bold">    242</span>     <span style="color: rgb(95,135,135)">#</span>
-<span class="ansi-green-intense-fg ansi-bold">    243</span>     <span style="color: rgb(95,135,135)"># In this case we clear the connection and try again.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/connection.py:103</span>, in <span class="ansi-cyan-fg">HTTPConnection.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    101</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> exc
-<span class="ansi-green-fg">--&gt; 103</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_connection</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:136</span>, in <span class="ansi-cyan-fg">HTTP11Connection.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    135</span>         <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_response_closed()
-<span class="ansi-green-fg">--&gt; 136</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> exc
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:106</span>, in <span class="ansi-cyan-fg">HTTP11Connection.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">     97</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> Trace(
-<span class="ansi-green-intense-fg ansi-bold">     98</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">receive_response_headers</span><span style="color: rgb(175,0,0)">"</span>, logger, request, kwargs
-<span class="ansi-green-intense-fg ansi-bold">     99</span> ) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> trace:
-<span class="ansi-green-intense-fg ansi-bold">    100</span>     (
-<span class="ansi-green-intense-fg ansi-bold">    101</span>         http_version,
-<span class="ansi-green-intense-fg ansi-bold">    102</span>         status,
-<span class="ansi-green-intense-fg ansi-bold">    103</span>         reason_phrase,
-<span class="ansi-green-intense-fg ansi-bold">    104</span>         headers,
-<span class="ansi-green-intense-fg ansi-bold">    105</span>         trailing_data,
-<span class="ansi-green-fg">--&gt; 106</span>     ) <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_receive_response_headers</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    107</span>     trace<span style="color: rgb(98,98,98)">.</span>return_value <span style="color: rgb(98,98,98)">=</span> (
-<span class="ansi-green-intense-fg ansi-bold">    108</span>         http_version,
-<span class="ansi-green-intense-fg ansi-bold">    109</span>         status,
-<span class="ansi-green-intense-fg ansi-bold">    110</span>         reason_phrase,
-<span class="ansi-green-intense-fg ansi-bold">    111</span>         headers,
-<span class="ansi-green-intense-fg ansi-bold">    112</span>     )
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:177</span>, in <span class="ansi-cyan-fg">HTTP11Connection._receive_response_headers</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    176</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
-<span class="ansi-green-fg">--&gt; 177</span>     event <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_receive_event</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    178</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(event, h11<span style="color: rgb(98,98,98)">.</span>Response):
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:217</span>, in <span class="ansi-cyan-fg">HTTP11Connection._receive_event</span><span class="ansi-blue-fg">(self, timeout)</span>
-<span class="ansi-green-intense-fg ansi-bold">    216</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> event <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> h11<span style="color: rgb(98,98,98)">.</span>NEED_DATA:
-<span class="ansi-green-fg">--&gt; 217</span>     data <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_network_stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    218</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">READ_NUM_BYTES</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span>
-<span class="ansi-green-intense-fg ansi-bold">    219</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    221</span>     <span style="color: rgb(95,135,135)"># If we feed this case through h11 we'll raise an exception like:</span>
-<span class="ansi-green-intense-fg ansi-bold">    222</span>     <span style="color: rgb(95,135,135)">#</span>
-<span class="ansi-green-intense-fg ansi-bold">    223</span>     <span style="color: rgb(95,135,135)">#     httpcore.RemoteProtocolError: can't handle event type</span>
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    227</span>     <span style="color: rgb(95,135,135)"># perspective. Instead we handle this case distinctly and treat</span>
-<span class="ansi-green-intense-fg ansi-bold">    228</span>     <span style="color: rgb(95,135,135)"># it as a ConnectError.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_backends/sync.py:126</span>, in <span class="ansi-cyan-fg">SyncStream.read</span><span class="ansi-blue-fg">(self, max_bytes, timeout)</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span> exc_map: ExceptionMapping <span style="color: rgb(98,98,98)">=</span> {socket<span style="color: rgb(98,98,98)">.</span>timeout: ReadTimeout, <span class="ansi-bold" style="color: rgb(215,95,95)">OSError</span>: ReadError}
-<span class="ansi-green-fg">--&gt; 126</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> map_exceptions(exc_map):
-<span class="ansi-green-intense-fg ansi-bold">    127</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_sock<span style="color: rgb(98,98,98)">.</span>settimeout(timeout)
-
-File <span class="ansi-green-fg">/usr/lib/python3.10/contextlib.py:153</span>, in <span class="ansi-cyan-fg">_GeneratorContextManager.__exit__</span><span class="ansi-blue-fg">(self, typ, value, traceback)</span>
-<span class="ansi-green-intense-fg ansi-bold">    152</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; 153</span>     <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">gen</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">throw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">typ</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">value</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">traceback</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">StopIteration</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
-<span class="ansi-green-intense-fg ansi-bold">    155</span>     <span style="color: rgb(95,135,135)"># Suppress StopIteration *unless* it's the same exception that</span>
-<span class="ansi-green-intense-fg ansi-bold">    156</span>     <span style="color: rgb(95,135,135)"># was passed to throw().  This prevents a StopIteration</span>
-<span class="ansi-green-intense-fg ansi-bold">    157</span>     <span style="color: rgb(95,135,135)"># raised inside the "with" statement from being suppressed.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_exceptions.py:14</span>, in <span class="ansi-cyan-fg">map_exceptions</span><span class="ansi-blue-fg">(map)</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(exc, from_exc):
-<span class="ansi-green-fg">---&gt; 14</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> to_exc(exc) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">exc</span>
-<span class="ansi-green-intense-fg ansi-bold">     15</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span>
-
-<span class="ansi-red-fg">ReadTimeout</span>: The read operation timed out
-
-The above exception was the direct cause of the following exception:
-
-<span class="ansi-red-fg">ReadTimeout</span>                               Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> r <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">httpx</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">titiler_endpoint</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/WebMercatorQuad/tilejson.json</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">concept_id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">concept_id</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># Datetime in form of `start_date/end_date`</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">datetime</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">2024-10-01T00:00:00Z/2024-10-10T23:59:59Z</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># We know that the HLS collection dataset is stored as File per Band</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># so we need to pass a `band_regex` option to assign `bands` to each URL</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands_regex</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B[0-9][0-9]</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># titiler-cmr can work with both Zarr and COG dataset</span>
-<span class="ansi-green-intense-fg ansi-bold">     11</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># but we need to tell the endpoints in advance which backend</span>
-<span class="ansi-green-intense-fg ansi-bold">     12</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># to use</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">backend</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rasterio</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     14</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># True Color Image B04,B03,B02</span>
-<span class="ansi-green-intense-fg ansi-bold">     15</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B04</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     16</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B03</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B02</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     18</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># The data is in type of Uint16 so we need to apply some</span>
-<span class="ansi-green-intense-fg ansi-bold">     19</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># rescaling/color_formula in order to create PNGs</span>
-<span class="ansi-green-intense-fg ansi-bold">     20</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">color_formula</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Gamma RGB 3.5 Saturation 1.7 Sigmoidal RGB 15 0.35</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)</span>
-<span class="ansi-green-intense-fg ansi-bold">     22</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># which will results in useless large scale query</span>
-<span class="ansi-green-intense-fg ansi-bold">     23</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">minzoom</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">8</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     24</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">maxzoom</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">13</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     25</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     26</span> <span class="ansi-yellow-bg">)</span><span style="color: rgb(98,98,98)">.</span>json()
-<span class="ansi-green-intense-fg ansi-bold">     28</span> <span style="color: rgb(0,135,0)">print</span>(r)
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_api.py:195</span>, in <span class="ansi-cyan-fg">get</span><span class="ansi-blue-fg">(url, params, headers, cookies, auth, proxy, follow_redirects, verify, timeout, trust_env)</span>
-<span class="ansi-green-intense-fg ansi-bold">    174</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">get</span>(
-<span class="ansi-green-intense-fg ansi-bold">    175</span>     url: URL <span style="color: rgb(98,98,98)">|</span> <span style="color: rgb(0,135,0)">str</span>,
-<span class="ansi-green-intense-fg ansi-bold">    176</span>     <span style="color: rgb(98,98,98)">*</span>,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    185</span>     trust_env: <span style="color: rgb(0,135,0)">bool</span> <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
-<span class="ansi-green-intense-fg ansi-bold">    186</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> Response:
-<span class="ansi-green-intense-fg ansi-bold">    187</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    188</span> <span style="color: rgb(175,0,0)">    Sends a `GET` request.</span>
-<span class="ansi-green-intense-fg ansi-bold">    189</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    193</span> <span style="color: rgb(175,0,0)">    on this function, as `GET` requests should not include a request body.</span>
-<span class="ansi-green-intense-fg ansi-bold">    194</span> <span style="color: rgb(175,0,0)">    """</span>
-<span class="ansi-green-fg">--&gt; 195</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    196</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">GET</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    197</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    198</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    199</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    200</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cookies</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">cookies</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    201</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    202</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">proxy</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">proxy</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    203</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    204</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">verify</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">verify</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    205</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    206</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">trust_env</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">trust_env</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    207</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_api.py:109</span>, in <span class="ansi-cyan-fg">request</span><span class="ansi-blue-fg">(method, url, params, content, data, files, json, headers, cookies, auth, proxy, timeout, follow_redirects, verify, trust_env)</span>
-<span class="ansi-green-intense-fg ansi-bold">     57</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">     58</span> <span style="color: rgb(175,0,0)">Sends an HTTP request.</span>
-<span class="ansi-green-intense-fg ansi-bold">     59</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    100</span> <span style="color: rgb(175,0,0)">```</span>
-<span class="ansi-green-intense-fg ansi-bold">    101</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    102</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> Client(
-<span class="ansi-green-intense-fg ansi-bold">    103</span>     cookies<span style="color: rgb(98,98,98)">=</span>cookies,
-<span class="ansi-green-intense-fg ansi-bold">    104</span>     proxy<span style="color: rgb(98,98,98)">=</span>proxy,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    107</span>     trust_env<span style="color: rgb(98,98,98)">=</span>trust_env,
-<span class="ansi-green-intense-fg ansi-bold">    108</span> ) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
-<span class="ansi-green-fg">--&gt; 109</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">client</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    110</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">method</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">method</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    111</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    112</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">content</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">content</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    113</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    114</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">files</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">files</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">json</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">json</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    116</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    117</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    118</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    119</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    120</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:827</span>, in <span class="ansi-cyan-fg">Client.request</span><span class="ansi-blue-fg">(self, method, url, content, data, files, json, params, headers, cookies, auth, follow_redirects, timeout, extensions)</span>
-<span class="ansi-green-intense-fg ansi-bold">    812</span>     warnings<span style="color: rgb(98,98,98)">.</span>warn(message, <span class="ansi-bold" style="color: rgb(215,95,95)">DeprecationWarning</span>, stacklevel<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">2</span>)
-<span class="ansi-green-intense-fg ansi-bold">    814</span> request <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>build_request(
-<span class="ansi-green-intense-fg ansi-bold">    815</span>     method<span style="color: rgb(98,98,98)">=</span>method,
-<span class="ansi-green-intense-fg ansi-bold">    816</span>     url<span style="color: rgb(98,98,98)">=</span>url,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    825</span>     extensions<span style="color: rgb(98,98,98)">=</span>extensions,
-<span class="ansi-green-intense-fg ansi-bold">    826</span> )
-<span class="ansi-green-fg">--&gt; 827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">send</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:916</span>, in <span class="ansi-cyan-fg">Client.send</span><span class="ansi-blue-fg">(self, request, stream, auth, follow_redirects)</span>
-<span class="ansi-green-intense-fg ansi-bold">    912</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_set_timeout(request)
-<span class="ansi-green-intense-fg ansi-bold">    914</span> auth <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_build_request_auth(request, auth)
-<span class="ansi-green-fg">--&gt; 916</span> response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_send_handling_auth</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    917</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    918</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    919</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    920</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">history</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    921</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    922</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    923</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> stream:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:944</span>, in <span class="ansi-cyan-fg">Client._send_handling_auth</span><span class="ansi-blue-fg">(self, request, auth, follow_redirects, history)</span>
-<span class="ansi-green-intense-fg ansi-bold">    941</span> request <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">next</span>(auth_flow)
-<span class="ansi-green-intense-fg ansi-bold">    943</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
-<span class="ansi-green-fg">--&gt; 944</span>     response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_send_handling_redirects</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    945</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    946</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    947</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">history</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">history</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    948</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    949</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    950</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:981</span>, in <span class="ansi-cyan-fg">Client._send_handling_redirects</span><span class="ansi-blue-fg">(self, request, follow_redirects, history)</span>
-<span class="ansi-green-intense-fg ansi-bold">    978</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> hook <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_event_hooks[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">request</span><span style="color: rgb(175,0,0)">"</span>]:
-<span class="ansi-green-intense-fg ansi-bold">    979</span>     hook(request)
-<span class="ansi-green-fg">--&gt; 981</span> response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_send_single_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    982</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    983</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> hook <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_event_hooks[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">response</span><span style="color: rgb(175,0,0)">"</span>]:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:1016</span>, in <span class="ansi-cyan-fg">Client._send_single_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1011</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">RuntimeError</span>(
-<span class="ansi-green-intense-fg ansi-bold">   1012</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Attempted to send an async request with a sync Client instance.</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">   1013</span>     )
-<span class="ansi-green-intense-fg ansi-bold">   1015</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> request_context(request<span style="color: rgb(98,98,98)">=</span>request):
-<span class="ansi-green-fg">-&gt; 1016</span>     response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">transport</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1018</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span style="color: rgb(0,135,0)">isinstance</span>(response<span style="color: rgb(98,98,98)">.</span>stream, SyncByteStream)
-<span class="ansi-green-intense-fg ansi-bold">   1020</span> response<span style="color: rgb(98,98,98)">.</span>request <span style="color: rgb(98,98,98)">=</span> request
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:249</span>, in <span class="ansi-cyan-fg">HTTPTransport.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    235</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> <span class="ansi-bold" style="color: rgb(0,0,255)">httpcore</span>
-<span class="ansi-green-intense-fg ansi-bold">    237</span> req <span style="color: rgb(98,98,98)">=</span> httpcore<span style="color: rgb(98,98,98)">.</span>Request(
-<span class="ansi-green-intense-fg ansi-bold">    238</span>     method<span style="color: rgb(98,98,98)">=</span>request<span style="color: rgb(98,98,98)">.</span>method,
-<span class="ansi-green-intense-fg ansi-bold">    239</span>     url<span style="color: rgb(98,98,98)">=</span>httpcore<span style="color: rgb(98,98,98)">.</span>URL(
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    247</span>     extensions<span style="color: rgb(98,98,98)">=</span>request<span style="color: rgb(98,98,98)">.</span>extensions,
-<span class="ansi-green-intense-fg ansi-bold">    248</span> )
-<span class="ansi-green-fg">--&gt; 249</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> map_httpcore_exceptions():
-<span class="ansi-green-intense-fg ansi-bold">    250</span>     resp <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_pool<span style="color: rgb(98,98,98)">.</span>handle_request(req)
-<span class="ansi-green-intense-fg ansi-bold">    252</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span style="color: rgb(0,135,0)">isinstance</span>(resp<span style="color: rgb(98,98,98)">.</span>stream, typing<span style="color: rgb(98,98,98)">.</span>Iterable)
-
-File <span class="ansi-green-fg">/usr/lib/python3.10/contextlib.py:153</span>, in <span class="ansi-cyan-fg">_GeneratorContextManager.__exit__</span><span class="ansi-blue-fg">(self, typ, value, traceback)</span>
-<span class="ansi-green-intense-fg ansi-bold">    151</span>     value <span style="color: rgb(98,98,98)">=</span> typ()
-<span class="ansi-green-intense-fg ansi-bold">    152</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; 153</span>     <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">gen</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">throw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">typ</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">value</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">traceback</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">StopIteration</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
-<span class="ansi-green-intense-fg ansi-bold">    155</span>     <span style="color: rgb(95,135,135)"># Suppress StopIteration *unless* it's the same exception that</span>
-<span class="ansi-green-intense-fg ansi-bold">    156</span>     <span style="color: rgb(95,135,135)"># was passed to throw().  This prevents a StopIteration</span>
-<span class="ansi-green-intense-fg ansi-bold">    157</span>     <span style="color: rgb(95,135,135)"># raised inside the "with" statement from being suppressed.</span>
-<span class="ansi-green-intense-fg ansi-bold">    158</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> exc <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> value
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:118</span>, in <span class="ansi-cyan-fg">map_httpcore_exceptions</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span>
-<span class="ansi-green-intense-fg ansi-bold">    117</span> message <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">str</span>(exc)
-<span class="ansi-green-fg">--&gt; 118</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> mapped_exc(message) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">exc</span>
-
-<span class="ansi-red-fg">ReadTimeout</span>: The read operation timed out</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
+</pre>
 </div>
 </div>
 </div>
@@ -2009,25 +1755,90 @@ m</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> bounds <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">r</span>[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">bounds</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">      2</span> m <span style="color: rgb(98,98,98)">=</span> Map(
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     location<span style="color: rgb(98,98,98)">=</span>(<span style="color: rgb(98,98,98)">47.590266824611675</span>, <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">91.03729840730689</span>),
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     zoom_start<span style="color: rgb(98,98,98)">=</span>r[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">maxzoom</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">-</span> <span style="color: rgb(98,98,98)">2</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> )
-<span class="ansi-green-intense-fg ansi-bold">      7</span> TileLayer(
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     tiles<span style="color: rgb(98,98,98)">=</span>r[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles</span><span style="color: rgb(175,0,0)">"</span>][<span style="color: rgb(98,98,98)">0</span>],
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     opacity<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>,
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     attr<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">NASA</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     11</span> )<span style="color: rgb(98,98,98)">.</span>add_to(m)
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe allowfullscreen="" mozallowfullscreen="" srcdoc='&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8" /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"&gt;&lt;/script&gt;
+    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/&gt;
+    
+            &lt;meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
+            &lt;style&gt;
+                #map_a752a49a6c0b0c95b04f2c8abf19d373 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class="folium-map" id="map_a752a49a6c0b0c95b04f2c8abf19d373" &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_a752a49a6c0b0c95b04f2c8abf19d373 = L.map(
+                "map_a752a49a6c0b0c95b04f2c8abf19d373",
+                {
+                    center: [47.590266824611675, -91.03729840730689],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 11,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
 
-<span class="ansi-red-fg">NameError</span>: name 'r' is not defined</pre>
+            
+
+        
+    
+            var tile_layer_16dbb2709fb1e1a23e1b9ab1b1a073b5 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_16dbb2709fb1e1a23e1b9ab1b1a073b5.addTo(map_a752a49a6c0b0c95b04f2c8abf19d373);
+        
+    
+            var tile_layer_dfb27effed10f950f7afb42745f3d176 = L.tileLayer(
+                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
+                {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_dfb27effed10f950f7afb42745f3d176.addTo(map_a752a49a6c0b0c95b04f2c8abf19d373);
+        
+&lt;/script&gt;
+&lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
 </div>
 </div>
 </div>
@@ -2156,275 +1967,90 @@ m</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ReadTimeout</span>                               Traceback (most recent call last)
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:101</span>, in <span class="ansi-cyan-fg">map_httpcore_exceptions</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    100</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; 101</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">yield</span>
-<span class="ansi-green-intense-fg ansi-bold">    102</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe allowfullscreen="" mozallowfullscreen="" srcdoc='&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8" /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"&gt;&lt;/script&gt;
+    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/&gt;
+    
+            &lt;meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
+            &lt;style&gt;
+                #map_217376bec5e7a8a551f0c18c19a3b2f9 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class="folium-map" id="map_217376bec5e7a8a551f0c18c19a3b2f9" &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_217376bec5e7a8a551f0c18c19a3b2f9 = L.map(
+                "map_217376bec5e7a8a551f0c18c19a3b2f9",
+                {
+                    center: [47.9221313337365, -91.65432884883238],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 12,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:250</span>, in <span class="ansi-cyan-fg">HTTPTransport.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    249</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> map_httpcore_exceptions():
-<span class="ansi-green-fg">--&gt; 250</span>     resp <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_pool</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">req</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    252</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span style="color: rgb(0,135,0)">isinstance</span>(resp<span style="color: rgb(98,98,98)">.</span>stream, typing<span style="color: rgb(98,98,98)">.</span>Iterable)
+            
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py:256</span>, in <span class="ansi-cyan-fg">ConnectionPool.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    255</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_close_connections(closing)
-<span class="ansi-green-fg">--&gt; 256</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> exc <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    258</span> <span style="color: rgb(95,135,135)"># Return the response. Note that in this case we still have to manage</span>
-<span class="ansi-green-intense-fg ansi-bold">    259</span> <span style="color: rgb(95,135,135)"># the point at which the response is closed.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py:236</span>, in <span class="ansi-cyan-fg">ConnectionPool.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    234</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    235</span>     <span style="color: rgb(95,135,135)"># Send the request on the assigned connection.</span>
-<span class="ansi-green-fg">--&gt; 236</span>     response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">connection</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    237</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">pool_request</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">request</span>
-<span class="ansi-green-intense-fg ansi-bold">    238</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    239</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> ConnectionNotAvailable:
-<span class="ansi-green-intense-fg ansi-bold">    240</span>     <span style="color: rgb(95,135,135)"># In some cases a connection may initially be available to</span>
-<span class="ansi-green-intense-fg ansi-bold">    241</span>     <span style="color: rgb(95,135,135)"># handle a request, but then become unavailable.</span>
-<span class="ansi-green-intense-fg ansi-bold">    242</span>     <span style="color: rgb(95,135,135)">#</span>
-<span class="ansi-green-intense-fg ansi-bold">    243</span>     <span style="color: rgb(95,135,135)"># In this case we clear the connection and try again.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/connection.py:103</span>, in <span class="ansi-cyan-fg">HTTPConnection.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    101</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> exc
-<span class="ansi-green-fg">--&gt; 103</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_connection</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:136</span>, in <span class="ansi-cyan-fg">HTTP11Connection.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    135</span>         <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_response_closed()
-<span class="ansi-green-fg">--&gt; 136</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> exc
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:106</span>, in <span class="ansi-cyan-fg">HTTP11Connection.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">     97</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> Trace(
-<span class="ansi-green-intense-fg ansi-bold">     98</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">receive_response_headers</span><span style="color: rgb(175,0,0)">"</span>, logger, request, kwargs
-<span class="ansi-green-intense-fg ansi-bold">     99</span> ) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> trace:
-<span class="ansi-green-intense-fg ansi-bold">    100</span>     (
-<span class="ansi-green-intense-fg ansi-bold">    101</span>         http_version,
-<span class="ansi-green-intense-fg ansi-bold">    102</span>         status,
-<span class="ansi-green-intense-fg ansi-bold">    103</span>         reason_phrase,
-<span class="ansi-green-intense-fg ansi-bold">    104</span>         headers,
-<span class="ansi-green-intense-fg ansi-bold">    105</span>         trailing_data,
-<span class="ansi-green-fg">--&gt; 106</span>     ) <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_receive_response_headers</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    107</span>     trace<span style="color: rgb(98,98,98)">.</span>return_value <span style="color: rgb(98,98,98)">=</span> (
-<span class="ansi-green-intense-fg ansi-bold">    108</span>         http_version,
-<span class="ansi-green-intense-fg ansi-bold">    109</span>         status,
-<span class="ansi-green-intense-fg ansi-bold">    110</span>         reason_phrase,
-<span class="ansi-green-intense-fg ansi-bold">    111</span>         headers,
-<span class="ansi-green-intense-fg ansi-bold">    112</span>     )
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:177</span>, in <span class="ansi-cyan-fg">HTTP11Connection._receive_response_headers</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    176</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
-<span class="ansi-green-fg">--&gt; 177</span>     event <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_receive_event</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    178</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(event, h11<span style="color: rgb(98,98,98)">.</span>Response):
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_sync/http11.py:217</span>, in <span class="ansi-cyan-fg">HTTP11Connection._receive_event</span><span class="ansi-blue-fg">(self, timeout)</span>
-<span class="ansi-green-intense-fg ansi-bold">    216</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> event <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> h11<span style="color: rgb(98,98,98)">.</span>NEED_DATA:
-<span class="ansi-green-fg">--&gt; 217</span>     data <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_network_stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    218</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">READ_NUM_BYTES</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span>
-<span class="ansi-green-intense-fg ansi-bold">    219</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    221</span>     <span style="color: rgb(95,135,135)"># If we feed this case through h11 we'll raise an exception like:</span>
-<span class="ansi-green-intense-fg ansi-bold">    222</span>     <span style="color: rgb(95,135,135)">#</span>
-<span class="ansi-green-intense-fg ansi-bold">    223</span>     <span style="color: rgb(95,135,135)">#     httpcore.RemoteProtocolError: can't handle event type</span>
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    227</span>     <span style="color: rgb(95,135,135)"># perspective. Instead we handle this case distinctly and treat</span>
-<span class="ansi-green-intense-fg ansi-bold">    228</span>     <span style="color: rgb(95,135,135)"># it as a ConnectError.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_backends/sync.py:126</span>, in <span class="ansi-cyan-fg">SyncStream.read</span><span class="ansi-blue-fg">(self, max_bytes, timeout)</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span> exc_map: ExceptionMapping <span style="color: rgb(98,98,98)">=</span> {socket<span style="color: rgb(98,98,98)">.</span>timeout: ReadTimeout, <span class="ansi-bold" style="color: rgb(215,95,95)">OSError</span>: ReadError}
-<span class="ansi-green-fg">--&gt; 126</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> map_exceptions(exc_map):
-<span class="ansi-green-intense-fg ansi-bold">    127</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_sock<span style="color: rgb(98,98,98)">.</span>settimeout(timeout)
-
-File <span class="ansi-green-fg">/usr/lib/python3.10/contextlib.py:153</span>, in <span class="ansi-cyan-fg">_GeneratorContextManager.__exit__</span><span class="ansi-blue-fg">(self, typ, value, traceback)</span>
-<span class="ansi-green-intense-fg ansi-bold">    152</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; 153</span>     <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">gen</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">throw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">typ</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">value</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">traceback</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">StopIteration</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
-<span class="ansi-green-intense-fg ansi-bold">    155</span>     <span style="color: rgb(95,135,135)"># Suppress StopIteration *unless* it's the same exception that</span>
-<span class="ansi-green-intense-fg ansi-bold">    156</span>     <span style="color: rgb(95,135,135)"># was passed to throw().  This prevents a StopIteration</span>
-<span class="ansi-green-intense-fg ansi-bold">    157</span>     <span style="color: rgb(95,135,135)"># raised inside the "with" statement from being suppressed.</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpcore/_exceptions.py:14</span>, in <span class="ansi-cyan-fg">map_exceptions</span><span class="ansi-blue-fg">(map)</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(exc, from_exc):
-<span class="ansi-green-fg">---&gt; 14</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> to_exc(exc) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">exc</span>
-<span class="ansi-green-intense-fg ansi-bold">     15</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span>
-
-<span class="ansi-red-fg">ReadTimeout</span>: The read operation timed out
-
-The above exception was the direct cause of the following exception:
-
-<span class="ansi-red-fg">ReadTimeout</span>                               Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[9], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> r <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">httpx</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">titiler_endpoint</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/WebMercatorQuad/tilejson.json</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">concept_id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">concept_id</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># Datetime in form of `start_date/end_date`</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">datetime</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">2024-06-20T00:00:00Z/2024-06-27T23:59:59Z</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># We know that the HLS collection dataset is stored as File per Band</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># so we need to pass a `band_regex` option to assign `bands` to each URL</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands_regex</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B[0-9][0-9]</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># titiler-cmr can work with both Zarr and COG dataset</span>
-<span class="ansi-green-intense-fg ansi-bold">     11</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># but we need to tell the endpoints in advance which backend</span>
-<span class="ansi-green-intense-fg ansi-bold">     12</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># to use</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">backend</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rasterio</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     14</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># NDVI</span>
-<span class="ansi-green-intense-fg ansi-bold">     15</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">expression</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">(B05-B04)/(B05+B04)</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     16</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># Need red (B04) and nir (B05) for NDVI</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B05</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     18</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">bands</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">B04</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     19</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># The data is in type of Uint16 so we need to apply some</span>
-<span class="ansi-green-intense-fg ansi-bold">     20</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># rescaling/color_formula in order to create PNGs</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">colormap_name</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">viridis</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     22</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rescale</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">-1,1</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     23</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)</span>
-<span class="ansi-green-intense-fg ansi-bold">     24</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># which will results in useless large scale query</span>
-<span class="ansi-green-intense-fg ansi-bold">     25</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">minzoom</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">8</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     26</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">maxzoom</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">13</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     27</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     28</span> <span class="ansi-yellow-bg">)</span><span style="color: rgb(98,98,98)">.</span>json()
-<span class="ansi-green-intense-fg ansi-bold">     30</span> m <span style="color: rgb(98,98,98)">=</span> Map(
-<span class="ansi-green-intense-fg ansi-bold">     31</span>     location<span style="color: rgb(98,98,98)">=</span>(<span style="color: rgb(98,98,98)">47.9221313337365</span>, <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">91.65432884883238</span>),
-<span class="ansi-green-intense-fg ansi-bold">     32</span>     zoom_start<span style="color: rgb(98,98,98)">=</span>r[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">maxzoom</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">-</span> <span style="color: rgb(98,98,98)">1</span>
-<span class="ansi-green-intense-fg ansi-bold">     33</span> )
-<span class="ansi-green-intense-fg ansi-bold">     36</span> TileLayer(
-<span class="ansi-green-intense-fg ansi-bold">     37</span>     tiles<span style="color: rgb(98,98,98)">=</span>r[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles</span><span style="color: rgb(175,0,0)">"</span>][<span style="color: rgb(98,98,98)">0</span>],
-<span class="ansi-green-intense-fg ansi-bold">     38</span>     opacity<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>,
-<span class="ansi-green-intense-fg ansi-bold">     39</span>     attr<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">NASA</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     40</span> )<span style="color: rgb(98,98,98)">.</span>add_to(m)
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_api.py:195</span>, in <span class="ansi-cyan-fg">get</span><span class="ansi-blue-fg">(url, params, headers, cookies, auth, proxy, follow_redirects, verify, timeout, trust_env)</span>
-<span class="ansi-green-intense-fg ansi-bold">    174</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">get</span>(
-<span class="ansi-green-intense-fg ansi-bold">    175</span>     url: URL <span style="color: rgb(98,98,98)">|</span> <span style="color: rgb(0,135,0)">str</span>,
-<span class="ansi-green-intense-fg ansi-bold">    176</span>     <span style="color: rgb(98,98,98)">*</span>,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    185</span>     trust_env: <span style="color: rgb(0,135,0)">bool</span> <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
-<span class="ansi-green-intense-fg ansi-bold">    186</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> Response:
-<span class="ansi-green-intense-fg ansi-bold">    187</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    188</span> <span style="color: rgb(175,0,0)">    Sends a `GET` request.</span>
-<span class="ansi-green-intense-fg ansi-bold">    189</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    193</span> <span style="color: rgb(175,0,0)">    on this function, as `GET` requests should not include a request body.</span>
-<span class="ansi-green-intense-fg ansi-bold">    194</span> <span style="color: rgb(175,0,0)">    """</span>
-<span class="ansi-green-fg">--&gt; 195</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    196</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">GET</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    197</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    198</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    199</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    200</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cookies</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">cookies</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    201</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    202</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">proxy</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">proxy</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    203</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    204</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">verify</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">verify</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    205</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    206</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">trust_env</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">trust_env</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    207</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_api.py:109</span>, in <span class="ansi-cyan-fg">request</span><span class="ansi-blue-fg">(method, url, params, content, data, files, json, headers, cookies, auth, proxy, timeout, follow_redirects, verify, trust_env)</span>
-<span class="ansi-green-intense-fg ansi-bold">     57</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">     58</span> <span style="color: rgb(175,0,0)">Sends an HTTP request.</span>
-<span class="ansi-green-intense-fg ansi-bold">     59</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    100</span> <span style="color: rgb(175,0,0)">```</span>
-<span class="ansi-green-intense-fg ansi-bold">    101</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    102</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> Client(
-<span class="ansi-green-intense-fg ansi-bold">    103</span>     cookies<span style="color: rgb(98,98,98)">=</span>cookies,
-<span class="ansi-green-intense-fg ansi-bold">    104</span>     proxy<span style="color: rgb(98,98,98)">=</span>proxy,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    107</span>     trust_env<span style="color: rgb(98,98,98)">=</span>trust_env,
-<span class="ansi-green-intense-fg ansi-bold">    108</span> ) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
-<span class="ansi-green-fg">--&gt; 109</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">client</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    110</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">method</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">method</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    111</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    112</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">content</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">content</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    113</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    114</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">files</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">files</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">json</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">json</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    116</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    117</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    118</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    119</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    120</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:827</span>, in <span class="ansi-cyan-fg">Client.request</span><span class="ansi-blue-fg">(self, method, url, content, data, files, json, params, headers, cookies, auth, follow_redirects, timeout, extensions)</span>
-<span class="ansi-green-intense-fg ansi-bold">    812</span>     warnings<span style="color: rgb(98,98,98)">.</span>warn(message, <span class="ansi-bold" style="color: rgb(215,95,95)">DeprecationWarning</span>, stacklevel<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">2</span>)
-<span class="ansi-green-intense-fg ansi-bold">    814</span> request <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>build_request(
-<span class="ansi-green-intense-fg ansi-bold">    815</span>     method<span style="color: rgb(98,98,98)">=</span>method,
-<span class="ansi-green-intense-fg ansi-bold">    816</span>     url<span style="color: rgb(98,98,98)">=</span>url,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    825</span>     extensions<span style="color: rgb(98,98,98)">=</span>extensions,
-<span class="ansi-green-intense-fg ansi-bold">    826</span> )
-<span class="ansi-green-fg">--&gt; 827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">send</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:916</span>, in <span class="ansi-cyan-fg">Client.send</span><span class="ansi-blue-fg">(self, request, stream, auth, follow_redirects)</span>
-<span class="ansi-green-intense-fg ansi-bold">    912</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_set_timeout(request)
-<span class="ansi-green-intense-fg ansi-bold">    914</span> auth <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_build_request_auth(request, auth)
-<span class="ansi-green-fg">--&gt; 916</span> response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_send_handling_auth</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    917</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    918</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">auth</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    919</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    920</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">history</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    921</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    922</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    923</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> stream:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:944</span>, in <span class="ansi-cyan-fg">Client._send_handling_auth</span><span class="ansi-blue-fg">(self, request, auth, follow_redirects, history)</span>
-<span class="ansi-green-intense-fg ansi-bold">    941</span> request <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">next</span>(auth_flow)
-<span class="ansi-green-intense-fg ansi-bold">    943</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
-<span class="ansi-green-fg">--&gt; 944</span>     response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_send_handling_redirects</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    945</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    946</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">follow_redirects</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    947</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">history</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">history</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    948</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    949</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    950</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:981</span>, in <span class="ansi-cyan-fg">Client._send_handling_redirects</span><span class="ansi-blue-fg">(self, request, follow_redirects, history)</span>
-<span class="ansi-green-intense-fg ansi-bold">    978</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> hook <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_event_hooks[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">request</span><span style="color: rgb(175,0,0)">"</span>]:
-<span class="ansi-green-intense-fg ansi-bold">    979</span>     hook(request)
-<span class="ansi-green-fg">--&gt; 981</span> response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_send_single_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    982</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    983</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> hook <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_event_hooks[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">response</span><span style="color: rgb(175,0,0)">"</span>]:
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_client.py:1016</span>, in <span class="ansi-cyan-fg">Client._send_single_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1011</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">RuntimeError</span>(
-<span class="ansi-green-intense-fg ansi-bold">   1012</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Attempted to send an async request with a sync Client instance.</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">   1013</span>     )
-<span class="ansi-green-intense-fg ansi-bold">   1015</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> request_context(request<span style="color: rgb(98,98,98)">=</span>request):
-<span class="ansi-green-fg">-&gt; 1016</span>     response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">transport</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">handle_request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1018</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span style="color: rgb(0,135,0)">isinstance</span>(response<span style="color: rgb(98,98,98)">.</span>stream, SyncByteStream)
-<span class="ansi-green-intense-fg ansi-bold">   1020</span> response<span style="color: rgb(98,98,98)">.</span>request <span style="color: rgb(98,98,98)">=</span> request
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:249</span>, in <span class="ansi-cyan-fg">HTTPTransport.handle_request</span><span class="ansi-blue-fg">(self, request)</span>
-<span class="ansi-green-intense-fg ansi-bold">    235</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> <span class="ansi-bold" style="color: rgb(0,0,255)">httpcore</span>
-<span class="ansi-green-intense-fg ansi-bold">    237</span> req <span style="color: rgb(98,98,98)">=</span> httpcore<span style="color: rgb(98,98,98)">.</span>Request(
-<span class="ansi-green-intense-fg ansi-bold">    238</span>     method<span style="color: rgb(98,98,98)">=</span>request<span style="color: rgb(98,98,98)">.</span>method,
-<span class="ansi-green-intense-fg ansi-bold">    239</span>     url<span style="color: rgb(98,98,98)">=</span>httpcore<span style="color: rgb(98,98,98)">.</span>URL(
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    247</span>     extensions<span style="color: rgb(98,98,98)">=</span>request<span style="color: rgb(98,98,98)">.</span>extensions,
-<span class="ansi-green-intense-fg ansi-bold">    248</span> )
-<span class="ansi-green-fg">--&gt; 249</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> map_httpcore_exceptions():
-<span class="ansi-green-intense-fg ansi-bold">    250</span>     resp <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_pool<span style="color: rgb(98,98,98)">.</span>handle_request(req)
-<span class="ansi-green-intense-fg ansi-bold">    252</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span style="color: rgb(0,135,0)">isinstance</span>(resp<span style="color: rgb(98,98,98)">.</span>stream, typing<span style="color: rgb(98,98,98)">.</span>Iterable)
-
-File <span class="ansi-green-fg">/usr/lib/python3.10/contextlib.py:153</span>, in <span class="ansi-cyan-fg">_GeneratorContextManager.__exit__</span><span class="ansi-blue-fg">(self, typ, value, traceback)</span>
-<span class="ansi-green-intense-fg ansi-bold">    151</span>     value <span style="color: rgb(98,98,98)">=</span> typ()
-<span class="ansi-green-intense-fg ansi-bold">    152</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; 153</span>     <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">gen</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">throw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">typ</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">value</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">traceback</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">StopIteration</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
-<span class="ansi-green-intense-fg ansi-bold">    155</span>     <span style="color: rgb(95,135,135)"># Suppress StopIteration *unless* it's the same exception that</span>
-<span class="ansi-green-intense-fg ansi-bold">    156</span>     <span style="color: rgb(95,135,135)"># was passed to throw().  This prevents a StopIteration</span>
-<span class="ansi-green-intense-fg ansi-bold">    157</span>     <span style="color: rgb(95,135,135)"># raised inside the "with" statement from being suppressed.</span>
-<span class="ansi-green-intense-fg ansi-bold">    158</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> exc <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> value
-
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.10/site-packages/httpx/_transports/default.py:118</span>, in <span class="ansi-cyan-fg">map_httpcore_exceptions</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span>
-<span class="ansi-green-intense-fg ansi-bold">    117</span> message <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">str</span>(exc)
-<span class="ansi-green-fg">--&gt; 118</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> mapped_exc(message) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">exc</span>
-
-<span class="ansi-red-fg">ReadTimeout</span>: The read operation timed out</pre>
+        
+    
+            var tile_layer_60d9e4b65f75891600cc6dd77075507f = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_60d9e4b65f75891600cc6dd77075507f.addTo(map_217376bec5e7a8a551f0c18c19a3b2f9);
+        
+    
+            var tile_layer_e41de7520827f4b39eb258119b3da897 = L.tileLayer(
+                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=viridis\u0026rescale=-1%2C1",
+                {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_e41de7520827f4b39eb258119b3da897.addTo(map_217376bec5e7a8a551f0c18c19a3b2f9);
+        
+&lt;/script&gt;
+&lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
 </div>
 </div>
 </div>

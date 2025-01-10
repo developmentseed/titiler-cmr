@@ -498,6 +498,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      Terminology
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#highlights" class="md-nav__link">
     <span class="md-ellipsis">
       Highlights
@@ -662,6 +671,15 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      Terminology
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#highlights" class="md-nav__link">
@@ -1209,11 +1227,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="time-series-api-limits">Time series API limits<a class="anchor-link" href="#time-series-api-limits">¶</a></h1><p>Last updated: 2025-01-02</p>
 <p>The <code>titiler-cmr</code> API can be deployed as a Lambda function in AWS. Since requests to the time series endpoints will make recursive requests to the Lambda function for the lower-level time step operations, there are some limits in place to avoid making large requests that are likely to overwhelm the API.</p>
+<h2 id="terminology">Terminology<a class="anchor-link" href="#terminology">¶</a></h2><p><strong>Grid cells</strong> refer to the smallest spatial units in a gridded dataset, representing the area over which a single data value is aggregated or measured. These cells collectively form a regular grid that defines the spatial structure of the data.</p>
 <h2 id="highlights">Highlights<a class="anchor-link" href="#highlights">¶</a></h2><ul>
-<li>Maximum of 995 discrete points or intervals in a time series request (due to Lambda concurrency limits)</li>
-<li>You can use the length of the time series, the AOI size, and the resolution of the dataset to calculate the number of total pixels (<code>x_pixels * y_pixels * n_time</code>) which is helpful for determining if a request will succeed</li>
-<li>The <code>/timeseries/bbox</code> endpoint for generating GIFs for a bounding box will struggle on requests for a large AOI and/or a lengthy time series for high spatial resolution datasets. Based on a coarse evaluation of the API, requests are limited to <strong>100,000,000 (<code>1e8</code>) total pixels</strong>. There is a limit in place that will cause requests that exceed this limit to fail fast without firing hundreds of doomed Lambda invocations.</li>
-<li>The <code>/timeseries/statistics</code> endpoint can handle larger requests than the <code>/timeseries/bbox</code> endpoint Based on a coarse evaluation of the API, requests are limited to <strong>15,000,000,000 (<code>1.5e10</code>) total pixels</strong> as long as the individual images read by the <code>/statistics</code> endpoint are smaller than 56,250,000 (<code>5.625e7</code>) pixels.</li>
+<li>Maximum of 995 discrete points or intervals in a time series request (due to <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html">AWS Lambda concurrency</a> limits)</li>
+<li>You can use the length of the time series, the AOI size, and the resolution of the dataset to calculate the number of total grid cells (<code>x_dimension * y_dimension * n_time</code>) which is helpful for determining if a request will succeed</li>
+<li>The <code>/timeseries/bbox</code> endpoint for generating GIFs for a bounding box will struggle on requests for a large AOI and/or a lengthy time series for high spatial resolution datasets. Based on a coarse evaluation of the API, requests are limited to <strong>100,000,000 (<code>1e8</code>) total grid cells</strong>. There is a limit in place that will cause requests that exceed this limit to fail fast without firing hundreds of doomed Lambda invocations.</li>
+<li>The <code>/timeseries/statistics</code> endpoint can handle larger requests than the <code>/timeseries/bbox</code> endpoint Based on a coarse evaluation of the API, requests are limited to <strong>15,000,000,000 (<code>1.5e10</code>) total grid cells</strong> as long as the individual images read by the <code>/statistics</code> endpoint are smaller than 56,250,000 (<code>5.625e7</code>) grid cells.</li>
 </ul>
 <h2 id="tips">Tips<a class="anchor-link" href="#tips">¶</a></h2><ul>
 <li>If you hit an error because the total size of the request is too large, try reducing the temporal resolution of the time series, e.g. from daily (<code>P1D</code>) to weekly (<code>P7D</code>) or greater (<code>P10D</code>)</li>
@@ -1243,17 +1262,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <p>The limits for the <code>xarray</code> backend are:</p>
 <ul>
 <li><code>/timeseries/bbox</code><ul>
-<li>individual image size: <code>5.6e7</code> pixels (~7500x7500)</li>
-<li>total image size (<code>x_pixels * y_pixels * n_time</code>): <code>1e8</code> pixels</li>
+<li>individual image size: <code>5.6e7</code> grid cells (~7500x7500)</li>
+<li>total image size (<code>x_dimension * y_dimension * n_time</code>): <code>1e8</code> grid cells</li>
 </ul>
 </li>
 <li><code>/timeseries/statistics</code><ul>
-<li>individual image size: <code>5.6e7</code> pixels (~7500x7500)</li>
-<li>total image size: <code>1.5e10</code> pixels</li>
+<li>individual image size: <code>5.6e7</code> grid cells (~7500x7500)</li>
+<li>total image size: <code>1.5e10</code> grid cells</li>
 </ul>
 </li>
 </ul>
-<p>For low-resolution datasets (e.g. 28km or 0.25 degree) you will not run into any issues (unless you request too many time points!) because a request for the full dataset will be reading arrays that are ~1440x720 pixels.</p>
+<p>For low-resolution datasets (e.g. 28km or 0.25 degree) you will not run into any issues (unless you request too many time points!) because a request for the full dataset will be reading arrays that are ~1440x720 grid cells.</p>
 <p>For higher-resolution datasets (e.g. 1km or 0.01 degree), you will start to run into problems as the size of the raw arrays that titiler-cmr is processing increases (and the number of discrete points or intervals increases).</p>
 </div>
 </div>
@@ -1265,7 +1284,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="examples">Examples<a class="anchor-link" href="#examples">¶</a></h3><p>The MUR-SST dataset is good for demonstrating the limits of the time series endpoints with the <code>xarray</code> backend. It has high resolution (1 km, 0.01 degree) daily global sea surface temperature observations! With this resolution it is easy to craft a request that will break the <code>/timeseries</code> endpoints. Here are some examples of how to manipulate the time series parameters to achieve success with the <code>/timeseries/bbox</code> endpoint.</p>
+<h3 id="examples">Examples<a class="anchor-link" href="#examples">¶</a></h3><p>The <a href="https://podaac.jpl.nasa.gov/dataset/MUR-JPL-L4-GLOB-v4.1">MUR SST</a> dataset is good for demonstrating the limits of the time series endpoints with the <code>xarray</code> backend. MUR SST delivers high resolution (1 km, 0.01 degree) daily global sea surface temperature observations! With this resolution it is easy to craft a request that will break the <code>/timeseries</code> endpoints. Here are some examples of how to manipulate the time series parameters to achieve success with the <code>/timeseries/bbox</code> endpoint.</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 
 <span class="kn">import</span> <span class="nn">httpx</span>
@@ -1299,7 +1318,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre></div>
 <p>That request is about half of the maximum request size for the <code>/timeseries/bbox</code> endpoint. We can push it to the limit by doubling the length of the time series:</p>
 <ul>
-<li>5x5 degree bounding box (500 x 500 pixels)</li>
+<li>5x5 degree bounding box (500 x 500 grid cells)</li>
 <li>360 daily observations (<code>360 / P1D</code>)</li>
 <li>total size: <code>500 * 500 * 360 = 9.0e7</code></li>
 </ul>
@@ -1326,7 +1345,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre></div>
 <p>If we increase the length of the time series such that the request exceeds the maximum size, the API will return an error:</p>
 <ul>
-<li>5x5 degree bounding box (500 x 500 pixels)</li>
+<li>5x5 degree bounding box (500 x 500 grid cells)</li>
 <li>540 daily observations (<code>540 / P1D</code>)</li>
 <li>total size: <code>500 * 500 * 540 = 1.35e8</code> (greater than maximum of <code>1.0e8</code>!)</li>
 </ul>
@@ -1353,7 +1372,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre></div>
 <p>We can get get a successful response for the larger time window if we reduce the temporal resolution:</p>
 <ul>
-<li>5x5 degree bounding box (500 x 500 pixels)</li>
+<li>5x5 degree bounding box (500 x 500 grid cells)</li>
 <li>77 weekly observations (<code>540 / P7D</code>)</li>
 <li>total size: <code>500 * 500 * 77 = 1.925e7</code></li>
 </ul>
@@ -1380,7 +1399,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre></div>
 <p>With the weekly temporal resolution we have some room to increase the size of the bounding box!</p>
 <ul>
-<li>10x10 degree bounding box (1000 x 1000 pixels)</li>
+<li>10x10 degree bounding box (1000 x 1000 grid cells)</li>
 <li>77 weekly observations (<code>540 / P7D</code>)</li>
 <li>total size: <code>1000 * 1000 * 77 = 7.7e7</code></li>
 </ul>
@@ -1407,7 +1426,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre></div>
 <p>If we double the AOI size again, we will break exceed the request size limit:</p>
 <ul>
-<li>20x20 degree bounding box (1000 x 1000 pixels)</li>
+<li>20x20 degree bounding box (1000 x 1000 grid cells)</li>
 <li>77 weekly observations (<code>540 / P7D</code>)</li>
 <li>total size: <code>2000 * 2000 * 77 = 3.08e8</code> (greater than maximum of <code>1e8</code></li>
 </ul>
@@ -1434,7 +1453,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre></div>
 <p>But if we reduce the temporal resolution from weekly to monthly, it will work!</p>
 <ul>
-<li>20x20 degree bounding box (1000 x 1000 pixels)</li>
+<li>20x20 degree bounding box (1000 x 1000 grid cells)</li>
 <li>18 monthly observations (<code>540 / P1M</code>)</li>
 <li>total size: <code>2000 * 2000 * 18 = 3.08e8</code></li>
 </ul>
@@ -1459,7 +1478,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<p>However, there is a maximum image size that we can read with the <code>xarray</code> backend, so we cannot increase the bounding box indefinitely. The limit imposed on the API at this time is <code>5.6e7</code> pixels (7500 x 7500 pixels). In the case of MUR-SST, that is a bounding box of roughly 75 x 75 degrees.</p>
+<p>However, there is a maximum image size that we can read with the <code>xarray</code> backend, so we cannot increase the bounding box indefinitely. The limit imposed on the API at this time is <code>5.6e7</code> grid cells (7500 x 7500 grid cells). In the case of MUR-SST, that is a bounding box of roughly 75 x 75 degrees.</p>
 </div>
 </div>
 </div>
