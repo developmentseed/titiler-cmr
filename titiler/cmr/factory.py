@@ -49,11 +49,15 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
-from titiler.core.utils import render_image
 from titiler.xarray.io import Reader as XarrayReader
 
 jinja2_env = jinja2.Environment(
-    loader=jinja2.ChoiceLoader([jinja2.PackageLoader(__package__, "templates")])
+    loader=jinja2.ChoiceLoader(
+        [
+            jinja2.PackageLoader(__package__, "templates"),
+            jinja2.PackageLoader("titiler.core", "templates"),
+        ]
+    ),
 )
 DEFAULT_TEMPLATES = Jinja2Templates(env=jinja2_env)
 
@@ -497,8 +501,6 @@ class Endpoints(TilerFactory):
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
-            rescale=Depends(self.rescale_dependency),
-            color_formula=Depends(self.color_formula_dependency),
             colormap=Depends(self.colormap_dependency),
             render_params=Depends(self.render_dependency),
         ) -> Response:
@@ -538,20 +540,15 @@ class Endpoints(TilerFactory):
                     reproject_method=reproject_method,
                     **read_options,
                 )
+                dst_colormap = getattr(src_dst, "colormap", None)
 
             if post_process:
                 image = post_process(image)
 
-            if rescale:
-                image.rescale(rescale)
-
-            if color_formula:
-                image.apply_color_formula(color_formula)
-
-            content, media_type = render_image(
+            content, media_type = self.render_func(
                 image,
                 output_format=format,
-                colormap=colormap,
+                colormap=colormap or dst_colormap,
                 **render_params.as_dict(),
             )
 
@@ -595,8 +592,6 @@ class Endpoints(TilerFactory):
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(available_algorithms.dependency),
-            rescale=Depends(self.rescale_dependency),
-            color_formula=Depends(self.color_formula_dependency),
             colormap=Depends(self.colormap_dependency),
             render_params=Depends(self.render_dependency),
         ) -> Dict:
@@ -679,8 +674,6 @@ class Endpoints(TilerFactory):
             # Rendering Options
             ###################################################################
             post_process=Depends(self.process_dependency),
-            rescale=Depends(self.rescale_dependency),
-            color_formula=Depends(self.color_formula_dependency),
             colormap=Depends(self.colormap_dependency),
             render_params=Depends(self.render_dependency),
         ) -> _TemplateResponse:
@@ -711,14 +704,10 @@ class Endpoints(TilerFactory):
                 request=request,
                 name="map.html",
                 context={
+                    "request": request,
                     "tilejson_endpoint": tilejson_url,
                     "tms": tms,
                     "resolutions": [matrix.cellSize for matrix in tms],
-                    "template": {
-                        "api_root": base_url,
-                        "params": request.query_params,
-                        "title": "Map",
-                    },
                 },
                 media_type="text/html",
             )
@@ -755,8 +744,6 @@ class Endpoints(TilerFactory):
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             image_params=Depends(self.img_part_dependency),
-            rescale=Depends(self.rescale_dependency),
-            color_formula=Depends(self.color_formula_dependency),
             colormap=Depends(self.colormap_dependency),
             render_params=Depends(self.render_dependency),
         ):
@@ -794,13 +781,7 @@ class Endpoints(TilerFactory):
             if post_process:
                 image = post_process(image)
 
-            if rescale:
-                image.rescale(rescale)
-
-            if color_formula:
-                image.apply_color_formula(color_formula)
-
-            content, media_type = render_image(
+            content, media_type = self.render_func(
                 image,
                 output_format=format,
                 colormap=colormap or dst_colormap,
@@ -846,9 +827,7 @@ class Endpoints(TilerFactory):
             zarr_params=Depends(self.zarr_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
-            rescale=Depends(self.rescale_dependency),
             image_params=Depends(self.img_part_dependency),
-            color_formula=Depends(self.color_formula_dependency),
             colormap=Depends(self.colormap_dependency),
             render_params=Depends(self.render_dependency),
         ):
@@ -882,20 +861,15 @@ class Endpoints(TilerFactory):
                     dst_crs=dst_crs,
                     **read_options,
                 )
+                dst_colormap = getattr(src_dst, "colormap", None)
 
             if post_process:
                 image = post_process(image)
 
-            if rescale:
-                image.rescale(rescale)
-
-            if color_formula:
-                image.apply_color_formula(color_formula)
-
-            content, media_type = render_image(
+            content, media_type = self.render_func(
                 image,
                 output_format=format,
-                colormap=colormap,
+                colormap=colormap or dst_colormap,
                 **render_params.as_dict(),
             )
 
