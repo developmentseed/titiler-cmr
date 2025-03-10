@@ -570,8 +570,6 @@ class TimeseriesExtension(FactoryExtension):
             rasterio_params=Depends(factory.rasterio_dependency),
             reader_params=Depends(factory.reader_dependency),
             post_process=Depends(available_algorithms.dependency),
-            rescale=Depends(factory.rescale_dependency),
-            color_formula=Depends(factory.color_formula_dependency),
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
         ) -> TimeseriesTileJSON:
@@ -635,8 +633,6 @@ class TimeseriesExtension(FactoryExtension):
             reader_params=Depends(factory.reader_dependency),
             post_process=Depends(factory.process_dependency),
             image_params=Depends(factory.img_part_dependency),
-            rescale=Depends(factory.rescale_dependency),
-            color_formula=Depends(factory.color_formula_dependency),
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
         ):
