@@ -1,6 +1,6 @@
 {
     "machine_info": {
-        "node": "fv-az1374-461",
+        "node": "fv-az1326-225",
         "processor": "x86_64",
         "machine": "x86_64",
         "python_compiler": "GCC 13.3.0",
@@ -27,14 +27,14 @@
             "arch_string_raw": "x86_64",
             "vendor_id_raw": "AuthenticAMD",
             "brand_raw": "AMD EPYC 7763 64-Core Processor",
-            "hz_advertised_friendly": "2.4454 GHz",
-            "hz_actual_friendly": "2.4454 GHz",
+            "hz_advertised_friendly": "3.2709 GHz",
+            "hz_actual_friendly": "3.2709 GHz",
             "hz_advertised": [
-                2445432000,
+                3270873000,
                 0
             ],
             "hz_actual": [
-                2445432000,
+                3270873000,
                 0
             ],
             "stepping": 1,
@@ -156,48 +156,37 @@
         }
     },
     "commit_info": {
-        "id": "8dc9c99d91cd21ff145130c0f99d330775cdaf89",
-        "time": "2025-03-12T09:36:33-05:00",
-        "author_time": "2025-03-10T06:50:18-05:00",
-        "dirty": false,
+        "id": "b2ce3830a28d71793edc2ff0478a7939f361e398",
+        "time": "2025-03-12T12:21:10-05:00",
+        "author_time": "2025-03-12T12:21:10-05:00",
+        "dirty": true,
         "project": "titiler-cmr",
         "branch": "feat/hls-benchmark"
     },
     "benchmarks": [
         {
             "group": "hls-tiles",
-            "name": "test_hls_tiles[bands0-location0-1-7-HLSL30]",
-            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[bands0-location0-1-7-HLSL30]",
+            "name": "test_hls_tiles[1-1-6-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-6-HLSL30]",
             "params": {
-                "bands": [
-                    "B05"
-                ],
-                "location": [
-                    -92.1161,
-                    46.8199,
-                    "Duluth"
-                ],
+                "n_bands": 1,
                 "interval_days": 1,
-                "zoom": 7,
-                "collection": "HLSL30"
+                "zoom": 6,
+                "collection_id": "HLSL30"
             },
-            "param": "bands0-location0-1-7-HLSL30",
+            "param": "1-1-6-HLSL30",
             "extra_info": {
                 "collection": "HLSL30",
-                "zoom": 7,
+                "zoom": 6,
                 "interval_days": 1,
-                "location": "Duluth",
-                "lat": 46.8199,
-                "lng": -92.1161,
-                "bands": "B05",
                 "band_count": 1,
                 "total_tiles": 25,
-                "success_count": 11,
-                "no_data_count": 14,
+                "success_count": 21,
+                "no_data_count": 4,
                 "error_count": 0,
-                "success_rate": 0.44,
-                "avg_response_time": 2.69673556,
-                "avg_response_size": 60604.36363636364
+                "success_rate": 0.84,
+                "avg_response_time": 3.5690107999999996,
+                "avg_response_size": 32462.04761904762
             },
             "options": {
                 "disable_gc": false,
@@ -205,66 +194,55 @@
                 "min_rounds": 2,
                 "max_time": 1.0,
                 "min_time": 5e-06,
-                "warmup": 1
+                "warmup": false
             },
             "stats": {
-                "min": 4.280796506999991,
-                "max": 4.403326141000008,
-                "mean": 4.3420613239999994,
-                "stddev": 0.0866415350977178,
+                "min": 7.410635146000004,
+                "max": 7.46089643900001,
+                "mean": 7.435765792500007,
+                "stddev": 0.03554010111150783,
                 "rounds": 2,
-                "median": 4.3420613239999994,
-                "iqr": 0.12252963400001704,
-                "q1": 4.280796506999991,
-                "q3": 4.403326141000008,
+                "median": 7.435765792500007,
+                "iqr": 0.05026129300000548,
+                "q1": 7.410635146000004,
+                "q3": 7.46089643900001,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.280796506999991,
-                "hd15iqr": 4.403326141000008,
-                "ops": 0.23030536083695352,
-                "total": 8.684122647999999,
+                "ld15iqr": 7.410635146000004,
+                "hd15iqr": 7.46089643900001,
+                "ops": 0.13448513951429691,
+                "total": 14.871531585000014,
                 "data": [
-                    4.403326141000008,
-                    4.280796506999991
+                    7.410635146000004,
+                    7.46089643900001
                 ],
                 "iterations": 1
             }
         },
         {
             "group": "hls-tiles",
-            "name": "test_hls_tiles[bands0-location0-1-7-HLSS30]",
-            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[bands0-location0-1-7-HLSS30]",
+            "name": "test_hls_tiles[1-1-6-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-6-HLSS30]",
             "params": {
-                "bands": [
-                    "B05"
-                ],
-                "location": [
-                    -92.1161,
-                    46.8199,
-                    "Duluth"
-                ],
+                "n_bands": 1,
                 "interval_days": 1,
-                "zoom": 7,
-                "collection": "HLSS30"
+                "zoom": 6,
+                "collection_id": "HLSS30"
             },
-            "param": "bands0-location0-1-7-HLSS30",
+            "param": "1-1-6-HLSS30",
             "extra_info": {
                 "collection": "HLSS30",
-                "zoom": 7,
+                "zoom": 6,
                 "interval_days": 1,
-                "location": "Duluth",
-                "lat": 46.8199,
-                "lng": -92.1161,
-                "bands": "B05",
                 "band_count": 1,
                 "total_tiles": 25,
-                "success_count": 17,
-                "no_data_count": 8,
+                "success_count": 23,
+                "no_data_count": 2,
                 "error_count": 0,
-                "success_rate": 0.68,
-                "avg_response_time": 3.2400098400000004,
-                "avg_response_size": 73459.05882352941
+                "success_rate": 0.92,
+                "avg_response_time": 3.51359648,
+                "avg_response_size": 39608.95652173913
             },
             "options": {
                 "disable_gc": false,
@@ -272,33 +250,1937 @@
                 "min_rounds": 2,
                 "max_time": 1.0,
                 "min_time": 5e-06,
-                "warmup": 1
+                "warmup": false
             },
             "stats": {
-                "min": 5.667754040999995,
-                "max": 6.546368196000003,
-                "mean": 6.107061118499999,
-                "stddev": 0.6212740270469941,
+                "min": 7.331306757999982,
+                "max": 9.711127113999993,
+                "mean": 8.521216935999988,
+                "stddev": 1.682787111733391,
                 "rounds": 2,
-                "median": 6.107061118499999,
-                "iqr": 0.8786141550000082,
-                "q1": 5.667754040999995,
-                "q3": 6.546368196000003,
+                "median": 8.521216935999988,
+                "iqr": 2.3798203560000104,
+                "q1": 7.331306757999982,
+                "q3": 9.711127113999993,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 5.667754040999995,
-                "hd15iqr": 6.546368196000003,
-                "ops": 0.16374488163721168,
-                "total": 12.214122236999998,
+                "ld15iqr": 7.331306757999982,
+                "hd15iqr": 9.711127113999993,
+                "ops": 0.11735412999230811,
+                "total": 17.042433871999975,
                 "data": [
-                    5.667754040999995,
-                    6.546368196000003
+                    9.711127113999993,
+                    7.331306757999982
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-8-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-8-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 8,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-1-8-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 8,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 16,
+                "no_data_count": 9,
+                "error_count": 0,
+                "success_rate": 0.64,
+                "avg_response_time": 1.81529672,
+                "avg_response_size": 55184.1875
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 3.610056560000004,
+                "max": 3.948252343000007,
+                "mean": 3.7791544515000055,
+                "stddev": 0.23914053152799644,
+                "rounds": 2,
+                "median": 3.7791544515000055,
+                "iqr": 0.3381957830000033,
+                "q1": 3.610056560000004,
+                "q3": 3.948252343000007,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 3.610056560000004,
+                "hd15iqr": 3.948252343000007,
+                "ops": 0.26460945506026734,
+                "total": 7.558308903000011,
+                "data": [
+                    3.948252343000007,
+                    3.610056560000004
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-8-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-8-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 8,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-1-8-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 8,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 3.58640828,
+                "avg_response_size": 77589.61111111111
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.617341487999994,
+                "max": 13.097208198000033,
+                "mean": 9.357274843000013,
+                "stddev": 5.289064473012538,
+                "rounds": 2,
+                "median": 9.357274843000013,
+                "iqr": 7.479866710000039,
+                "q1": 5.617341487999994,
+                "q3": 13.097208198000033,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.617341487999994,
+                "hd15iqr": 13.097208198000033,
+                "ops": 0.10686872158597326,
+                "total": 18.714549686000026,
+                "data": [
+                    5.617341487999994,
+                    13.097208198000033
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-10-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-10-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 10,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-1-10-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 10,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 1.86848736,
+                "avg_response_size": 97171.22727272728
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.267346422000003,
+                "max": 3.336990162999996,
+                "mean": 2.8021682924999993,
+                "stddev": 0.7563523427148422,
+                "rounds": 2,
+                "median": 2.8021682924999993,
+                "iqr": 1.069643740999993,
+                "q1": 2.267346422000003,
+                "q3": 3.336990162999996,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 2.267346422000003,
+                "hd15iqr": 3.336990162999996,
+                "ops": 0.3568665032276966,
+                "total": 5.604336584999999,
+                "data": [
+                    2.267346422000003,
+                    3.336990162999996
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-10-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-10-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 10,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-1-10-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 10,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 2.99644252,
+                "avg_response_size": 101326.68181818182
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.976342394000028,
+                "max": 5.942614483999989,
+                "mean": 5.459478439000009,
+                "stddev": 0.6832575473102706,
+                "rounds": 2,
+                "median": 5.459478439000009,
+                "iqr": 0.9662720899999613,
+                "q1": 4.976342394000028,
+                "q3": 5.942614483999989,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.976342394000028,
+                "hd15iqr": 5.942614483999989,
+                "ops": 0.18316768005831086,
+                "total": 10.918956878000017,
+                "data": [
+                    4.976342394000028,
+                    5.942614483999989
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-6-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-6-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 6,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-7-6-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 6,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 10.62241188,
+                "avg_response_size": 87990.4
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 16.091459080999982,
+                "max": 19.717764194999972,
+                "mean": 17.904611637999977,
+                "stddev": 2.5641849367608494,
+                "rounds": 2,
+                "median": 17.904611637999977,
+                "iqr": 3.6263051139999902,
+                "q1": 16.091459080999982,
+                "q3": 19.717764194999972,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 16.091459080999982,
+                "hd15iqr": 19.717764194999972,
+                "ops": 0.055851532567042284,
+                "total": 35.809223275999955,
+                "data": [
+                    19.717764194999972,
+                    16.091459080999982
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-6-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-6-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 6,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-7-6-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 6,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 13.982277360000001,
+                "avg_response_size": 102666.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 22.227314809999996,
+                "max": 24.262325868000005,
+                "mean": 23.244820339,
+                "stddev": 1.438970118901417,
+                "rounds": 2,
+                "median": 23.244820339,
+                "iqr": 2.035011058000009,
+                "q1": 22.227314809999996,
+                "q3": 24.262325868000005,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 22.227314809999996,
+                "hd15iqr": 24.262325868000005,
+                "ops": 0.04302033680691465,
+                "total": 46.489640678,
+                "data": [
+                    22.227314809999996,
+                    24.262325868000005
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-8-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-8-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 8,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-7-8-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 8,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 24,
+                "no_data_count": 1,
+                "error_count": 0,
+                "success_rate": 0.96,
+                "avg_response_time": 3.05792392,
+                "avg_response_size": 87060.25
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.054363307000017,
+                "max": 6.537108830000022,
+                "mean": 5.79573606850002,
+                "stddev": 1.0484594140872978,
+                "rounds": 2,
+                "median": 5.79573606850002,
+                "iqr": 1.4827455230000055,
+                "q1": 5.054363307000017,
+                "q3": 6.537108830000022,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.054363307000017,
+                "hd15iqr": 6.537108830000022,
+                "ops": 0.17254063818313375,
+                "total": 11.59147213700004,
+                "data": [
+                    6.537108830000022,
+                    5.054363307000017
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-8-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-8-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 8,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-7-8-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 8,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 3.9176172000000005,
+                "avg_response_size": 98665.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 8.316329319999966,
+                "max": 15.397679229000005,
+                "mean": 11.857004274499985,
+                "stddev": 5.007270540608669,
+                "rounds": 2,
+                "median": 11.857004274499985,
+                "iqr": 7.081349909000039,
+                "q1": 8.316329319999966,
+                "q3": 15.397679229000005,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 8.316329319999966,
+                "hd15iqr": 15.397679229000005,
+                "ops": 0.08433833511814015,
+                "total": 23.71400854899997,
+                "data": [
+                    15.397679229000005,
+                    8.316329319999966
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-10-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-10-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 10,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-7-10-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 10,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 1.84221632,
+                "avg_response_size": 119476.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 2.911274961999993,
+                "max": 3.178706379999994,
+                "mean": 3.0449906709999937,
+                "stddev": 0.18910256917013485,
+                "rounds": 2,
+                "median": 3.0449906709999937,
+                "iqr": 0.26743141800000103,
+                "q1": 2.911274961999993,
+                "q3": 3.178706379999994,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 2.911274961999993,
+                "hd15iqr": 3.178706379999994,
+                "ops": 0.32840823110686046,
+                "total": 6.089981341999987,
+                "data": [
+                    2.911274961999993,
+                    3.178706379999994
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-10-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-10-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 10,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-7-10-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 10,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 6.455021759999999,
+                "avg_response_size": 102092.63636363637
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.029756824999936,
+                "max": 5.237291188999961,
+                "mean": 4.633524006999949,
+                "stddev": 0.8538557373002029,
+                "rounds": 2,
+                "median": 4.633524006999949,
+                "iqr": 1.2075343640000256,
+                "q1": 4.029756824999936,
+                "q3": 5.237291188999961,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.029756824999936,
+                "hd15iqr": 5.237291188999961,
+                "ops": 0.21581845664105373,
+                "total": 9.267048013999897,
+                "data": [
+                    4.029756824999936,
+                    5.237291188999961
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-6-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-6-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 6,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-1-6-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 6,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 21,
+                "no_data_count": 4,
+                "error_count": 0,
+                "success_rate": 0.84,
+                "avg_response_time": 4.55419508,
+                "avg_response_size": 40452.666666666664
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.662917730000004,
+                "max": 8.857520197999975,
+                "mean": 8.26021896399999,
+                "stddev": 0.8447115059449651,
+                "rounds": 2,
+                "median": 8.26021896399999,
+                "iqr": 1.194602467999971,
+                "q1": 7.662917730000004,
+                "q3": 8.857520197999975,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.662917730000004,
+                "hd15iqr": 8.857520197999975,
+                "ops": 0.12106216607068641,
+                "total": 16.52043792799998,
+                "data": [
+                    8.857520197999975,
+                    7.662917730000004
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-6-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-6-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 6,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-1-6-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 6,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 2,
+                "error_count": 23,
+                "success_rate": 0.0,
+                "avg_response_time": 4.30705024,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.916940066999928,
+                "max": 13.610516724000036,
+                "mean": 11.763728395499982,
+                "stddev": 2.611753100997115,
+                "rounds": 2,
+                "median": 11.763728395499982,
+                "iqr": 3.693576657000108,
+                "q1": 9.916940066999928,
+                "q3": 13.610516724000036,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 9.916940066999928,
+                "hd15iqr": 13.610516724000036,
+                "ops": 0.08500706292934589,
+                "total": 23.527456790999963,
+                "data": [
+                    9.916940066999928,
+                    13.610516724000036
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-8-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-8-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 8,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-1-8-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 8,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 16,
+                "no_data_count": 9,
+                "error_count": 0,
+                "success_rate": 0.64,
+                "avg_response_time": 1.9626734,
+                "avg_response_size": 71296.25
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.716244072999984,
+                "max": 4.804625685000019,
+                "mean": 4.760434879000002,
+                "stddev": 0.06249523717742288,
+                "rounds": 2,
+                "median": 4.760434879000002,
+                "iqr": 0.08838161200003469,
+                "q1": 4.716244072999984,
+                "q3": 4.804625685000019,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.716244072999984,
+                "hd15iqr": 4.804625685000019,
+                "ops": 0.21006484185118493,
+                "total": 9.520869758000003,
+                "data": [
+                    4.804625685000019,
+                    4.716244072999984
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-8-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-8-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 8,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-1-8-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 8,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 7,
+                "error_count": 18,
+                "success_rate": 0.0,
+                "avg_response_time": 4.839937119999999,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.515872868999963,
+                "max": 5.920168951999926,
+                "mean": 5.718020910499945,
+                "stddev": 0.285880501896433,
+                "rounds": 2,
+                "median": 5.718020910499945,
+                "iqr": 0.4042960829999629,
+                "q1": 5.515872868999963,
+                "q3": 5.920168951999926,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.515872868999963,
+                "hd15iqr": 5.920168951999926,
+                "ops": 0.17488568433943813,
+                "total": 11.43604182099989,
+                "data": [
+                    5.920168951999926,
+                    5.515872868999963
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-10-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-10-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 10,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-1-10-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 10,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 1.8250054800000002,
+                "avg_response_size": 104300.13636363637
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 3.139724728000033,
+                "max": 4.160293123999963,
+                "mean": 3.650008925999998,
+                "stddev": 0.7216508334762287,
+                "rounds": 2,
+                "median": 3.650008925999998,
+                "iqr": 1.0205683959999305,
+                "q1": 3.139724728000033,
+                "q3": 4.160293123999963,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 3.139724728000033,
+                "hd15iqr": 4.160293123999963,
+                "ops": 0.2739719327469942,
+                "total": 7.300017851999996,
+                "data": [
+                    4.160293123999963,
+                    3.139724728000033
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-10-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-10-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 10,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-1-10-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 10,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 3,
+                "error_count": 22,
+                "success_rate": 0.0,
+                "avg_response_time": 1.4314106000000002,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.020287256000074,
+                "max": 4.305964012999993,
+                "mean": 4.163125634500034,
+                "stddev": 0.2020039721020244,
+                "rounds": 2,
+                "median": 4.163125634500034,
+                "iqr": 0.28567675699991923,
+                "q1": 4.020287256000074,
+                "q3": 4.305964012999993,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.020287256000074,
+                "hd15iqr": 4.305964012999993,
+                "ops": 0.24020413693810946,
+                "total": 8.326251269000068,
+                "data": [
+                    4.020287256000074,
+                    4.305964012999993
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-6-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-6-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 6,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-7-6-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 6,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 16.112565,
+                "avg_response_size": 109074.8
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 23.36279877900006,
+                "max": 25.444921241999964,
+                "mean": 24.40386001050001,
+                "stddev": 1.4722829128480692,
+                "rounds": 2,
+                "median": 24.40386001050001,
+                "iqr": 2.082122462999905,
+                "q1": 23.36279877900006,
+                "q3": 25.444921241999964,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 23.36279877900006,
+                "hd15iqr": 25.444921241999964,
+                "ops": 0.04097712409306314,
+                "total": 48.80772002100002,
+                "data": [
+                    25.444921241999964,
+                    23.36279877900006
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-6-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-6-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 6,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-7-6-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 6,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 0,
+                "error_count": 25,
+                "success_rate": 0.0,
+                "avg_response_time": 6.45679612,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.867029248999984,
+                "max": 8.298158844999989,
+                "mean": 8.082594046999986,
+                "stddev": 0.30485466090182034,
+                "rounds": 2,
+                "median": 8.082594046999986,
+                "iqr": 0.4311295960000052,
+                "q1": 7.867029248999984,
+                "q3": 8.298158844999989,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.867029248999984,
+                "hd15iqr": 8.298158844999989,
+                "ops": 0.12372265564558071,
+                "total": 16.165188093999973,
+                "data": [
+                    8.298158844999989,
+                    7.867029248999984
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-8-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-8-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 8,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-7-8-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 8,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 24,
+                "no_data_count": 1,
+                "error_count": 0,
+                "success_rate": 0.96,
+                "avg_response_time": 3.2926845200000003,
+                "avg_response_size": 108574.20833333333
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.138153740999996,
+                "max": 8.178069495999921,
+                "mean": 7.658111618499959,
+                "stddev": 0.735331482223175,
+                "rounds": 2,
+                "median": 7.658111618499959,
+                "iqr": 1.0399157549999245,
+                "q1": 7.138153740999996,
+                "q3": 8.178069495999921,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.138153740999996,
+                "hd15iqr": 8.178069495999921,
+                "ops": 0.13058049422840304,
+                "total": 15.316223236999917,
+                "data": [
+                    8.178069495999921,
+                    7.138153740999996
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-8-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-8-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 8,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-7-8-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 8,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 0,
+                "error_count": 25,
+                "success_rate": 0.0,
+                "avg_response_time": 3.2973823199999996,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.189851062999992,
+                "max": 8.49093927599995,
+                "mean": 7.3403951694999705,
+                "stddev": 1.6271150795207043,
+                "rounds": 2,
+                "median": 7.3403951694999705,
+                "iqr": 2.3010882129999572,
+                "q1": 6.189851062999992,
+                "q3": 8.49093927599995,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 6.189851062999992,
+                "hd15iqr": 8.49093927599995,
+                "ops": 0.13623244756019318,
+                "total": 14.680790338999941,
+                "data": [
+                    8.49093927599995,
+                    6.189851062999992
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-10-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-10-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 10,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-7-10-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 10,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 3.10433312,
+                "avg_response_size": 129706.48
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.107897467999919,
+                "max": 4.27356844499991,
+                "mean": 4.1907329564999145,
+                "stddev": 0.11714707128249395,
+                "rounds": 2,
+                "median": 4.1907329564999145,
+                "iqr": 0.16567097699999067,
+                "q1": 4.107897467999919,
+                "q3": 4.27356844499991,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.107897467999919,
+                "hd15iqr": 4.27356844499991,
+                "ops": 0.23862174239687095,
+                "total": 8.381465912999829,
+                "data": [
+                    4.107897467999919,
+                    4.27356844499991
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-10-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-10-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 10,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-7-10-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 10,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 3,
+                "error_count": 22,
+                "success_rate": 0.0,
+                "avg_response_time": 2.5637138399999997,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.392328742000018,
+                "max": 5.699278785000047,
+                "mean": 5.045803763500032,
+                "stddev": 0.9241532380773704,
+                "rounds": 2,
+                "median": 5.045803763500032,
+                "iqr": 1.306950043000029,
+                "q1": 4.392328742000018,
+                "q3": 5.699278785000047,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.392328742000018,
+                "hd15iqr": 5.699278785000047,
+                "ops": 0.19818448098075617,
+                "total": 10.091607527000065,
+                "data": [
+                    5.699278785000047,
+                    4.392328742000018
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-6-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-6-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 6,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-1-6-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 6,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 21,
+                "no_data_count": 4,
+                "error_count": 0,
+                "success_rate": 0.84,
+                "avg_response_time": 5.99160932,
+                "avg_response_size": 36168.71428571428
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.945964961000072,
+                "max": 10.593958368000017,
+                "mean": 10.269961664500045,
+                "stddev": 0.45820053225383517,
+                "rounds": 2,
+                "median": 10.269961664500045,
+                "iqr": 0.6479934069999445,
+                "q1": 9.945964961000072,
+                "q3": 10.593958368000017,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 9.945964961000072,
+                "hd15iqr": 10.593958368000017,
+                "ops": 0.09737134691132085,
+                "total": 20.53992332900009,
+                "data": [
+                    9.945964961000072,
+                    10.593958368000017
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-6-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-6-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 6,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-1-6-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 6,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 23,
+                "no_data_count": 2,
+                "error_count": 0,
+                "success_rate": 0.92,
+                "avg_response_time": 5.819419239999999,
+                "avg_response_size": 46220.565217391304
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 12.8367588320001,
+                "max": 14.781890843000042,
+                "mean": 13.809324837500071,
+                "stddev": 1.3754160352810847,
+                "rounds": 2,
+                "median": 13.809324837500071,
+                "iqr": 1.9451320109999415,
+                "q1": 12.8367588320001,
+                "q3": 14.781890843000042,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 12.8367588320001,
+                "hd15iqr": 14.781890843000042,
+                "ops": 0.07241483647950973,
+                "total": 27.618649675000142,
+                "data": [
+                    14.781890843000042,
+                    12.8367588320001
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-8-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-8-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 8,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-1-8-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 8,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 16,
+                "no_data_count": 9,
+                "error_count": 0,
+                "success_rate": 0.64,
+                "avg_response_time": 2.33274004,
+                "avg_response_size": 68563.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.672560472999976,
+                "max": 6.138942499999985,
+                "mean": 5.90575148649998,
+                "stddev": 0.32978189391523366,
+                "rounds": 2,
+                "median": 5.90575148649998,
+                "iqr": 0.46638202700000875,
+                "q1": 5.672560472999976,
+                "q3": 6.138942499999985,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.672560472999976,
+                "hd15iqr": 6.138942499999985,
+                "ops": 0.16932646121089087,
+                "total": 11.81150297299996,
+                "data": [
+                    6.138942499999985,
+                    5.672560472999976
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-8-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-8-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 8,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-1-8-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 8,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 3.00672644,
+                "avg_response_size": 90936.05555555556
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.965889900000093,
+                "max": 8.412254863000044,
+                "mean": 7.689072381500068,
+                "stddev": 1.0227344734078951,
+                "rounds": 2,
+                "median": 7.689072381500068,
+                "iqr": 1.4463649629999509,
+                "q1": 6.965889900000093,
+                "q3": 8.412254863000044,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 6.965889900000093,
+                "hd15iqr": 8.412254863000044,
+                "ops": 0.13005469975884257,
+                "total": 15.378144763000137,
+                "data": [
+                    8.412254863000044,
+                    6.965889900000093
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-10-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-10-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 10,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-1-10-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 10,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 2.6185727200000004,
+                "avg_response_size": 117307.63636363637
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.7629060410001784,
+                "max": 6.299992857999996,
+                "mean": 5.531449449500087,
+                "stddev": 1.0868845115730168,
+                "rounds": 2,
+                "median": 5.531449449500087,
+                "iqr": 1.5370868169998175,
+                "q1": 4.7629060410001784,
+                "q3": 6.299992857999996,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.7629060410001784,
+                "hd15iqr": 6.299992857999996,
+                "ops": 0.18078444160605617,
+                "total": 11.062898899000174,
+                "data": [
+                    4.7629060410001784,
+                    6.299992857999996
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-10-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-10-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 10,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-1-10-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 10,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 2.8041344400000003,
+                "avg_response_size": 117333.63636363637
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.756922214999804,
+                "max": 5.282375254000044,
+                "mean": 5.019648734499924,
+                "stddev": 0.3715514070721492,
+                "rounds": 2,
+                "median": 5.019648734499924,
+                "iqr": 0.5254530390002401,
+                "q1": 4.756922214999804,
+                "q3": 5.282375254000044,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.756922214999804,
+                "hd15iqr": 5.282375254000044,
+                "ops": 0.19921712711230652,
+                "total": 10.039297468999848,
+                "data": [
+                    4.756922214999804,
+                    5.282375254000044
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-6-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-6-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 6,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-7-6-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 6,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 0,
+                "error_count": 3,
+                "success_rate": 0.88,
+                "avg_response_time": 22.031604480000002,
+                "avg_response_size": 105120.59090909091
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 30.185718139999835,
+                "max": 30.20278526600009,
+                "mean": 30.194251702999964,
+                "stddev": 0.012068280530146533,
+                "rounds": 2,
+                "median": 30.194251702999964,
+                "iqr": 0.017067126000256394,
+                "q1": 30.185718139999835,
+                "q3": 30.20278526600009,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 30.185718139999835,
+                "hd15iqr": 30.20278526600009,
+                "ops": 0.03311888666214717,
+                "total": 60.38850340599993,
+                "data": [
+                    30.185718139999835,
+                    30.20278526600009
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-6-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-6-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 6,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-7-6-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 6,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 19,
+                "no_data_count": 0,
+                "error_count": 6,
+                "success_rate": 0.76,
+                "avg_response_time": 25.200231560000002,
+                "avg_response_size": 121976.42105263157
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 30.184286590000056,
+                "max": 30.249731640999926,
+                "mean": 30.21700911549999,
+                "stddev": 0.04627663935710726,
+                "rounds": 2,
+                "median": 30.21700911549999,
+                "iqr": 0.06544505099986964,
+                "q1": 30.184286590000056,
+                "q3": 30.249731640999926,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 30.184286590000056,
+                "hd15iqr": 30.249731640999926,
+                "ops": 0.033093943751271004,
+                "total": 60.43401823099998,
+                "data": [
+                    30.184286590000056,
+                    30.249731640999926
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-8-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-8-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 8,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-7-8-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 8,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 24,
+                "no_data_count": 1,
+                "error_count": 0,
+                "success_rate": 0.96,
+                "avg_response_time": 4.69904204,
+                "avg_response_size": 105673.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.69063644300013,
+                "max": 15.545697468000071,
+                "mean": 11.1181669555001,
+                "stddev": 6.2614736985981585,
+                "rounds": 2,
+                "median": 11.1181669555001,
+                "iqr": 8.85506102499994,
+                "q1": 6.69063644300013,
+                "q3": 15.545697468000071,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 6.69063644300013,
+                "hd15iqr": 15.545697468000071,
+                "ops": 0.08994288393063796,
+                "total": 22.2363339110002,
+                "data": [
+                    15.545697468000071,
+                    6.69063644300013
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-8-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-8-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 8,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-7-8-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 8,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 11.15691868,
+                "avg_response_size": 116190.08
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 10.35748941199995,
+                "max": 10.791445457000009,
+                "mean": 10.57446743449998,
+                "stddev": 0.3068532621564363,
+                "rounds": 2,
+                "median": 10.57446743449998,
+                "iqr": 0.433956045000059,
+                "q1": 10.35748941199995,
+                "q3": 10.791445457000009,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 10.35748941199995,
+                "hd15iqr": 10.791445457000009,
+                "ops": 0.09456741024492886,
+                "total": 21.14893486899996,
+                "data": [
+                    10.791445457000009,
+                    10.35748941199995
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-10-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-10-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 10,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-7-10-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 10,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 2.65762496,
+                "avg_response_size": 143856.24
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 4.234762721000152,
+                "max": 4.7238645130000805,
+                "mean": 4.479313617000116,
+                "stddev": 0.34584719381364176,
+                "rounds": 2,
+                "median": 4.479313617000116,
+                "iqr": 0.48910179199992854,
+                "q1": 4.234762721000152,
+                "q3": 4.7238645130000805,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 4.234762721000152,
+                "hd15iqr": 4.7238645130000805,
+                "ops": 0.22324848972502165,
+                "total": 8.958627234000232,
+                "data": [
+                    4.234762721000152,
+                    4.7238645130000805
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-10-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-10-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 10,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-7-10-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 10,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 22,
+                "no_data_count": 3,
+                "error_count": 0,
+                "success_rate": 0.88,
+                "avg_response_time": 3.1487337600000003,
+                "avg_response_size": 118264.09090909091
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.19824702599999,
+                "max": 5.946703926000055,
+                "mean": 5.572475476000022,
+                "stddev": 0.5292389494159074,
+                "rounds": 2,
+                "median": 5.572475476000022,
+                "iqr": 0.7484569000000647,
+                "q1": 5.19824702599999,
+                "q3": 5.946703926000055,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.19824702599999,
+                "hd15iqr": 5.946703926000055,
+                "ops": 0.1794534591146931,
+                "total": 11.144950952000045,
+                "data": [
+                    5.946703926000055,
+                    5.19824702599999
                 ],
                 "iterations": 1
             }
         }
     ],
-    "datetime": "2025-03-12T14:39:29.620566+00:00",
+    "datetime": "2025-03-12T17:44:48.482385+00:00",
     "version": "5.1.0"
 }
