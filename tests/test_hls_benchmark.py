@@ -14,42 +14,35 @@ HLS_COLLECTIONS = {
 }
 
 ENDPOINT = "https://dev-titiler-cmr.delta-backend.com"
-BASE_DATE = datetime(2023, 6, 1)  # Fixed base date
+BASE_DATE = datetime(2024, 8, 1)  # Fixed base date
 
 TILES_HEIGHT = 5
 TILES_WIDTH = 5
 
 TMS = morecantile.tms.get("WebMercatorQuad")
 
-TEST_LOCATIONS = [
-    (-92.1161, 46.8199, "Duluth"),
-    # (13.4050, 52.5200, "Berlin"),
-    # (31.0335, -17.8252, "Harare"),
-    # (116.4074, 39.9042, "Beijing"),
-    # (151.2093, -33.8688, "Sydney"),
-]
+TEST_LNG, TEST_LAT = -92.1, 46.8
 
 BAND_COMBINATIONS = [
     ["B05"],
-    # ["B04", "B03"],
-    # ["B04", "B03", "B02"],
+    ["B04", "B03"],
+    ["B04", "B03", "B02"],
 ]
 
 ZOOM_LEVELS = [
-    # 6,
+    6,
     7,
-    # 8,
-    # 9,
-    # 10,
+    8,
+    9,
+    10,
+    11,
 ]
 INTERVAL_DAYS = [
     1,
-    # 3,
-    # 5,
-    # 7,
-    # 10,
-    # 12,
-    # 16,
+    3,
+    5,
+    7,
+    10,
 ]
 
 
@@ -176,18 +169,15 @@ async def fetch_viewport_tiles(
 @pytest.mark.parametrize("collection", list(HLS_COLLECTIONS.keys()))
 @pytest.mark.parametrize("zoom", ZOOM_LEVELS)
 @pytest.mark.parametrize("interval_days", INTERVAL_DAYS)
-@pytest.mark.parametrize("location", TEST_LOCATIONS)
 @pytest.mark.parametrize("bands", BAND_COMBINATIONS)
 def test_hls_tiles(
     benchmark,
     collection: str,
     zoom: int,
     interval_days: int,
-    location: Tuple[float, float, str],
     bands: List[str],
 ):
     """Test HLS tile performance with various parameters"""
-    lng, lat, location_name = location
     concept_id = HLS_COLLECTIONS[collection]
 
     def tile_benchmark():
@@ -197,8 +187,8 @@ def test_hls_tiles(
                 endpoint=ENDPOINT,
                 concept_id=concept_id,
                 zoom=zoom,
-                lng=lng,
-                lat=lat,
+                lng=TEST_LNG,
+                lat=TEST_LAT,
                 interval_days=interval_days,
                 bands=bands,
             )
@@ -229,9 +219,6 @@ def test_hls_tiles(
             "collection": collection,
             "zoom": zoom,
             "interval_days": interval_days,
-            "location": location_name,
-            "lat": lat,
-            "lng": lng,
             "bands": "-".join(bands),
             "band_count": len(bands),
             "total_tiles": total_tiles,
