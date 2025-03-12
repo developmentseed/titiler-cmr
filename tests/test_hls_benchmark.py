@@ -2,48 +2,59 @@
 
 import asyncio
 from datetime import datetime, timedelta
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, NamedTuple, Tuple
 
 import httpx
 import morecantile
 import pytest
 
-HLS_COLLECTIONS = {
-    "HLSL30": "C2021957657-LPCLOUD",  # Landsat
-    "HLSS30": "C2021957295-LPCLOUD",  # Sentinel-2
-}
-
 ENDPOINT = "https://dev-titiler-cmr.delta-backend.com"
-BASE_DATE = datetime(2024, 8, 1)  # Fixed base date
-
+TMS = morecantile.tms.get("WebMercatorQuad")
+TEST_LNG, TEST_LAT = -92.1, 46.8
 TILES_HEIGHT = 5
 TILES_WIDTH = 5
 
-TMS = morecantile.tms.get("WebMercatorQuad")
 
-TEST_LNG, TEST_LAT = -92.1, 46.8
+class CollectionConfig(NamedTuple):
+    """Configuration for a collection"""
 
-BAND_COMBINATIONS = [
-    ["B05"],
-    ["B04", "B03"],
-    ["B04", "B03", "B02"],
-]
+    collection_id: str
+    concept_id: str
+    base_date: datetime
 
-ZOOM_LEVELS = [
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-]
-INTERVAL_DAYS = [
-    1,
-    3,
-    5,
-    7,
-    10,
-]
+    # band configurations
+    rgb_bands: List[str]
+    ndvi_bands: Tuple[str, str]  # (red_band, nir_band)
+    single_band: str
+
+
+LANDSAT = CollectionConfig(
+    collection_id="HLSL30",
+    concept_id="C2021957657-LPCLOUD",
+    base_date=datetime(2023, 2, 24),
+    rgb_bands=["B04", "B03", "B02"],
+    ndvi_bands=("B04", "B05"),
+    single_band="B04",
+)
+
+SENTINEL = CollectionConfig(
+    collection_id="HLSS30",
+    concept_id="C2021957295-LPCLOUD",
+    base_date=datetime(2023, 2, 13),
+    rgb_bands=["B04", "B03", "B02"],
+    ndvi_bands=("B04", "B8A"),
+    single_band="B04",
+)
+
+COLLECTIONS = {
+    "HLSL30": LANDSAT,
+    "HLSS30": SENTINEL,
+}
+
+# test parameters
+ZOOM_LEVELS = [6, 8, 10]
+INTERVAL_DAYS = [1, 7]
+N_BANDS = [1, 2, 3]
 
 
 def get_surrounding_tiles(
@@ -65,42 +76,65 @@ def get_surrounding_tiles(
     return tiles
 
 
+def get_band_params(
+    collection_config: CollectionConfig, n_bands: int
+) -> Dict[str, Any]:
+    """Get band-specific parameters based on collection and band count"""
+    params: Dict[str, Any] = {
+        "backend": "rasterio",
+        "bands_regex": "B[0-9][0-9]",
+    }
+
+    if n_bands == 3:
+        # RGB visualization
+        params["color_formula"] = "Gamma RGB 3.5 Saturation 1.7 Sigmoidal RGB 15 0.35"
+        params["bands"] = collection_config.rgb_bands
+    elif n_bands == 2:
+        # NDVI visualization
+        red_band, nir_band = collection_config.ndvi_bands
+        params["bands"] = [red_band, nir_band]
+        params["expression"] = f"({nir_band}-{red_band})/({nir_band}+{red_band})"
+        params["colormap_name"] = "greens"
+        params["rescale"] = "-1,1"
+    elif n_bands == 1:
+        # Single band visualization
+        params["bands"] = [collection_config.single_band]
+        params["colormap_name"] = "viridis"
+        params["rescale"] = "0,5000"
+
+    return params
+
+
 async def fetch_tile(
     client: httpx.AsyncClient,
     endpoint: str,
     z: int,
     x: int,
     y: int,
-    concept_id: str,
+    collection_config: CollectionConfig,
     interval_days: int,
-    bands: List[str],
+    n_bands: int,
 ) -> httpx.Response:
     """Fetch a single HLS tile"""
     url = f"{endpoint}/tiles/WebMercatorQuad/{z}/{x}/{y}.png"
 
-    end_date = BASE_DATE + timedelta(days=interval_days)
-    datetime_range = f"{BASE_DATE.isoformat()}/{end_date.isoformat()}"
+    start_date = collection_config.base_date
+    end_date = start_date + timedelta(days=interval_days)
+    datetime_range = f"{start_date.isoformat()}/{end_date.isoformat()}"
 
-    params = {
-        "concept_id": concept_id,
+    params: Dict[str, Any] = {
+        "concept_id": collection_config.concept_id,
         "datetime": datetime_range,
-        "backend": "rasterio",
-        "bands_regex": "B[0-9][0-9]",
-        "bands": bands,
     }
 
-    if len(bands) == 3:
-        params["color_formula"] = "Gamma RGB 3.5 Saturation 1.7 Sigmoidal RGB 15 0.35"
-    elif len(bands) == 1:
-        params["colormap_name"] = "viridis"
-        params["rescale"] = "0,5000"
+    params.update(get_band_params(collection_config, n_bands))
 
     start_time = datetime.now()
     try:
         response = await client.get(url, params=params, timeout=30.0)
+        response.raise_for_status()
         elapsed = (datetime.now() - start_time).total_seconds()
 
-        # Add elapsed time to response for consistency with real responses
         response.elapsed = timedelta(seconds=elapsed)
         return response
     except Exception:
@@ -112,12 +146,12 @@ async def fetch_tile(
 
 async def fetch_viewport_tiles(
     endpoint: str,
-    concept_id: str,
+    collection_config: CollectionConfig,
     zoom: int,
     lng: float,
     lat: float,
     interval_days: int,
-    bands: List[str],
+    n_bands: int,
 ) -> List[Dict]:
     """Fetch all tiles for a viewport and return detailed metrics"""
     tile = TMS.tile(lng=lng, lat=lat, zoom=zoom)
@@ -133,9 +167,9 @@ async def fetch_viewport_tiles(
                 zoom,
                 x,
                 y,
-                concept_id,
+                collection_config,
                 interval_days,
-                bands,
+                n_bands,
             )
             for x, y in tiles
         ]
@@ -160,37 +194,52 @@ async def fetch_viewport_tiles(
     return results
 
 
+@pytest.fixture(scope="session", autouse=True)
+def warm_up_api():
+    """Perform a single warmup request to the API before all tests."""
+    asyncio.run(
+        fetch_viewport_tiles(
+            endpoint=ENDPOINT,
+            collection_config=LANDSAT,
+            zoom=8,
+            lng=TEST_LNG,
+            lat=TEST_LAT,
+            interval_days=1,
+            n_bands=3,
+        )
+    )
+
+
 @pytest.mark.benchmark(
     group="hls-tiles",
     min_rounds=2,
-    warmup=True,
-    warmup_iterations=1,
+    warmup=False,
 )
-@pytest.mark.parametrize("collection", list(HLS_COLLECTIONS.keys()))
+@pytest.mark.parametrize("collection_id", list(COLLECTIONS.keys()))
 @pytest.mark.parametrize("zoom", ZOOM_LEVELS)
 @pytest.mark.parametrize("interval_days", INTERVAL_DAYS)
-@pytest.mark.parametrize("bands", BAND_COMBINATIONS)
+@pytest.mark.parametrize("n_bands", N_BANDS)
 def test_hls_tiles(
     benchmark,
-    collection: str,
+    collection_id: str,
     zoom: int,
     interval_days: int,
-    bands: List[str],
+    n_bands: int,
 ):
     """Test HLS tile performance with various parameters"""
-    concept_id = HLS_COLLECTIONS[collection]
+    collection_config = COLLECTIONS[collection_id]
 
     def tile_benchmark():
         # Run the async function in a synchronous context
         results = asyncio.run(
             fetch_viewport_tiles(
                 endpoint=ENDPOINT,
-                concept_id=concept_id,
+                collection_config=collection_config,
                 zoom=zoom,
                 lng=TEST_LNG,
                 lat=TEST_LAT,
                 interval_days=interval_days,
-                bands=bands,
+                n_bands=n_bands,
             )
         )
         return results
@@ -216,11 +265,10 @@ def test_hls_tiles(
     # Add detailed metrics to the benchmark results
     benchmark.extra_info.update(
         {
-            "collection": collection,
+            "collection": collection_id,
             "zoom": zoom,
             "interval_days": interval_days,
-            "bands": "-".join(bands),
-            "band_count": len(bands),
+            "band_count": n_bands,
             "total_tiles": total_tiles,
             "success_count": success_count,
             "no_data_count": no_data_count,
@@ -230,8 +278,3 @@ def test_hls_tiles(
             "avg_response_size": avg_response_size,
         }
     )
-
-
-if __name__ == "__main__":
-    # This allows running with python -m pytest tile_benchmark_test.py -v
-    pytest.main([__file__, "-v"])
