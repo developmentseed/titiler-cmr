@@ -52,7 +52,7 @@ COLLECTIONS = {
 }
 
 # test parameters
-ZOOM_LEVELS = [6, 8, 10]
+ZOOM_LEVELS = [6, 7, 8, 9, 10]
 INTERVAL_DAYS = [1, 7]
 N_BANDS = [1, 2, 3]
 
