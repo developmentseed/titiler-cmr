@@ -1,6 +1,6 @@
 {
     "machine_info": {
-        "node": "fv-az1326-225",
+        "node": "fv-az1373-535",
         "processor": "x86_64",
         "machine": "x86_64",
         "python_compiler": "GCC 13.3.0",
@@ -27,14 +27,14 @@
             "arch_string_raw": "x86_64",
             "vendor_id_raw": "AuthenticAMD",
             "brand_raw": "AMD EPYC 7763 64-Core Processor",
-            "hz_advertised_friendly": "3.2709 GHz",
-            "hz_actual_friendly": "3.2709 GHz",
+            "hz_advertised_friendly": "3.2621 GHz",
+            "hz_actual_friendly": "3.2621 GHz",
             "hz_advertised": [
-                3270873000,
+                3262126000,
                 0
             ],
             "hz_actual": [
-                3270873000,
+                3262126000,
                 0
             ],
             "stepping": 1,
@@ -156,9 +156,9 @@
         }
     },
     "commit_info": {
-        "id": "b2ce3830a28d71793edc2ff0478a7939f361e398",
-        "time": "2025-03-12T12:21:10-05:00",
-        "author_time": "2025-03-12T12:21:10-05:00",
+        "id": "bb0398818ec1c2effbf1811dd88935df968b1f11",
+        "time": "2025-03-17T09:24:09-05:00",
+        "author_time": "2025-03-17T09:24:09-05:00",
         "dirty": true,
         "project": "titiler-cmr",
         "branch": "feat/hls-benchmark"
@@ -185,7 +185,7 @@
                 "no_data_count": 4,
                 "error_count": 0,
                 "success_rate": 0.84,
-                "avg_response_time": 3.5690107999999996,
+                "avg_response_time": 4.6753468,
                 "avg_response_size": 32462.04761904762
             },
             "options": {
@@ -197,25 +197,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 7.410635146000004,
-                "max": 7.46089643900001,
-                "mean": 7.435765792500007,
-                "stddev": 0.03554010111150783,
+                "min": 7.3233285890000275,
+                "max": 7.550183173999983,
+                "mean": 7.436755881500005,
+                "stddev": 0.16041041539672857,
                 "rounds": 2,
-                "median": 7.435765792500007,
-                "iqr": 0.05026129300000548,
-                "q1": 7.410635146000004,
-                "q3": 7.46089643900001,
+                "median": 7.436755881500005,
+                "iqr": 0.22685458499995548,
+                "q1": 7.3233285890000275,
+                "q3": 7.550183173999983,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 7.410635146000004,
-                "hd15iqr": 7.46089643900001,
-                "ops": 0.13448513951429691,
-                "total": 14.871531585000014,
+                "ld15iqr": 7.3233285890000275,
+                "hd15iqr": 7.550183173999983,
+                "ops": 0.1344672348984378,
+                "total": 14.87351176300001,
                 "data": [
-                    7.410635146000004,
-                    7.46089643900001
+                    7.3233285890000275,
+                    7.550183173999983
                 ],
                 "iterations": 1
             }
@@ -241,7 +241,7 @@
                 "no_data_count": 2,
                 "error_count": 0,
                 "success_rate": 0.92,
-                "avg_response_time": 3.51359648,
+                "avg_response_time": 7.30794768,
                 "avg_response_size": 39608.95652173913
             },
             "options": {
@@ -253,25 +253,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 7.331306757999982,
-                "max": 9.711127113999993,
-                "mean": 8.521216935999988,
-                "stddev": 1.682787111733391,
+                "min": 9.737533575999976,
+                "max": 11.044419028999982,
+                "mean": 10.390976302499979,
+                "stddev": 0.9241075660503578,
                 "rounds": 2,
-                "median": 8.521216935999988,
-                "iqr": 2.3798203560000104,
-                "q1": 7.331306757999982,
-                "q3": 9.711127113999993,
+                "median": 10.390976302499979,
+                "iqr": 1.3068854530000067,
+                "q1": 9.737533575999976,
+                "q3": 11.044419028999982,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 7.331306757999982,
-                "hd15iqr": 9.711127113999993,
-                "ops": 0.11735412999230811,
-                "total": 17.042433871999975,
+                "ld15iqr": 9.737533575999976,
+                "hd15iqr": 11.044419028999982,
+                "ops": 0.09623734776099996,
+                "total": 20.781952604999958,
                 "data": [
-                    9.711127113999993,
-                    7.331306757999982
+                    9.737533575999976,
+                    11.044419028999982
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-7-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-7-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 7,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-1-7-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 7,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 11,
+                "no_data_count": 14,
+                "error_count": 0,
+                "success_rate": 0.44,
+                "avg_response_time": 3.32181904,
+                "avg_response_size": 43993.818181818184
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.1962641200000235,
+                "max": 5.467481335000002,
+                "mean": 5.331872727500013,
+                "stddev": 0.1917795319010148,
+                "rounds": 2,
+                "median": 5.331872727500013,
+                "iqr": 0.27121721499997875,
+                "q1": 5.1962641200000235,
+                "q3": 5.467481335000002,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.1962641200000235,
+                "hd15iqr": 5.467481335000002,
+                "ops": 0.18755136349041773,
+                "total": 10.663745455000026,
+                "data": [
+                    5.1962641200000235,
+                    5.467481335000002
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-7-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-7-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 7,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-1-7-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 7,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 14,
+                "no_data_count": 11,
+                "error_count": 0,
+                "success_rate": 0.56,
+                "avg_response_time": 4.03284216,
+                "avg_response_size": 70358.07142857143
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.3708801110000195,
+                "max": 9.069149449999998,
+                "mean": 8.220014780500009,
+                "stddev": 1.2008577658880801,
+                "rounds": 2,
+                "median": 8.220014780500009,
+                "iqr": 1.6982693389999781,
+                "q1": 7.3708801110000195,
+                "q3": 9.069149449999998,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.3708801110000195,
+                "hd15iqr": 9.069149449999998,
+                "ops": 0.1216542824682332,
+                "total": 16.440029561000017,
+                "data": [
+                    9.069149449999998,
+                    7.3708801110000195
                 ],
                 "iterations": 1
             }
@@ -297,7 +409,7 @@
                 "no_data_count": 9,
                 "error_count": 0,
                 "success_rate": 0.64,
-                "avg_response_time": 1.81529672,
+                "avg_response_time": 3.08400128,
                 "avg_response_size": 55184.1875
             },
             "options": {
@@ -309,25 +421,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 3.610056560000004,
-                "max": 3.948252343000007,
-                "mean": 3.7791544515000055,
-                "stddev": 0.23914053152799644,
+                "min": 5.08341062400001,
+                "max": 5.48093400800002,
+                "mean": 5.282172316000015,
+                "stddev": 0.281091480506631,
                 "rounds": 2,
-                "median": 3.7791544515000055,
-                "iqr": 0.3381957830000033,
-                "q1": 3.610056560000004,
-                "q3": 3.948252343000007,
+                "median": 5.282172316000015,
+                "iqr": 0.3975233840000101,
+                "q1": 5.08341062400001,
+                "q3": 5.48093400800002,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 3.610056560000004,
-                "hd15iqr": 3.948252343000007,
-                "ops": 0.26460945506026734,
-                "total": 7.558308903000011,
+                "ld15iqr": 5.08341062400001,
+                "hd15iqr": 5.48093400800002,
+                "ops": 0.1893160503247765,
+                "total": 10.56434463200003,
                 "data": [
-                    3.948252343000007,
-                    3.610056560000004
+                    5.08341062400001,
+                    5.48093400800002
                 ],
                 "iterations": 1
             }
@@ -353,7 +465,7 @@
                 "no_data_count": 7,
                 "error_count": 0,
                 "success_rate": 0.72,
-                "avg_response_time": 3.58640828,
+                "avg_response_time": 5.1325732,
                 "avg_response_size": 77589.61111111111
             },
             "options": {
@@ -365,25 +477,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 5.617341487999994,
-                "max": 13.097208198000033,
-                "mean": 9.357274843000013,
-                "stddev": 5.289064473012538,
+                "min": 7.025721966999981,
+                "max": 7.563343744000008,
+                "mean": 7.294532855499995,
+                "stddev": 0.38015600423028073,
                 "rounds": 2,
-                "median": 9.357274843000013,
-                "iqr": 7.479866710000039,
-                "q1": 5.617341487999994,
-                "q3": 13.097208198000033,
+                "median": 7.294532855499995,
+                "iqr": 0.5376217770000267,
+                "q1": 7.025721966999981,
+                "q3": 7.563343744000008,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 5.617341487999994,
-                "hd15iqr": 13.097208198000033,
-                "ops": 0.10686872158597326,
-                "total": 18.714549686000026,
+                "ld15iqr": 7.025721966999981,
+                "hd15iqr": 7.563343744000008,
+                "ops": 0.13708897057691793,
+                "total": 14.58906571099999,
                 "data": [
-                    5.617341487999994,
-                    13.097208198000033
+                    7.563343744000008,
+                    7.025721966999981
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-9-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-9-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 9,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-1-9-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 9,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 3.34521408,
+                "avg_response_size": 98931.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.055704419999984,
+                "max": 5.191842038000004,
+                "mean": 5.123773228999994,
+                "stddev": 0.09626383286239841,
+                "rounds": 2,
+                "median": 5.123773228999994,
+                "iqr": 0.13613761800002067,
+                "q1": 5.055704419999984,
+                "q3": 5.191842038000004,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.055704419999984,
+                "hd15iqr": 5.191842038000004,
+                "ops": 0.19516866873422692,
+                "total": 10.247546457999988,
+                "data": [
+                    5.191842038000004,
+                    5.055704419999984
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-1-9-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-1-9-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 1,
+                "zoom": 9,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-1-9-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 9,
+                "interval_days": 1,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 5.12353372,
+                "avg_response_size": 102349.66666666667
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 8.00504569900005,
+                "max": 10.080714954999962,
+                "mean": 9.042880327000006,
+                "stddev": 1.467719806417974,
+                "rounds": 2,
+                "median": 9.042880327000006,
+                "iqr": 2.0756692559999124,
+                "q1": 8.00504569900005,
+                "q3": 10.080714954999962,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 8.00504569900005,
+                "hd15iqr": 10.080714954999962,
+                "ops": 0.11058423465079208,
+                "total": 18.085760654000012,
+                "data": [
+                    10.080714954999962,
+                    8.00504569900005
                 ],
                 "iterations": 1
             }
@@ -409,7 +633,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 1.86848736,
+                "avg_response_time": 3.34205004,
                 "avg_response_size": 97171.22727272728
             },
             "options": {
@@ -421,25 +645,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 2.267346422000003,
-                "max": 3.336990162999996,
-                "mean": 2.8021682924999993,
-                "stddev": 0.7563523427148422,
+                "min": 4.208781062000014,
+                "max": 4.977927654999974,
+                "mean": 4.593354358499994,
+                "stddev": 0.5438687716368009,
                 "rounds": 2,
-                "median": 2.8021682924999993,
-                "iqr": 1.069643740999993,
-                "q1": 2.267346422000003,
-                "q3": 3.336990162999996,
+                "median": 4.593354358499994,
+                "iqr": 0.7691465929999595,
+                "q1": 4.208781062000014,
+                "q3": 4.977927654999974,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 2.267346422000003,
-                "hd15iqr": 3.336990162999996,
-                "ops": 0.3568665032276966,
-                "total": 5.604336584999999,
+                "ld15iqr": 4.208781062000014,
+                "hd15iqr": 4.977927654999974,
+                "ops": 0.21770582497069965,
+                "total": 9.186708716999988,
                 "data": [
-                    2.267346422000003,
-                    3.336990162999996
+                    4.977927654999974,
+                    4.208781062000014
                 ],
                 "iterations": 1
             }
@@ -465,7 +689,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 2.99644252,
+                "avg_response_time": 5.190771079999999,
                 "avg_response_size": 101326.68181818182
             },
             "options": {
@@ -477,25 +701,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.976342394000028,
-                "max": 5.942614483999989,
-                "mean": 5.459478439000009,
-                "stddev": 0.6832575473102706,
+                "min": 6.155165274000012,
+                "max": 6.730773030999956,
+                "mean": 6.442969152499984,
+                "stddev": 0.4070161482782384,
                 "rounds": 2,
-                "median": 5.459478439000009,
-                "iqr": 0.9662720899999613,
-                "q1": 4.976342394000028,
-                "q3": 5.942614483999989,
+                "median": 6.442969152499984,
+                "iqr": 0.5756077569999434,
+                "q1": 6.155165274000012,
+                "q3": 6.730773030999956,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.976342394000028,
-                "hd15iqr": 5.942614483999989,
-                "ops": 0.18316768005831086,
-                "total": 10.918956878000017,
+                "ld15iqr": 6.155165274000012,
+                "hd15iqr": 6.730773030999956,
+                "ops": 0.15520794471163696,
+                "total": 12.885938304999968,
                 "data": [
-                    4.976342394000028,
-                    5.942614483999989
+                    6.155165274000012,
+                    6.730773030999956
                 ],
                 "iterations": 1
             }
@@ -521,7 +745,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 10.62241188,
+                "avg_response_time": 13.191294000000001,
                 "avg_response_size": 87990.4
             },
             "options": {
@@ -533,25 +757,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 16.091459080999982,
-                "max": 19.717764194999972,
-                "mean": 17.904611637999977,
-                "stddev": 2.5641849367608494,
+                "min": 18.393949059999954,
+                "max": 20.72410573800005,
+                "mean": 19.559027399,
+                "stddev": 1.6476695882409849,
                 "rounds": 2,
-                "median": 17.904611637999977,
-                "iqr": 3.6263051139999902,
-                "q1": 16.091459080999982,
-                "q3": 19.717764194999972,
+                "median": 19.559027399,
+                "iqr": 2.330156678000094,
+                "q1": 18.393949059999954,
+                "q3": 20.72410573800005,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 16.091459080999982,
-                "hd15iqr": 19.717764194999972,
-                "ops": 0.055851532567042284,
-                "total": 35.809223275999955,
+                "ld15iqr": 18.393949059999954,
+                "hd15iqr": 20.72410573800005,
+                "ops": 0.05112728662832832,
+                "total": 39.118054798,
                 "data": [
-                    19.717764194999972,
-                    16.091459080999982
+                    20.72410573800005,
+                    18.393949059999954
                 ],
                 "iterations": 1
             }
@@ -577,7 +801,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 13.982277360000001,
+                "avg_response_time": 14.571039719999998,
                 "avg_response_size": 102666.0
             },
             "options": {
@@ -589,25 +813,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 22.227314809999996,
-                "max": 24.262325868000005,
-                "mean": 23.244820339,
-                "stddev": 1.438970118901417,
+                "min": 21.460957435999944,
+                "max": 22.552328407999994,
+                "mean": 22.00664292199997,
+                "stddev": 0.7717158150913889,
                 "rounds": 2,
-                "median": 23.244820339,
-                "iqr": 2.035011058000009,
-                "q1": 22.227314809999996,
-                "q3": 24.262325868000005,
+                "median": 22.00664292199997,
+                "iqr": 1.0913709720000497,
+                "q1": 21.460957435999944,
+                "q3": 22.552328407999994,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 22.227314809999996,
-                "hd15iqr": 24.262325868000005,
-                "ops": 0.04302033680691465,
-                "total": 46.489640678,
+                "ld15iqr": 21.460957435999944,
+                "hd15iqr": 22.552328407999994,
+                "ops": 0.04544082455213118,
+                "total": 44.01328584399994,
                 "data": [
-                    22.227314809999996,
-                    24.262325868000005
+                    21.460957435999944,
+                    22.552328407999994
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-7-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-7-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 7,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-7-7-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 7,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 5.81523564,
+                "avg_response_size": 78450.28
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.085205986999995,
+                "max": 9.184761984000033,
+                "mean": 9.134983985500014,
+                "stddev": 0.07039672058651486,
+                "rounds": 2,
+                "median": 9.134983985500014,
+                "iqr": 0.09955599700003859,
+                "q1": 9.085205986999995,
+                "q3": 9.184761984000033,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 9.085205986999995,
+                "hd15iqr": 9.184761984000033,
+                "ops": 0.10946926689606712,
+                "total": 18.26996797100003,
+                "data": [
+                    9.184761984000033,
+                    9.085205986999995
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-7-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-7-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 7,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-7-7-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 7,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 10.15306828,
+                "avg_response_size": 108908.92
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 12.424825550000037,
+                "max": 17.138864207000097,
+                "mean": 14.781844878500067,
+                "stddev": 3.333328701140268,
+                "rounds": 2,
+                "median": 14.781844878500067,
+                "iqr": 4.71403865700006,
+                "q1": 12.424825550000037,
+                "q3": 17.138864207000097,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 12.424825550000037,
+                "hd15iqr": 17.138864207000097,
+                "ops": 0.06765055432657681,
+                "total": 29.563689757000134,
+                "data": [
+                    17.138864207000097,
+                    12.424825550000037
                 ],
                 "iterations": 1
             }
@@ -633,7 +969,7 @@
                 "no_data_count": 1,
                 "error_count": 0,
                 "success_rate": 0.96,
-                "avg_response_time": 3.05792392,
+                "avg_response_time": 5.060684800000001,
                 "avg_response_size": 87060.25
             },
             "options": {
@@ -645,25 +981,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 5.054363307000017,
-                "max": 6.537108830000022,
-                "mean": 5.79573606850002,
-                "stddev": 1.0484594140872978,
+                "min": 6.304202109000016,
+                "max": 9.687477734000026,
+                "mean": 7.995839921500021,
+                "stddev": 2.392337137060662,
                 "rounds": 2,
-                "median": 5.79573606850002,
-                "iqr": 1.4827455230000055,
-                "q1": 5.054363307000017,
-                "q3": 6.537108830000022,
+                "median": 7.995839921500021,
+                "iqr": 3.3832756250000102,
+                "q1": 6.304202109000016,
+                "q3": 9.687477734000026,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 5.054363307000017,
-                "hd15iqr": 6.537108830000022,
-                "ops": 0.17254063818313375,
-                "total": 11.59147213700004,
+                "ld15iqr": 6.304202109000016,
+                "hd15iqr": 9.687477734000026,
+                "ops": 0.12506503504542393,
+                "total": 15.991679843000043,
                 "data": [
-                    6.537108830000022,
-                    5.054363307000017
+                    6.304202109000016,
+                    9.687477734000026
                 ],
                 "iterations": 1
             }
@@ -689,7 +1025,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 3.9176172000000005,
+                "avg_response_time": 6.4642121999999995,
                 "avg_response_size": 98665.0
             },
             "options": {
@@ -701,25 +1037,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 8.316329319999966,
-                "max": 15.397679229000005,
-                "mean": 11.857004274499985,
-                "stddev": 5.007270540608669,
+                "min": 9.38335439299999,
+                "max": 10.569027031000019,
+                "mean": 9.976190712000005,
+                "stddev": 0.8383971625971625,
                 "rounds": 2,
-                "median": 11.857004274499985,
-                "iqr": 7.081349909000039,
-                "q1": 8.316329319999966,
-                "q3": 15.397679229000005,
+                "median": 9.976190712000005,
+                "iqr": 1.1856726380000282,
+                "q1": 9.38335439299999,
+                "q3": 10.569027031000019,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 8.316329319999966,
-                "hd15iqr": 15.397679229000005,
-                "ops": 0.08433833511814015,
-                "total": 23.71400854899997,
+                "ld15iqr": 9.38335439299999,
+                "hd15iqr": 10.569027031000019,
+                "ops": 0.10023866111512239,
+                "total": 19.95238142400001,
                 "data": [
-                    15.397679229000005,
-                    8.316329319999966
+                    10.569027031000019,
+                    9.38335439299999
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-9-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-9-HLSL30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 9,
+                "collection_id": "HLSL30"
+            },
+            "param": "1-7-9-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 9,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 4.44327412,
+                "avg_response_size": 122536.68
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.13304747799998,
+                "max": 13.008772337999972,
+                "mean": 9.570909907999976,
+                "stddev": 4.861871674078919,
+                "rounds": 2,
+                "median": 9.570909907999976,
+                "iqr": 6.875724859999991,
+                "q1": 6.13304747799998,
+                "q3": 13.008772337999972,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 6.13304747799998,
+                "hd15iqr": 13.008772337999972,
+                "ops": 0.10448327375479069,
+                "total": 19.141819815999952,
+                "data": [
+                    13.008772337999972,
+                    6.13304747799998
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[1-7-9-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[1-7-9-HLSS30]",
+            "params": {
+                "n_bands": 1,
+                "interval_days": 7,
+                "zoom": 9,
+                "collection_id": "HLSS30"
+            },
+            "param": "1-7-9-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 9,
+                "interval_days": 7,
+                "band_count": 1,
+                "total_tiles": 25,
+                "success_count": 24,
+                "no_data_count": 1,
+                "error_count": 0,
+                "success_rate": 0.96,
+                "avg_response_time": 5.3829375200000005,
+                "avg_response_size": 93747.91666666667
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.839928009999994,
+                "max": 6.878550043000018,
+                "mean": 6.859239026500006,
+                "stddev": 0.02730990143752773,
+                "rounds": 2,
+                "median": 6.859239026500006,
+                "iqr": 0.0386220330000242,
+                "q1": 6.839928009999994,
+                "q3": 6.878550043000018,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 6.839928009999994,
+                "hd15iqr": 6.878550043000018,
+                "ops": 0.14578876696621837,
+                "total": 13.718478053000013,
+                "data": [
+                    6.878550043000018,
+                    6.839928009999994
                 ],
                 "iterations": 1
             }
@@ -745,7 +1193,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 1.84221632,
+                "avg_response_time": 4.69191756,
                 "avg_response_size": 119476.0
             },
             "options": {
@@ -757,25 +1205,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 2.911274961999993,
-                "max": 3.178706379999994,
-                "mean": 3.0449906709999937,
-                "stddev": 0.18910256917013485,
+                "min": 7.744264855000097,
+                "max": 13.316717445999984,
+                "mean": 10.53049115050004,
+                "stddev": 3.940319014936567,
                 "rounds": 2,
-                "median": 3.0449906709999937,
-                "iqr": 0.26743141800000103,
-                "q1": 2.911274961999993,
-                "q3": 3.178706379999994,
+                "median": 10.53049115050004,
+                "iqr": 5.572452590999887,
+                "q1": 7.744264855000097,
+                "q3": 13.316717445999984,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 2.911274961999993,
-                "hd15iqr": 3.178706379999994,
-                "ops": 0.32840823110686046,
-                "total": 6.089981341999987,
+                "ld15iqr": 7.744264855000097,
+                "hd15iqr": 13.316717445999984,
+                "ops": 0.09496233230797739,
+                "total": 21.06098230100008,
                 "data": [
-                    2.911274961999993,
-                    3.178706379999994
+                    13.316717445999984,
+                    7.744264855000097
                 ],
                 "iterations": 1
             }
@@ -801,7 +1249,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 6.455021759999999,
+                "avg_response_time": 5.2161722,
                 "avg_response_size": 102092.63636363637
             },
             "options": {
@@ -813,25 +1261,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.029756824999936,
-                "max": 5.237291188999961,
-                "mean": 4.633524006999949,
-                "stddev": 0.8538557373002029,
+                "min": 7.539718365999988,
+                "max": 8.025964311000052,
+                "mean": 7.78284133850002,
+                "stddev": 0.34382780503400645,
                 "rounds": 2,
-                "median": 4.633524006999949,
-                "iqr": 1.2075343640000256,
-                "q1": 4.029756824999936,
-                "q3": 5.237291188999961,
+                "median": 7.78284133850002,
+                "iqr": 0.48624594500006424,
+                "q1": 7.539718365999988,
+                "q3": 8.025964311000052,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.029756824999936,
-                "hd15iqr": 5.237291188999961,
-                "ops": 0.21581845664105373,
-                "total": 9.267048013999897,
+                "ld15iqr": 7.539718365999988,
+                "hd15iqr": 8.025964311000052,
+                "ops": 0.12848777927069102,
+                "total": 15.56568267700004,
                 "data": [
-                    4.029756824999936,
-                    5.237291188999961
+                    8.025964311000052,
+                    7.539718365999988
                 ],
                 "iterations": 1
             }
@@ -857,7 +1305,7 @@
                 "no_data_count": 4,
                 "error_count": 0,
                 "success_rate": 0.84,
-                "avg_response_time": 4.55419508,
+                "avg_response_time": 6.3409316,
                 "avg_response_size": 40452.666666666664
             },
             "options": {
@@ -869,25 +1317,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 7.662917730000004,
-                "max": 8.857520197999975,
-                "mean": 8.26021896399999,
-                "stddev": 0.8447115059449651,
+                "min": 9.386024943000052,
+                "max": 9.481981911000048,
+                "mean": 9.43400342700005,
+                "stddev": 0.06785182277489762,
                 "rounds": 2,
-                "median": 8.26021896399999,
-                "iqr": 1.194602467999971,
-                "q1": 7.662917730000004,
-                "q3": 8.857520197999975,
+                "median": 9.43400342700005,
+                "iqr": 0.09595696799999587,
+                "q1": 9.386024943000052,
+                "q3": 9.481981911000048,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 7.662917730000004,
-                "hd15iqr": 8.857520197999975,
-                "ops": 0.12106216607068641,
-                "total": 16.52043792799998,
+                "ld15iqr": 9.386024943000052,
+                "hd15iqr": 9.481981911000048,
+                "ops": 0.10599953749624547,
+                "total": 18.8680068540001,
                 "data": [
-                    8.857520197999975,
-                    7.662917730000004
+                    9.481981911000048,
+                    9.386024943000052
                 ],
                 "iterations": 1
             }
@@ -913,7 +1361,7 @@
                 "no_data_count": 2,
                 "error_count": 23,
                 "success_rate": 0.0,
-                "avg_response_time": 4.30705024,
+                "avg_response_time": 7.35375496,
                 "avg_response_size": 0
             },
             "options": {
@@ -925,25 +1373,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 9.916940066999928,
-                "max": 13.610516724000036,
-                "mean": 11.763728395499982,
-                "stddev": 2.611753100997115,
+                "min": 9.61675155099988,
+                "max": 9.779138487999944,
+                "mean": 9.697945019499912,
+                "stddev": 0.11482490432885849,
                 "rounds": 2,
-                "median": 11.763728395499982,
-                "iqr": 3.693576657000108,
-                "q1": 9.916940066999928,
-                "q3": 13.610516724000036,
+                "median": 9.697945019499912,
+                "iqr": 0.1623869370000648,
+                "q1": 9.61675155099988,
+                "q3": 9.779138487999944,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 9.916940066999928,
-                "hd15iqr": 13.610516724000036,
-                "ops": 0.08500706292934589,
-                "total": 23.527456790999963,
+                "ld15iqr": 9.61675155099988,
+                "hd15iqr": 9.779138487999944,
+                "ops": 0.10311462871662748,
+                "total": 19.395890038999823,
                 "data": [
-                    9.916940066999928,
-                    13.610516724000036
+                    9.779138487999944,
+                    9.61675155099988
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-7-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-7-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 7,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-1-7-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 7,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 11,
+                "no_data_count": 14,
+                "error_count": 0,
+                "success_rate": 0.44,
+                "avg_response_time": 4.1671706,
+                "avg_response_size": 53806.818181818184
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.079478766000193,
+                "max": 7.621259763999888,
+                "mean": 7.35036926500004,
+                "stddev": 0.3830970176035994,
+                "rounds": 2,
+                "median": 7.35036926500004,
+                "iqr": 0.5417809979996946,
+                "q1": 7.079478766000193,
+                "q3": 7.621259763999888,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.079478766000193,
+                "hd15iqr": 7.621259763999888,
+                "ops": 0.1360475867194401,
+                "total": 14.70073853000008,
+                "data": [
+                    7.079478766000193,
+                    7.621259763999888
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-7-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-7-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 7,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-1-7-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 7,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 11,
+                "error_count": 14,
+                "success_rate": 0.0,
+                "avg_response_time": 5.55704768,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 8.012091834999865,
+                "max": 8.95543864299998,
+                "mean": 8.483765238999922,
+                "stddev": 0.6670469249475652,
+                "rounds": 2,
+                "median": 8.483765238999922,
+                "iqr": 0.9433468080001148,
+                "q1": 8.012091834999865,
+                "q3": 8.95543864299998,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 8.012091834999865,
+                "hd15iqr": 8.95543864299998,
+                "ops": 0.1178721913948059,
+                "total": 16.967530477999844,
+                "data": [
+                    8.95543864299998,
+                    8.012091834999865
                 ],
                 "iterations": 1
             }
@@ -969,7 +1529,7 @@
                 "no_data_count": 9,
                 "error_count": 0,
                 "success_rate": 0.64,
-                "avg_response_time": 1.9626734,
+                "avg_response_time": 4.1385879999999995,
                 "avg_response_size": 71296.25
             },
             "options": {
@@ -981,25 +1541,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.716244072999984,
-                "max": 4.804625685000019,
-                "mean": 4.760434879000002,
-                "stddev": 0.06249523717742288,
+                "min": 6.331107301999964,
+                "max": 6.734876829999848,
+                "mean": 6.532992065999906,
+                "stddev": 0.2855081712852098,
                 "rounds": 2,
-                "median": 4.760434879000002,
-                "iqr": 0.08838161200003469,
-                "q1": 4.716244072999984,
-                "q3": 4.804625685000019,
+                "median": 6.532992065999906,
+                "iqr": 0.4037695279998843,
+                "q1": 6.331107301999964,
+                "q3": 6.734876829999848,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.716244072999984,
-                "hd15iqr": 4.804625685000019,
-                "ops": 0.21006484185118493,
-                "total": 9.520869758000003,
+                "ld15iqr": 6.331107301999964,
+                "hd15iqr": 6.734876829999848,
+                "ops": 0.15306922002926773,
+                "total": 13.065984131999812,
                 "data": [
-                    4.804625685000019,
-                    4.716244072999984
+                    6.331107301999964,
+                    6.734876829999848
                 ],
                 "iterations": 1
             }
@@ -1025,7 +1585,7 @@
                 "no_data_count": 7,
                 "error_count": 18,
                 "success_rate": 0.0,
-                "avg_response_time": 4.839937119999999,
+                "avg_response_time": 5.37939408,
                 "avg_response_size": 0
             },
             "options": {
@@ -1037,25 +1597,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 5.515872868999963,
-                "max": 5.920168951999926,
-                "mean": 5.718020910499945,
-                "stddev": 0.285880501896433,
+                "min": 6.919729139000083,
+                "max": 10.71104036099996,
+                "mean": 8.815384750000021,
+                "stddev": 2.6808618746647688,
                 "rounds": 2,
-                "median": 5.718020910499945,
-                "iqr": 0.4042960829999629,
-                "q1": 5.515872868999963,
-                "q3": 5.920168951999926,
+                "median": 8.815384750000021,
+                "iqr": 3.7913112219998766,
+                "q1": 6.919729139000083,
+                "q3": 10.71104036099996,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 5.515872868999963,
-                "hd15iqr": 5.920168951999926,
-                "ops": 0.17488568433943813,
-                "total": 11.43604182099989,
+                "ld15iqr": 6.919729139000083,
+                "hd15iqr": 10.71104036099996,
+                "ops": 0.11343804364296153,
+                "total": 17.630769500000042,
                 "data": [
-                    5.920168951999926,
-                    5.515872868999963
+                    10.71104036099996,
+                    6.919729139000083
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-9-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-9-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 9,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-1-9-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 9,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 4.35915324,
+                "avg_response_size": 111992.55555555556
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.077028724000002,
+                "max": 5.610317867000049,
+                "mean": 5.343673295500025,
+                "stddev": 0.3770923693484959,
+                "rounds": 2,
+                "median": 5.343673295500025,
+                "iqr": 0.5332891430000473,
+                "q1": 5.077028724000002,
+                "q3": 5.610317867000049,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.077028724000002,
+                "hd15iqr": 5.610317867000049,
+                "ops": 0.18713718910213178,
+                "total": 10.68734659100005,
+                "data": [
+                    5.077028724000002,
+                    5.610317867000049
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-1-9-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-1-9-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 1,
+                "zoom": 9,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-1-9-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 9,
+                "interval_days": 1,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 7,
+                "error_count": 18,
+                "success_rate": 0.0,
+                "avg_response_time": 5.54790908,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.002211432999957,
+                "max": 8.178159089000019,
+                "mean": 7.590185260999988,
+                "stddev": 0.8315205618780694,
+                "rounds": 2,
+                "median": 7.590185260999988,
+                "iqr": 1.1759476560000621,
+                "q1": 7.002211432999957,
+                "q3": 8.178159089000019,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.002211432999957,
+                "hd15iqr": 8.178159089000019,
+                "ops": 0.13174908985927078,
+                "total": 15.180370521999976,
+                "data": [
+                    7.002211432999957,
+                    8.178159089000019
                 ],
                 "iterations": 1
             }
@@ -1081,7 +1753,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 1.8250054800000002,
+                "avg_response_time": 3.09000216,
                 "avg_response_size": 104300.13636363637
             },
             "options": {
@@ -1093,25 +1765,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 3.139724728000033,
-                "max": 4.160293123999963,
-                "mean": 3.650008925999998,
-                "stddev": 0.7216508334762287,
+                "min": 4.338102368999898,
+                "max": 4.835347619000004,
+                "mean": 4.586724993999951,
+                "stddev": 0.3516054881878747,
                 "rounds": 2,
-                "median": 3.650008925999998,
-                "iqr": 1.0205683959999305,
-                "q1": 3.139724728000033,
-                "q3": 4.160293123999963,
+                "median": 4.586724993999951,
+                "iqr": 0.49724525000010544,
+                "q1": 4.338102368999898,
+                "q3": 4.835347619000004,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 3.139724728000033,
-                "hd15iqr": 4.160293123999963,
-                "ops": 0.2739719327469942,
-                "total": 7.300017851999996,
+                "ld15iqr": 4.338102368999898,
+                "hd15iqr": 4.835347619000004,
+                "ops": 0.21802048330958004,
+                "total": 9.173449987999902,
                 "data": [
-                    4.160293123999963,
-                    3.139724728000033
+                    4.835347619000004,
+                    4.338102368999898
                 ],
                 "iterations": 1
             }
@@ -1137,7 +1809,7 @@
                 "no_data_count": 3,
                 "error_count": 22,
                 "success_rate": 0.0,
-                "avg_response_time": 1.4314106000000002,
+                "avg_response_time": 5.04621168,
                 "avg_response_size": 0
             },
             "options": {
@@ -1149,25 +1821,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.020287256000074,
-                "max": 4.305964012999993,
-                "mean": 4.163125634500034,
-                "stddev": 0.2020039721020244,
+                "min": 6.286244437999812,
+                "max": 6.784002145999921,
+                "mean": 6.5351232919998665,
+                "stddev": 0.35196785071475,
                 "rounds": 2,
-                "median": 4.163125634500034,
-                "iqr": 0.28567675699991923,
-                "q1": 4.020287256000074,
-                "q3": 4.305964012999993,
+                "median": 6.5351232919998665,
+                "iqr": 0.4977577080001083,
+                "q1": 6.286244437999812,
+                "q3": 6.784002145999921,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.020287256000074,
-                "hd15iqr": 4.305964012999993,
-                "ops": 0.24020413693810946,
-                "total": 8.326251269000068,
+                "ld15iqr": 6.286244437999812,
+                "hd15iqr": 6.784002145999921,
+                "ops": 0.15301930129216917,
+                "total": 13.070246583999733,
                 "data": [
-                    4.020287256000074,
-                    4.305964012999993
+                    6.784002145999921,
+                    6.286244437999812
                 ],
                 "iterations": 1
             }
@@ -1193,7 +1865,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 16.112565,
+                "avg_response_time": 17.064805160000002,
                 "avg_response_size": 109074.8
             },
             "options": {
@@ -1205,25 +1877,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 23.36279877900006,
-                "max": 25.444921241999964,
-                "mean": 24.40386001050001,
-                "stddev": 1.4722829128480692,
+                "min": 25.407944330999953,
+                "max": 27.792200904000083,
+                "mean": 26.600072617500018,
+                "stddev": 1.6859239908569903,
                 "rounds": 2,
-                "median": 24.40386001050001,
-                "iqr": 2.082122462999905,
-                "q1": 23.36279877900006,
-                "q3": 25.444921241999964,
+                "median": 26.600072617500018,
+                "iqr": 2.3842565730001297,
+                "q1": 25.407944330999953,
+                "q3": 27.792200904000083,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 23.36279877900006,
-                "hd15iqr": 25.444921241999964,
-                "ops": 0.04097712409306314,
-                "total": 48.80772002100002,
+                "ld15iqr": 25.407944330999953,
+                "hd15iqr": 27.792200904000083,
+                "ops": 0.03759388233181388,
+                "total": 53.200145235000036,
                 "data": [
-                    25.444921241999964,
-                    23.36279877900006
+                    25.407944330999953,
+                    27.792200904000083
                 ],
                 "iterations": 1
             }
@@ -1249,7 +1921,7 @@
                 "no_data_count": 0,
                 "error_count": 25,
                 "success_rate": 0.0,
-                "avg_response_time": 6.45679612,
+                "avg_response_time": 9.57210536,
                 "avg_response_size": 0
             },
             "options": {
@@ -1261,25 +1933,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 7.867029248999984,
-                "max": 8.298158844999989,
-                "mean": 8.082594046999986,
-                "stddev": 0.30485466090182034,
+                "min": 10.537068424000154,
+                "max": 12.011729207999906,
+                "mean": 11.27439881600003,
+                "stddev": 1.0427426403160955,
                 "rounds": 2,
-                "median": 8.082594046999986,
-                "iqr": 0.4311295960000052,
-                "q1": 7.867029248999984,
-                "q3": 8.298158844999989,
+                "median": 11.27439881600003,
+                "iqr": 1.4746607839997523,
+                "q1": 10.537068424000154,
+                "q3": 12.011729207999906,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 7.867029248999984,
-                "hd15iqr": 8.298158844999989,
-                "ops": 0.12372265564558071,
-                "total": 16.165188093999973,
+                "ld15iqr": 10.537068424000154,
+                "hd15iqr": 12.011729207999906,
+                "ops": 0.08869652531546542,
+                "total": 22.54879763200006,
                 "data": [
-                    8.298158844999989,
-                    7.867029248999984
+                    10.537068424000154,
+                    12.011729207999906
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-7-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-7-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 7,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-7-7-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 7,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 6.4631218,
+                "avg_response_size": 92874.08
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.840133174999892,
+                "max": 10.922269222000068,
+                "mean": 10.38120119849998,
+                "stddev": 0.7651857370002293,
+                "rounds": 2,
+                "median": 10.38120119849998,
+                "iqr": 1.0821360470001764,
+                "q1": 9.840133174999892,
+                "q3": 10.922269222000068,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 9.840133174999892,
+                "hd15iqr": 10.922269222000068,
+                "ops": 0.09632796637680945,
+                "total": 20.76240239699996,
+                "data": [
+                    9.840133174999892,
+                    10.922269222000068
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-7-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-7-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 7,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-7-7-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 7,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 0,
+                "error_count": 25,
+                "success_rate": 0.0,
+                "avg_response_time": 8.23262588,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.420514992000108,
+                "max": 11.156101934999924,
+                "mean": 10.288308463500016,
+                "stddev": 1.2272452967340002,
+                "rounds": 2,
+                "median": 10.288308463500016,
+                "iqr": 1.7355869429998165,
+                "q1": 9.420514992000108,
+                "q3": 11.156101934999924,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 9.420514992000108,
+                "hd15iqr": 11.156101934999924,
+                "ops": 0.09719770782026169,
+                "total": 20.576616927000032,
+                "data": [
+                    11.156101934999924,
+                    9.420514992000108
                 ],
                 "iterations": 1
             }
@@ -1305,7 +2089,7 @@
                 "no_data_count": 1,
                 "error_count": 0,
                 "success_rate": 0.96,
-                "avg_response_time": 3.2926845200000003,
+                "avg_response_time": 4.58895772,
                 "avg_response_size": 108574.20833333333
             },
             "options": {
@@ -1317,25 +2101,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 7.138153740999996,
-                "max": 8.178069495999921,
-                "mean": 7.658111618499959,
-                "stddev": 0.735331482223175,
+                "min": 6.633663593999927,
+                "max": 8.05700223100007,
+                "mean": 7.345332912499998,
+                "stddev": 1.0064524021476187,
                 "rounds": 2,
-                "median": 7.658111618499959,
-                "iqr": 1.0399157549999245,
-                "q1": 7.138153740999996,
-                "q3": 8.178069495999921,
+                "median": 7.345332912499998,
+                "iqr": 1.4233386370001426,
+                "q1": 6.633663593999927,
+                "q3": 8.05700223100007,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 7.138153740999996,
-                "hd15iqr": 8.178069495999921,
-                "ops": 0.13058049422840304,
-                "total": 15.316223236999917,
+                "ld15iqr": 6.633663593999927,
+                "hd15iqr": 8.05700223100007,
+                "ops": 0.13614086821010377,
+                "total": 14.690665824999996,
                 "data": [
-                    8.178069495999921,
-                    7.138153740999996
+                    8.05700223100007,
+                    6.633663593999927
                 ],
                 "iterations": 1
             }
@@ -1361,7 +2145,7 @@
                 "no_data_count": 0,
                 "error_count": 25,
                 "success_rate": 0.0,
-                "avg_response_time": 3.2973823199999996,
+                "avg_response_time": 7.60093668,
                 "avg_response_size": 0
             },
             "options": {
@@ -1373,25 +2157,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 6.189851062999992,
-                "max": 8.49093927599995,
-                "mean": 7.3403951694999705,
-                "stddev": 1.6271150795207043,
+                "min": 7.888938678000159,
+                "max": 10.065930813000023,
+                "mean": 8.97743474550009,
+                "stddev": 1.5393659012481837,
                 "rounds": 2,
-                "median": 7.3403951694999705,
-                "iqr": 2.3010882129999572,
-                "q1": 6.189851062999992,
-                "q3": 8.49093927599995,
+                "median": 8.97743474550009,
+                "iqr": 2.176992134999864,
+                "q1": 7.888938678000159,
+                "q3": 10.065930813000023,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 6.189851062999992,
-                "hd15iqr": 8.49093927599995,
-                "ops": 0.13623244756019318,
-                "total": 14.680790338999941,
+                "ld15iqr": 7.888938678000159,
+                "hd15iqr": 10.065930813000023,
+                "ops": 0.11139039473400202,
+                "total": 17.95486949100018,
                 "data": [
-                    8.49093927599995,
-                    6.189851062999992
+                    10.065930813000023,
+                    7.888938678000159
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-9-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-9-HLSL30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 9,
+                "collection_id": "HLSL30"
+            },
+            "param": "2-7-9-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 9,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 4.9799261999999995,
+                "avg_response_size": 139053.12
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.854402299999947,
+                "max": 6.883990283000003,
+                "mean": 6.369196291499975,
+                "stddev": 0.7280286446075193,
+                "rounds": 2,
+                "median": 6.369196291499975,
+                "iqr": 1.0295879830000558,
+                "q1": 5.854402299999947,
+                "q3": 6.883990283000003,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.854402299999947,
+                "hd15iqr": 6.883990283000003,
+                "ops": 0.15700568081636174,
+                "total": 12.73839258299995,
+                "data": [
+                    5.854402299999947,
+                    6.883990283000003
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[2-7-9-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[2-7-9-HLSS30]",
+            "params": {
+                "n_bands": 2,
+                "interval_days": 7,
+                "zoom": 9,
+                "collection_id": "HLSS30"
+            },
+            "param": "2-7-9-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 9,
+                "interval_days": 7,
+                "band_count": 2,
+                "total_tiles": 25,
+                "success_count": 0,
+                "no_data_count": 0,
+                "error_count": 25,
+                "success_rate": 0.0,
+                "avg_response_time": 30.10055868,
+                "avg_response_size": 0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 30.114715600999943,
+                "max": 30.13080787900003,
+                "mean": 30.122761739999987,
+                "stddev": 0.011378958898600886,
+                "rounds": 2,
+                "median": 30.122761739999987,
+                "iqr": 0.01609227800008739,
+                "q1": 30.114715600999943,
+                "q3": 30.13080787900003,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 30.114715600999943,
+                "hd15iqr": 30.13080787900003,
+                "ops": 0.03319748728988886,
+                "total": 60.245523479999974,
+                "data": [
+                    30.114715600999943,
+                    30.13080787900003
                 ],
                 "iterations": 1
             }
@@ -1417,7 +2313,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 3.10433312,
+                "avg_response_time": 4.6940826399999995,
                 "avg_response_size": 129706.48
             },
             "options": {
@@ -1429,25 +2325,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.107897467999919,
-                "max": 4.27356844499991,
-                "mean": 4.1907329564999145,
-                "stddev": 0.11714707128249395,
+                "min": 5.812719545999926,
+                "max": 6.5310780819997944,
+                "mean": 6.17189881399986,
+                "stddev": 0.5079561921287479,
                 "rounds": 2,
-                "median": 4.1907329564999145,
-                "iqr": 0.16567097699999067,
-                "q1": 4.107897467999919,
-                "q3": 4.27356844499991,
+                "median": 6.17189881399986,
+                "iqr": 0.7183585359998688,
+                "q1": 5.812719545999926,
+                "q3": 6.5310780819997944,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.107897467999919,
-                "hd15iqr": 4.27356844499991,
-                "ops": 0.23862174239687095,
-                "total": 8.381465912999829,
+                "ld15iqr": 5.812719545999926,
+                "hd15iqr": 6.5310780819997944,
+                "ops": 0.16202469128814573,
+                "total": 12.34379762799972,
                 "data": [
-                    4.107897467999919,
-                    4.27356844499991
+                    6.5310780819997944,
+                    5.812719545999926
                 ],
                 "iterations": 1
             }
@@ -1473,7 +2369,7 @@
                 "no_data_count": 3,
                 "error_count": 22,
                 "success_rate": 0.0,
-                "avg_response_time": 2.5637138399999997,
+                "avg_response_time": 5.049832,
                 "avg_response_size": 0
             },
             "options": {
@@ -1485,25 +2381,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.392328742000018,
-                "max": 5.699278785000047,
-                "mean": 5.045803763500032,
-                "stddev": 0.9241532380773704,
+                "min": 8.577322674000015,
+                "max": 13.364569485999937,
+                "mean": 10.970946079999976,
+                "stddev": 3.3850946839788256,
                 "rounds": 2,
-                "median": 5.045803763500032,
-                "iqr": 1.306950043000029,
-                "q1": 4.392328742000018,
-                "q3": 5.699278785000047,
+                "median": 10.970946079999976,
+                "iqr": 4.787246811999921,
+                "q1": 8.577322674000015,
+                "q3": 13.364569485999937,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.392328742000018,
-                "hd15iqr": 5.699278785000047,
-                "ops": 0.19818448098075617,
-                "total": 10.091607527000065,
+                "ld15iqr": 8.577322674000015,
+                "hd15iqr": 13.364569485999937,
+                "ops": 0.09114984183752384,
+                "total": 21.941892159999952,
                 "data": [
-                    5.699278785000047,
-                    4.392328742000018
+                    13.364569485999937,
+                    8.577322674000015
                 ],
                 "iterations": 1
             }
@@ -1529,7 +2425,7 @@
                 "no_data_count": 4,
                 "error_count": 0,
                 "success_rate": 0.84,
-                "avg_response_time": 5.99160932,
+                "avg_response_time": 10.36071396,
                 "avg_response_size": 36168.71428571428
             },
             "options": {
@@ -1541,25 +2437,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 9.945964961000072,
-                "max": 10.593958368000017,
-                "mean": 10.269961664500045,
-                "stddev": 0.45820053225383517,
+                "min": 10.060475890999896,
+                "max": 18.251287533000095,
+                "mean": 14.155881711999996,
+                "stddev": 5.791778455480061,
                 "rounds": 2,
-                "median": 10.269961664500045,
-                "iqr": 0.6479934069999445,
-                "q1": 9.945964961000072,
-                "q3": 10.593958368000017,
+                "median": 14.155881711999996,
+                "iqr": 8.190811642000199,
+                "q1": 10.060475890999896,
+                "q3": 18.251287533000095,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 9.945964961000072,
-                "hd15iqr": 10.593958368000017,
-                "ops": 0.09737134691132085,
-                "total": 20.53992332900009,
+                "ld15iqr": 10.060475890999896,
+                "hd15iqr": 18.251287533000095,
+                "ops": 0.07064201441809846,
+                "total": 28.31176342399999,
                 "data": [
-                    9.945964961000072,
-                    10.593958368000017
+                    18.251287533000095,
+                    10.060475890999896
                 ],
                 "iterations": 1
             }
@@ -1585,7 +2481,7 @@
                 "no_data_count": 2,
                 "error_count": 0,
                 "success_rate": 0.92,
-                "avg_response_time": 5.819419239999999,
+                "avg_response_time": 9.626444320000001,
                 "avg_response_size": 46220.565217391304
             },
             "options": {
@@ -1597,25 +2493,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 12.8367588320001,
-                "max": 14.781890843000042,
-                "mean": 13.809324837500071,
-                "stddev": 1.3754160352810847,
+                "min": 12.956837767000025,
+                "max": 17.686355821999996,
+                "mean": 15.32159679450001,
+                "stddev": 3.3442742884346908,
                 "rounds": 2,
-                "median": 13.809324837500071,
-                "iqr": 1.9451320109999415,
-                "q1": 12.8367588320001,
-                "q3": 14.781890843000042,
+                "median": 15.32159679450001,
+                "iqr": 4.729518054999971,
+                "q1": 12.956837767000025,
+                "q3": 17.686355821999996,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 12.8367588320001,
-                "hd15iqr": 14.781890843000042,
-                "ops": 0.07241483647950973,
-                "total": 27.618649675000142,
+                "ld15iqr": 12.956837767000025,
+                "hd15iqr": 17.686355821999996,
+                "ops": 0.06526734865904903,
+                "total": 30.64319358900002,
                 "data": [
-                    14.781890843000042,
-                    12.8367588320001
+                    17.686355821999996,
+                    12.956837767000025
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-7-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-7-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 7,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-1-7-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 7,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 11,
+                "no_data_count": 14,
+                "error_count": 0,
+                "success_rate": 0.44,
+                "avg_response_time": 4.424339079999999,
+                "avg_response_size": 44164.0
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.267618106999862,
+                "max": 8.689190714000006,
+                "mean": 7.978404410499934,
+                "stddev": 1.0052036303588405,
+                "rounds": 2,
+                "median": 7.978404410499934,
+                "iqr": 1.4215726070001438,
+                "q1": 7.267618106999862,
+                "q3": 8.689190714000006,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.267618106999862,
+                "hd15iqr": 8.689190714000006,
+                "ops": 0.1253383444293643,
+                "total": 15.956808820999868,
+                "data": [
+                    8.689190714000006,
+                    7.267618106999862
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-7-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-7-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 7,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-1-7-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 7,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 14,
+                "no_data_count": 11,
+                "error_count": 0,
+                "success_rate": 0.56,
+                "avg_response_time": 5.28986548,
+                "avg_response_size": 72792.35714285714
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 11.007113703999948,
+                "max": 11.522885287999998,
+                "mean": 11.264999495999973,
+                "stddev": 0.3647055845897618,
+                "rounds": 2,
+                "median": 11.264999495999973,
+                "iqr": 0.5157715840000492,
+                "q1": 11.007113703999948,
+                "q3": 11.522885287999998,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 11.007113703999948,
+                "hd15iqr": 11.522885287999998,
+                "ops": 0.08877053215626725,
+                "total": 22.529998991999946,
+                "data": [
+                    11.007113703999948,
+                    11.522885287999998
                 ],
                 "iterations": 1
             }
@@ -1641,7 +2649,7 @@
                 "no_data_count": 9,
                 "error_count": 0,
                 "success_rate": 0.64,
-                "avg_response_time": 2.33274004,
+                "avg_response_time": 3.3589114,
                 "avg_response_size": 68563.0
             },
             "options": {
@@ -1653,25 +2661,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 5.672560472999976,
-                "max": 6.138942499999985,
-                "mean": 5.90575148649998,
-                "stddev": 0.32978189391523366,
+                "min": 6.797651414000029,
+                "max": 7.125240393000013,
+                "mean": 6.961445903500021,
+                "stddev": 0.231640388492866,
                 "rounds": 2,
-                "median": 5.90575148649998,
-                "iqr": 0.46638202700000875,
-                "q1": 5.672560472999976,
-                "q3": 6.138942499999985,
+                "median": 6.961445903500021,
+                "iqr": 0.32758897899998374,
+                "q1": 6.797651414000029,
+                "q3": 7.125240393000013,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 5.672560472999976,
-                "hd15iqr": 6.138942499999985,
-                "ops": 0.16932646121089087,
-                "total": 11.81150297299996,
+                "ld15iqr": 6.797651414000029,
+                "hd15iqr": 7.125240393000013,
+                "ops": 0.14364831873465078,
+                "total": 13.922891807000042,
                 "data": [
-                    6.138942499999985,
-                    5.672560472999976
+                    6.797651414000029,
+                    7.125240393000013
                 ],
                 "iterations": 1
             }
@@ -1697,7 +2705,7 @@
                 "no_data_count": 7,
                 "error_count": 0,
                 "success_rate": 0.72,
-                "avg_response_time": 3.00672644,
+                "avg_response_time": 5.62834836,
                 "avg_response_size": 90936.05555555556
             },
             "options": {
@@ -1709,25 +2717,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 6.965889900000093,
-                "max": 8.412254863000044,
-                "mean": 7.689072381500068,
-                "stddev": 1.0227344734078951,
+                "min": 8.961766352999803,
+                "max": 9.406043709999722,
+                "mean": 9.183905031499762,
+                "stddev": 0.3141515318622794,
                 "rounds": 2,
-                "median": 7.689072381500068,
-                "iqr": 1.4463649629999509,
-                "q1": 6.965889900000093,
-                "q3": 8.412254863000044,
+                "median": 9.183905031499762,
+                "iqr": 0.444277356999919,
+                "q1": 8.961766352999803,
+                "q3": 9.406043709999722,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 6.965889900000093,
-                "hd15iqr": 8.412254863000044,
-                "ops": 0.13005469975884257,
-                "total": 15.378144763000137,
+                "ld15iqr": 8.961766352999803,
+                "hd15iqr": 9.406043709999722,
+                "ops": 0.10888614337475315,
+                "total": 18.367810062999524,
                 "data": [
-                    8.412254863000044,
-                    6.965889900000093
+                    8.961766352999803,
+                    9.406043709999722
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-9-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-9-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 9,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-1-9-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 9,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 3.5784882,
+                "avg_response_size": 116061.77777777778
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 5.5003981059999205,
+                "max": 5.8038517089999,
+                "mean": 5.6521249074999105,
+                "stddev": 0.21457410045677627,
+                "rounds": 2,
+                "median": 5.6521249074999105,
+                "iqr": 0.3034536029999799,
+                "q1": 5.5003981059999205,
+                "q3": 5.8038517089999,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 5.5003981059999205,
+                "hd15iqr": 5.8038517089999,
+                "ops": 0.17692461089688255,
+                "total": 11.304249814999821,
+                "data": [
+                    5.8038517089999,
+                    5.5003981059999205
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-1-9-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-1-9-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 1,
+                "zoom": 9,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-1-9-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 9,
+                "interval_days": 1,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 18,
+                "no_data_count": 7,
+                "error_count": 0,
+                "success_rate": 0.72,
+                "avg_response_time": 4.78958792,
+                "avg_response_size": 113707.22222222222
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 6.702242999999726,
+                "max": 7.797979177999878,
+                "mean": 7.250111088999802,
+                "stddev": 0.7748024818553374,
+                "rounds": 2,
+                "median": 7.250111088999802,
+                "iqr": 1.095736178000152,
+                "q1": 6.702242999999726,
+                "q3": 7.797979177999878,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 6.702242999999726,
+                "hd15iqr": 7.797979177999878,
+                "ops": 0.137928921050223,
+                "total": 14.500222177999603,
+                "data": [
+                    6.702242999999726,
+                    7.797979177999878
                 ],
                 "iterations": 1
             }
@@ -1753,7 +2873,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 2.6185727200000004,
+                "avg_response_time": 3.8924496399999997,
                 "avg_response_size": 117307.63636363637
             },
             "options": {
@@ -1765,25 +2885,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.7629060410001784,
-                "max": 6.299992857999996,
-                "mean": 5.531449449500087,
-                "stddev": 1.0868845115730168,
+                "min": 4.842141252000147,
+                "max": 5.058444872000109,
+                "mean": 4.950293062000128,
+                "stddev": 0.15294975649717155,
                 "rounds": 2,
-                "median": 5.531449449500087,
-                "iqr": 1.5370868169998175,
-                "q1": 4.7629060410001784,
-                "q3": 6.299992857999996,
+                "median": 4.950293062000128,
+                "iqr": 0.2163036199999624,
+                "q1": 4.842141252000147,
+                "q3": 5.058444872000109,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.7629060410001784,
-                "hd15iqr": 6.299992857999996,
-                "ops": 0.18078444160605617,
-                "total": 11.062898899000174,
+                "ld15iqr": 4.842141252000147,
+                "hd15iqr": 5.058444872000109,
+                "ops": 0.2020082422344421,
+                "total": 9.900586124000256,
                 "data": [
-                    4.7629060410001784,
-                    6.299992857999996
+                    4.842141252000147,
+                    5.058444872000109
                 ],
                 "iterations": 1
             }
@@ -1809,7 +2929,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 2.8041344400000003,
+                "avg_response_time": 5.79024976,
                 "avg_response_size": 117333.63636363637
             },
             "options": {
@@ -1821,25 +2941,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.756922214999804,
-                "max": 5.282375254000044,
-                "mean": 5.019648734499924,
-                "stddev": 0.3715514070721492,
+                "min": 8.000883862999672,
+                "max": 8.448298187999626,
+                "mean": 8.224591025499649,
+                "stddev": 0.31636970320746954,
                 "rounds": 2,
-                "median": 5.019648734499924,
-                "iqr": 0.5254530390002401,
-                "q1": 4.756922214999804,
-                "q3": 5.282375254000044,
+                "median": 8.224591025499649,
+                "iqr": 0.44741432499995426,
+                "q1": 8.000883862999672,
+                "q3": 8.448298187999626,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.756922214999804,
-                "hd15iqr": 5.282375254000044,
-                "ops": 0.19921712711230652,
-                "total": 10.039297468999848,
+                "ld15iqr": 8.000883862999672,
+                "hd15iqr": 8.448298187999626,
+                "ops": 0.12158659280438196,
+                "total": 16.449182050999298,
                 "data": [
-                    4.756922214999804,
-                    5.282375254000044
+                    8.448298187999626,
+                    8.000883862999672
                 ],
                 "iterations": 1
             }
@@ -1865,8 +2985,8 @@
                 "no_data_count": 0,
                 "error_count": 3,
                 "success_rate": 0.88,
-                "avg_response_time": 22.031604480000002,
-                "avg_response_size": 105120.59090909091
+                "avg_response_time": 21.51273612,
+                "avg_response_size": 102127.04545454546
             },
             "options": {
                 "disable_gc": false,
@@ -1877,25 +2997,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 30.185718139999835,
-                "max": 30.20278526600009,
-                "mean": 30.194251702999964,
-                "stddev": 0.012068280530146533,
+                "min": 30.11816015000022,
+                "max": 30.121721140999853,
+                "mean": 30.119940645500037,
+                "stddev": 0.0025180008835833643,
                 "rounds": 2,
-                "median": 30.194251702999964,
-                "iqr": 0.017067126000256394,
-                "q1": 30.185718139999835,
-                "q3": 30.20278526600009,
+                "median": 30.119940645500037,
+                "iqr": 0.0035609909996310307,
+                "q1": 30.11816015000022,
+                "q3": 30.121721140999853,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 30.185718139999835,
-                "hd15iqr": 30.20278526600009,
-                "ops": 0.03311888666214717,
-                "total": 60.38850340599993,
+                "ld15iqr": 30.11816015000022,
+                "hd15iqr": 30.121721140999853,
+                "ops": 0.03320059663362589,
+                "total": 60.239881291000074,
                 "data": [
-                    30.185718139999835,
-                    30.20278526600009
+                    30.121721140999853,
+                    30.11816015000022
                 ],
                 "iterations": 1
             }
@@ -1917,12 +3037,12 @@
                 "interval_days": 7,
                 "band_count": 3,
                 "total_tiles": 25,
-                "success_count": 19,
+                "success_count": 21,
                 "no_data_count": 0,
-                "error_count": 6,
-                "success_rate": 0.76,
-                "avg_response_time": 25.200231560000002,
-                "avg_response_size": 121976.42105263157
+                "error_count": 4,
+                "success_rate": 0.84,
+                "avg_response_time": 25.75754796,
+                "avg_response_size": 122762.38095238095
             },
             "options": {
                 "disable_gc": false,
@@ -1933,25 +3053,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 30.184286590000056,
-                "max": 30.249731640999926,
-                "mean": 30.21700911549999,
-                "stddev": 0.04627663935710726,
+                "min": 30.119556181999997,
+                "max": 30.174513843000113,
+                "mean": 30.147035012500055,
+                "stddev": 0.03886093477133404,
                 "rounds": 2,
-                "median": 30.21700911549999,
-                "iqr": 0.06544505099986964,
-                "q1": 30.184286590000056,
-                "q3": 30.249731640999926,
+                "median": 30.147035012500055,
+                "iqr": 0.054957661000116786,
+                "q1": 30.119556181999997,
+                "q3": 30.174513843000113,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 30.184286590000056,
-                "hd15iqr": 30.249731640999926,
-                "ops": 0.033093943751271004,
-                "total": 60.43401823099998,
+                "ld15iqr": 30.119556181999997,
+                "hd15iqr": 30.174513843000113,
+                "ops": 0.03317075790655246,
+                "total": 60.29407002500011,
                 "data": [
-                    30.184286590000056,
-                    30.249731640999926
+                    30.174513843000113,
+                    30.119556181999997
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-7-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-7-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 7,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-7-7-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 7,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 7.13633836,
+                "avg_response_size": 87318.12
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 10.899279178000143,
+                "max": 13.778721688000132,
+                "mean": 12.339000433000137,
+                "stddev": 2.036073324857806,
+                "rounds": 2,
+                "median": 12.339000433000137,
+                "iqr": 2.87944250999999,
+                "q1": 10.899279178000143,
+                "q3": 13.778721688000132,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 10.899279178000143,
+                "hd15iqr": 13.778721688000132,
+                "ops": 0.08104384187600334,
+                "total": 24.678000866000275,
+                "data": [
+                    10.899279178000143,
+                    13.778721688000132
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-7-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-7-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 7,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-7-7-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 7,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 11.515251800000001,
+                "avg_response_size": 126731.28
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 18.119622057000015,
+                "max": 18.724801738000224,
+                "mean": 18.42221189750012,
+                "stddev": 0.4279266562715593,
+                "rounds": 2,
+                "median": 18.42221189750012,
+                "iqr": 0.6051796810002088,
+                "q1": 18.119622057000015,
+                "q3": 18.724801738000224,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 18.119622057000015,
+                "hd15iqr": 18.724801738000224,
+                "ops": 0.054282298214998775,
+                "total": 36.84442379500024,
+                "data": [
+                    18.119622057000015,
+                    18.724801738000224
                 ],
                 "iterations": 1
             }
@@ -1977,7 +3209,7 @@
                 "no_data_count": 1,
                 "error_count": 0,
                 "success_rate": 0.96,
-                "avg_response_time": 4.69904204,
+                "avg_response_time": 14.59936036,
                 "avg_response_size": 105673.0
             },
             "options": {
@@ -1989,25 +3221,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 6.69063644300013,
-                "max": 15.545697468000071,
-                "mean": 11.1181669555001,
-                "stddev": 6.2614736985981585,
+                "min": 8.0288236399997,
+                "max": 8.899749842999881,
+                "mean": 8.46428674149979,
+                "stddev": 0.6158378240544796,
                 "rounds": 2,
-                "median": 11.1181669555001,
-                "iqr": 8.85506102499994,
-                "q1": 6.69063644300013,
-                "q3": 15.545697468000071,
+                "median": 8.46428674149979,
+                "iqr": 0.870926203000181,
+                "q1": 8.0288236399997,
+                "q3": 8.899749842999881,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 6.69063644300013,
-                "hd15iqr": 15.545697468000071,
-                "ops": 0.08994288393063796,
-                "total": 22.2363339110002,
+                "ld15iqr": 8.0288236399997,
+                "hd15iqr": 8.899749842999881,
+                "ops": 0.1181434455778857,
+                "total": 16.92857348299958,
                 "data": [
-                    15.545697468000071,
-                    6.69063644300013
+                    8.0288236399997,
+                    8.899749842999881
                 ],
                 "iterations": 1
             }
@@ -2033,7 +3265,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 11.15691868,
+                "avg_response_time": 8.9328072,
                 "avg_response_size": 116190.08
             },
             "options": {
@@ -2045,25 +3277,137 @@
                 "warmup": false
             },
             "stats": {
-                "min": 10.35748941199995,
-                "max": 10.791445457000009,
-                "mean": 10.57446743449998,
-                "stddev": 0.3068532621564363,
+                "min": 11.98223611200001,
+                "max": 12.969670185999803,
+                "mean": 12.475953148999906,
+                "stddev": 0.698221329699913,
                 "rounds": 2,
-                "median": 10.57446743449998,
-                "iqr": 0.433956045000059,
-                "q1": 10.35748941199995,
-                "q3": 10.791445457000009,
+                "median": 12.475953148999906,
+                "iqr": 0.9874340739997933,
+                "q1": 11.98223611200001,
+                "q3": 12.969670185999803,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 10.35748941199995,
-                "hd15iqr": 10.791445457000009,
-                "ops": 0.09456741024492886,
-                "total": 21.14893486899996,
+                "ld15iqr": 11.98223611200001,
+                "hd15iqr": 12.969670185999803,
+                "ops": 0.08015419648158599,
+                "total": 24.951906297999813,
                 "data": [
-                    10.791445457000009,
-                    10.35748941199995
+                    12.969670185999803,
+                    11.98223611200001
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-9-HLSL30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-9-HLSL30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 9,
+                "collection_id": "HLSL30"
+            },
+            "param": "3-7-9-HLSL30",
+            "extra_info": {
+                "collection": "HLSL30",
+                "zoom": 9,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 25,
+                "no_data_count": 0,
+                "error_count": 0,
+                "success_rate": 1.0,
+                "avg_response_time": 5.175730519999999,
+                "avg_response_size": 145686.12
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.026672419000079,
+                "max": 7.664986649999719,
+                "mean": 7.345829534499899,
+                "stddev": 0.4513563212677219,
+                "rounds": 2,
+                "median": 7.345829534499899,
+                "iqr": 0.6383142309996401,
+                "q1": 7.026672419000079,
+                "q3": 7.664986649999719,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.026672419000079,
+                "hd15iqr": 7.664986649999719,
+                "ops": 0.13613166427337733,
+                "total": 14.691659068999797,
+                "data": [
+                    7.664986649999719,
+                    7.026672419000079
+                ],
+                "iterations": 1
+            }
+        },
+        {
+            "group": "hls-tiles",
+            "name": "test_hls_tiles[3-7-9-HLSS30]",
+            "fullname": "tests/test_hls_benchmark.py::test_hls_tiles[3-7-9-HLSS30]",
+            "params": {
+                "n_bands": 3,
+                "interval_days": 7,
+                "zoom": 9,
+                "collection_id": "HLSS30"
+            },
+            "param": "3-7-9-HLSS30",
+            "extra_info": {
+                "collection": "HLSS30",
+                "zoom": 9,
+                "interval_days": 7,
+                "band_count": 3,
+                "total_tiles": 25,
+                "success_count": 24,
+                "no_data_count": 1,
+                "error_count": 0,
+                "success_rate": 0.96,
+                "avg_response_time": 6.4328164800000005,
+                "avg_response_size": 105627.20833333333
+            },
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 2,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 7.575498573999994,
+                "max": 8.364986451999812,
+                "mean": 7.970242512999903,
+                "stddev": 0.558252232198249,
+                "rounds": 2,
+                "median": 7.970242512999903,
+                "iqr": 0.789487877999818,
+                "q1": 7.575498573999994,
+                "q3": 8.364986451999812,
+                "iqr_outliers": 0,
+                "stddev_outliers": 0,
+                "outliers": "0;0",
+                "ld15iqr": 7.575498573999994,
+                "hd15iqr": 8.364986451999812,
+                "ops": 0.12546669669949756,
+                "total": 15.940485025999806,
+                "data": [
+                    8.364986451999812,
+                    7.575498573999994
                 ],
                 "iterations": 1
             }
@@ -2089,7 +3433,7 @@
                 "no_data_count": 0,
                 "error_count": 0,
                 "success_rate": 1.0,
-                "avg_response_time": 2.65762496,
+                "avg_response_time": 3.95710112,
                 "avg_response_size": 143856.24
             },
             "options": {
@@ -2101,25 +3445,25 @@
                 "warmup": false
             },
             "stats": {
-                "min": 4.234762721000152,
-                "max": 4.7238645130000805,
-                "mean": 4.479313617000116,
-                "stddev": 0.34584719381364176,
+                "min": 6.447236495999732,
+                "max": 7.136909066000044,
+                "mean": 6.792072780999888,
+                "stddev": 0.48767215104557426,
                 "rounds": 2,
-                "median": 4.479313617000116,
-                "iqr": 0.48910179199992854,
-                "q1": 4.234762721000152,
-                "q3": 4.7238645130000805,
+                "median": 6.792072780999888,
+                "iqr": 0.6896725700003117,
+                "q1": 6.447236495999732,
+                "q3": 7.136909066000044,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 4.234762721000152,
-                "hd15iqr": 4.7238645130000805,
-                "ops": 0.22324848972502165,
-                "total": 8.958627234000232,
+                "ld15iqr": 6.447236495999732,
+                "hd15iqr": 7.136909066000044,
+                "ops": 0.14723046001470938,
+                "total": 13.584145561999776,
                 "data": [
-                    4.234762721000152,
-                    4.7238645130000805
+                    7.136909066000044,
+                    6.447236495999732
                 ],
                 "iterations": 1
             }
@@ -2145,7 +3489,7 @@
                 "no_data_count": 3,
                 "error_count": 0,
                 "success_rate": 0.88,
-                "avg_response_time": 3.1487337600000003,
+                "avg_response_time": 4.75278796,
                 "avg_response_size": 118264.09090909091
             },
             "options": {
@@ -2157,30 +3501,30 @@
                 "warmup": false
             },
             "stats": {
-                "min": 5.19824702599999,
-                "max": 5.946703926000055,
-                "mean": 5.572475476000022,
-                "stddev": 0.5292389494159074,
+                "min": 7.052416558999994,
+                "max": 8.461191119999967,
+                "mean": 7.75680383949998,
+                "stddev": 0.9961540452461823,
                 "rounds": 2,
-                "median": 5.572475476000022,
-                "iqr": 0.7484569000000647,
-                "q1": 5.19824702599999,
-                "q3": 5.946703926000055,
+                "median": 7.75680383949998,
+                "iqr": 1.408774560999973,
+                "q1": 7.052416558999994,
+                "q3": 8.461191119999967,
                 "iqr_outliers": 0,
                 "stddev_outliers": 0,
                 "outliers": "0;0",
-                "ld15iqr": 5.19824702599999,
-                "hd15iqr": 5.946703926000055,
-                "ops": 0.1794534591146931,
-                "total": 11.144950952000045,
+                "ld15iqr": 7.052416558999994,
+                "hd15iqr": 8.461191119999967,
+                "ops": 0.12891907810117603,
+                "total": 15.51360767899996,
                 "data": [
-                    5.946703926000055,
-                    5.19824702599999
+                    8.461191119999967,
+                    7.052416558999994
                 ],
                 "iterations": 1
             }
         }
     ],
-    "datetime": "2025-03-12T17:44:48.482385+00:00",
+    "datetime": "2025-03-17T15:07:47.943504+00:00",
     "version": "5.1.0"
 }
