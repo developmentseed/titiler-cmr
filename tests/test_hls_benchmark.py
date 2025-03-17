@@ -31,7 +31,7 @@ class CollectionConfig(NamedTuple):
 LANDSAT = CollectionConfig(
     collection_id="HLSL30",
     concept_id="C2021957657-LPCLOUD",
-    base_date=datetime(2023, 2, 24),
+    base_date=datetime(2023, 2, 24, 0, 0, 1),
     rgb_bands=["B04", "B03", "B02"],
     ndvi_bands=("B04", "B05"),
     single_band="B04",
@@ -40,7 +40,7 @@ LANDSAT = CollectionConfig(
 SENTINEL = CollectionConfig(
     collection_id="HLSS30",
     concept_id="C2021957295-LPCLOUD",
-    base_date=datetime(2023, 2, 13),
+    base_date=datetime(2023, 2, 13, 0, 0, 1),
     rgb_bands=["B04", "B03", "B02"],
     ndvi_bands=("B04", "B8A"),
     single_band="B04",
