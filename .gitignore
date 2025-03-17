@@ -107,3 +107,4 @@ node_modules
 cdk.context.json
 
 notebooks/
+.envrc
