@@ -534,7 +534,7 @@
             
   
   <span class="md-ellipsis">
-    Deployment
+    Dataset configuration
   </span>
   
 
@@ -543,6 +543,73 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Dataset configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/hls_tiling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Deployment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Deployment
           </label>
@@ -1198,7 +1265,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span> <span class="nn">earthaccess</span>
 <span class="kn">import</span> <span class="nn">httpx</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">GeoJson</span><span class="p">,</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
+<span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
 
 <span class="c1"># titiler_endpoint = "http://localhost:8081"  # docker network endpoint</span>
 <span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://dev-titiler-cmr.delta-backend.com"</span>  <span class="c1"># deployed endpoint</span>
@@ -1209,7 +1276,7 @@ from datetime import datetime, timezone
 import earthaccess
 import httpx
 import xarray as xr
-from folium import GeoJson, Map, TileLayer
+from folium import Map, TileLayer
 
 # titiler_endpoint = "http://localhost:8081"  # docker network endpoint
 titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"  # deployed endpoint</div>
@@ -1833,8 +1900,8 @@ Attributes: (12/47)
     publisher_url:              http://www.ghrsst.org
     publisher_email:            ghrsst-po@nceo.ac.uk
     processing_level:           L4
-    cdm_data_type:              grid</pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input class="xr-section-summary-in" disabled="" id="section-2a5fa188-5dc4-46de-9256-cd782e597948" type="checkbox"/><label class="xr-section-summary" for="section-2a5fa188-5dc4-46de-9256-cd782e597948" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">time</span>: 1</li><li><span class="xr-has-index">lat</span>: 17999</li><li><span class="xr-has-index">lon</span>: 36000</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input checked="" class="xr-section-summary-in" id="section-41fded30-ca07-4358-87b8-ffb0ca2e22fd" type="checkbox"/><label class="xr-section-summary" for="section-41fded30-ca07-4358-87b8-ffb0ca2e22fd">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">time</span></div><div class="xr-var-dims">(time)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2024-10-12T09:00:00</div><input class="xr-var-attrs-in" id="attrs-5cdab12f-78b5-41de-8195-d26f32042941" type="checkbox"/><label for="attrs-5cdab12f-78b5-41de-8195-d26f32042941" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-6db209a7-c9dc-486b-802b-aab39da4464d" type="checkbox"/><label for="data-6db209a7-c9dc-486b-802b-aab39da4464d" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>reference time of sst field</dd><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>axis :</span></dt><dd>T</dd><dt><span>comment :</span></dt><dd>Nominal time of analyzed fields</dd></dl></div><div class="xr-var-data"><pre>array(['2024-10-12T09:00:00.000000000'], dtype='datetime64[ns]')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lat</span></div><div class="xr-var-dims">(lat)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">-89.99 -89.98 ... 89.98 89.99</div><input class="xr-var-attrs-in" id="attrs-a923b720-497f-44ae-9d2e-88b1fcf64345" type="checkbox"/><label for="attrs-a923b720-497f-44ae-9d2e-88b1fcf64345" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-60218840-4110-4a97-b1d3-06dee246b587" type="checkbox"/><label for="data-60218840-4110-4a97-b1d3-06dee246b587" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>latitude</dd><dt><span>standard_name :</span></dt><dd>latitude</dd><dt><span>axis :</span></dt><dd>Y</dd><dt><span>units :</span></dt><dd>degrees_north</dd><dt><span>valid_min :</span></dt><dd>-90.0</dd><dt><span>valid_max :</span></dt><dd>90.0</dd><dt><span>comment :</span></dt><dd>geolocations inherited from the input data without correction</dd></dl></div><div class="xr-var-data"><pre>array([-89.99, -89.98, -89.97, ...,  89.97,  89.98,  89.99], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lon</span></div><div class="xr-var-dims">(lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">-180.0 -180.0 ... 180.0 180.0</div><input class="xr-var-attrs-in" id="attrs-c5529cac-d5a6-4011-9aa0-6e88062a3894" type="checkbox"/><label for="attrs-c5529cac-d5a6-4011-9aa0-6e88062a3894" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-7fbb058d-6bc1-485a-8584-d1bc74039131" type="checkbox"/><label for="data-7fbb058d-6bc1-485a-8584-d1bc74039131" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>longitude</dd><dt><span>standard_name :</span></dt><dd>longitude</dd><dt><span>axis :</span></dt><dd>X</dd><dt><span>units :</span></dt><dd>degrees_east</dd><dt><span>valid_min :</span></dt><dd>-180.0</dd><dt><span>valid_max :</span></dt><dd>180.0</dd><dt><span>comment :</span></dt><dd>geolocations inherited from the input data without correction</dd></dl></div><div class="xr-var-data"><pre>array([-179.99, -179.98, -179.97, ...,  179.98,  179.99,  180.  ],
-      dtype=float32)</pre></div></li></ul></div></li><li class="xr-section-item"><input checked="" class="xr-section-summary-in" id="section-8d95fd04-5c58-4300-8159-61a5818fe91b" type="checkbox"/><label class="xr-section-summary" for="section-8d95fd04-5c58-4300-8159-61a5818fe91b">Data variables: <span>(6)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>analysed_sst</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-191761c9-2233-4311-b269-144c7919218a" type="checkbox"/><label for="attrs-191761c9-2233-4311-b269-144c7919218a" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-cdec9d31-f902-4c52-8366-fcdba838899c" type="checkbox"/><label for="data-cdec9d31-f902-4c52-8366-fcdba838899c" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>analysed sea surface temperature</dd><dt><span>standard_name :</span></dt><dd>sea_surface_foundation_temperature</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>-32767</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>"Final" version using Multi-Resolution Variational Analysis (MRVA) method for interpolation</dd><dt><span>source :</span></dt><dd>MODIS_T-JPL, MODIS_A-JPL, AVHRRMTB_G-NAVO, iQUAM-NOAA/NESDIS, Ice_Conc-OSISAF</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>analysis_error</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-4d3f4333-2a55-472e-8d6c-b3179406aa22" type="checkbox"/><label for="attrs-4d3f4333-2a55-472e-8d6c-b3179406aa22" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-749314f8-f263-481d-817c-e3cf464bd5e4" type="checkbox"/><label for="data-749314f8-f263-481d-817c-e3cf464bd5e4" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>estimated error standard deviation of analysed_sst</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>0</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>uncertainty in "analysed_sst"</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>mask</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-2b93f514-ac31-44ed-8398-53627d6d8f36" type="checkbox"/><label for="attrs-2b93f514-ac31-44ed-8398-53627d6d8f36" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-70144d49-1f6b-4117-9907-2f8e5d88148e" type="checkbox"/><label for="data-70144d49-1f6b-4117-9907-2f8e5d88148e" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>sea/land field composite mask</dd><dt><span>valid_min :</span></dt><dd>1</dd><dt><span>valid_max :</span></dt><dd>31</dd><dt><span>flag_masks :</span></dt><dd>[ 1  2  4  8 16]</dd><dt><span>flag_meanings :</span></dt><dd>open_sea land open_lake open_sea_with_ice_in_the_grid open_lake_with_ice_in_the_grid</dd><dt><span>comment :</span></dt><dd>mask can be used to further filter the data.</dd><dt><span>source :</span></dt><dd>GMT "grdlandmask", ice flag from sea_ice_fraction data</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float32]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>sea_ice_fraction</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-fe8a7f93-5f68-4257-b98c-a9850690c8c2" type="checkbox"/><label for="attrs-fe8a7f93-5f68-4257-b98c-a9850690c8c2" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-ac9c41d5-f1f4-4f3d-9f91-1468bef53605" type="checkbox"/><label for="data-ac9c41d5-f1f4-4f3d-9f91-1468bef53605" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>sea ice area fraction</dd><dt><span>standard_name :</span></dt><dd>sea_ice_area_fraction</dd><dt><span>valid_min :</span></dt><dd>0</dd><dt><span>valid_max :</span></dt><dd>100</dd><dt><span>source :</span></dt><dd>EUMETSAT OSI-SAF, copyright EUMETSAT</dd><dt><span>comment :</span></dt><dd>ice fraction is a dimensionless quantity between 0 and 1; it has been interpolated by a nearest neighbor approach; EUMETSAT OSI-SAF files used: ice_conc_nh_polstere-100_multi_202410121200.nc, ice_conc_sh_polstere-100_multi_202410121200.nc.</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>dt_1km_data</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">timedelta64[ns]</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-2c7b7e01-a62c-4d72-aad5-6c390fbdf20b" type="checkbox"/><label for="attrs-2c7b7e01-a62c-4d72-aad5-6c390fbdf20b" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-39bbeea7-10cf-4980-ae2f-149e8d044dce" type="checkbox"/><label for="data-39bbeea7-10cf-4980-ae2f-149e8d044dce" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>time to most recent 1km data</dd><dt><span>valid_min :</span></dt><dd>-127</dd><dt><span>valid_max :</span></dt><dd>127</dd><dt><span>source :</span></dt><dd>MODIS and VIIRS pixels ingested by MUR</dd><dt><span>comment :</span></dt><dd>The grid value is hours between the analysis time and the most recent MODIS or VIIRS 1km L2P datum within 0.01 degrees from the grid point.  "Fill value" indicates absence of such 1km data at the grid point.</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=timedelta64[ns]]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>sst_anomaly</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-de365c6f-4f34-4ca4-8c0d-846fa8f9acd4" type="checkbox"/><label for="attrs-de365c6f-4f34-4ca4-8c0d-846fa8f9acd4" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-8109df3c-23e2-4c62-ad3d-a2a8f2493949" type="checkbox"/><label for="data-8109df3c-23e2-4c62-ad3d-a2a8f2493949" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>SST anomaly from a seasonal SST climatology based on the MUR data over 2003-2014 period</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>-32767</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>anomaly reference to the day-of-year average between 2003 and 2014</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li></ul></div></li><li class="xr-section-item"><input class="xr-section-summary-in" id="section-a63fba3c-ebc7-4f07-9847-072055b3bc74" type="checkbox"/><label class="xr-section-summary" for="section-a63fba3c-ebc7-4f07-9847-072055b3bc74">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>time</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-9569f026-ba3c-47a4-b7a2-daf86a3aa4e8" type="checkbox"><label for="index-9569f026-ba3c-47a4-b7a2-daf86a3aa4e8" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2024-10-12 09:00:00'], dtype='datetime64[ns]', name='time', freq=None))</pre></div></input></li><li class="xr-var-item"><div class="xr-index-name"><div>lat</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-3cf5cc00-5620-4774-a972-15bcd7d75b25" type="checkbox"><label for="index-3cf5cc00-5620-4774-a972-15bcd7d75b25" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-89.98999786376953,  -89.9800033569336, -89.97000122070312,
+    cdm_data_type:              grid</pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input class="xr-section-summary-in" disabled="" id="section-fd5370f5-1314-49b9-9d3d-78adc8a45e88" type="checkbox"/><label class="xr-section-summary" for="section-fd5370f5-1314-49b9-9d3d-78adc8a45e88" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">time</span>: 1</li><li><span class="xr-has-index">lat</span>: 17999</li><li><span class="xr-has-index">lon</span>: 36000</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input checked="" class="xr-section-summary-in" id="section-3ed5efc0-af85-43a3-9a5e-dbcd8406af56" type="checkbox"/><label class="xr-section-summary" for="section-3ed5efc0-af85-43a3-9a5e-dbcd8406af56">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">time</span></div><div class="xr-var-dims">(time)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2024-10-12T09:00:00</div><input class="xr-var-attrs-in" id="attrs-c6778e47-ee1b-4014-937e-e97dc0ba6027" type="checkbox"/><label for="attrs-c6778e47-ee1b-4014-937e-e97dc0ba6027" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-f378b1c4-3cbc-400f-8a28-3fbadae02193" type="checkbox"/><label for="data-f378b1c4-3cbc-400f-8a28-3fbadae02193" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>reference time of sst field</dd><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>axis :</span></dt><dd>T</dd><dt><span>comment :</span></dt><dd>Nominal time of analyzed fields</dd></dl></div><div class="xr-var-data"><pre>array(['2024-10-12T09:00:00.000000000'], dtype='datetime64[ns]')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lat</span></div><div class="xr-var-dims">(lat)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">-89.99 -89.98 ... 89.98 89.99</div><input class="xr-var-attrs-in" id="attrs-5979b506-6cf1-459a-a0f6-2d7d6fdc7529" type="checkbox"/><label for="attrs-5979b506-6cf1-459a-a0f6-2d7d6fdc7529" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-8b4f0724-0de1-41fc-838c-908a8c12c1c7" type="checkbox"/><label for="data-8b4f0724-0de1-41fc-838c-908a8c12c1c7" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>latitude</dd><dt><span>standard_name :</span></dt><dd>latitude</dd><dt><span>axis :</span></dt><dd>Y</dd><dt><span>units :</span></dt><dd>degrees_north</dd><dt><span>valid_min :</span></dt><dd>-90.0</dd><dt><span>valid_max :</span></dt><dd>90.0</dd><dt><span>comment :</span></dt><dd>geolocations inherited from the input data without correction</dd></dl></div><div class="xr-var-data"><pre>array([-89.99, -89.98, -89.97, ...,  89.97,  89.98,  89.99], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lon</span></div><div class="xr-var-dims">(lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">-180.0 -180.0 ... 180.0 180.0</div><input class="xr-var-attrs-in" id="attrs-2a2027c2-c553-4324-b7f5-ce69b9153572" type="checkbox"/><label for="attrs-2a2027c2-c553-4324-b7f5-ce69b9153572" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-fc189baf-6d13-4f0c-b795-45eee4db854a" type="checkbox"/><label for="data-fc189baf-6d13-4f0c-b795-45eee4db854a" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>longitude</dd><dt><span>standard_name :</span></dt><dd>longitude</dd><dt><span>axis :</span></dt><dd>X</dd><dt><span>units :</span></dt><dd>degrees_east</dd><dt><span>valid_min :</span></dt><dd>-180.0</dd><dt><span>valid_max :</span></dt><dd>180.0</dd><dt><span>comment :</span></dt><dd>geolocations inherited from the input data without correction</dd></dl></div><div class="xr-var-data"><pre>array([-179.99, -179.98, -179.97, ...,  179.98,  179.99,  180.  ],
+      dtype=float32)</pre></div></li></ul></div></li><li class="xr-section-item"><input checked="" class="xr-section-summary-in" id="section-01b307c0-4180-462a-80f0-83b51975f81a" type="checkbox"/><label class="xr-section-summary" for="section-01b307c0-4180-462a-80f0-83b51975f81a">Data variables: <span>(6)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>analysed_sst</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-8d8f8f3e-c18a-49d5-b023-09852def7241" type="checkbox"/><label for="attrs-8d8f8f3e-c18a-49d5-b023-09852def7241" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-fc31fbd6-6fd4-473f-a905-6ef53162226d" type="checkbox"/><label for="data-fc31fbd6-6fd4-473f-a905-6ef53162226d" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>analysed sea surface temperature</dd><dt><span>standard_name :</span></dt><dd>sea_surface_foundation_temperature</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>-32767</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>"Final" version using Multi-Resolution Variational Analysis (MRVA) method for interpolation</dd><dt><span>source :</span></dt><dd>MODIS_T-JPL, MODIS_A-JPL, AVHRRMTB_G-NAVO, iQUAM-NOAA/NESDIS, Ice_Conc-OSISAF</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>analysis_error</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-30d940f2-f629-4a0c-a5e9-3a6f7a80a7cd" type="checkbox"/><label for="attrs-30d940f2-f629-4a0c-a5e9-3a6f7a80a7cd" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-b3e1353d-44d8-4d6f-9312-7975b2ac8714" type="checkbox"/><label for="data-b3e1353d-44d8-4d6f-9312-7975b2ac8714" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>estimated error standard deviation of analysed_sst</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>0</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>uncertainty in "analysed_sst"</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>mask</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-c4f62a90-3578-49cf-8d6a-09293f19c8e8" type="checkbox"/><label for="attrs-c4f62a90-3578-49cf-8d6a-09293f19c8e8" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-9699ca23-97d7-482e-b14e-1467a05320c9" type="checkbox"/><label for="data-9699ca23-97d7-482e-b14e-1467a05320c9" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>sea/land field composite mask</dd><dt><span>valid_min :</span></dt><dd>1</dd><dt><span>valid_max :</span></dt><dd>31</dd><dt><span>flag_masks :</span></dt><dd>[ 1  2  4  8 16]</dd><dt><span>flag_meanings :</span></dt><dd>open_sea land open_lake open_sea_with_ice_in_the_grid open_lake_with_ice_in_the_grid</dd><dt><span>comment :</span></dt><dd>mask can be used to further filter the data.</dd><dt><span>source :</span></dt><dd>GMT "grdlandmask", ice flag from sea_ice_fraction data</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float32]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>sea_ice_fraction</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-c10bc77f-ea1d-4fde-8fd7-df42c28a979b" type="checkbox"/><label for="attrs-c10bc77f-ea1d-4fde-8fd7-df42c28a979b" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-b810247a-d9ce-4197-8e01-a0a10f94dc0b" type="checkbox"/><label for="data-b810247a-d9ce-4197-8e01-a0a10f94dc0b" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>sea ice area fraction</dd><dt><span>standard_name :</span></dt><dd>sea_ice_area_fraction</dd><dt><span>valid_min :</span></dt><dd>0</dd><dt><span>valid_max :</span></dt><dd>100</dd><dt><span>source :</span></dt><dd>EUMETSAT OSI-SAF, copyright EUMETSAT</dd><dt><span>comment :</span></dt><dd>ice fraction is a dimensionless quantity between 0 and 1; it has been interpolated by a nearest neighbor approach; EUMETSAT OSI-SAF files used: ice_conc_nh_polstere-100_multi_202410121200.nc, ice_conc_sh_polstere-100_multi_202410121200.nc.</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>dt_1km_data</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">timedelta64[ns]</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-48ef67ef-444e-41de-a4c1-50a10851399b" type="checkbox"/><label for="attrs-48ef67ef-444e-41de-a4c1-50a10851399b" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-61d9cda0-c8ee-4f2a-b509-cbf10d207c7f" type="checkbox"/><label for="data-61d9cda0-c8ee-4f2a-b509-cbf10d207c7f" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>time to most recent 1km data</dd><dt><span>valid_min :</span></dt><dd>-127</dd><dt><span>valid_max :</span></dt><dd>127</dd><dt><span>source :</span></dt><dd>MODIS and VIIRS pixels ingested by MUR</dd><dt><span>comment :</span></dt><dd>The grid value is hours between the analysis time and the most recent MODIS or VIIRS 1km L2P datum within 0.01 degrees from the grid point.  "Fill value" indicates absence of such 1km data at the grid point.</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=timedelta64[ns]]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>sst_anomaly</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input class="xr-var-attrs-in" id="attrs-5659e39c-f053-4a32-9c27-0e919cf05c4f" type="checkbox"/><label for="attrs-5659e39c-f053-4a32-9c27-0e919cf05c4f" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use xlink:href="#icon-file-text2"></use></svg></label><input class="xr-var-data-in" id="data-d2935db0-aa80-405b-b6fd-3344ff67cbd1" type="checkbox"/><label for="data-d2935db0-aa80-405b-b6fd-3344ff67cbd1" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>SST anomaly from a seasonal SST climatology based on the MUR data over 2003-2014 period</dd><dt><span>units :</span></dt><dd>kelvin</dd><dt><span>valid_min :</span></dt><dd>-32767</dd><dt><span>valid_max :</span></dt><dd>32767</dd><dt><span>comment :</span></dt><dd>anomaly reference to the day-of-year average between 2003 and 2014</dd></dl></div><div class="xr-var-data"><pre>[647964000 values with dtype=float64]</pre></div></li></ul></div></li><li class="xr-section-item"><input class="xr-section-summary-in" id="section-a0a85e1b-c621-4657-b8ec-0c07214956f4" type="checkbox"/><label class="xr-section-summary" for="section-a0a85e1b-c621-4657-b8ec-0c07214956f4">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>time</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-93467f05-8538-4426-84fd-d5bee93f60df" type="checkbox"><label for="index-93467f05-8538-4426-84fd-d5bee93f60df" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2024-10-12 09:00:00'], dtype='datetime64[ns]', name='time', freq=None))</pre></div></input></li><li class="xr-var-item"><div class="xr-index-name"><div>lat</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-1845ef1c-f470-4a0c-8284-35101680a3a5" type="checkbox"><label for="index-1845ef1c-f470-4a0c-8284-35101680a3a5" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-89.98999786376953,  -89.9800033569336, -89.97000122070312,
        -89.95999908447266, -89.94999694824219, -89.94000244140625,
        -89.93000030517578, -89.91999816894531, -89.91000366210938,
         -89.9000015258789,
@@ -1843,7 +1910,7 @@ Attributes: (12/47)
         89.93000030517578,  89.94000244140625,  89.94999694824219,
         89.95999908447266,  89.97000122070312,   89.9800033569336,
         89.98999786376953],
-      dtype='float32', name='lat', length=17999))</pre></div></input></li><li class="xr-var-item"><div class="xr-index-name"><div>lon</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-188be27d-f3a1-407d-8b49-c635a097b287" type="checkbox"><label for="index-188be27d-f3a1-407d-8b49-c635a097b287" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-179.99000549316406, -179.97999572753906, -179.97000122070312,
+      dtype='float32', name='lat', length=17999))</pre></div></input></li><li class="xr-var-item"><div class="xr-index-name"><div>lon</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input class="xr-index-data-in" id="index-42fabefa-21b6-4337-bcf2-fc7ca8a037bd" type="checkbox"><label for="index-42fabefa-21b6-4337-bcf2-fc7ca8a037bd" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use xlink:href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-179.99000549316406, -179.97999572753906, -179.97000122070312,
         -179.9600067138672,  -179.9499969482422, -179.94000244140625,
        -179.92999267578125,  -179.9199981689453, -179.91000366210938,
        -179.89999389648438,
@@ -1852,7 +1919,7 @@ Attributes: (12/47)
         179.94000244140625,   179.9499969482422,   179.9600067138672,
         179.97000122070312,  179.97999572753906,  179.99000549316406,
                      180.0],
-      dtype='float32', name='lon', length=36000))</pre></div></input></li></ul></div></li><li class="xr-section-item"><input class="xr-section-summary-in" id="section-2ea49deb-37c5-4ec6-862d-c18c45ce6bf3" type="checkbox"/><label class="xr-section-summary" for="section-2ea49deb-37c5-4ec6-862d-c18c45ce6bf3">Attributes: <span>(47)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>Conventions :</span></dt><dd>CF-1.7</dd><dt><span>title :</span></dt><dd>Daily MUR SST, Final product</dd><dt><span>summary :</span></dt><dd>A merged, multi-sensor L4 Foundation SST analysis product from JPL.</dd><dt><span>references :</span></dt><dd>http://podaac.jpl.nasa.gov/Multi-scale_Ultra-high_Resolution_MUR-SST</dd><dt><span>institution :</span></dt><dd>Jet Propulsion Laboratory</dd><dt><span>history :</span></dt><dd>created at nominal 4-day latency; replaced nrt (1-day latency) version.</dd><dt><span>comment :</span></dt><dd>MUR = "Multi-scale Ultra-high Resolution"</dd><dt><span>license :</span></dt><dd>These data are available free of charge under data policy of JPL PO.DAAC.</dd><dt><span>id :</span></dt><dd>MUR-JPL-L4-GLOB-v04.1</dd><dt><span>naming_authority :</span></dt><dd>org.ghrsst</dd><dt><span>product_version :</span></dt><dd>04.1</dd><dt><span>uuid :</span></dt><dd>27665bc0-d5fc-11e1-9b23-0800200c9a66</dd><dt><span>gds_version_id :</span></dt><dd>2.0</dd><dt><span>netcdf_version_id :</span></dt><dd>4.1</dd><dt><span>date_created :</span></dt><dd>20241021T071625Z</dd><dt><span>start_time :</span></dt><dd>20241012T090000Z</dd><dt><span>stop_time :</span></dt><dd>20241012T090000Z</dd><dt><span>time_coverage_start :</span></dt><dd>20241011T210000Z</dd><dt><span>time_coverage_end :</span></dt><dd>20241012T210000Z</dd><dt><span>file_quality_level :</span></dt><dd>3</dd><dt><span>source :</span></dt><dd>MODIS_T-JPL, MODIS_A-JPL, AVHRRMTB_G-NAVO, iQUAM-NOAA/NESDIS, Ice_Conc-OSISAF</dd><dt><span>platform :</span></dt><dd>Terra, Aqua, MetOp-B, Buoys/Ships</dd><dt><span>sensor :</span></dt><dd>MODIS, AVHRR, in-situ</dd><dt><span>Metadata_Conventions :</span></dt><dd>Unidata Observation Dataset v1.0</dd><dt><span>metadata_link :</span></dt><dd>http://podaac.jpl.nasa.gov/ws/metadata/dataset/?format=iso&amp;shortName=MUR-JPL-L4-GLOB-v04.1</dd><dt><span>keywords :</span></dt><dd>Oceans &gt; Ocean Temperature &gt; Sea Surface Temperature</dd><dt><span>keywords_vocabulary :</span></dt><dd>NASA Global Change Master Directory (GCMD) Science Keywords</dd><dt><span>standard_name_vocabulary :</span></dt><dd>NetCDF Climate and Forecast (CF) Metadata Convention</dd><dt><span>southernmost_latitude :</span></dt><dd>-90.0</dd><dt><span>northernmost_latitude :</span></dt><dd>90.0</dd><dt><span>westernmost_longitude :</span></dt><dd>-180.0</dd><dt><span>easternmost_longitude :</span></dt><dd>180.0</dd><dt><span>spatial_resolution :</span></dt><dd>0.01 degrees</dd><dt><span>geospatial_lat_units :</span></dt><dd>degrees north</dd><dt><span>geospatial_lat_resolution :</span></dt><dd>0.01</dd><dt><span>geospatial_lon_units :</span></dt><dd>degrees east</dd><dt><span>geospatial_lon_resolution :</span></dt><dd>0.01</dd><dt><span>acknowledgment :</span></dt><dd>Please acknowledge the use of these data with the following statement:  These data were provided by JPL under support by NASA MEaSUREs program.</dd><dt><span>creator_name :</span></dt><dd>JPL MUR SST project</dd><dt><span>creator_email :</span></dt><dd>ghrsst@podaac.jpl.nasa.gov</dd><dt><span>creator_url :</span></dt><dd>http://mur.jpl.nasa.gov</dd><dt><span>project :</span></dt><dd>NASA Making Earth Science Data Records for Use in Research Environments (MEaSUREs) Program</dd><dt><span>publisher_name :</span></dt><dd>GHRSST Project Office</dd><dt><span>publisher_url :</span></dt><dd>http://www.ghrsst.org</dd><dt><span>publisher_email :</span></dt><dd>ghrsst-po@nceo.ac.uk</dd><dt><span>processing_level :</span></dt><dd>L4</dd><dt><span>cdm_data_type :</span></dt><dd>grid</dd></dl></div></li></ul></div></div>
+      dtype='float32', name='lon', length=36000))</pre></div></input></li></ul></div></li><li class="xr-section-item"><input class="xr-section-summary-in" id="section-977b5dd6-d6c9-400f-ba4c-026584691871" type="checkbox"/><label class="xr-section-summary" for="section-977b5dd6-d6c9-400f-ba4c-026584691871">Attributes: <span>(47)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>Conventions :</span></dt><dd>CF-1.7</dd><dt><span>title :</span></dt><dd>Daily MUR SST, Final product</dd><dt><span>summary :</span></dt><dd>A merged, multi-sensor L4 Foundation SST analysis product from JPL.</dd><dt><span>references :</span></dt><dd>http://podaac.jpl.nasa.gov/Multi-scale_Ultra-high_Resolution_MUR-SST</dd><dt><span>institution :</span></dt><dd>Jet Propulsion Laboratory</dd><dt><span>history :</span></dt><dd>created at nominal 4-day latency; replaced nrt (1-day latency) version.</dd><dt><span>comment :</span></dt><dd>MUR = "Multi-scale Ultra-high Resolution"</dd><dt><span>license :</span></dt><dd>These data are available free of charge under data policy of JPL PO.DAAC.</dd><dt><span>id :</span></dt><dd>MUR-JPL-L4-GLOB-v04.1</dd><dt><span>naming_authority :</span></dt><dd>org.ghrsst</dd><dt><span>product_version :</span></dt><dd>04.1</dd><dt><span>uuid :</span></dt><dd>27665bc0-d5fc-11e1-9b23-0800200c9a66</dd><dt><span>gds_version_id :</span></dt><dd>2.0</dd><dt><span>netcdf_version_id :</span></dt><dd>4.1</dd><dt><span>date_created :</span></dt><dd>20241021T071625Z</dd><dt><span>start_time :</span></dt><dd>20241012T090000Z</dd><dt><span>stop_time :</span></dt><dd>20241012T090000Z</dd><dt><span>time_coverage_start :</span></dt><dd>20241011T210000Z</dd><dt><span>time_coverage_end :</span></dt><dd>20241012T210000Z</dd><dt><span>file_quality_level :</span></dt><dd>3</dd><dt><span>source :</span></dt><dd>MODIS_T-JPL, MODIS_A-JPL, AVHRRMTB_G-NAVO, iQUAM-NOAA/NESDIS, Ice_Conc-OSISAF</dd><dt><span>platform :</span></dt><dd>Terra, Aqua, MetOp-B, Buoys/Ships</dd><dt><span>sensor :</span></dt><dd>MODIS, AVHRR, in-situ</dd><dt><span>Metadata_Conventions :</span></dt><dd>Unidata Observation Dataset v1.0</dd><dt><span>metadata_link :</span></dt><dd>http://podaac.jpl.nasa.gov/ws/metadata/dataset/?format=iso&amp;shortName=MUR-JPL-L4-GLOB-v04.1</dd><dt><span>keywords :</span></dt><dd>Oceans &gt; Ocean Temperature &gt; Sea Surface Temperature</dd><dt><span>keywords_vocabulary :</span></dt><dd>NASA Global Change Master Directory (GCMD) Science Keywords</dd><dt><span>standard_name_vocabulary :</span></dt><dd>NetCDF Climate and Forecast (CF) Metadata Convention</dd><dt><span>southernmost_latitude :</span></dt><dd>-90.0</dd><dt><span>northernmost_latitude :</span></dt><dd>90.0</dd><dt><span>westernmost_longitude :</span></dt><dd>-180.0</dd><dt><span>easternmost_longitude :</span></dt><dd>180.0</dd><dt><span>spatial_resolution :</span></dt><dd>0.01 degrees</dd><dt><span>geospatial_lat_units :</span></dt><dd>degrees north</dd><dt><span>geospatial_lat_resolution :</span></dt><dd>0.01</dd><dt><span>geospatial_lon_units :</span></dt><dd>degrees east</dd><dt><span>geospatial_lon_resolution :</span></dt><dd>0.01</dd><dt><span>acknowledgment :</span></dt><dd>Please acknowledge the use of these data with the following statement:  These data were provided by JPL under support by NASA MEaSUREs program.</dd><dt><span>creator_name :</span></dt><dd>JPL MUR SST project</dd><dt><span>creator_email :</span></dt><dd>ghrsst@podaac.jpl.nasa.gov</dd><dt><span>creator_url :</span></dt><dd>http://mur.jpl.nasa.gov</dd><dt><span>project :</span></dt><dd>NASA Making Earth Science Data Records for Use in Research Environments (MEaSUREs) Program</dd><dt><span>publisher_name :</span></dt><dd>GHRSST Project Office</dd><dt><span>publisher_url :</span></dt><dd>http://www.ghrsst.org</dd><dt><span>publisher_email :</span></dt><dd>ghrsst-po@nceo.ac.uk</dd><dt><span>processing_level :</span></dt><dd>L4</dd><dt><span>cdm_data_type :</span></dt><dd>grid</dd></dl></div></li></ul></div></div>
 </div>
 </div>
 </div>
@@ -1930,7 +1997,7 @@ datetime_ = datetime(2024, 10, 10, tzinfo=timezone.utc).isoformat()</div>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
     <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="p">(</span><span class="s2">"concept_id"</span><span class="p">,</span> <span class="n">concept_id</span><span class="p">),</span>
         <span class="c1"># Datetime in form of `start_date/end_date`</span>
         <span class="p">(</span><span class="s2">"datetime"</span><span class="p">,</span> <span class="n">datetime_</span><span class="p">),</span>
@@ -1945,14 +2012,14 @@ datetime_ = datetime(2024, 10, 10, tzinfo=timezone.utc).isoformat()</div>
         <span class="p">(</span><span class="s2">"maxzoom"</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"rescale"</span><span class="p">,</span> <span class="s2">"0,1"</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"colormap_name"</span><span class="p">,</span> <span class="s2">"blues_r"</span><span class="p">),</span>
-    <span class="p">)</span>
+    <span class="p">),</span>
 <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-6">r = httpx.get(
     f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
-    params = (
+    params=(
         ("concept_id", concept_id),
         # Datetime in form of `start_date/end_date`
         ("datetime", datetime_),
@@ -1967,7 +2034,7 @@ datetime_ = datetime(2024, 10, 10, tzinfo=timezone.utc).isoformat()</div>
         ("maxzoom", 13),
         ("rescale", "0,1"),
         ("colormap_name", "blues_r"),
-    )
+    ),
 ).json()
 
 print(r)</div>
@@ -2009,10 +2076,7 @@ print(r)</div>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">bounds</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">"bounds"</span><span class="p">]</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
-    <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span>
-    <span class="n">zoom_start</span><span class="o">=</span><span class="mi">3</span>
-<span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
 <span class="n">TileLayer</span><span class="p">(</span>
     <span class="n">tiles</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s2">"tiles"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
@@ -2022,10 +2086,7 @@ print(r)</div>
 <span class="n">m</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-7">bounds = r["bounds"]
-m = Map(
-    location=(70, -40),
-    zoom_start=3
-)
+m = Map(location=(70, -40), zoom_start=3)
 
 TileLayer(
     tiles=r["tiles"][0],
@@ -2071,7 +2132,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_aa5ee000fc0eb1525811ebb37dad2bdf {
+                #map_30eaf925630e6fc58d52fc03275bd556 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2085,14 +2146,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_aa5ee000fc0eb1525811ebb37dad2bdf" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_30eaf925630e6fc58d52fc03275bd556" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_aa5ee000fc0eb1525811ebb37dad2bdf = L.map(
-                "map_aa5ee000fc0eb1525811ebb37dad2bdf",
+            var map_30eaf925630e6fc58d52fc03275bd556 = L.map(
+                "map_30eaf925630e6fc58d52fc03275bd556",
                 {
                     center: [70.0, -40.0],
                     crs: L.CRS.EPSG3857,
@@ -2106,22 +2167,22 @@ m</div>
 
         
     
-            var tile_layer_310f123e16ba42b073ace38a1ba68e33 = L.tileLayer(
+            var tile_layer_f91f8f3650ebe5eb4b9f1d7816d1750d = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_310f123e16ba42b073ace38a1ba68e33.addTo(map_aa5ee000fc0eb1525811ebb37dad2bdf);
+            tile_layer_f91f8f3650ebe5eb4b9f1d7816d1750d.addTo(map_30eaf925630e6fc58d52fc03275bd556);
         
     
-            var tile_layer_912d8e7ed7c4c3a69e8f4e8605ca044d = L.tileLayer(
+            var tile_layer_cd9a249f61451b244fcb0cc49c33f503 = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C1996881146-POCLOUD\u0026datetime=2024-10-10T00%3A00%3A00%2B00%3A00\u0026backend=xarray\u0026variable=sea_ice_fraction\u0026rescale=0%2C1\u0026colormap_name=blues_r",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_912d8e7ed7c4c3a69e8f4e8605ca044d.addTo(map_aa5ee000fc0eb1525811ebb37dad2bdf);
+            tile_layer_cd9a249f61451b244fcb0cc49c33f503.addTo(map_30eaf925630e6fc58d52fc03275bd556);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2161,40 +2222,25 @@ m</div>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">geojson_dict</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"FeatureCollection"</span><span class="p">,</span>
-  <span class="s2">"features"</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
-      <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{},</span>
-      <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
-          <span class="p">[</span>
-            <span class="p">[</span>
-              <span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span>
-              <span class="mf">83.55979308678764</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span>
-              <span class="mf">75.0115425216471</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">14.483337068956956</span><span class="p">,</span>
-              <span class="mf">75.0115425216471</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">14.483337068956956</span><span class="p">,</span>
-              <span class="mf">83.55979308678764</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span>
-              <span class="mf">83.55979308678764</span>
-            <span class="p">]</span>
-          <span class="p">]</span>
-        <span class="p">],</span>
-        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Polygon"</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">]</span>
+    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"FeatureCollection"</span><span class="p">,</span>
+    <span class="s2">"features"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
+            <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="p">[</span><span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span> <span class="mf">83.55979308678764</span><span class="p">],</span>
+                        <span class="p">[</span><span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span> <span class="mf">75.0115425216471</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">14.483337068956956</span><span class="p">,</span> <span class="mf">75.0115425216471</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">14.483337068956956</span><span class="p">,</span> <span class="mf">83.55979308678764</span><span class="p">],</span>
+                        <span class="p">[</span><span class="o">-</span><span class="mf">20.79973248834736</span><span class="p">,</span> <span class="mf">83.55979308678764</span><span class="p">],</span>
+                    <span class="p">]</span>
+                <span class="p">],</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Polygon"</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
 <span class="p">}</span>
 
 <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
@@ -2216,40 +2262,25 @@ m</div>
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-8">geojson_dict = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              -20.79973248834736,
-              83.55979308678764
-            ],
-            [
-              -20.79973248834736,
-              75.0115425216471
-            ],
-            [
-              14.483337068956956,
-              75.0115425216471
-            ],
-            [
-              14.483337068956956,
-              83.55979308678764
-            ],
-            [
-              -20.79973248834736,
-              83.55979308678764
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "coordinates": [
+                    [
+                        [-20.79973248834736, 83.55979308678764],
+                        [-20.79973248834736, 75.0115425216471],
+                        [14.483337068956956, 75.0115425216471],
+                        [14.483337068956956, 83.55979308678764],
+                        [-20.79973248834736, 83.55979308678764],
+                    ]
+                ],
+                "type": "Polygon",
+            },
+        }
+    ],
 }
 
 r = httpx.post(
