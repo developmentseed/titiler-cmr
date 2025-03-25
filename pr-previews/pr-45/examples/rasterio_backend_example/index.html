@@ -583,7 +583,7 @@
         
   
   <span class="md-ellipsis">
-    Harmonized Landsat Sentinel 2 (HLS): configuration and performance
+    Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance
   </span>
   
 
@@ -1280,7 +1280,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="rasterio-backend-example-hls">rasterio backend example: HLS<a class="anchor-link" href="#rasterio-backend-example-hls">¶</a></h1><p>The Harmonized Landsat Sentinel-2 dataset is available in two collections in CMR. This example will use data from the <code>HLSL30.002</code> (Landsat) dataset.</p>
+<h1 id="rasterio-backend-example-hls">rasterio backend example: HLS<a class="anchor-link" href="#rasterio-backend-example-hls">¶</a></h1><p>This notebook demonstrates how to use titiler-cmr's <code>rasterio</code> backend to render tiles for collections with granules that contain two-dimensional raster data.</p>
+<p>In addition to showing how to parameterize <code>tilesson</code> endpoint requests this guide also demonstrates how to use the <a href="https://earthaccess.readthedocs.io/en/latest/"><code>earthaccess</code></a> package to search for collections and how the relevant details for tiling can be extracted from the search results.</p>
 <h4 id="requirements">Requirements<a class="anchor-link" href="#requirements">¶</a></h4><p>To run some of the chunks in this notebook you will need to install a few packages:</p>
 <ul>
 <li><code>earthaccess</code></li>
@@ -1314,13 +1315,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span> <span class="nn">httpx</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
-
 <span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import earthaccess
 import httpx
 import json
-
 
 from folium import Map, TileLayer</div>
 </div>
@@ -1364,7 +1363,8 @@ titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"  # deployed endpo
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="identify-the-dataset">Identify the dataset<a class="anchor-link" href="#identify-the-dataset">¶</a></h2><p>You can find the <code>HLSL30.002</code> dataset using the earthaccess.search_datasets function.</p>
+<h2 id="identify-the-dataset">Identify the dataset<a class="anchor-link" href="#identify-the-dataset">¶</a></h2><p>The Harmonized Landsat Sentinel-2 dataset is available in two collections in CMR. This example will use data from the <code>HLSL30.002</code> (Landsat) dataset.
+You can find the <code>HLSL30.002</code> dataset using the earthaccess.search_datasets function.</p>
 </div>
 </div>
 </div>
@@ -1387,14 +1387,14 @@ titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"  # deployed endpo
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">datasets</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_datasets</span><span class="p">(</span><span class="n">doi</span><span class="o">=</span><span class="s2">"10.5067/HLS/HLSL30.002"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">datasets</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_datasets</span><span class="p">(</span><span class="n">keyword</span><span class="o">=</span><span class="s2">"HLSL30"</span><span class="p">)</span>
 <span class="n">ds</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">concept_id</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">][</span><span class="s2">"concept-id"</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Concept-Id: "</span><span class="p">,</span> <span class="n">concept_id</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Abstract: "</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"umm"</span><span class="p">][</span><span class="s2">"Abstract"</span><span class="p">])</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">datasets = earthaccess.search_datasets(doi="10.5067/HLS/HLSL30.002")
+<div class="clipboard-copy-txt" id="cell-3">datasets = earthaccess.search_datasets(keyword="HLSL30")
 ds = datasets[0]
 
 concept_id = ds["meta"]["concept-id"]
@@ -1460,6 +1460,7 @@ The HLSL30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each
 
 <span class="n">bounds</span> <span class="o">=</span> <span class="n">tms</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="mi">62</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
 <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">)</span>
+<span class="n">concept_id</span> <span class="o">=</span> <span class="s2">"C2021957295-LPCLOUD"</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_data</span><span class="p">(</span>
     <span class="n">bounding_box</span><span class="o">=</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span>
@@ -1481,6 +1482,7 @@ tms = morecantile.tms.get("WebMercatorQuad")
 
 bounds = tms.bounds(62, 44, 7)
 xmin, ymin, xmax, ymax = (round(n, 8) for n in bounds)
+concept_id = "C2021957295-LPCLOUD"
 
 results = earthaccess.search_data(
     bounding_box=(xmin, ymin, xmax, ymax),
@@ -1506,28 +1508,31 @@ for link in results[0].data_links(access="direct"):
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Granules:
-[Collection: {'EntryTitle': 'HLS Landsat Operational Land Imager Surface Reflectance and TOA Brightness Daily Global 30m v2.0'}
-Spatial coverage: {'HorizontalSpatialDomain': {'Geometry': {'GPolygons': [{'Boundary': {'Points': [{'Longitude': -2.64743819, 'Latitude': 48.6644919}, {'Longitude': -2.21521695, 'Latitude': 49.65006328}, {'Longitude': -3.00027708, 'Latitude': 49.65272281}, {'Longitude': -3.00027162, 'Latitude': 48.66503141}, {'Longitude': -2.64743819, 'Latitude': 48.6644919}]}}]}}}
-Temporal coverage: {'RangeDateTime': {'BeginningDateTime': '2024-02-12T11:05:26.302Z', 'EndingDateTime': '2024-02-12T11:05:50.181Z'}}
-Size(MB): 56.62721920013428
-Data: ['https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B02.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B06.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B01.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.SAA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B07.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.SZA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B03.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.Fmask.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B04.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B05.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.VAA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.VZA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B11.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B10.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B09.tif']]
+[Collection: {'EntryTitle': 'HLS Sentinel-2 Multi-spectral Instrument Surface Reflectance Daily Global 30m v2.0'}
+Spatial coverage: {'HorizontalSpatialDomain': {'Geometry': {'GPolygons': [{'Boundary': {'Points': [{'Longitude': -5.71462895, 'Latitude': 48.63303181}, {'Longitude': -5.04818328, 'Latitude': 48.64735841}, {'Longitude': -4.57847134, 'Latitude': 49.64196234}, {'Longitude': -5.76906794, 'Latitude': 49.61959687}, {'Longitude': -5.71462895, 'Latitude': 48.63303181}]}}]}}}
+Temporal coverage: {'RangeDateTime': {'BeginningDateTime': '2024-02-11T11:37:33.939Z', 'EndingDateTime': '2024-02-11T11:37:33.939Z'}}
+Size(MB): 134.71638679504395
+Data: ['https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.Fmask.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SAA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B8A.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VAA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SZA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VZA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif']]
 
 Example of COGs URL: 
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B02.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B06.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B01.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.SAA.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B07.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.SZA.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B03.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.Fmask.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B04.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B05.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.VAA.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.VZA.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B11.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B10.tif
-s3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B09.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.Fmask.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SAA.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B8A.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VAA.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SZA.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VZA.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif
+s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif
 </pre>
 </div>
 </div>
@@ -1604,7 +1609,7 @@ print(assets[0])</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'url': {'B02': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B02.tif', 'B06': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B06.tif', 'B01': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B01.tif', 'B07': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B07.tif', 'B03': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B03.tif', 'B04': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B04.tif', 'B05': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B05.tif', 'B11': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B11.tif', 'B10': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B10.tif', 'B09': 's3://lp-prod-protected/HLSL30.020/HLS.L30.T30UWV.2024043T110526.v2.0/HLS.L30.T30UWV.2024043T110526.v2.0.B09.tif'}, 'provider': 'LPCLOUD'}
+<pre>{'url': {'B12': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif', 'B11': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif', 'B07': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif', 'B04': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif', 'B03': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif', 'B05': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif', 'B02': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif', 'B01': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif', 'B06': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif', 'B08': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif', 'B09': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif', 'B10': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif'}, 'provider': 'LPCLOUD'}
 </pre>
 </div>
 </div>
@@ -1763,7 +1768,7 @@ print(r)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
+<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
 </pre>
 </div>
 </div>
@@ -1846,7 +1851,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_83fd57702cd1089595b27773c1d73502 {
+                #map_ef04262447dde2ae97a091fecbff0f01 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -1860,14 +1865,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_83fd57702cd1089595b27773c1d73502" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_ef04262447dde2ae97a091fecbff0f01" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_83fd57702cd1089595b27773c1d73502 = L.map(
-                "map_83fd57702cd1089595b27773c1d73502",
+            var map_ef04262447dde2ae97a091fecbff0f01 = L.map(
+                "map_ef04262447dde2ae97a091fecbff0f01",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -1881,22 +1886,22 @@ m</div>
 
         
     
-            var tile_layer_f365190785a31e6f0f06673728cf6177 = L.tileLayer(
+            var tile_layer_0fbd0bced51561462a2fe49b09a27484 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_f365190785a31e6f0f06673728cf6177.addTo(map_83fd57702cd1089595b27773c1d73502);
+            tile_layer_0fbd0bced51561462a2fe49b09a27484.addTo(map_ef04262447dde2ae97a091fecbff0f01);
         
     
-            var tile_layer_de77389f611b76478372b2214a973cd5 = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
+            var tile_layer_88ef71f36a3020332039384c7e992234 = L.tileLayer(
+                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_de77389f611b76478372b2214a973cd5.addTo(map_83fd57702cd1089595b27773c1d73502);
+            tile_layer_88ef71f36a3020332039384c7e992234.addTo(map_ef04262447dde2ae97a091fecbff0f01);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2052,7 +2057,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_7f99f7305e5b68b1ca1faa8c02d2756a {
+                #map_e020b4556ca1e46306b282e6216d3ffa {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2066,14 +2071,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_7f99f7305e5b68b1ca1faa8c02d2756a" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_e020b4556ca1e46306b282e6216d3ffa" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_7f99f7305e5b68b1ca1faa8c02d2756a = L.map(
-                "map_7f99f7305e5b68b1ca1faa8c02d2756a",
+            var map_e020b4556ca1e46306b282e6216d3ffa = L.map(
+                "map_e020b4556ca1e46306b282e6216d3ffa",
                 {
                     center: [47.9221313337365, -91.65432884883238],
                     crs: L.CRS.EPSG3857,
@@ -2087,22 +2092,22 @@ m</div>
 
         
     
-            var tile_layer_960100e9d7ef79c299d1010a29798e7e = L.tileLayer(
+            var tile_layer_578905a36c9149aa4059dd772dba2099 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_960100e9d7ef79c299d1010a29798e7e.addTo(map_7f99f7305e5b68b1ca1faa8c02d2756a);
+            tile_layer_578905a36c9149aa4059dd772dba2099.addTo(map_e020b4556ca1e46306b282e6216d3ffa);
         
     
-            var tile_layer_7ec9d38a104c079a295990321497f98e = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
+            var tile_layer_1187b6e39bfdf524f16701030549152a = L.tileLayer(
+                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_7ec9d38a104c079a295990321497f98e.addTo(map_7f99f7305e5b68b1ca1faa8c02d2756a);
+            tile_layer_1187b6e39bfdf524f16701030549152a.addTo(map_e020b4556ca1e46306b282e6216d3ffa);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2303,48 +2308,48 @@ print(json.dumps(r, indent=2))</div>
       "properties": {
         "statistics": {
           "(B05-B04)/(B05+B04)": {
-            "min": -75.4,
-            "max": 26.6,
-            "mean": 0.5238783261952482,
+            "min": -111.0,
+            "max": 1.7976931348623157e+308,
+            "mean": null,
             "count": 57304.8046875,
-            "sum": 30020.745162633113,
-            "std": 0.6052277569586431,
-            "median": 0.6041512231282431,
-            "majority": 0.75,
-            "minority": -75.4,
-            "unique": 47613.0,
+            "sum": null,
+            "std": null,
+            "median": 0.28023598820059,
+            "majority": 0.3333333333333333,
+            "minority": -111.0,
+            "unique": 42086.0,
             "histogram": [
               [
-                1,
-                0,
-                2,
-                1,
+                57796,
                 0,
                 0,
-                16,
-                57764,
-                12,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
                 2
               ],
               [
-                -75.4,
-                -65.2,
-                -55.00000000000001,
-                -44.80000000000001,
-                -34.60000000000001,
-                -24.400000000000006,
-                -14.20000000000001,
-                -4.000000000000014,
-                6.199999999999989,
-                16.39999999999999,
-                26.6
+                -111.0,
+                1.7976931348623158e+307,
+                3.5953862697246315e+307,
+                5.393079404586948e+307,
+                7.190772539449263e+307,
+                8.988465674311579e+307,
+                1.0786158809173895e+308,
+                1.258385194403621e+308,
+                1.4381545078898526e+308,
+                1.6179238213760842e+308,
+                1.7976931348623157e+308
               ]
             ],
             "valid_percent": 100.0,
             "masked_pixels": 0.0,
             "valid_pixels": 57798.0,
-            "percentile_2": 0.04382638010956595,
-            "percentile_98": 0.8685282140779523
+            "percentile_2": 0.001119263773162542,
+            "percentile_98": 0.5649122807017544
           }
         }
       }

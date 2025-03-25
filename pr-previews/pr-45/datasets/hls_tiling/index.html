@@ -26,7 +26,7 @@
     
     
       
-        <title>Harmonized Landsat Sentinel 2 (HLS): configuration and performance - TiTiler.CMR</title>
+        <title>Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance - TiTiler.CMR</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#harmonized-landsat-sentinel-2-hls-configuration-and-performance" class="md-skip">
+        <a href="#harmonized-landsat-sentinel-2-hls-tiling-configuration-and-rendering-performance" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Harmonized Landsat Sentinel 2 (HLS): configuration and performance
+              Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance
             
           </span>
         </div>
@@ -465,7 +465,7 @@
           
   
   <span class="md-ellipsis">
-    Harmonized Landsat Sentinel 2 (HLS): configuration and performance
+    Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance
   </span>
   
 
@@ -476,7 +476,7 @@
         
   
   <span class="md-ellipsis">
-    Harmonized Landsat Sentinel 2 (HLS): configuration and performance
+    Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance
   </span>
   
 
@@ -1430,8 +1430,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="harmonized-landsat-sentinel-2-hls-configuration-and-performance">Harmonized Landsat Sentinel 2 (HLS): configuration and performance<a class="anchor-link" href="#harmonized-landsat-sentinel-2-hls-configuration-and-performance">¶</a></h1><p>This notebook analyzes the performance benchmarks for the Harmonized Landsat Sentinel (HLS) tiler endpoint in titiler-cmr. The benchmarks measure how effectively the API handles tile requests across varying conditions.</p>
-<h2 id="background">Background<a class="anchor-link" href="#background">¶</a></h2><p>The Harmonized Landsat Sentinel (HLS) dataset provides surface reflectance data by combining observations from the Operational Land Imager (OLI) and Multi-Spectral Instrument (MSI) aboard the Landsat 8/9 and Sentinel-2 satellites, respectively. This data is processed to enable time series analyses.</p>
+<h1 id="harmonized-landsat-sentinel-2-hls-tiling-configuration-and-rendering-performance">Harmonized Landsat Sentinel 2 (HLS): tiling configuration and rendering performance<a class="anchor-link" href="#harmonized-landsat-sentinel-2-hls-tiling-configuration-and-rendering-performance">¶</a></h1><h2 id="background">Background<a class="anchor-link" href="#background">¶</a></h2><p>The Harmonized Landsat Sentinel (HLS) dataset provides surface reflectance data by combining observations from the Operational Land Imager (OLI) and Multi-Spectral Instrument (MSI) aboard the Landsat 8/9 and Sentinel-2 satellites, respectively. This dataset is processed to enable time series analyses with greater density of observations in time than is possible with any single global satellite data collection with similar spatial resolution.</p>
 <p>Two HLS collections are available in CMR:</p>
 <ul>
 <li><strong>HLSL30</strong>: Harmonized Landsat 8/9 data (30m resolution)</li>
@@ -1447,15 +1446,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <ol>
 <li><strong>Zoom level</strong>: Lower zoom levels require rendering pixels from more assets</li>
 <li><strong>Temporal range</strong>: Larger time ranges require searching through and rendering more granules</li>
-<li><strong>Collection choice</strong>: HLSS30 has a more frequent revisit rate than HLSL30</li>
+<li><strong>Collection choice</strong>: HLSS30 has a more frequent revisit rate than HLSL30<ul>
+<li>HLSS30's higher revisit rate means that for a fixed area and datetime interval there will usually be more granules to process than for HLSL30</li>
+</ul>
+</li>
 <li><strong>Band combination</strong>: More bands require more files to be accessed and processed</li>
 </ol>
-<h2 id="tile-rendering-benchmark-analysis">Tile rendering benchmark analysis<a class="anchor-link" href="#tile-rendering-benchmark-analysis">¶</a></h2><p>To get a handle on tile rendering performance for the HLS collections we wrote a benchmarking process that measures the time it takes for the API to render tiles for a range of zoom levels, datetime interval widths, and number of band combinations.
+<h2 id="tile-rendering-benchmark-analysis">Tile rendering benchmark analysis<a class="anchor-link" href="#tile-rendering-benchmark-analysis">¶</a></h2><p>To assess tile rendering performance for the HLS collections we wrote a <a href="https://github.com/developmentseed/titiler-cmr/blob/develop/tests/test_hls_benchmark.py">benchmarking process</a> that measures the time it takes for the API to render tiles for a range of zoom levels, datetime interval widths, and number of band combinations.
+This notebook explores the trends and findings from the <a href="https://github.com/developmentseed/titiler-cmr/blob/develop/benchmark.json">benchmark results</a>.
 The following diagram shows the observed performance across all of these dimensions for the two collections (HLSL30 and HLSS30).
 Based on this analysis we recommend these configuration limits:</p>
 <ul>
 <li><strong><code>minzoom=7</code></strong>: the titiler-cmr API should be able to return a full viewport's worth of tiles in ~10 seconds.</li>
-<li>try to set single-day <code>datetime</code> intervals to reduce the number of assets requested in a single tile (e.g. <code>datetime=2024-08-10T00:00:01Z/2024-08-10T23:59:59</code>)<ul>
+<li>use single-day <code>datetime</code> intervals to reduce the number of assets requested in a single tile (e.g. <code>datetime=2024-08-10T00:00:01Z/2024-08-10T23:59:59</code>)<ul>
+<li>this will give users an orbit-wise view of the data, which is probably the most intuitive way to view it</li>
 <li>wider datetime intervals will work, but performance can substantially slower</li>
 </ul>
 </li>
@@ -1464,252 +1468,8 @@ Based on this analysis we recommend these configuration limits:</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-1">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-
-<span class="c1"># Load the benchmark data</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"../../benchmark.json"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">benchmark_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="c1"># Set style for plots</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">"ggplot"</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">"colorblind"</span><span class="p">)</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">benchmark</span> <span class="ow">in</span> <span class="n">benchmark_data</span><span class="p">[</span><span class="s2">"benchmarks"</span><span class="p">]:</span>
-    <span class="c1"># Only include results from the hls-tiles group</span>
-    <span class="k">if</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"group"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"hls-tiles"</span><span class="p">:</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">"name"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span>
-            <span class="s2">"collection"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"collection"</span><span class="p">],</span>
-            <span class="s2">"zoom"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"zoom"</span><span class="p">],</span>
-            <span class="s2">"interval_days"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"interval_days"</span><span class="p">],</span>
-            <span class="s2">"band_count"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"band_count"</span><span class="p">],</span>
-            <span class="s2">"mean_time"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"stats"</span><span class="p">][</span><span class="s2">"mean"</span><span class="p">],</span>  <span class="c1"># Mean execution time in seconds</span>
-            <span class="s2">"success_rate"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"success_rate"</span><span class="p">],</span>
-            <span class="s2">"avg_response_time"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"avg_response_time"</span><span class="p">],</span>
-            <span class="s2">"avg_response_size"</span><span class="p">:</span> <span class="n">benchmark</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="s2">"avg_response_size"</span><span class="p">],</span>
-        <span class="p">}</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-
-<span class="n">collections</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"collection"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-<span class="n">intervals</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"interval_days"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-    <span class="n">nrows</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">intervals</span><span class="p">),</span>
-    <span class="n">ncols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">collections</span><span class="p">),</span>
-    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-    <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">band_colors</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">"blue"</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">"green"</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">"red"</span><span class="p">}</span>
-
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">intervals</span><span class="p">)):</span>
-    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">collection</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">collections</span><span class="p">)):</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-
-        <span class="n">facet_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"collection"</span><span class="p">]</span> <span class="o">==</span> <span class="n">collection</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"interval_days"</span><span class="p">]</span> <span class="o">==</span> <span class="n">interval</span><span class="p">)</span>
-        <span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">band_count</span><span class="p">,</span> <span class="n">band_data</span> <span class="ow">in</span> <span class="n">facet_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"band_count"</span><span class="p">):</span>
-            <span class="c1"># Sort by zoom level to ensure proper line connections</span>
-            <span class="n">band_data</span> <span class="o">=</span> <span class="n">band_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"zoom"</span><span class="p">)</span>
-
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">band_data</span><span class="p">[</span><span class="s2">"zoom"</span><span class="p">],</span>
-                <span class="n">band_data</span><span class="p">[</span><span class="s2">"mean_time"</span><span class="p">],</span>
-                <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
-                <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">band_colors</span><span class="p">[</span><span class="n">band_count</span><span class="p">],</span>
-                <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">band_count</span><span class="si">}</span><span class="s2"> bands"</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Add facet title only on the first row and column</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> day interval</span><span class="se">\n</span><span class="s2">Response Time (s)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-
-        <span class="c1"># Add x-label only on the bottom row</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"zoom Level"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-
-        <span class="c1"># Set x-ticks to show the actual zoom levels</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
-
-        <span class="c1"># Add grid</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-
-        <span class="c1"># Only add legend to the first plot</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Create legend for band counts</span>
-            <span class="n">band_handles</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">Line2D</span><span class="p">(</span>
-                    <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">color</span><span class="o">=</span><span class="n">band_colors</span><span class="p">[</span><span class="n">b</span><span class="p">],</span>
-                    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2"> band</span><span class="si">{</span><span class="s1">'s'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                    <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
-                    <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-                    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">band_colors</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="p">]</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">band_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
-
-<span class="c1"># Add an overall title</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-    <span class="s2">"HLS tiling benchmark: time to render tiles for viewport"</span><span class="p">,</span>
-    <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Adjust layout</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-1">import json
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Load the benchmark data
-with open("../../benchmark.json", "r") as f:
-    benchmark_data = json.load(f)
-
-# Set style for plots
-plt.style.use("ggplot")
-sns.set_palette("colorblind")
-
-results = []
-for benchmark in benchmark_data["benchmarks"]:
-    # Only include results from the hls-tiles group
-    if benchmark["group"] == "hls-tiles":
-        row = {
-            "name": benchmark["name"],
-            "collection": benchmark["extra_info"]["collection"],
-            "zoom": benchmark["extra_info"]["zoom"],
-            "interval_days": benchmark["extra_info"]["interval_days"],
-            "band_count": benchmark["extra_info"]["band_count"],
-            "mean_time": benchmark["stats"]["mean"],  # Mean execution time in seconds
-            "success_rate": benchmark["extra_info"]["success_rate"],
-            "avg_response_time": benchmark["extra_info"]["avg_response_time"],
-            "avg_response_size": benchmark["extra_info"]["avg_response_size"],
-        }
-        results.append(row)
-
-df = pd.DataFrame(results)
-
-collections = df["collection"].unique()
-intervals = df["interval_days"].unique()
-
-fig, axes = plt.subplots(
-    nrows=len(intervals),
-    ncols=len(collections),
-    figsize=(14, 10),
-    sharex=True,
-    sharey=True,
-)
-
-band_colors = {1: "blue", 2: "green", 3: "red"}
-
-for i, interval in enumerate(sorted(intervals)):
-    for j, collection in enumerate(sorted(collections)):
-        ax = axes[i, j]
-
-        facet_data = df[
-            (df["collection"] == collection) &amp; (df["interval_days"] == interval)
-        ]
-
-        for band_count, band_data in facet_data.groupby("band_count"):
-            # Sort by zoom level to ensure proper line connections
-            band_data = band_data.sort_values("zoom")
-
-            ax.plot(
-                band_data["zoom"],
-                band_data["mean_time"],
-                marker="o",
-                markersize=8,
-                color=band_colors[band_count],
-                linewidth=2,
-                label=f"{band_count} bands",
-            )
-
-        # Add facet title only on the first row and column
-        if i == 0:
-            ax.set_title(collection, fontsize=14)
-        if j == 0:
-            ax.set_ylabel(f"{interval} day interval\nResponse Time (s)", fontsize=12)
-
-        # Add x-label only on the bottom row
-        if i == len(intervals) - 1:
-            ax.set_xlabel("zoom Level", fontsize=12)
-
-        # Set x-ticks to show the actual zoom levels
-        ax.set_xticks([6, 8, 10])
-
-        # Add grid
-        ax.grid(True, alpha=0.3)
-
-        # Only add legend to the first plot
-        if i == 0 and j == 0:
-            # Create legend for band counts
-            band_handles = [
-                plt.Line2D(
-                    [0],
-                    [0],
-                    color=band_colors[b],
-                    label=f"{b} band{'s' if b &gt; 1 else ''}",
-                    marker="o",
-                    markersize=6,
-                    linewidth=2,
-                )
-                for b in sorted(band_colors.keys())
-            ]
-            ax.legend(handles=band_handles, loc="upper left")
-
-# Add an overall title
-fig.suptitle(
-    "HLS tiling benchmark: time to render tiles for viewport",
-    fontsize=16,
-    y=0.98,
-)
-
-# Adjust layout
-plt.tight_layout()
-fig.subplots_adjust(top=0.9)</div>
-</div>
-</div>
-</div>
-</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell celltag_hide_code">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell celltag_hide_code">
 <div class="jp-Cell-outputWrapper">
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
@@ -1937,7 +1697,7 @@ fig.subplots_adjust(top=0.9)</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-1">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -1953,7 +1713,7 @@ fig.subplots_adjust(top=0.9)</div>
 <span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://dev-titiler-cmr.delta-backend.com"</span>
 <span class="n">minzoom</span> <span class="o">=</span> <span class="mi">7</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import httpx
+<div class="clipboard-copy-txt" id="cell-1">import httpx
 from folium import LayerControl, Map, TileLayer
 
 titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"
@@ -1983,7 +1743,7 @@ minzoom = 7</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -2100,7 +1860,7 @@ minzoom = 7</div>
 
 <span class="n">m</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">m = Map(location=(46.7653, -91.0321), zoom_start=minzoom + 1)
+<div class="clipboard-copy-txt" id="cell-2">m = Map(location=(46.7653, -91.0321), zoom_start=minzoom + 1)
 base_parameters = (
     ("concept_id", "C2021957657-LPCLOUD"),
     # Datetime in form of `start_date/end_date`
@@ -2244,7 +2004,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_d2095d9b289a5f3f00ee1d53473fd401 {
+                #map_32237e7b24f8087b2ea4724b828a6eb5 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2258,14 +2018,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_d2095d9b289a5f3f00ee1d53473fd401" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_32237e7b24f8087b2ea4724b828a6eb5" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_d2095d9b289a5f3f00ee1d53473fd401 = L.map(
-                "map_d2095d9b289a5f3f00ee1d53473fd401",
+            var map_32237e7b24f8087b2ea4724b828a6eb5 = L.map(
+                "map_32237e7b24f8087b2ea4724b828a6eb5",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2279,51 +2039,51 @@ m</div>
 
         
     
-            var tile_layer_cfc518d816cf827249d771f189d209d0 = L.tileLayer(
+            var tile_layer_bbff2e5bd0438c52d3345a3b8ca7e152 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_cfc518d816cf827249d771f189d209d0.addTo(map_d2095d9b289a5f3f00ee1d53473fd401);
+            tile_layer_bbff2e5bd0438c52d3345a3b8ca7e152.addTo(map_32237e7b24f8087b2ea4724b828a6eb5);
         
     
-            var tile_layer_65d6fd908f1c88f04f3ade97c9642c21 = L.tileLayer(
+            var tile_layer_986199a6718896543a399c23ef4e0799 = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_65d6fd908f1c88f04f3ade97c9642c21.addTo(map_d2095d9b289a5f3f00ee1d53473fd401);
+            tile_layer_986199a6718896543a399c23ef4e0799.addTo(map_32237e7b24f8087b2ea4724b828a6eb5);
         
     
-            var tile_layer_3a2333f3f1e834a1aaf236aac914f686 = L.tileLayer(
+            var tile_layer_da41ff7445e3fea553922e59fc4da924 = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var tile_layer_5c864959151c786c9af416de53fcd3bb = L.tileLayer(
+            var tile_layer_6e1afa8081f6df8d6e4d1768dc975736 = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var layer_control_e8294caa85e64e18412e926a8435f906_layers = {
+            var layer_control_9210d5f9222e17b4df1ce0044c83ecb5_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_cfc518d816cf827249d771f189d209d0,
+                    "openstreetmap" : tile_layer_bbff2e5bd0438c52d3345a3b8ca7e152,
                 },
                 overlays :  {
-                    "HLSL30 true color" : tile_layer_65d6fd908f1c88f04f3ade97c9642c21,
-                    "HLSL30 false color" : tile_layer_3a2333f3f1e834a1aaf236aac914f686,
-                    "HLSL30 NDVI" : tile_layer_5c864959151c786c9af416de53fcd3bb,
+                    "HLSL30 true color" : tile_layer_986199a6718896543a399c23ef4e0799,
+                    "HLSL30 false color" : tile_layer_da41ff7445e3fea553922e59fc4da924,
+                    "HLSL30 NDVI" : tile_layer_6e1afa8081f6df8d6e4d1768dc975736,
                 },
             };
-            let layer_control_e8294caa85e64e18412e926a8435f906 = L.control.layers(
-                layer_control_e8294caa85e64e18412e926a8435f906_layers.base_layers,
-                layer_control_e8294caa85e64e18412e926a8435f906_layers.overlays,
+            let layer_control_9210d5f9222e17b4df1ce0044c83ecb5 = L.control.layers(
+                layer_control_9210d5f9222e17b4df1ce0044c83ecb5_layers.base_layers,
+                layer_control_9210d5f9222e17b4df1ce0044c83ecb5_layers.overlays,
                 {"autoZIndex": true, "collapsed": false, "position": "topright"}
-            ).addTo(map_d2095d9b289a5f3f00ee1d53473fd401);
+            ).addTo(map_32237e7b24f8087b2ea4724b828a6eb5);
 
         
 &lt;/script&gt;
@@ -2353,7 +2113,7 @@ m</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -2471,7 +2231,7 @@ m</div>
 
 <span class="n">m</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">m = Map(location=(46.7653, -91.0321), zoom_start=minzoom + 1)
+<div class="clipboard-copy-txt" id="cell-3">m = Map(location=(46.7653, -91.0321), zoom_start=minzoom + 1)
 
 base_parameters = (
     ("concept_id", "C2021957295-LPCLOUD"),
@@ -2616,7 +2376,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_6aabacc1ce90cdcd0ef67f9f6e388baf {
+                #map_19f191c024b082c8593f228fd8a5ce01 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2630,14 +2390,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_6aabacc1ce90cdcd0ef67f9f6e388baf" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_19f191c024b082c8593f228fd8a5ce01" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_6aabacc1ce90cdcd0ef67f9f6e388baf = L.map(
-                "map_6aabacc1ce90cdcd0ef67f9f6e388baf",
+            var map_19f191c024b082c8593f228fd8a5ce01 = L.map(
+                "map_19f191c024b082c8593f228fd8a5ce01",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2651,51 +2411,51 @@ m</div>
 
         
     
-            var tile_layer_6fba5b64cbe9b0605417133cc1c775c2 = L.tileLayer(
+            var tile_layer_b6ea13670fb57c342f86f02c853cda23 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_6fba5b64cbe9b0605417133cc1c775c2.addTo(map_6aabacc1ce90cdcd0ef67f9f6e388baf);
+            tile_layer_b6ea13670fb57c342f86f02c853cda23.addTo(map_19f191c024b082c8593f228fd8a5ce01);
         
     
-            var tile_layer_04c824e878905869a747eea49e9d0cb6 = L.tileLayer(
+            var tile_layer_217324a695097663565692a34b32feff = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_04c824e878905869a747eea49e9d0cb6.addTo(map_6aabacc1ce90cdcd0ef67f9f6e388baf);
+            tile_layer_217324a695097663565692a34b32feff.addTo(map_19f191c024b082c8593f228fd8a5ce01);
         
     
-            var tile_layer_2f6f3179edc87e9e7abc1cbfdc931c99 = L.tileLayer(
+            var tile_layer_5656d9b9c65bc5d5339b51cbb9abc30d = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var tile_layer_081264136c8b78933b95c0955466c3f5 = L.tileLayer(
+            var tile_layer_8b44a7b193ae259c51e537853ab646d4 = L.tileLayer(
                 "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var layer_control_f7f1744ec49126c6a6d6d6b99d309c55_layers = {
+            var layer_control_3555e0766b97c15c19f37cf95bebdd37_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_6fba5b64cbe9b0605417133cc1c775c2,
+                    "openstreetmap" : tile_layer_b6ea13670fb57c342f86f02c853cda23,
                 },
                 overlays :  {
-                    "HLSS30 true color" : tile_layer_04c824e878905869a747eea49e9d0cb6,
-                    "HLSS30 false color" : tile_layer_2f6f3179edc87e9e7abc1cbfdc931c99,
-                    "HLSS30 NDVI" : tile_layer_081264136c8b78933b95c0955466c3f5,
+                    "HLSS30 true color" : tile_layer_217324a695097663565692a34b32feff,
+                    "HLSS30 false color" : tile_layer_5656d9b9c65bc5d5339b51cbb9abc30d,
+                    "HLSS30 NDVI" : tile_layer_8b44a7b193ae259c51e537853ab646d4,
                 },
             };
-            let layer_control_f7f1744ec49126c6a6d6d6b99d309c55 = L.control.layers(
-                layer_control_f7f1744ec49126c6a6d6d6b99d309c55_layers.base_layers,
-                layer_control_f7f1744ec49126c6a6d6d6b99d309c55_layers.overlays,
+            let layer_control_3555e0766b97c15c19f37cf95bebdd37 = L.control.layers(
+                layer_control_3555e0766b97c15c19f37cf95bebdd37_layers.base_layers,
+                layer_control_3555e0766b97c15c19f37cf95bebdd37_layers.overlays,
                 {"autoZIndex": true, "collapsed": false, "position": "topright"}
-            ).addTo(map_6aabacc1ce90cdcd0ef67f9f6e388baf);
+            ).addTo(map_19f191c024b082c8593f228fd8a5ce01);
 
         
 &lt;/script&gt;
