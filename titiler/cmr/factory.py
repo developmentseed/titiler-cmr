@@ -140,7 +140,7 @@ def parse_reader_options(
     else:
         if rasterio_params.bands_regex:
             assert rasterio_params.bands, (
-                "`bands=` option must be provided when using Multi bands collections."
+                "`bands=` option must be provided when using multi-band data."
             )
 
             reader = MultiFilesBandsReader
@@ -156,7 +156,7 @@ def parse_reader_options(
 
         else:
             assert rasterio_params.bands, (
-                "Can't use `bands=` option without `bands_regex`"
+                "`bands_regex` must be provided when using the `bands=` option"
             )
 
             reader = rasterio.Reader
