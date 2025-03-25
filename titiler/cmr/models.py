@@ -245,9 +245,9 @@ class Queryables(BaseModel):
     title: str
     properties: Dict[str, Dict[str, str]]
     type: str = "object"
-    schema_name: Annotated[
-        str, Field(alias="$schema")
-    ] = "https://json-schema.org/draft/2019-09/schema"
+    schema_name: Annotated[str, Field(alias="$schema")] = (
+        "https://json-schema.org/draft/2019-09/schema"
+    )
     link: Annotated[str, Field(alias="$id")]
 
     model_config = {"populate_by_name": True}
@@ -328,9 +328,9 @@ class BoundingBox(BaseModel):
         ),
     ]
     crs: Annotated[Optional[CRS], Field(title="CRS")] = None
-    orderedAxes: Annotated[
-        Optional[List[str]], Field(max_length=2, min_length=2)
-    ] = None
+    orderedAxes: Annotated[Optional[List[str]], Field(max_length=2, min_length=2)] = (
+        None
+    )
 
 
 # Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/propertiesSchema.yaml
@@ -614,9 +614,9 @@ class TileSet(BaseModel):
     Based on https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/tileSet.yaml
     """
 
-    title: Annotated[
-        Optional[str], Field(description="A title for this tileset")
-    ] = None
+    title: Annotated[Optional[str], Field(description="A title for this tileset")] = (
+        None
+    )
     description: Annotated[
         Optional[str], Field(description="Brief narrative description of this tile set")
     ] = None

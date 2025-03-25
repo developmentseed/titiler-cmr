@@ -72,7 +72,8 @@ dev = [
     "markdown-callouts>=0.4.0",
     "plotly>=5.24.1",
     "ipywidgets>=8.1.5",
-    "tilebench>=0.15.0",
+    "pytest-benchmark>=5.1.0",
+    "seaborn>=0.13.2",
 ]
 
 [project.urls]
@@ -142,6 +143,6 @@ filterwarnings = [
     "ignore::rasterio.errors.NotGeoreferencedWarning",
 ]
 markers = "vcr: records network activity"
-addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml"
+addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml -vv --benchmark-skip"
 
 

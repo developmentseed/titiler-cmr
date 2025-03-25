@@ -29,6 +29,8 @@ nav:
     - examples/xarray_backend_example.ipynb
     - examples/rasterio_backend_example.ipynb
     - examples/time_series_example.ipynb
+  - Dataset configuration:
+    - datasets/hls_tiling.ipynb
   - Deployment:
     - deployment/time_series_api_limits.ipynb 
   - Development - Contributing: contributing.md
@@ -44,6 +46,9 @@ plugins:
       include_source: True
       include_requirejs: True
       execute: True
+      remove_tag_config:
+        remove_input_tags:
+          - hide_code
 
 theme:
   name: material
