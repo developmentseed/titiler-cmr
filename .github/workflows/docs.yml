@@ -200,19 +200,22 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-          # Get list of preview directories
-          cd pr-previews
-          for preview in pr-*; do
-            if [ -d "$preview" ]; then
-              PR_NUM=$(echo $preview | sed 's/pr-//')
-              if ! echo "${{ steps.closed-prs.outputs.result }}" | grep -q "$PR_NUM"; then
-                rm -rf "$preview"
-                echo "Removed old preview: $preview"
+          if [ -d "pr-previews" ]; then 
+            cd pr-previews
+            for preview in pr-*; do
+              if [ -d "$preview" ]; then
+                PR_NUM=$(echo $preview | sed 's/pr-//')
+                if ! echo "${{ steps.closed-prs.outputs.result }}" | grep -q "$PR_NUM"; then
+                  rm -rf "$preview"
+                  echo "Removed old preview: $preview"
+                fi
               fi
-            fi
-          done
+            done
+
+            git add .
+            git diff --staged --quiet || (git commit -m "Cleanup old PR previews" && git push origin gh-pages)
+          else
+            echo "No preview directores found. Nothing to clean up."
+          fi
           
-          # Commit and push if there are changes
-          git add .
-          git diff --staged --quiet || (git commit -m "Cleanup old PR previews" && git push origin gh-pages)
 
