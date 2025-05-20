@@ -56,7 +56,6 @@ runs:
     - name: Get relevant environment configuration from aws secrets
       if: inputs.env_aws_secret_name != ''
       shell: bash
-      working-directory: ${{ inputs.dir }}
       env:
         AWS_DEFAULT_REGION: us-west-2
       run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}      

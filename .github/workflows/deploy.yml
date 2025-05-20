@@ -32,7 +32,7 @@ jobs:
     if: ${{ needs.define-environment.outputs.env_name }}
     needs: [define-environment]
     environment: ${{ needs.define-environment.outputs.env_name }}
-    concurrency: ${{ needs.define-environment.outputs.env_name }}
+    concurrency: ${{ needs.define-environment.outputs.env_name }}  
 
     steps:
       - name: Checkout
