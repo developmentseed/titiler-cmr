@@ -64,7 +64,7 @@ runs:
     - name: CDK Synth
       shell: bash
       working-directory: ${{ inputs.dir }}
-      run: uv run cdk synth --all --prefix infrastructure/aws
+      run: uv run npm run cdk -- synth
       
     - name: Deploy Test
       if: ${{ inputs.skip_deploy == 'false' }}
