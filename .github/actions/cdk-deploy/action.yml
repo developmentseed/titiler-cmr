@@ -61,15 +61,19 @@ runs:
         AWS_DEFAULT_REGION: us-west-2
       run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}      
 
+    - name: Install node dependencies
+      working-directory: infrastructure/aws
+      run: uv run npm install
+
     - name: CDK Synth
       shell: bash
       working-directory: infrastructure/aws
-      run: uv run npm run cdk -- synth --prefix infrastructure/aws
+      run: uv run npm run cdk -- synth
       
     - name: Deploy Test
       if: ${{ inputs.skip_deploy == 'false' }}
       id: deploy_titiler_cmr_stack              
-      run: uv run cdk deploy --all --require-approval never --prefix infrastructure/aws --outputs-file ${HOME}/cdk-outputs.json
+      run: uv run cdk deploy --all --require-approval never --outputs-file ${HOME}/cdk-outputs.json
       working-directory: infrastructure/aws
       shell: bash
       env:
