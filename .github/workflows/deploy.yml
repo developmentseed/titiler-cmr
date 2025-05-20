@@ -33,8 +33,6 @@ jobs:
     needs: [define-environment]
     environment: ${{ needs.define-environment.outputs.env_name }}
     concurrency: ${{ needs.define-environment.outputs.env_name }}
-    env:
-      DIRECTORY: titiler-cmr
 
     steps:
       - name: Checkout
@@ -52,7 +50,7 @@ jobs:
       - name: Run titiler-cmr deployment
         uses: "./.github/actions/cdk-deploy"
         with:
-          dir: "${{ env.DIRECTORY }}/infrastructure/aws"
+          dir: "./infrastructure/aws"
           env_aws_secret_name: ${{ vars.ENV_AWS_SECRET_NAME }}
           script_path: "./.github/workflows/generate_env_file.py"
     
