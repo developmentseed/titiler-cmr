@@ -1,0 +1,76 @@
+name: Deploy
+
+inputs:
+  env_aws_secret_name:
+    required: false
+    type: string
+    default: ''
+  dir:
+    required: false
+    type: string
+    default: "infrastructure/aws"
+  script_path:
+    required: true
+    type: string
+    default: ''
+  skip_deploy:
+    required: false
+    type: string
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install node and related deps
+      uses: actions/setup-node@v4
+      with:
+        node-version: 14
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install AWS CDK
+      shell: bash
+      run: npm install -g aws-cdk@2
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "0.5.*" 
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      run: |
+        uv sync
+        uv run npm install
+
+    - name: Get relevant environment configuration from aws secrets
+      if: inputs.env_aws_secret_name != ''
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      env:
+        AWS_DEFAULT_REGION: us-west-2
+      run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}      
+
+    - name: CDK Synth
+      shell: bash
+      working-directory: ${{ inputs.dir }}
+      run: uv run npm run cdk -- synth
+      
+    - name: Deploy Test
+      if: ${{ inputs.skip_deploy == 'false' }}
+      id: deploy_titiler_cmr_stack              
+      run: uv run cdk deploy --all --require-approval never --outputs-file ${HOME}/cdk-outputs.json
+      working-directory: ${{ inputs.dir }}
+      env:
+        STACK_ROLE_ARN: ${{ secrets.lambda_role_arn }}
+        STACK_STAGE: staging
+        STACK_ADDITIONAL_ENV: '{"TITILER_CMR_S3_AUTH_STRATEGY":"iam", "TITILER_CMR_API_DEBUG":"TRUE"}'
