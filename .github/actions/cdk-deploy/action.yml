@@ -63,19 +63,19 @@ runs:
 
     - name: Install node dependencies
       shell: bash
-      working-directory: infrastructure/aws
+      working-directory: ${{ inputs.dir }}
       run: uv run npm install
 
     - name: CDK Synth
       shell: bash
-      working-directory: infrastructure/aws
+      working-directory: ${{ inputs.dir }}
       run: uv run npm run cdk -- synth
       
     - name: Deploy Test
       if: ${{ inputs.skip_deploy == 'false' }}
-      id: deploy_titiler_cmr_stack              
+      id: deploy_titiler_cmr_stack
+      working-directory: ${{ inputs.dir }}
       run: uv run cdk deploy --all --require-approval never --outputs-file ${HOME}/cdk-outputs.json
-      working-directory: infrastructure/aws
       shell: bash
       env:
         TITILER_CMR_ROLE_ARN: $TITILER_CMR_READER_ROLE_ARN
