@@ -51,6 +51,7 @@ runs:
       run: |
         uv sync
         uv run npm install
+        uv run pip install boto3 # for the generate_env_file.py script
 
     - name: Get relevant environment configuration from aws secrets
       if: inputs.env_aws_secret_name != ''
