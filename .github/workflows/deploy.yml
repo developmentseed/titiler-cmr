@@ -49,7 +49,6 @@ jobs:
 
       - name: Run titiler-cmr deployment
         uses: "./.github/actions/cdk-deploy"
-        shell: bash
         with:
           env_aws_secret_name: ${{ vars.ENV_AWS_SECRET_NAME }}
           script_path: "./generate_env_file.py"
