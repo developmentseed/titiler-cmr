@@ -68,7 +68,7 @@ runs:
     - name: Deploy Test
       if: ${{ inputs.skip_deploy == 'false' }}
       id: deploy_titiler_cmr_stack              
-      run: uv run cdk deploy --all --require-approval never --outputs-file ${HOME}/cdk-outputs.json
+      run: uv run cdk deploy --all --require-approval never --prefix infrastructure/aws --outputs-file ${HOME}/cdk-outputs.json
       working-directory: ${{ inputs.dir }}
       shell: bash
       env:
