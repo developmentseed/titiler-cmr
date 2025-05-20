@@ -62,6 +62,7 @@ runs:
       run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}      
 
     - name: Install node dependencies
+      shell: bash
       working-directory: infrastructure/aws
       run: uv run npm install
 
