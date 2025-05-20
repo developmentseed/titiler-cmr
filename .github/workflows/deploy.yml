@@ -37,6 +37,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        ref: test-deploy
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -46,7 +47,7 @@ jobs:
           aws-region: us-west-2
 
       - name: Run titiler-cmr deployment
-        uses: ".github/actions/cdk-deploy"
+        uses: "./.github/actions/cdk-deploy"
         with:
           env_aws_secret_name: ${{ vars.ENV_AWS_SECRET_NAME }}
           script_path: "./generate_env_file.py"
