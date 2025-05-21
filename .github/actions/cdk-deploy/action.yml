@@ -89,7 +89,8 @@ runs:
       run: uv run cdk deploy --all --require-approval never --outputs-file ${HOME}/cdk-outputs.json
       shell: bash
       env:
-        TITILER_CMR_ROLE_ARN: ${{ env.TITILER_CMR_READER_ROLE_ARN }}
+        TITILER_CMR_ROLE_ARN: ${{ env.TITILER_CMR_ROLE_ARN }}
+        # TODO: remove this once in use with veda-deploy, which includes a `STAGE` variable in the deployment secrets
         TITILER_CMR_STAGE: test
         # TODO: are these being used?
         TITILER_CMR_ADDITIONAL_ENV: '{"TITILER_CMR_S3_AUTH_STRATEGY":"iam", "TITILER_CMR_API_DEBUG":"TRUE"}'
