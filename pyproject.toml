@@ -80,7 +80,7 @@ deployment = [
     "constructs>=10.4.2",
     "pydantic-settings~=2.0",
     "python-dotenv>=1.0.1",
-    "boto3>=1.29.62,<1.30.0"
+    "boto3>=1.30.0"
 ]
 
 [project.urls]
