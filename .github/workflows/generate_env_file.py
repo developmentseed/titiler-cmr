@@ -20,8 +20,6 @@ def get_cf_outs_as_env(stack_names, out_file):
 
 def get_secrets_as_env(secret_id, out_file):
     sm_client = boto3.client('secretsmanager')
-    print(f"Getting secrets from {secret_id}")
-    print(f"Writing to {out_file}")
     response = sm_client.get_secret_value(
         SecretId=secret_id
     )
