@@ -30,6 +30,12 @@ RUN rm -rdf /asset/numpy/doc/ /asset/bin /asset/geos_license /asset/Misc
 RUN rm -rdf /asset/boto3*
 RUN rm -rdf /asset/botocore*
 
+# Strip debug symbols from compiled C/C++ code (except for numpy.libs!)
+RUN cd /asset && \
+  find . -type f -name '*.so*' \
+  -not -path "./numpy.libs/*" \
+  -exec strip --strip-unneeded {} \;
+
 COPY infrastructure/aws/lambda/handler.py /asset/handler.py
 
 CMD ["echo", "hello world"]

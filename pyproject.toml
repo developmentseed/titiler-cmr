@@ -75,6 +75,12 @@ dev = [
     "pytest-benchmark>=5.1.0",
     "seaborn>=0.13.2",
 ]
+deployment = [
+    "aws-cdk-lib~=2.177.0",
+    "constructs>=10.4.2",
+    "pydantic-settings~=2.0",
+    "python-dotenv>=1.0.1"
+]
 
 [project.urls]
 Homepage = 'https://developmentseed.org/titiler-cmr/'

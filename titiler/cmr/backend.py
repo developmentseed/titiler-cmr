@@ -37,7 +37,7 @@ s3_auth_config = AuthSettings()
 
 @cached(  # type: ignore
     TTLCache(maxsize=100, ttl=60),
-    key=lambda auth, daac: hashkey(auth.tokens[0]["access_token"], daac),
+    key=lambda auth, daac: hashkey(auth.token["access_token"], daac),
 )
 def aws_s3_credential(auth: Auth, provider: str) -> Dict:
     """Get AWS S3 credential through earthaccess."""

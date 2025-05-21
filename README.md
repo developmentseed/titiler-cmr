@@ -95,6 +95,10 @@ TITILER_CMR_S3_AUTH_ACCESS=external uvicorn titiler.cmr.main:app --reload
 
 The application will be available at this address: [http://localhost:8000/api.html](http://localhost:8000/api.html)
 
+## Deployment to AWS
+
+Deployment to AWS is currently triggered using [veda-deploy](https://github.com/NASA-IMPACT/veda-deploy). veda-deploy checks out this repo as a submodule and then executes [.github/actions/cdk-deploy/action.yml](.github/actions/cdk-deploy/action.yml) (see also: [veda-deploy/.github/workflows/deploy.yml](https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml)). For more details, please review the [veda-deploy README section on adding new components](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components).
+
 ## Contribution & Development
 
 See [CONTRIBUTING.md](https://github.com/developmentseed/titiler-cmr/blob/develop/CONTRIBUTING.md)

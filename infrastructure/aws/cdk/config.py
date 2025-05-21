@@ -37,5 +37,5 @@ class StackSettings(BaseSettings):
     alarm_email: Optional[str] = None
 
     model_config = SettingsConfigDict(
-        env_prefix="STACK_", env_file=".env", extra="ignore"
+        env_prefix="TITILER_CMR_", env_file=".env", extra="ignore"
     )
