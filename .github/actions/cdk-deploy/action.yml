@@ -49,26 +49,20 @@ runs:
       shell: bash
       working-directory: ${{ inputs.dir }}
       run: |
-        uv sync
+        uv sync --only-group deployment
         uv run npm install
-        uv run pip install boto3 # for the generate_env_file.py script
 
     - name: Get relevant environment configuration from aws secrets
       if: inputs.env_aws_secret_name != ''
       shell: bash
       env:
         AWS_DEFAULT_REGION: us-west-2
-      run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}      
-
-    - name: Install node dependencies
-      shell: bash
-      working-directory: ${{ inputs.dir }}
-      run: uv run npm install
+      run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}
 
     - name: CDK Synth
       shell: bash
       working-directory: ${{ inputs.dir }}
-      run: uv run npm run cdk -- synth
+      run: uv run --only-group deployment npm run cdk -- synth
 
     - name: Check Asset Sizes
       shell: bash
