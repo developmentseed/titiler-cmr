@@ -58,7 +58,7 @@ runs:
       shell: bash
       env:
         AWS_DEFAULT_REGION: us-west-2
-      run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}
+      run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }} --env-file ${{ inputs.dir }}/.env
 
     - name: CDK Synth
       shell: bash
