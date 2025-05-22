@@ -43,6 +43,7 @@ class AppSettings(BaseSettings):
     # Default: - No specific limit - account limit.
     max_concurrent: Optional[int] = None
     alarm_email: Optional[str] = None
+    root_path: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_prefix="TITILER_CMR_", env_file=".env", extra="ignore"
