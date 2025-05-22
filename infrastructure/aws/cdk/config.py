@@ -1,11 +1,19 @@
 """STACK Configs."""
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Annotated
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class StackSettings(BaseSettings):
+    """Stack settings"""
+    veda_custom_host: Optional[str] = None
+
+    model_config = SettingsConfigDict(
+        env_file=".env", extra="ignore"
+    )
+
+class AppSettings(BaseSettings):
     """Application settings"""
 
     name: str = "titiler-cmr"
