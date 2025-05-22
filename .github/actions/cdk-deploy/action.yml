@@ -58,7 +58,9 @@ runs:
       working-directory: ${{ inputs.dir }}
       env:
         AWS_DEFAULT_REGION: us-west-2
-      run: uv run --only-group deployment ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }} --env-file ${{ inputs.dir }}/.env
+      run: |
+        touch ${{ inputs.dir }}/.env
+        uv run --only-group deployment ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}
 
     - name: CDK Synth
       shell: bash
