@@ -15,7 +15,7 @@ from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from config import StackSettings, AppSettings
 from constructs import Construct
 
-stack_settings, app_settings = AppSettings(), StackSettings()
+stack_settings, app_settings = StackSettings(), AppSettings()
 
 DEFAULT_ENV = {
     "GDAL_CACHEMAX": "200",  # 200 mb
