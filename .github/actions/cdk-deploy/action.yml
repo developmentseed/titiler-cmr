@@ -51,14 +51,13 @@ runs:
       run: |
         uv sync --only-group deployment
         uv run npm install
-        uv run pip install boto3 # for the generate_env_file.py script
 
     - name: Get relevant environment configuration from aws secrets
       if: inputs.env_aws_secret_name != ''
       shell: bash
       env:
         AWS_DEFAULT_REGION: us-west-2
-      run: python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }} --env-file ${{ inputs.dir }}/.env
+      run: uv run ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }} --env-file ${{ inputs.dir }}/.env
 
     - name: CDK Synth
       shell: bash
