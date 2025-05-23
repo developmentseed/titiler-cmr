@@ -12,10 +12,10 @@ from aws_cdk import aws_logs as logs
 from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as subscriptions
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
-from config import StackSettings
+from config import StackSettings, AppSettings
 from constructs import Construct
 
-settings = StackSettings()
+stack_settings, app_settings = StackSettings(), AppSettings()
 
 DEFAULT_ENV = {
     "GDAL_CACHEMAX": "200",  # 200 mb
@@ -77,6 +77,7 @@ class LambdaStack(Stack):
             environment={
                 **DEFAULT_ENV,
                 **environment,
+                "TITILER_CMR_ROOT_PATH": app_settings.root_path,
             },
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
@@ -89,12 +90,19 @@ class LambdaStack(Stack):
             self,
             f"{id}-endpoint",
             default_integration=HttpLambdaIntegration(
-                f"{id}-integration", lambda_function
+                f"{id}-integration",
+                lambda_function,
+                parameter_mapping=apigw.ParameterMapping().overwrite_header(
+                    "host",
+                    apigw.MappingValue(stack_settings.veda_custom_host),
+                )
+                if stack_settings.veda_custom_host
+                else None,
             ),
         )
 
         # Create an SNS Topic
-        if settings.alarm_email:
+        if app_settings.alarm_email:
             topic = sns.Topic(
                 self,
                 f"{id}-500-Errors",
@@ -103,7 +111,7 @@ class LambdaStack(Stack):
             )
             # Subscribe email to the topic
             topic.add_subscription(
-                subscriptions.EmailSubscription(settings.alarm_email),
+                subscriptions.EmailSubscription(app_settings.alarm_email),
             )
 
             # Create CloudWatch Alarm
@@ -130,30 +138,30 @@ class LambdaStack(Stack):
 app = App()
 
 perms = []
-if settings.buckets:
+if app_settings.buckets:
     perms.append(
         iam.PolicyStatement(
             actions=["s3:GetObject"],
-            resources=[f"arn:aws:s3:::{bucket}*" for bucket in settings.buckets],
+            resources=[f"arn:aws:s3:::{bucket}*" for bucket in app_settings.buckets],
         )
     )
 
 lambda_stack = LambdaStack(
     app,
-    f"{settings.name}-{settings.stage}",
-    memory=settings.memory,
-    timeout=settings.timeout,
-    concurrent=settings.max_concurrent,
-    role_arn=settings.role_arn,
+    f"{app_settings.name}-{app_settings.stage}",
+    memory=app_settings.memory,
+    timeout=app_settings.timeout,
+    concurrent=app_settings.max_concurrent,
+    role_arn=app_settings.role_arn,
     permissions=perms,
-    environment=settings.additional_env,
+    environment=app_settings.additional_env,
 )
 # Tag infrastructure
 for key, value in {
-    "Project": settings.name,
-    "Stack": settings.stage,
-    "Owner": settings.owner,
-    "Client": settings.client,
+    "Project": app_settings.name,
+    "Stack": app_settings.stage,
+    "Owner": app_settings.owner,
+    "Client": app_settings.client,
 }.items():
     if value:
         Tags.of(lambda_stack).add(key, value)

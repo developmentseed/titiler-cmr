@@ -17,7 +17,7 @@ services:
       - HOST=0.0.0.0
       - PORT=8081
       - WEB_CONCURRENCY=1
-      - TITILER_CMR_API_DEBUG=TRUE
+      - TITILER_CMR_DEBUG=TRUE
       - TITILER_CMR_S3_AUTH_STRATEGY=iam
       - TITILER_CMR_S3_AUTH_ACCESS=external
       # earthdata authentication
