@@ -30,7 +30,6 @@ jinja2_env = jinja2.Environment(
 templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
-app_settings = AppSettings()
 auth_config = AuthSettings()
 
 
