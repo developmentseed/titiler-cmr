@@ -21,7 +21,7 @@ class ApiSettings(BaseSettings):
     debug: bool = False
 
     model_config = {
-        "env_prefix": "TITILER_CMR_API_",
+        "env_prefix": "TITILER_CMR_",
         "env_file": ".env",
         "extra": "ignore",
     }
@@ -63,7 +63,7 @@ class RetrySettings(BaseSettings):
     delay: Annotated[float, Field(ge=0.0)] = 0.0
 
     model_config = {
-        "env_prefix": "TITILER_CMR_API_",
+        "env_prefix": "TITILER_CMR_",
         "env_file": ".env",
         "extra": "ignore",
     }
