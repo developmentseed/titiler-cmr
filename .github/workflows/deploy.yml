@@ -52,5 +52,5 @@ jobs:
         with:
           dir: "./infrastructure/aws"
           env_aws_secret_name: ${{ vars.ENV_AWS_SECRET_NAME }}
-          script_path: "./.github/workflows/generate_env_file.py"
+          script_path: "../../.github/workflows/generate_env_file.py"
     
