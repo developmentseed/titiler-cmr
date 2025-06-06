@@ -13,8 +13,6 @@ jobs:
   deploy:
     name: Deploy to dev 🚀
     runs-on: ubuntu-latest
-    if: ${{ needs.define-environment.outputs.env_name }}
-    environment: dev
 
     steps:
       - name: Checkout
