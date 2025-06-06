@@ -52,14 +52,6 @@ runs:
         uv sync --only-group deployment
         uv run npm install
 
-    - name: Get relevant environment configuration from aws secrets
-      if: inputs.env_aws_secret_name != ''
-      shell: bash
-      working-directory: ${{ inputs.dir }}
-      env:
-        AWS_DEFAULT_REGION: us-west-2
-      run: uv run --only-group deployment ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}
-
     - name: CDK Synth
       shell: bash
       working-directory: ${{ inputs.dir }}
