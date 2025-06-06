@@ -10,29 +10,11 @@ on:
       - feat/add-dev-deploy
 
 jobs:
-  define-environment:
-    name: Set ✨ environment ✨
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set the environment based on the branch
-        id: define_environment
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/feat/add-dev-deploy" ]; then
-            echo "env_name=staging" >> $GITHUB_OUTPUT
-          fi
-      - name: Print the environment
-        run: echo "The environment is ${{ steps.define_environment.outputs.env_name }}"
-
-    outputs:
-      env_name: ${{ steps.define_environment.outputs.env_name }}
-
   deploy:
-    name: Deploy to ${{ needs.define-environment.outputs.env_name }} 🚀
+    name: Deploy to dev 🚀
     runs-on: ubuntu-latest
     if: ${{ needs.define-environment.outputs.env_name }}
-    needs: [define-environment]
-    environment: ${{ needs.define-environment.outputs.env_name }}
-    concurrency: ${{ needs.define-environment.outputs.env_name }}  
+    environment: dev
 
     steps:
       - name: Checkout
@@ -51,6 +33,7 @@ jobs:
         uses: "./.github/actions/cdk-deploy"
         with:
           dir: "./infrastructure/aws"
-          env_aws_secret_name: ${{ vars.ENV_AWS_SECRET_NAME }}
-          script_path: "../../.github/workflows/generate_env_file.py"
-    
+        env:
+          TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
+          TITILER_CMR_STAGE: dev
+          TITILER_CMR_ROOT_PATH: ''
