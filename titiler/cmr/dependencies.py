@@ -166,31 +166,7 @@ class RasterioParams(DefaultDependency):
         ),
     ] = None
 
-
-@dataclass
-class ZarrParams(DefaultDependency):
-    """Zarr backend parameters"""
-
-    variable: Annotated[
-        Optional[str],
-        Query(description="Xarray Variable"),
-    ] = None
-    drop_dim: Annotated[
-        Optional[str],
-        Query(description="Dimension to drop"),
-    ] = None
-    time_slice: Annotated[
-        Optional[str], Query(description="Slice of time to read (if available)")
-    ] = None
-    decode_times: Annotated[
-        Optional[bool],
-        Query(
-            title="decode_times",
-            description="Whether to decode times",
-        ),
-    ] = None
-
-
+# TODO:can we replace this with titiler.xarray.dependencies.DatasetParams?
 @dataclass
 class ReaderParams(DefaultDependency):
     """Reader parameters"""

@@ -115,7 +115,6 @@ def test_rasterio_tilejson(app, rasterio_query_params):
             "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
         },
     )
-
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
 
@@ -240,10 +239,10 @@ def test_xarray_statistics(
     assert len(stats) == 1
 
     # numbers corroborated by QGIS zonal stats for this file and polygon
-    variable = xarray_query_params["variable"]
-    assert round(stats[variable]["median"], 1) == 0.8
-    assert round(stats[variable]["sum"]) == 2420
-    assert round(stats[variable]["mean"], 2) == 0.53
+    stats = list(stats.values())[0]
+    assert round(stats["median"], 1) == 0.8
+    assert round(stats["sum"]) == 2420
+    assert round(stats["mean"], 2) == 0.53
 
 
 @pytest.mark.vcr
