@@ -70,6 +70,7 @@ def xarray_open_dataset(
     decode_times: Optional[bool] = True,
     s3_credentials: Optional[Dict] = None,
 ) -> xarray.Dataset:
+    # TODO: can we import the internals of titiler.xarray.io.xarray_open_dataset?
     """Modified version of titiler.xarray.io.xarray_open_dataset with
     custom handler for earthaccess authentication over https
     """
