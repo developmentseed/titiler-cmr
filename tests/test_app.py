@@ -103,6 +103,7 @@ def test_conformance(app):
     assert "text/html" in response.headers["content-type"]
     assert "Conformance" in response.text
 
+
 @pytest.mark.vcr
 def test_rasterio_tilejson(app, rasterio_query_params):
     """Test /tilejson.json endpoint for rasterio backend"""
@@ -558,4 +559,3 @@ def test_timeseries_bbox_limit(
     )
 
     assert response.status_code == 400
-

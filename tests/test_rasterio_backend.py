@@ -6,8 +6,6 @@ from typing import Tuple
 import pytest
 from rasterio.errors import NotGeoreferencedWarning
 
-from titiler.cmr.timeseries import TimeseriesMediaType
-
 
 @pytest.mark.vcr
 def test_rasterio_tilejson(app, rasterio_query_params):

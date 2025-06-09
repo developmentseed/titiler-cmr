@@ -1,7 +1,6 @@
 """Test titiler-cmr xarray backend."""
 
 import io
-import warnings
 from copy import deepcopy
 from datetime import datetime, timedelta
 from math import ceil
@@ -13,7 +12,6 @@ from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, Polygon
 from httpx import Response
 from PIL import Image
-from rasterio.errors import NotGeoreferencedWarning
 
 from titiler.cmr.timeseries import TimeseriesMediaType
 from titiler.core.models.mapbox import TileJSON
@@ -36,6 +34,7 @@ def test_xarray_tilejson(app, xarray_query_params):
 
     tilejson = response.json()
     assert tilejson["bounds"] == [-180.0, -90.0, 180.0, 90.0]
+
 
 @pytest.mark.vcr
 def test_xarray_tilejson_with_sel(app, xarray_query_params):

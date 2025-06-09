@@ -166,6 +166,7 @@ class RasterioParams(DefaultDependency):
         ),
     ] = None
 
+
 # TODO:can we replace this with titiler.xarray.dependencies.DatasetParams?
 @dataclass
 class ReaderParams(DefaultDependency):

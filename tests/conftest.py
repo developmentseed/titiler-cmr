@@ -136,6 +136,7 @@ def mn_geojson(mn_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
 @pytest.fixture(scope="session")
 def xarray_query_params() -> Dict[str, str]:
     """reusable set of query parameters for xarray backend requests"""
+
     def _xarray_query_params(
         concept_id: str = "C2036881735-POCLOUD",
         variable: str = "sea_ice_fraction",
@@ -151,6 +152,7 @@ def xarray_query_params() -> Dict[str, str]:
             **({"sel": sel} if sel else {}),
             **({"sel_method": sel_method} if sel_method else {}),
         }
+
     return _xarray_query_params
 
 

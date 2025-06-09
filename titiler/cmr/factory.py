@@ -173,6 +173,7 @@ def parse_reader_options(
 
     return reader, read_options, reader_options
 
+
 @define(kw_only=True)
 class Endpoints(TilerFactory):
     """Endpoints Factory."""
@@ -972,7 +973,7 @@ class Endpoints(TilerFactory):
                     if reader_params.backend == "xarray" and (
                         image.band_names == ["value"] or not image.band_names
                     ):
-                        image.band_names = [zarr_params.variable]
+                        image.band_names = [xarray_ds_params.variable]
 
                     stats = image.statistics(
                         **stats_params.as_dict(),

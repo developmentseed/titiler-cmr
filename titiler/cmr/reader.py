@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 import attr
 import earthaccess
 import fsspec
-import numpy
 import s3fs
 import xarray
 from cachetools import TTLCache
@@ -122,6 +121,7 @@ def xarray_open_dataset(
     cache_client[cache_key] = pickle.dumps(ds)
 
     return ds
+
 
 @attr.s
 class MultiFilesBandsReader(MultiBandReader):
