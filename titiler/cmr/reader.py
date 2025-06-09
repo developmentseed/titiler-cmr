@@ -123,69 +123,6 @@ def xarray_open_dataset(
 
     return ds
 
-
-def arrange_coordinates(da: xarray.DataArray) -> xarray.DataArray:
-    """
-    Arrange coordinates to DataArray.
-    An rioxarray.exceptions.InvalidDimensionOrder error is raised if the coordinates are not in the correct order time, y, and x.
-    See: https://github.com/corteva/rioxarray/discussions/674
-    We conform to using x and y as the spatial dimension names. You can do this a bit more elegantly with metpy but that is a heavy dependency.
-    """
-    if "x" not in da.dims and "y" not in da.dims:
-        latitude_var_name = "lat"
-        longitude_var_name = "lon"
-        if "latitude" in da.dims:
-            latitude_var_name = "latitude"
-        if "longitude" in da.dims:
-            longitude_var_name = "longitude"
-        da = da.rename({latitude_var_name: "y", longitude_var_name: "x"})
-    if "time" in da.dims:
-        da = da.transpose("time", "y", "x")
-    else:
-        da = da.transpose("y", "x")
-    return da
-
-
-def get_variable(
-    ds: xarray.Dataset,
-    variable: str,
-    time_slice: Optional[str] = None,
-    drop_dim: Optional[str] = None,
-) -> xarray.DataArray:
-    """Get Xarray variable as DataArray."""
-    da = ds[variable]
-    da = arrange_coordinates(da)
-    # TODO: add test
-    if drop_dim:
-        dim_to_drop, dim_val = drop_dim.split("=")
-        da = da.sel({dim_to_drop: dim_val}).drop(dim_to_drop)
-    da = arrange_coordinates(da)
-
-    if (da.x > 180).any():
-        # Adjust the longitude coordinates to the -180 to 180 range
-        da = da.assign_coords(x=(da.x + 180) % 360 - 180)
-
-        # Sort the dataset by the updated longitude coordinates
-        da = da.sortby(da.x)
-
-    # Make sure we have a valid CRS
-    crs = da.rio.crs or "epsg:4326"
-    da.rio.write_crs(crs, inplace=True)
-
-    if "time" in da.dims:
-        if time_slice:
-            time_as_str = time_slice.split("T")[0]
-            if da["time"].dtype == "O":
-                da["time"] = da["time"].astype("datetime64[ns]")
-            da = da.sel(
-                time=numpy.array(time_as_str, dtype=numpy.datetime64), method="nearest"
-            )
-        else:
-            da = da.isel(time=0)
-
-    return da
-
-
 @attr.s
 class MultiFilesBandsReader(MultiBandReader):
     """Multiple Files as Bands."""

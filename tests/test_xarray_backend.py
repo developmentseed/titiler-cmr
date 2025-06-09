@@ -1,4 +1,4 @@
-"""test titiler-cmr app."""
+"""Test titiler-cmr xarray backend."""
 
 import io
 import warnings
@@ -19,189 +19,6 @@ from titiler.cmr.timeseries import TimeseriesMediaType
 from titiler.core.models.mapbox import TileJSON
 
 
-def test_landing(app):
-    """Test / endpoint."""
-    response = app.get("/")
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["title"] == "titiler-cmr"
-    assert body["links"]
-
-    response = app.get("/?f=html")
-    assert response.status_code == 200
-    assert "text/html" in response.headers["content-type"]
-    assert "titiler-cmr" in response.text
-
-    # Check accept headers
-    response = app.get("/", headers={"accept": "text/html"})
-    assert response.status_code == 200
-    assert "text/html" in response.headers["content-type"]
-    assert "titiler-cmr" in response.text
-
-    # accept quality
-    response = app.get(
-        "/", headers={"accept": "application/json;q=0.9, text/html;q=1.0"}
-    )
-    assert response.status_code == 200
-    assert "text/html" in response.headers["content-type"]
-    assert "titiler-cmr" in response.text
-
-    # accept quality but only json is available
-    response = app.get("/", headers={"accept": "text/csv;q=1.0, application/json"})
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["title"] == "titiler-cmr"
-
-    # accept quality but only json is available
-    response = app.get("/", headers={"accept": "text/csv;q=1.0, */*"})
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["title"] == "titiler-cmr"
-
-    # Invalid accept, return default
-    response = app.get("/", headers={"accept": "text/htm"})
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["title"] == "titiler-cmr"
-    assert body["links"]
-
-    # make sure `?f=` has priority over headers
-    response = app.get("/?f=json", headers={"accept": "text/html"})
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["title"] == "titiler-cmr"
-
-
-def test_docs(app):
-    """Test /api endpoint."""
-    response = app.get("/api")
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["openapi"]
-
-    response = app.get("/api.html")
-    assert response.status_code == 200
-    assert "text/html" in response.headers["content-type"]
-
-
-def test_conformance(app):
-    """Test /conformance endpoint."""
-    response = app.get("/conformance")
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert body["conformsTo"]
-
-    response = app.get("/conformance?f=html")
-    assert response.status_code == 200
-    assert "text/html" in response.headers["content-type"]
-    assert "Conformance" in response.text
-
-@pytest.mark.vcr
-def test_rasterio_tilejson(app, rasterio_query_params):
-    """Test /tilejson.json endpoint for rasterio backend"""
-
-    response = app.get(
-        "/WebMercatorQuad/tilejson.json",
-        params={
-            **rasterio_query_params,
-            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
-        },
-    )
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
-
-    tilejson = response.json()
-    assert tilejson["bounds"] == [-180.0, -90.0, 180.0, 90.0]
-
-
-@pytest.mark.vcr
-def test_rasterio_statistics(app, mock_cmr_get_assets, mn_geojson):
-    """Test /statistics endpoint for a polygon that straddles the boundary between two HLS granules"""
-
-    concept_id = "C2021957657-LPCLOUD"
-    band = "Fmask"
-    datetime_range = "2024-10-09T00:00:01Z/2024-10-09T23:59:59Z"
-
-    with warnings.catch_warnings(record=True):
-        warnings.simplefilter("ignore", NotGeoreferencedWarning)
-
-        response = app.post(
-            "/statistics",
-            params={
-                "concept_id": concept_id,
-                "datetime": datetime_range,
-                "backend": "rasterio",
-                "bands_regex": band,
-                "bands": band,
-                "dst_crs": "epsg:32615",
-            },
-            json=mn_geojson,
-        )
-
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/geo+json"
-    resp = response.json()
-    stats = resp["properties"]["statistics"]
-    assert len(stats) == 1
-
-    # numbers corroborated by QGIS zonal stats for these files and polygon
-    assert stats[band]["majority"] == 64.0
-    assert stats[band]["minority"] == 96.0
-    assert stats[band]["sum"] == 19888616.0
-    assert round(stats[band]["count"]) == 273132
-
-
-@pytest.mark.vcr
-def test_rasterio_feature(
-    app, mock_cmr_get_assets, rasterio_query_params, mn_geojson
-) -> None:
-    """Test /feature endpoint for rasterio backend"""
-    with warnings.catch_warnings(record=True):
-        warnings.simplefilter("ignore", NotGeoreferencedWarning)
-
-        response = app.post(
-            "/feature",
-            params={
-                **rasterio_query_params,
-                "format": "tif",
-                "width": 100,
-                "height": 100,
-            },
-            json=mn_geojson,
-        )
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "image/tiff; application=geotiff"
-
-
-@pytest.mark.vcr
-def test_rasterio_part(
-    app,
-    mock_cmr_get_assets,
-    rasterio_query_params,
-    mn_bounds: Tuple[float, float, float, float],
-) -> None:
-    """Test /part endpoint for rasterio backend"""
-
-    with warnings.catch_warnings(record=True):
-        warnings.simplefilter("ignore", NotGeoreferencedWarning)
-        response = app.get(
-            f"/bbox/{','.join(str(coord) for coord in mn_bounds)}/100x100.tif",
-            params={
-                **rasterio_query_params,
-                "format": "tif",
-            },
-        )
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "image/tiff; application=geotiff"
-
-
 @pytest.mark.vcr
 def test_xarray_tilejson(app, xarray_query_params):
     """Test /tilejson.json endpoint for xarray backend"""
@@ -211,6 +28,29 @@ def test_xarray_tilejson(app, xarray_query_params):
         params={
             **xarray_query_params(),
             "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+
+    tilejson = response.json()
+    assert tilejson["bounds"] == [-180.0, -90.0, 180.0, 90.0]
+
+@pytest.mark.vcr
+def test_xarray_tilejson_with_sel(app, xarray_query_params):
+    """Test /tilejson.json endpoint for xarray backend"""
+
+    response = app.get(
+        "/WebMercatorQuad/tilejson.json",
+        params={
+            **xarray_query_params(
+                concept_id="C2837626477-GES_DISC",
+                variable="o3",
+                datetime="2010-01-01T00:00:00",
+                sel=["time=2010-10-01T00:00:00", "lev=1000"],
+                sel_method="nearest",
+            ),
         },
     )
 
@@ -558,4 +398,3 @@ def test_timeseries_bbox_limit(
     )
 
     assert response.status_code == 400
-
