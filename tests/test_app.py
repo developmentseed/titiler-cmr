@@ -1,23 +1,5 @@
 """test titiler-cmr app."""
 
-import io
-import warnings
-from copy import deepcopy
-from datetime import datetime, timedelta
-from math import ceil
-from pathlib import Path
-from typing import Tuple
-
-import pytest
-from fastapi.testclient import TestClient
-from geojson_pydantic import Feature, Polygon
-from httpx import Response
-from PIL import Image
-from rasterio.errors import NotGeoreferencedWarning
-
-from titiler.cmr.timeseries import TimeseriesMediaType
-from titiler.core.models.mapbox import TileJSON
-
 
 def test_landing(app):
     """Test / endpoint."""
