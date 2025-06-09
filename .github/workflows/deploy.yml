@@ -12,7 +12,7 @@ on:
         required: true
         default: 'develop'
   pull_request:
-    types: [labeled]
+    types: [labeled, synchronize]
 
 jobs:
   deploy:
