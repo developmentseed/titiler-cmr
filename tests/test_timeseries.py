@@ -164,27 +164,27 @@ def test_timeseries_query(
     arctic_bounds: Tuple[float, float, float, float],
 ) -> None:
     """Test timeseries_query"""
-    start_datetime, end_datetime = xarray_query_params["datetime"].split("/")
+    start_datetime, end_datetime = xarray_query_params()["datetime"].split("/")
     query = timeseries_cmr_query(
-        concept_id=xarray_query_params["concept_id"],
+        concept_id=xarray_query_params()["concept_id"],
         timeseries_params=TimeseriesParams(
-            datetime=xarray_query_params["datetime"],
+            datetime=xarray_query_params()["datetime"],
             step="P1D",
         ),
     )
     assert len(query) == 1
 
     query = timeseries_cmr_query(
-        concept_id=xarray_query_params["concept_id"],
+        concept_id=xarray_query_params()["concept_id"],
         timeseries_params=TimeseriesParams(
-            datetime=xarray_query_params["datetime"],
+            datetime=xarray_query_params()["datetime"],
             step="PT1H",
         ),
     )
     assert len(query) == 24
 
     query = timeseries_cmr_query(
-        concept_id=xarray_query_params["concept_id"],
+        concept_id=xarray_query_params()["concept_id"],
         timeseries_params=TimeseriesParams(
             datetime=f"{start_datetime}/2024-10-31T23:59:59Z",
             step="P1W",
@@ -195,9 +195,9 @@ def test_timeseries_query(
     # no step parameter will force a CMR query to get unique
     # datetimes from available granules
     query = timeseries_cmr_query(
-        concept_id=xarray_query_params["concept_id"],
+        concept_id=xarray_query_params()["concept_id"],
         timeseries_params=TimeseriesParams(
-            datetime=xarray_query_params["datetime"],
+            datetime=xarray_query_params()["datetime"],
         ),
     )
     assert len(query) == 1
@@ -207,7 +207,7 @@ def test_timeseries_query(
     query = timeseries_cmr_query(
         concept_id=geographically_limited_concept_id,
         timeseries_params=TimeseriesParams(
-            datetime=xarray_query_params["datetime"],
+            datetime=xarray_query_params()["datetime"],
         ),
         minx=-100,
         miny=30,
@@ -220,7 +220,7 @@ def test_timeseries_query(
     query = timeseries_cmr_query(
         concept_id=geographically_limited_concept_id,
         timeseries_params=TimeseriesParams(
-            datetime=xarray_query_params["datetime"],
+            datetime=xarray_query_params()["datetime"],
         ),
         minx=1,
         miny=1,
@@ -239,7 +239,7 @@ def test_timeseries_query_unbounded_intervals(
     # expect an error if an interval is provided with an unbounded start datetime
     with pytest.raises(HTTPException):
         timeseries_cmr_query(
-            concept_id=xarray_query_params["concept_id"],
+            concept_id=xarray_query_params()["concept_id"],
             timeseries_params=TimeseriesParams(
                 datetime="../2024-01-01T00:00:00Z",
                 step="P1W",
@@ -247,7 +247,7 @@ def test_timeseries_query_unbounded_intervals(
         )
 
     unbounded_query = timeseries_cmr_query(
-        concept_id=xarray_query_params["concept_id"],
+        concept_id=xarray_query_params()["concept_id"],
         timeseries_params=TimeseriesParams(
             datetime="2024-01-01T00:00:00Z/..",
             step="P1W",
@@ -263,7 +263,7 @@ def test_timeseries_mixed_datetime(
 ) -> None:
     """Test comma-separated mixed points and intervals"""
     mixed_query = timeseries_cmr_query(
-        concept_id=xarray_query_params["concept_id"],
+        concept_id=xarray_query_params()["concept_id"],
         timeseries_params=TimeseriesParams(
             datetime="2023-01-01T00:00:00Z,2024-01-01T00:00:00Z/2024-01-05T00:00:00Z",
             step="P1D",
