@@ -10,7 +10,7 @@ on:
       branch:
         description: 'Branch to deploy'
         required: true
-        default: 'main'
+        default: 'develop'
   pull_request:
     types: [labeled]
 
