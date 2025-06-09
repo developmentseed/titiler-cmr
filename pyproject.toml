@@ -24,7 +24,7 @@ classifiers = [
 dependencies = [
     "titiler.core>=0.22.0,<0.23",
     "titiler.mosaic>=0.22.0,<0.23",
-    "titiler.xarray>=0.22.0,<0.23",
+    "titier.xarray@git+https://github.com/developmentseed/titiler.git@ab/add-sel-by-datetime-to-xarray",
     "cftime~=1.6.4",
     "earthaccess~=0.11.0",
     "fsspec~=2024.9.0",
