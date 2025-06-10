@@ -3919,7 +3919,7 @@ requires-dist = [
     { name = "s3fs", specifier = "~=2024.9.0" },
     { name = "titiler-core", specifier = ">=0.22.0,<0.23" },
     { name = "titiler-mosaic", specifier = ">=0.22.0,<0.23" },
-    { name = "titiler-xarray", specifier = ">=0.22.0,<0.23" },
+    { name = "titiler-xarray", git = "https://github.com/developmentseed/titiler.git?subdirectory=src%2Ftitiler%2Fxarray&rev=ab%2Fadd-sel-by-datetime-to-xarray" },
     { name = "uvicorn", marker = "extra == 'uvicorn'" },
     { name = "xarray", specifier = "~=2024.9.0" },
 ]
@@ -3995,16 +3995,12 @@ wheels = [
 [[package]]
 name = "titiler-xarray"
 version = "0.22.2"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/developmentseed/titiler.git?subdirectory=src%2Ftitiler%2Fxarray&rev=ab%2Fadd-sel-by-datetime-to-xarray#cfac52c6328212a05549ff07612ac8001fda2f4c" }
 dependencies = [
     { name = "rio-tiler" },
     { name = "rioxarray" },
     { name = "titiler-core" },
     { name = "xarray" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/55/19/47eb0c4657dcefd23f36053e2fc0c186f2a5918c5c8e2b9fa3014e23c3d8/titiler_xarray-0.22.2.tar.gz", hash = "sha256:ce1ae35618cbe2de8037dfc00d49ea73037786baa543b4c1c796908258be8456", size = 10566 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/76/999e229fbffe3496a498427956877b2f5ca55acc0fafba85bebb2f397dfe/titiler_xarray-0.22.2-py3-none-any.whl", hash = "sha256:5e9a5e1e0703d045c3ea5a32fa8540b6f1a675cbeffad08d2505b9e634925e51", size = 11424 },
 ]
 
 [[package]]
