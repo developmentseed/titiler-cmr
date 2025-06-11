@@ -37,7 +37,7 @@ class LambdaStack(Stack):
         self,
         scope: Construct,
         id: str,
-        memory: int = 10240,
+        memory: int = 1024,
         timeout: int = 30,
         runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_10,
         concurrent: Optional[int] = None,
