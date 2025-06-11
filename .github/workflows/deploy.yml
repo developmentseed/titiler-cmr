@@ -1,0 +1,57 @@
+name: CDK Deploy Dev Workflow 🚀
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'develop'
+  pull_request:
+    types: [labeled, synchronize]
+
+jobs:
+  deploy:
+    name: Deploy to dev 🚀
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name != 'pull_request' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-dev'))    
+
+    steps:
+      - name: Determine branch to deploy
+        id: set_branch
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.set_branch.outputs.branch }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.deploy_role_arn }}
+          role-session-name: test-deploy
+          aws-region: us-west-2
+
+      - name: Run titiler-cmr deployment
+        uses: "./.github/actions/cdk-deploy"
+        with:
+          dir: "./infrastructure/aws"
+          env_aws_secret_name: ""
+        env:
+          TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
+          TITILER_CMR_STAGE: dev
+          TITILER_CMR_ROOT_PATH: ''

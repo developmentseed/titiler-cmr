@@ -99,6 +99,10 @@ The application will be available at this address: [http://localhost:8000/api.ht
 
 Deployment to AWS is currently triggered using [veda-deploy](https://github.com/NASA-IMPACT/veda-deploy). veda-deploy checks out this repo as a submodule and then executes [.github/actions/cdk-deploy/action.yml](.github/actions/cdk-deploy/action.yml) (see also: [veda-deploy/.github/workflows/deploy.yml](https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml)). For more details, please review the [veda-deploy README section on adding new components](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components).
 
+### Deployment to a development/test instance
+
+You can trigger a deploy to a "dev" stack (cloudformation stack name should be `titiler-cmr-dev`) in the VEDA SMCE account by labeling a PR with the "deploy-dev" tag. This stack is intended for testing new features.
+
 ## Contribution & Development
 
 See [CONTRIBUTING.md](https://github.com/developmentseed/titiler-cmr/blob/develop/CONTRIBUTING.md)
