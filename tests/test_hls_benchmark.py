@@ -8,7 +8,7 @@ import httpx
 import morecantile
 import pytest
 
-ENDPOINT = "https://dev-titiler-cmr.delta-backend.com"
+ENDPOINT = "https://staging.openveda.cloud/api/titiler-cmr"
 TMS = morecantile.tms.get("WebMercatorQuad")
 TEST_LNG, TEST_LAT = -92.1, 46.8
 TILES_HEIGHT = 5
