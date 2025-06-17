@@ -12,7 +12,7 @@ COPY titiler/ titiler/
 # Install dependencies
 
 # Install system dependencies to compile (numexpr)
-RUN yum install -y gcc-c++ git
+RUN yum install -y gcc-c++
 # HACK: aiobotocore has a tight botocore dependency
 # https://github.com/aio-libs/aiobotocore/issues/862
 # and becaise we NEED to remove both boto3 and botocore to save space for the package
