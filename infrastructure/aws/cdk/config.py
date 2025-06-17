@@ -9,6 +9,7 @@ class StackSettings(BaseSettings):
     """Stack settings"""
 
     veda_custom_host: Optional[str] = None
+    stage: str = "production"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -17,7 +18,6 @@ class AppSettings(BaseSettings):
     """Application settings"""
 
     name: str = "titiler-cmr"
-    stage: str = "production"
 
     owner: Optional[str] = None
     client: Optional[str] = None
