@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from math import ceil
 from pathlib import Path
 from typing import Tuple
+from urllib.parse import urlencode
 
 import pytest
 from fastapi.testclient import TestClient
@@ -39,6 +40,9 @@ def test_xarray_tilejson(app, xarray_query_params):
 @pytest.mark.vcr
 def test_xarray_tilejson_with_sel(app, xarray_query_params):
     """Test /tilejson.json endpoint for xarray backend"""
+    datetime = "2010-01-01T00:00:00"
+    sel = [f"time={datetime}", "lev=1000"]
+    sel_method = "nearest"
 
     response = app.get(
         "/WebMercatorQuad/tilejson.json",
@@ -46,9 +50,9 @@ def test_xarray_tilejson_with_sel(app, xarray_query_params):
             **xarray_query_params(
                 concept_id="C2837626477-GES_DISC",
                 variable="o3",
-                datetime="2010-01-01T00:00:00",
-                sel=["time=2010-10-01T00:00:00", "lev=1000"],
-                sel_method="nearest",
+                datetime=datetime,
+                sel=sel,
+                sel_method=sel_method,
             ),
         },
     )
@@ -57,7 +61,9 @@ def test_xarray_tilejson_with_sel(app, xarray_query_params):
     assert response.headers["content-type"] == "application/json"
 
     tilejson = response.json()
-    assert tilejson["bounds"] == [-180.0, -90.0, 180.0, 90.0]
+    assert urlencode({"sel": sel[0]}) in tilejson["tiles"][0]
+    assert urlencode({"sel": sel[1]}) in tilejson["tiles"][0]
+    assert urlencode({"sel_method": sel_method}) in tilejson["tiles"][0]
 
 
 @pytest.mark.vcr
