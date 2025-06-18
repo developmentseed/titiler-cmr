@@ -30,7 +30,6 @@ from titiler.cmr.dependencies import (
     OutputType,
     RasterioParams,
     ReaderParams,
-    ZarrParams,
     cmr_query,
 )
 from titiler.cmr.enums import MediaType
@@ -50,6 +49,7 @@ from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
 from titiler.xarray.io import Reader as XarrayReader
+from titiler.xarray.dependencies import XarrayIOParams, CompatXarrayParams
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
@@ -112,7 +112,8 @@ def create_html_response(
 
 def parse_reader_options(
     rasterio_params: RasterioParams,
-    zarr_params: ZarrParams,
+    xarray_io_params: XarrayIOParams,
+    xarray_ds_params: CompatXarrayParams,
     reader_params: ReaderParams,
     image_params: Optional[PartFeatureParams] = None,
 ) -> Tuple[Type[BaseReader], Dict[str, Any], Dict[str, Any]]:
@@ -131,10 +132,8 @@ def parse_reader_options(
 
         options = {
             "opener": xarray_open_dataset,
-            "variable": zarr_params.variable,
-            "decode_times": zarr_params.decode_times,
-            "drop_dim": zarr_params.drop_dim,
-            "time_slice": zarr_params.time_slice,
+            **xarray_io_params.as_dict(),
+            **xarray_ds_params.as_dict(),
         }
         reader_options = {k: v for k, v in options.items() if v is not None}
     else:
@@ -182,7 +181,8 @@ class Endpoints(TilerFactory):
     reader: Optional[Type[BaseReader]] = field(default=None)  # type: ignore
     supported_tms: TileMatrixSets = default_tms
 
-    zarr_dependency: Type[DefaultDependency] = ZarrParams
+    xarray_io_params: Type[DefaultDependency] = XarrayIOParams
+    xarray_ds_params: Type[DefaultDependency] = CompatXarrayParams
     rasterio_dependency: Type[DefaultDependency] = RasterioParams
     reader_dependency: Type[DefaultDependency] = ReaderParams
     stats_dependency: Type[DefaultDependency] = StatisticsParams
@@ -497,7 +497,8 @@ class Endpoints(TilerFactory):
                 Optional[ImageType],
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = None,
-            zarr_params=Depends(self.zarr_dependency),
+            xarray_io_params=Depends(self.xarray_io_params),
+            xarray_ds_params=Depends(self.xarray_ds_params),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
@@ -520,7 +521,8 @@ class Endpoints(TilerFactory):
 
             reader, read_options, reader_options = parse_reader_options(
                 rasterio_params=rasterio_params,
-                zarr_params=zarr_params,
+                xarray_io_params=xarray_io_params,
+                xarray_ds_params=xarray_ds_params,
                 reader_params=reader_params,
             )
 
@@ -588,7 +590,8 @@ class Endpoints(TilerFactory):
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-            zarr_params=Depends(self.zarr_dependency),
+            xarray_io_params=Depends(self.xarray_io_params),
+            xarray_ds_params=Depends(self.xarray_ds_params),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(available_algorithms.dependency),
@@ -647,7 +650,7 @@ class Endpoints(TilerFactory):
         """Register map endpoints."""
 
         @self.router.get(
-            "/{tileMatrixSetId}/map",
+            "/{tileMatrixSetId}/map.html",
             response_class=HTMLResponse,
             responses={200: {"description": "Return a Map document"}},
             tags=["Map"],
@@ -667,7 +670,8 @@ class Endpoints(TilerFactory):
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-            zarr_params=Depends(self.zarr_dependency),
+            xarray_io_params=Depends(self.xarray_io_params),
+            xarray_ds_params=Depends(self.xarray_ds_params),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             ###################################################################
@@ -740,7 +744,8 @@ class Endpoints(TilerFactory):
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(self.rasterio_dependency),
-            zarr_params=Depends(self.zarr_dependency),
+            xarray_io_params=Depends(self.xarray_io_params),
+            xarray_ds_params=Depends(self.xarray_ds_params),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             image_params=Depends(self.img_part_dependency),
@@ -750,7 +755,8 @@ class Endpoints(TilerFactory):
             """Create image from a bbox."""
             reader, read_options, reader_options = parse_reader_options(
                 rasterio_params=rasterio_params,
-                zarr_params=zarr_params,
+                xarray_io_params=xarray_io_params,
+                xarray_ds_params=xarray_ds_params,
                 reader_params=reader_params,
                 image_params=image_params,
             )
@@ -824,7 +830,8 @@ class Endpoints(TilerFactory):
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(self.rasterio_dependency),
-            zarr_params=Depends(self.zarr_dependency),
+            xarray_io_params=Depends(self.xarray_io_params),
+            xarray_ds_params=Depends(self.xarray_ds_params),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             image_params=Depends(self.img_part_dependency),
@@ -834,7 +841,8 @@ class Endpoints(TilerFactory):
             """Create image from a geojson feature."""
             reader, read_options, reader_options = parse_reader_options(
                 rasterio_params=rasterio_params,
-                zarr_params=zarr_params,
+                xarray_io_params=xarray_io_params,
+                xarray_ds_params=xarray_ds_params,
                 reader_params=reader_params,
                 image_params=image_params,
             )
@@ -906,7 +914,8 @@ class Endpoints(TilerFactory):
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(self.rasterio_dependency),
-            zarr_params=Depends(self.zarr_dependency),
+            xarray_io_params=Depends(self.xarray_io_params),
+            xarray_ds_params=Depends(self.xarray_ds_params),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             stats_params=Depends(self.stats_dependency),
@@ -920,7 +929,8 @@ class Endpoints(TilerFactory):
 
             reader, read_options, reader_options = parse_reader_options(
                 rasterio_params=rasterio_params,
-                zarr_params=zarr_params,
+                xarray_io_params=xarray_io_params,
+                xarray_ds_params=xarray_ds_params,
                 reader_params=reader_params,
                 image_params=image_params,
             )
@@ -963,7 +973,7 @@ class Endpoints(TilerFactory):
                     if reader_params.backend == "xarray" and (
                         image.band_names == ["value"] or not image.band_names
                     ):
-                        image.band_names = [zarr_params.variable]
+                        image.band_names = [xarray_ds_params.variable]
 
                     stats = image.statistics(
                         **stats_params.as_dict(),

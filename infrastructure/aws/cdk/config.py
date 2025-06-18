@@ -34,7 +34,7 @@ class AppSettings(BaseSettings):
     key: str = "*"
 
     timeout: int = 30
-    memory: int = 3009
+    memory: int = 10240
 
     role_arn: Optional[str] = None
 
