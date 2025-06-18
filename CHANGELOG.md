@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Internal Changes
 - Added github workflow for deploying to a dev stack: https://github.com/developmentseed/titiler-cmr/pull/51
 - Modifications to github workflow to support deployment via [github.com/NASA-IMPACT/veda-deploy](https://github.com/NASA-IMPACT/veda-deploy): https://github.com/developmentseed/titiler-cmr/pull/47, https://github.com/developmentseed/titiler-cmr/pull/48
+- Modifications to deployment environment variables `STAGE` and `AWS_REQUEST_PAYER` via `additional_env` in `StackSettings`: https://github.com/developmentseed/titiler-cmr/pull/55
 
 ## [0.1.3]
 
