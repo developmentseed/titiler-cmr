@@ -159,7 +159,7 @@ lambda_stack = LambdaStack(
 # Tag infrastructure
 for key, value in {
     "Project": app_settings.name,
-    "Stack": app_settings.stage,
+    "Stack": stack_settings.stage,
     "Owner": app_settings.owner,
     "Client": app_settings.client,
 }.items():
