@@ -154,7 +154,7 @@ lambda_stack = LambdaStack(
     concurrent=app_settings.max_concurrent,
     role_arn=app_settings.role_arn,
     permissions=perms,
-    environment=app_settings.additional_env,
+    environment=stack_settings.additional_env,
 )
 # Tag infrastructure
 for key, value in {
