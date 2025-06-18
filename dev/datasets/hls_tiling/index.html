@@ -1710,13 +1710,13 @@ Based on this analysis we recommend these configuration limits:</p>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">httpx</span>
 <span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">LayerControl</span><span class="p">,</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
 
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://dev-titiler-cmr.delta-backend.com"</span>
+<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>
 <span class="n">minzoom</span> <span class="o">=</span> <span class="mi">7</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import httpx
 from folium import LayerControl, Map, TileLayer
 
-titiler_endpoint = "https://dev-titiler-cmr.delta-backend.com"
+titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"
 minzoom = 7</div>
 </div>
 </div>
@@ -2004,7 +2004,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_c850f8465c0b971b0f63a4bcd90f50c7 {
+                #map_a0275e9b8e6148c3fe16f55cd0168cd5 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2018,14 +2018,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_c850f8465c0b971b0f63a4bcd90f50c7" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_a0275e9b8e6148c3fe16f55cd0168cd5" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_c850f8465c0b971b0f63a4bcd90f50c7 = L.map(
-                "map_c850f8465c0b971b0f63a4bcd90f50c7",
+            var map_a0275e9b8e6148c3fe16f55cd0168cd5 = L.map(
+                "map_a0275e9b8e6148c3fe16f55cd0168cd5",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2039,51 +2039,51 @@ m</div>
 
         
     
-            var tile_layer_93cfc9535a2ec95c1bbad8a93cf6bb6f = L.tileLayer(
+            var tile_layer_eb5f577963a7eb5a1cef98d5aab75eaf = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_93cfc9535a2ec95c1bbad8a93cf6bb6f.addTo(map_c850f8465c0b971b0f63a4bcd90f50c7);
+            tile_layer_eb5f577963a7eb5a1cef98d5aab75eaf.addTo(map_a0275e9b8e6148c3fe16f55cd0168cd5);
         
     
-            var tile_layer_a8ee812215bd0fbab380dafe8428f4fb = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
+            var tile_layer_0458b93d073a3c9d4e315f11c98b3208 = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_a8ee812215bd0fbab380dafe8428f4fb.addTo(map_c850f8465c0b971b0f63a4bcd90f50c7);
+            tile_layer_0458b93d073a3c9d4e315f11c98b3208.addTo(map_a0275e9b8e6148c3fe16f55cd0168cd5);
         
     
-            var tile_layer_89de36485bbb567c978f2e39116f53f7 = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
+            var tile_layer_ebd28c5980ede8aaf26096cf246da009 = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var tile_layer_1f7a3a3060f08993df37d5b79f4fdabf = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
+            var tile_layer_fbb1ba0b1954184451c792e9b9fc253a = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var layer_control_6b828a3088ee07a15d972b97aafa051f_layers = {
+            var layer_control_58b8edd329e07e6a3411fa3ec2ce3e65_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_93cfc9535a2ec95c1bbad8a93cf6bb6f,
+                    "openstreetmap" : tile_layer_eb5f577963a7eb5a1cef98d5aab75eaf,
                 },
                 overlays :  {
-                    "HLSL30 true color" : tile_layer_a8ee812215bd0fbab380dafe8428f4fb,
-                    "HLSL30 false color" : tile_layer_89de36485bbb567c978f2e39116f53f7,
-                    "HLSL30 NDVI" : tile_layer_1f7a3a3060f08993df37d5b79f4fdabf,
+                    "HLSL30 true color" : tile_layer_0458b93d073a3c9d4e315f11c98b3208,
+                    "HLSL30 false color" : tile_layer_ebd28c5980ede8aaf26096cf246da009,
+                    "HLSL30 NDVI" : tile_layer_fbb1ba0b1954184451c792e9b9fc253a,
                 },
             };
-            let layer_control_6b828a3088ee07a15d972b97aafa051f = L.control.layers(
-                layer_control_6b828a3088ee07a15d972b97aafa051f_layers.base_layers,
-                layer_control_6b828a3088ee07a15d972b97aafa051f_layers.overlays,
+            let layer_control_58b8edd329e07e6a3411fa3ec2ce3e65 = L.control.layers(
+                layer_control_58b8edd329e07e6a3411fa3ec2ce3e65_layers.base_layers,
+                layer_control_58b8edd329e07e6a3411fa3ec2ce3e65_layers.overlays,
                 {"autoZIndex": true, "collapsed": false, "position": "topright"}
-            ).addTo(map_c850f8465c0b971b0f63a4bcd90f50c7);
+            ).addTo(map_a0275e9b8e6148c3fe16f55cd0168cd5);
 
         
 &lt;/script&gt;
@@ -2376,7 +2376,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_941d8bdb18d60e8c026a0e525dd5d68f {
+                #map_e2f8491031286c2178cb8267b9410483 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2390,14 +2390,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_941d8bdb18d60e8c026a0e525dd5d68f" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_e2f8491031286c2178cb8267b9410483" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_941d8bdb18d60e8c026a0e525dd5d68f = L.map(
-                "map_941d8bdb18d60e8c026a0e525dd5d68f",
+            var map_e2f8491031286c2178cb8267b9410483 = L.map(
+                "map_e2f8491031286c2178cb8267b9410483",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2411,51 +2411,51 @@ m</div>
 
         
     
-            var tile_layer_214f972b238a62fb3842ca2242539b61 = L.tileLayer(
+            var tile_layer_b6cd2cce407dd3538ed101a590169808 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_214f972b238a62fb3842ca2242539b61.addTo(map_941d8bdb18d60e8c026a0e525dd5d68f);
+            tile_layer_b6cd2cce407dd3538ed101a590169808.addTo(map_e2f8491031286c2178cb8267b9410483);
         
     
-            var tile_layer_d480889b47b698b250956bb3d70a9678 = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
+            var tile_layer_b49b53a7dc174b05c161516076560e40 = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_d480889b47b698b250956bb3d70a9678.addTo(map_941d8bdb18d60e8c026a0e525dd5d68f);
+            tile_layer_b49b53a7dc174b05c161516076560e40.addTo(map_e2f8491031286c2178cb8267b9410483);
         
     
-            var tile_layer_4816be6607df816ecddbcbb32f0d8e01 = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
+            var tile_layer_ef6c1da00b59311051a9c60e8fee4c44 = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var tile_layer_f2130aa8d6825d0b779ca660cb40d5b9 = L.tileLayer(
-                "https://dev-titiler-cmr.delta-backend.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
+            var tile_layer_39074fdd3ff76de2a4b18d78510377b8 = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            var layer_control_b6be786d17f1c7a23d560d04436d5c08_layers = {
+            var layer_control_ed426917ae3eb8032e111b716173b861_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_214f972b238a62fb3842ca2242539b61,
+                    "openstreetmap" : tile_layer_b6cd2cce407dd3538ed101a590169808,
                 },
                 overlays :  {
-                    "HLSS30 true color" : tile_layer_d480889b47b698b250956bb3d70a9678,
-                    "HLSS30 false color" : tile_layer_4816be6607df816ecddbcbb32f0d8e01,
-                    "HLSS30 NDVI" : tile_layer_f2130aa8d6825d0b779ca660cb40d5b9,
+                    "HLSS30 true color" : tile_layer_b49b53a7dc174b05c161516076560e40,
+                    "HLSS30 false color" : tile_layer_ef6c1da00b59311051a9c60e8fee4c44,
+                    "HLSS30 NDVI" : tile_layer_39074fdd3ff76de2a4b18d78510377b8,
                 },
             };
-            let layer_control_b6be786d17f1c7a23d560d04436d5c08 = L.control.layers(
-                layer_control_b6be786d17f1c7a23d560d04436d5c08_layers.base_layers,
-                layer_control_b6be786d17f1c7a23d560d04436d5c08_layers.overlays,
+            let layer_control_ed426917ae3eb8032e111b716173b861 = L.control.layers(
+                layer_control_ed426917ae3eb8032e111b716173b861_layers.base_layers,
+                layer_control_ed426917ae3eb8032e111b716173b861_layers.overlays,
                 {"autoZIndex": true, "collapsed": false, "position": "topright"}
-            ).addTo(map_941d8bdb18d60e8c026a0e525dd5d68f);
+            ).addTo(map_e2f8491031286c2178cb8267b9410483);
 
         
 &lt;/script&gt;

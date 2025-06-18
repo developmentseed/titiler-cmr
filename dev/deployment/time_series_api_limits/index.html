@@ -1369,7 +1369,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>
@@ -1396,7 +1396,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>
@@ -1423,7 +1423,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">540</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>
@@ -1450,7 +1450,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">540</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>
@@ -1477,7 +1477,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">540</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>
@@ -1504,7 +1504,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">540</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>
@@ -1531,7 +1531,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">end_datetime</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">540</span><span class="p">)</span>
 
 <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"https://dev-titiler-cmr.delta-backend.com/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"https://staging.openveda.cloud/api/titiler-cmr/timeseries/bbox/</span><span class="si">{</span><span class="n">bbox_str</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"concept_id"</span><span class="p">:</span> <span class="s2">"C1996881146-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"datetime"</span><span class="p">:</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">start_datetime</span><span class="p">,</span> <span class="n">end_datetime</span><span class="p">]),</span>

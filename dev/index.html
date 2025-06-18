@@ -391,6 +391,30 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#deployment-to-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment to AWS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment to AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deployment-to-a-developmenttest-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment to a development/test instance
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#contribution-development" class="md-nav__link">
     <span class="md-ellipsis">
       Contribution &amp; Development
@@ -817,6 +841,30 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#deployment-to-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment to AWS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment to AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deployment-to-a-developmenttest-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment to a development/test instance
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#contribution-development" class="md-nav__link">
     <span class="md-ellipsis">
       Contribution &amp; Development
@@ -946,6 +994,10 @@ The docker container is configured to read the <code>EARTHDATA_USERNAME</code> a
 <div class="highlight"><pre><span></span><code><span class="nv">TITILER_CMR_S3_AUTH_ACCESS</span><span class="o">=</span>external<span class="w"> </span>uvicorn<span class="w"> </span>titiler.cmr.main:app<span class="w"> </span>--reload
 </code></pre></div>
 <p>The application will be available at this address: <a href="http://localhost:8000/api.html">http://localhost:8000/api.html</a></p>
+<h2 id="deployment-to-aws">Deployment to AWS<a class="headerlink" href="#deployment-to-aws" title="Permanent link">&para;</a></h2>
+<p>Deployment to AWS is currently triggered using <a href="https://github.com/NASA-IMPACT/veda-deploy">veda-deploy</a>. veda-deploy checks out this repo as a submodule and then executes <a href=".github/actions/cdk-deploy/action.yml">.github/actions/cdk-deploy/action.yml</a> (see also: <a href="https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml">veda-deploy/.github/workflows/deploy.yml</a>). For more details, please review the <a href="https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components">veda-deploy README section on adding new components</a>.</p>
+<h3 id="deployment-to-a-developmenttest-instance">Deployment to a development/test instance<a class="headerlink" href="#deployment-to-a-developmenttest-instance" title="Permanent link">&para;</a></h3>
+<p>You can trigger a deploy to a "dev" stack (cloudformation stack name should be <code>titiler-cmr-dev</code>) in the VEDA SMCE account by labeling a PR with the "deploy-dev" tag. This stack is intended for testing new features.</p>
 <h2 id="contribution-development">Contribution &amp; Development<a class="headerlink" href="#contribution-development" title="Permanent link">&para;</a></h2>
 <p>See <a href="https://github.com/developmentseed/titiler-cmr/blob/develop/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
