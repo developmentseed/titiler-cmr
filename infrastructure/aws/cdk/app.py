@@ -148,18 +148,18 @@ if app_settings.buckets:
 
 lambda_stack = LambdaStack(
     app,
-    f"{app_settings.name}-{app_settings.stage}",
+    f"{app_settings.name}-{stack_settings.stage}",
     memory=app_settings.memory,
     timeout=app_settings.timeout,
     concurrent=app_settings.max_concurrent,
     role_arn=app_settings.role_arn,
     permissions=perms,
-    environment=app_settings.additional_env,
+    environment=stack_settings.additional_env,
 )
 # Tag infrastructure
 for key, value in {
     "Project": app_settings.name,
-    "Stack": app_settings.stage,
+    "Stack": stack_settings.stage,
     "Owner": app_settings.owner,
     "Client": app_settings.client,
 }.items():

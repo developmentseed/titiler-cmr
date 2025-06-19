@@ -53,5 +53,6 @@ jobs:
           env_aws_secret_name: ""
         env:
           TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
-          TITILER_CMR_STAGE: dev
           TITILER_CMR_ROOT_PATH: ''
+          STAGE: dev
+          ADDITIONAL_ENV: '{"AWS_REQUEST_PAYER": "requester"}'

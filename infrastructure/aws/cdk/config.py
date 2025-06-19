@@ -9,6 +9,8 @@ class StackSettings(BaseSettings):
     """Stack settings"""
 
     veda_custom_host: Optional[str] = None
+    stage: str = "production"
+    additional_env: Dict = {}
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -17,13 +19,10 @@ class AppSettings(BaseSettings):
     """Application settings"""
 
     name: str = "titiler-cmr"
-    stage: str = "production"
 
     owner: Optional[str] = None
     client: Optional[str] = None
     project: Optional[str] = None
-
-    additional_env: Dict = {}
 
     # S3 bucket names where TiTiler could do HEAD and GET Requests
     # specific private and public buckets MUST be added if you want to use s3:// urls
