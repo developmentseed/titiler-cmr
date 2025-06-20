@@ -42,7 +42,6 @@ class LambdaStack(Stack):
         runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_10,
         concurrent: Optional[int] = None,
         permissions: Optional[List[iam.PolicyStatement]] = None,
-        environment: Optional[Dict] = None,
         role_arn: Optional[str] = None,
         context_dir: str = "../../",
         **kwargs: Any,
@@ -51,7 +50,6 @@ class LambdaStack(Stack):
         super().__init__(scope, id, *kwargs)
 
         permissions = permissions or []
-        environment = environment or {}
 
         iam_reader_role = None
         if role_arn:
@@ -76,8 +74,9 @@ class LambdaStack(Stack):
             timeout=Duration.seconds(timeout),
             environment={
                 **DEFAULT_ENV,
-                **environment,
                 "TITILER_CMR_ROOT_PATH": app_settings.root_path,
+                "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
+                "AWS_REQUESTER_PAYS": app_settings.aws_requester_pays,
             },
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
@@ -153,8 +152,7 @@ lambda_stack = LambdaStack(
     timeout=app_settings.timeout,
     concurrent=app_settings.max_concurrent,
     role_arn=app_settings.role_arn,
-    permissions=perms,
-    environment=stack_settings.additional_env,
+    permissions=perms
 )
 # Tag infrastructure
 for key, value in {

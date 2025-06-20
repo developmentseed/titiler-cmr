@@ -10,7 +10,6 @@ class StackSettings(BaseSettings):
 
     veda_custom_host: Optional[str] = None
     stage: str = "production"
-    additional_env: Dict = {}
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -43,6 +42,8 @@ class AppSettings(BaseSettings):
     max_concurrent: Optional[int] = None
     alarm_email: Optional[str] = None
     root_path: Optional[str] = None
+    s3_auth_strategy: Optional[str] = "environment"
+    aws_requester_pays: Optional[bool] = False
 
     model_config = SettingsConfigDict(
         env_prefix="TITILER_CMR_", env_file=".env", extra="ignore"

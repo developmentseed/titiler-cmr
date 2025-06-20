@@ -88,5 +88,3 @@ runs:
       working-directory: ${{ inputs.dir }}
       run: uv run cdk deploy --all --require-approval never --outputs-file ${HOME}/cdk-outputs.json
       shell: bash
-      env:
-        TITILER_CMR_ADDITIONAL_ENV: '{"TITILER_CMR_S3_AUTH_STRATEGY":"iam"}'

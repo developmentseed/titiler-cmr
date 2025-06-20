@@ -55,4 +55,5 @@ jobs:
           TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
           TITILER_CMR_ROOT_PATH: ''
           STAGE: dev
-          ADDITIONAL_ENV: '{"AWS_REQUEST_PAYER": "requester"}'
+          TITILER_CMR_AWS_REQUEST_PAYER: requester
+          TITILER_CMR_S3_AUTH_STRATEGY: iam
