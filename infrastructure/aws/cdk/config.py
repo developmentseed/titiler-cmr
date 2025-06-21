@@ -43,7 +43,7 @@ class AppSettings(BaseSettings):
     alarm_email: Optional[str] = None
     root_path: Optional[str] = None
     s3_auth_strategy: Optional[str] = "environment"
-    aws_request_payer: Optional[bool] = False
+    aws_request_payer: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_prefix="TITILER_CMR_", env_file=".env", extra="ignore"
