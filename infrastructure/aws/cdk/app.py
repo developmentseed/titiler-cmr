@@ -76,7 +76,7 @@ class LambdaStack(Stack):
                 **DEFAULT_ENV,
                 "TITILER_CMR_ROOT_PATH": app_settings.root_path,
                 "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
-                "AWS_REQUESTER_PAYS": app_settings.aws_requester_pays,
+                "AWS_REQUEST_PAYER": app_settings.aws_request_payer,
             },
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
