@@ -52,6 +52,7 @@ jobs:
           dir: "./infrastructure/aws"
           env_aws_secret_name: ""
         env:
+          # I'm not sure this is in use anymore, should we remove it?
           TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
           TITILER_CMR_ROOT_PATH: ''
           STAGE: dev
