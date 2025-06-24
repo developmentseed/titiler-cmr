@@ -1,7 +1,7 @@
 """Construct App."""
 
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda
 from aws_cdk import aws_apigatewayv2 as apigw
@@ -152,7 +152,7 @@ lambda_stack = LambdaStack(
     timeout=app_settings.timeout,
     concurrent=app_settings.max_concurrent,
     role_arn=app_settings.role_arn,
-    permissions=perms
+    permissions=perms,
 )
 # Tag infrastructure
 for key, value in {

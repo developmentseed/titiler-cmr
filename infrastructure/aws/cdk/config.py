@@ -1,6 +1,6 @@
 """STACK Configs."""
 
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
