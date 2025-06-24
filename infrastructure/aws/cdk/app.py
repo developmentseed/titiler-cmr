@@ -59,6 +59,15 @@ class LambdaStack(Stack):
                 role_arn=role_arn,
             )
 
+        lambda_env = {
+            **DEFAULT_ENV,
+            "TITILER_CMR_ROOT_PATH": app_settings.root_path,
+            "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
+        }
+
+        if app_settings.aws_request_payer:
+            lambda_env["AWS_REQUEST_PAYER"] = app_settings.aws_request_payer
+
         lambda_function = aws_lambda.Function(
             self,
             f"{id}-lambda",
@@ -72,12 +81,7 @@ class LambdaStack(Stack):
             memory_size=memory,
             reserved_concurrent_executions=concurrent,
             timeout=Duration.seconds(timeout),
-            environment={
-                **DEFAULT_ENV,
-                "TITILER_CMR_ROOT_PATH": app_settings.root_path,
-                "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
-                "AWS_REQUEST_PAYER": app_settings.aws_request_payer,
-            },
+            environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
         )
