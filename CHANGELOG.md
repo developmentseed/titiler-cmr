@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+### Fixed
+
+### Changed
+
+- Add `s3_auth_strategy` and `aws_request_payer` to `AppSettings`: https://github.com/developmentseed/titiler-cmr/pull/58
+
 ## [v0.1.4]
 
 ### Added

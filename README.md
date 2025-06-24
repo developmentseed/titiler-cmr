@@ -95,9 +95,19 @@ TITILER_CMR_S3_AUTH_ACCESS=external uvicorn titiler.cmr.main:app --reload
 
 The application will be available at this address: [http://localhost:8000/api.html](http://localhost:8000/api.html)
 
-## Deployment to AWS
+## Deployment to AWS via `veda-deploy`
 
 Deployment to AWS is currently triggered using [veda-deploy](https://github.com/NASA-IMPACT/veda-deploy). veda-deploy checks out this repo as a submodule and then executes [.github/actions/cdk-deploy/action.yml](.github/actions/cdk-deploy/action.yml) (see also: [veda-deploy/.github/workflows/deploy.yml](https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml)). For more details, please review the [veda-deploy README section on adding new components](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components).
+
+### Environment Variables
+
+Environment variables for the `veda-deploy` deployment should be configured in the `veda-deploy` environment-specific AWS Secret. See also [these instructions](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager). The variables in the AWS Secret will be written to an `.env` file and used by the CDK deployment as instantiated by the `AppSettings` and `StackSettings` defined [infrastructure/aws/cdk/config.py](infrastructure/aws/cdk/config.py). `StackSettings` are those specific to the specific stage being deployed, may only be used during deployment, and are more likely to be shared across VEDA services. `AppSettings` are settings specific to titiler-cmr and are used to set the lambda runtime environment variables.
+
+The application-specific (`AppSettings`) environment variables which should be set in the `veda-deploy` AWS secret are:
+
+* `TITILER_CMR_S3_AUTH_STRATEGY=iam`
+* `TITILER_CMR_ROOT_PATH=/api/titiler-cmr`
+* `TITILER_CMR_AWS_REQUEST_PAYER=requester`
 
 ### Deployment to a development/test instance
 
