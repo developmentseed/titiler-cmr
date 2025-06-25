@@ -6,26 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Added
-
 ### Fixed
+
+- Allow POST requests from cross-origin clients ([#60](https://github.com/developmentseed/titiler-cmr/pull/60))
 
 ### Changed
 
-- Add `s3_auth_strategy` and `aws_request_payer` to `AppSettings`: https://github.com/developmentseed/titiler-cmr/pull/58
+- Add `s3_auth_strategy` and `aws_request_payer` to `AppSettings`: <https://github.com/developmentseed/titiler-cmr/pull/58>
 
 ## [v0.1.4]
 
 ### Added
-- Added support for `sel` and `sel_method` parameters: https://github.com/developmentseed/titiler-cmr/pull/52
-- Add HLS tile configuration documentation: https://github.com/developmentseed/titiler-cmr/pull/45
+
+- Added support for `sel` and `sel_method` parameters: <https://github.com/developmentseed/titiler-cmr/pull/52>
+- Add HLS tile configuration documentation: <https://github.com/developmentseed/titiler-cmr/pull/45>
 
 ### Fixed
 
 ### Changed
-- Added github workflow for deploying to a dev stack: https://github.com/developmentseed/titiler-cmr/pull/51
-- Modifications to github workflow to support deployment via [github.com/NASA-IMPACT/veda-deploy](https://github.com/NASA-IMPACT/veda-deploy): https://github.com/developmentseed/titiler-cmr/pull/47, https://github.com/developmentseed/titiler-cmr/pull/48
-- Modifications to deployment environment variables `STAGE` and `AWS_REQUEST_PAYER` via `additional_env` in `StackSettings`: https://github.com/developmentseed/titiler-cmr/pull/55
+
+- Added github workflow for deploying to a dev stack: <https://github.com/developmentseed/titiler-cmr/pull/51>
+- Modifications to github workflow to support deployment via [github.com/NASA-IMPACT/veda-deploy](https://github.com/NASA-IMPACT/veda-deploy): <https://github.com/developmentseed/titiler-cmr/pull/47>, <https://github.com/developmentseed/titiler-cmr/pull/48>
+- Modifications to deployment environment variables `STAGE` and `AWS_REQUEST_PAYER` via `additional_env` in `StackSettings`: <https://github.com/developmentseed/titiler-cmr/pull/55>
 
 ## [v0.1.3]
 
