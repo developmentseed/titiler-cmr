@@ -4,6 +4,7 @@ Code from titiler.pgstac, MIT License.
 
 """
 
+import logging
 import time
 from datetime import datetime
 from typing import Any, List, Optional, Sequence, Tuple, Type, Union
@@ -17,6 +18,8 @@ from rasterio.warp import transform_bounds
 from rio_tiler.constants import WGS84_CRS
 
 from titiler.cmr.errors import InvalidDatetime
+
+logger = logging.getLogger(__name__)
 
 
 def retry(
@@ -81,9 +84,17 @@ def get_resolution_degrees(concept_id: str) -> Tuple[float, float]:
     """Query CMR to get the resolution of a dataset using its concept_id. If the units are in meters
     convert to degrees using the rough conversion factor of 0.00001 degrees per meter"""
     ds = earthaccess.collection_query().concept_id(concept_id).get()[0]
-    resolution_info = ds["umm"]["SpatialExtent"]["HorizontalSpatialDomain"][
-        "ResolutionAndCoordinateSystem"
-    ]["HorizontalDataResolution"]["GenericResolutions"][0]
+
+    try:
+        resolution_info = ds["umm"]["SpatialExtent"]["HorizontalSpatialDomain"][
+            "ResolutionAndCoordinateSystem"
+        ]["HorizontalDataResolution"]["GenericResolutions"][0]
+    except KeyError:
+        logger.warning(
+            f"could not find HorizontalDataResolution for concept_id {concept_id}"
+        )
+        return (0, 0)
+
     units = resolution_info["Unit"].lower()
     if units not in ["meters", "decimal degrees"]:
         raise ValueError(
@@ -124,6 +135,9 @@ def calculate_time_series_request_size(
     as a total number of pixels read across the entire time series
     """
     xres, yres = get_resolution_degrees(concept_id)
+    if (xres == 0) and (yres == 0):
+        return 0
+
     minx, miny, maxx, maxy = get_bbox_degrees(minx, miny, maxx, maxy, coord_crs)
 
     n_pixels_per_request = (maxx - minx) / xres * (maxy - miny) / yres
