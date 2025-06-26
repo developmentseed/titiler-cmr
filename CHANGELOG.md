@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Allow POST requests from cross-origin clients ([#60](https://github.com/developmentseed/titiler-cmr/pull/60))
 
+- Handle case where `ResolutionAndCoordinateSystem` is not available for calculating time series request size ([#62](https://github.com/developmentseed/titiler-cmr/pull/62))
+
 ### Changed
 
 - Add `s3_auth_strategy` and `aws_request_payer` to `AppSettings`: <https://github.com/developmentseed/titiler-cmr/pull/58>
