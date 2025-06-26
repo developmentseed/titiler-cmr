@@ -104,6 +104,19 @@ class LambdaStack(Stack):
             ),
         )
 
+        log_group = logs.LogGroup(self, "LogGroup",
+            log_group_name=f"/aws/lambda/{id}-lambda",
+            retention=logs.RetentionDays.ONE_MONTH,
+        )
+
+        apigw.HttpStage(self, "Stage",
+            http_api=api,
+            access_log_settings={
+                "destination": apigw.LogGroupLogDestination(log_group),
+                "format": apigw.AccessLogFormat.clf()
+            }
+        )
+
         # Create an SNS Topic
         if app_settings.alarm_email:
             topic = sns.Topic(
