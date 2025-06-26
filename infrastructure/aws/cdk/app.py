@@ -4,7 +4,8 @@ import os
 from typing import Any, List, Optional
 
 from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda
-from aws_cdk import aws_apigatewayv2 as apigw
+from aws_cdk import aws_apigatewayv2 as apigwv2
+from aws_cdk import aws_apigateway as apigw
 from aws_cdk import aws_cloudwatch as cloudwatch
 from aws_cdk import aws_cloudwatch_actions as cloudwatch_actions
 from aws_cdk import aws_iam as iam
@@ -89,15 +90,15 @@ class LambdaStack(Stack):
         for perm in permissions:
             lambda_function.add_to_role_policy(perm)
 
-        api = apigw.HttpApi(
+        api = apigwv2.HttpApi(
             self,
             f"{id}-endpoint",
             default_integration=HttpLambdaIntegration(
                 f"{id}-integration",
                 lambda_function,
-                parameter_mapping=apigw.ParameterMapping().overwrite_header(
+                parameter_mapping=apigwv2.ParameterMapping().overwrite_header(
                     "host",
-                    apigw.MappingValue(stack_settings.veda_custom_host),
+                    apigwv2.MappingValue(stack_settings.veda_custom_host),
                 )
                 if stack_settings.veda_custom_host
                 else None,
@@ -111,12 +112,12 @@ class LambdaStack(Stack):
             retention=logs.RetentionDays.ONE_MONTH,
         )
 
-        apigw.HttpStage(
+        apigwv2.HttpStage(
             self,
             "Stage",
             http_api=api,
             access_log_settings={
-                "destination": apigw.LogGroupLogDestination(log_group),
+                "destination": apigwv2.LogGroupLogDestination(log_group),
                 "format": apigw.AccessLogFormat.clf(),
             },
         )
