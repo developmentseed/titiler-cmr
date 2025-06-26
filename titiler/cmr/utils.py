@@ -80,7 +80,7 @@ def parse_datetime(
     return datetime_, start, end
 
 
-def get_resolution_degrees(concept_id: str) -> Tuple[float, float]:
+def get_resolution_degrees(concept_id: str) -> Tuple[Optional[float], Optional[float]]:
     """Query CMR to get the resolution of a dataset using its concept_id. If the units are in meters
     convert to degrees using the rough conversion factor of 0.00001 degrees per meter"""
     ds = earthaccess.collection_query().concept_id(concept_id).get()[0]
@@ -93,7 +93,7 @@ def get_resolution_degrees(concept_id: str) -> Tuple[float, float]:
         logger.warning(
             f"could not find HorizontalDataResolution for concept_id {concept_id}"
         )
-        return (0, 0)
+        return (None, None)
 
     units = resolution_info["Unit"].lower()
     if units not in ["meters", "decimal degrees"]:
@@ -135,7 +135,7 @@ def calculate_time_series_request_size(
     as a total number of pixels read across the entire time series
     """
     xres, yres = get_resolution_degrees(concept_id)
-    if (xres == 0) and (yres == 0):
+    if not (xres and yres):
         return 0
 
     minx, miny, maxx, maxy = get_bbox_degrees(minx, miny, maxx, maxy, coord_crs)
