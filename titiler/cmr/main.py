@@ -154,53 +154,53 @@ if settings.cors_origins:
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
-config.dictConfig(
-    {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "request": {
-                "format": (
-                    "%(asctime)s - %(levelname)s - %(name)s - %(message)s "
-                    + json.dumps(
-                        {
-                            k: f"%({k})s"
-                            for k in [
-                                "method",
-                                "referer",
-                                "origin",
-                                "route",
-                                "path",
-                                "path_params",
-                                "query_params",
-                                "headers",
-                            ]
-                        }
-                    )
-                ),
-            },
-        },
-        "handlers": {
-            "console_request": {
-                "class": "logging.StreamHandler",
-                "level": "DEBUG",
-                "formatter": "request",
-                "stream": "ext://sys.stdout",
-            },
-        },
-        "loggers": {
-            "titiler.cmr.requests": {
-                "level": "INFO",
-                "handlers": ["console_request"],
-                "propagate": False,
-            },
-        },
-    }
-)
+# config.dictConfig(
+#     {
+#         "version": 1,
+#         "disable_existing_loggers": False,
+#         "formatters": {
+#             "request": {
+#                 "format": (
+#                     "%(asctime)s - %(levelname)s - %(name)s - %(message)s "
+#                     + json.dumps(
+#                         {
+#                             k: f"%({k})s"
+#                             for k in [
+#                                 "method",
+#                                 "referer",
+#                                 "origin",
+#                                 "route",
+#                                 "path",
+#                                 "path_params",
+#                                 "query_params",
+#                                 "headers",
+#                             ]
+#                         }
+#                     )
+#                 ),
+#             },
+#         },
+#         "handlers": {
+#             "console_request": {
+#                 "class": "logging.StreamHandler",
+#                 "level": "DEBUG",
+#                 "formatter": "request",
+#                 "stream": "ext://sys.stdout",
+#             },
+#         },
+#         "loggers": {
+#             "titiler.cmr.requests": {
+#                 "level": "INFO",
+#                 "handlers": ["console_request"],
+#                 "propagate": False,
+#             },
+#         },
+#     }
+# )
 
 app.add_middleware(
     LoggerMiddleware,
-    logger=logging.getLogger("titiler.cmr.requests"),
+    logger=logging.getLogger("titiler.requests"),
 )
 
 ###############################################################################
