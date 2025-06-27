@@ -1,5 +1,6 @@
 """TiTiler+cmr FastAPI application."""
 
+import json
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -7,6 +8,7 @@ from contextlib import asynccontextmanager
 import earthaccess
 import jinja2
 from fastapi import FastAPI
+from logging import config
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 
@@ -152,7 +154,57 @@ if settings.cors_origins:
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
-app.add_middleware(LoggerMiddleware)
+config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "detailed": {
+                "format": "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+            },
+            "request": {
+                "format": (
+                    "%(asctime)s - %(levelname)s - %(name)s - %(message)s "
+                    + json.dumps(
+                        {
+                            k: f"%({k})s"
+                            for k in [
+                                "method",
+                                "referer",
+                                "origin",
+                                "route",
+                                "path",
+                                "path_params",
+                                "query_params",
+                                "headers",
+                            ]
+                        }
+                    )
+                ),
+            },
+        },
+        "handlers": {
+            "console_request": {
+                "class": "logging.StreamHandler",
+                "level": "DEBUG",
+                "formatter": "request",
+                "stream": "ext://sys.stdout",
+            },
+        },
+        "loggers": {
+            "titiler.cmr.requests": {
+                "level": "INFO",
+                "handlers": ["console_request"],
+                "propagate": False,
+            },
+        },
+    }
+)
+
+app.add_middleware(
+    LoggerMiddleware,
+    logger=logging.getLogger("titiler.cmr.requests"),
+)
 
 ###############################################################################
 # application endpoints
