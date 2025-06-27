@@ -112,16 +112,6 @@ class LambdaStack(Stack):
             retention=logs.RetentionDays.ONE_MONTH,
         )
 
-        apigwv2.HttpStage(
-            self,
-            "Stage",
-            http_api=api,
-            access_log_settings={
-                "destination": apigwv2.LogGroupLogDestination(log_group),
-                "format": apigw.AccessLogFormat.clf(),
-            },
-        )
-
         # Create an SNS Topic
         if app_settings.alarm_email:
             topic = sns.Topic(
