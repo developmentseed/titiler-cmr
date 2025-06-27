@@ -59,3 +59,4 @@ jobs:
           TITILER_CMR_AWS_REQUEST_PAYER: requester
           TITILER_CMR_S3_AUTH_STRATEGY: iam
           TITILER_CMR_ALARM_EMAIL: ${{ secrets.alarm_email }}
+          TITILER_CMR_API_ACCESS_LOGGING: True

@@ -41,6 +41,7 @@ class AppSettings(BaseSettings):
     # Default: - No specific limit - account limit.
     max_concurrent: Optional[int] = None
     alarm_email: Optional[str] = None
+    api_access_logging: Optional[bool] = False
     root_path: Optional[str] = None
     s3_auth_strategy: Optional[str] = "environment"
     aws_request_payer: Optional[str] = None
