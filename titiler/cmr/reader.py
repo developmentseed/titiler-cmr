@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 import attr
 import earthaccess
 import fsspec
+import os
 import s3fs
 import xarray
 from cachetools import TTLCache
@@ -37,6 +38,8 @@ def get_filesystem(
     """
     if protocol == "s3":
         s3_credentials = s3_credentials or {}
+        if os.environ.get("AWS_REQUEST_PAYER") == "requester":
+            s3_credentials["requester_pays"] = True
         s3_filesystem = s3fs.S3FileSystem(**s3_credentials)
         return (
             s3_filesystem.open(src_path)
