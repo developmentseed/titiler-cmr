@@ -152,8 +152,7 @@ if settings.cors_origins:
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
-if settings.debug:
-    app.add_middleware(LoggerMiddleware, headers=True, querystrings=True)
+app.add_middleware(LoggerMiddleware, headers=True, querystrings=True)
 
 ###############################################################################
 # application endpoints
