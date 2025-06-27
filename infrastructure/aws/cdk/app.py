@@ -5,7 +5,6 @@ from typing import Any, List, Optional
 
 from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda
 from aws_cdk import aws_apigatewayv2 as apigwv2
-from aws_cdk import aws_apigateway as apigw
 from aws_cdk import aws_cloudwatch as cloudwatch
 from aws_cdk import aws_cloudwatch_actions as cloudwatch_actions
 from aws_cdk import aws_iam as iam
