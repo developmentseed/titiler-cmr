@@ -105,20 +105,19 @@ class LambdaStack(Stack):
             ),
         )
 
-        log_group = logs.LogGroup(
-            self,
-            "LogGroup",
-            log_group_name=f"/aws/lambda/{id}-lambda",
-            retention=logs.RetentionDays.ONE_MONTH,
-        )
-
         if app_settings.api_access_logging:
+            log_group = logs.LogGroup(
+                self,
+                "LogGroup",
+                log_group_name=f"/aws/lambda/{id}-lambda",
+                retention=logs.RetentionDays.ONE_MONTH,
+            )
+
             # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_apigatewayv2/README.html#access-logging
             # the examples above didn't successfully synthesize, but the following which uses a version of https://github.com/aws/aws-cdk/issues/11100 does 
             # synthesize but still fails to deploy
             stage: apigwv2.CfnStage = api.default_stage.node.default_child
             stage.access_log_settings = {
-                # TODO: if possible, use a separate log group for access logs
                 "destination_arn": log_group.log_group_arn,
                 "format": apigw.AccessLogFormat.clf().to_string(),
             }
