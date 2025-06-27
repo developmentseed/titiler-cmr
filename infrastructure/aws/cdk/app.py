@@ -5,6 +5,7 @@ from typing import Any, List, Optional
 
 from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda
 from aws_cdk import aws_apigatewayv2 as apigwv2
+from aws_cdk import aws_apigateway as apigw
 from aws_cdk import aws_cloudwatch as cloudwatch
 from aws_cdk import aws_cloudwatch_actions as cloudwatch_actions
 from aws_cdk import aws_iam as iam
@@ -110,6 +111,23 @@ class LambdaStack(Stack):
             log_group_name=f"/aws/lambda/{id}-lambda",
             retention=logs.RetentionDays.ONE_MONTH,
         )
+
+        apigw.Stage(self, "dev",
+            deployment=api,
+            access_log_destination=apigw.LogGroupLogDestination(log_group),
+            access_log_format=apigw.AccessLogFormat.json_with_standard_fields(
+                caller=False,
+                http_method=True,
+                ip=True,
+                protocol=True,
+                request_time=True,
+                resource_path=True,
+                response_length=True,
+                status=True,
+                user=True
+            )
+        )
+
 
         # Create an SNS Topic
         if app_settings.alarm_email:
