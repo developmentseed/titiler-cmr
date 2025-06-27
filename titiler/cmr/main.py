@@ -159,9 +159,6 @@ config.dictConfig(
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "detailed": {
-                "format": "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
-            },
             "request": {
                 "format": (
                     "%(asctime)s - %(levelname)s - %(name)s - %(message)s "
