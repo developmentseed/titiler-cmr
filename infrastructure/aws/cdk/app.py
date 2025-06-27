@@ -112,11 +112,18 @@ class LambdaStack(Stack):
             retention=logs.RetentionDays.ONE_MONTH,
         )
 
+        access_log_group = logs.LogGroup(
+            self,
+            "AccessLogGroup",
+            log_group_name=f"/aws/apigateway/{id}-access-logs",
+            retention=logs.RetentionDays.ONE_MONTH,
+        )
+
+        # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_apigatewayv2/HttpStage.html
         apigwv2.HttpStage(self, "Stage",
             http_api=api,
             access_log_settings={
-                "destination": apigwv2.LogGroupLogDestination(log_group),
-                "format": apigwv2.AccessLogFormat.clf(),
+                "destination": apigwv2.LogGroupLogDestination(access_log_group),
             }
         )
 
