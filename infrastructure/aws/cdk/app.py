@@ -119,13 +119,13 @@ class LambdaStack(Stack):
             retention=logs.RetentionDays.ONE_MONTH,
         )
 
-        # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_apigatewayv2/HttpStage.html
-        apigwv2.HttpStage(self, "Stage",
-            http_api=api,
-            access_log_settings={
-                "destination": apigwv2.LogGroupLogDestination(access_log_group),
-            }
-        )
+        # https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_apigatewayv2/README.html#access-logging
+        # this took a while to figure out, the examples didn't work but this is a version of https://github.com/aws/aws-cdk/issues/11100 which did
+        stage: apigw.CfnStage = api.default_stage.node.default_child
+        stage.access_log_settings = {
+            "destination_arn": access_log_group.log_group_arn,
+            "format": apigw.AccessLogFormat.clf().to_string(),
+        }
 
         # Create an SNS Topic
         if app_settings.alarm_email:
