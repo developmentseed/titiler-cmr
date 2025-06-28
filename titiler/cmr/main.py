@@ -2,6 +2,7 @@
 
 import json
 import logging
+from logging import config as logging_config
 import os
 from contextlib import asynccontextmanager
 
@@ -184,7 +185,7 @@ if settings.cors_origins:
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
 # Configure logging with support for extra fields
-logging.config.dictConfig(
+logging_config.dictConfig(
     {
         "version": 1,
         "disable_existing_loggers": False,
