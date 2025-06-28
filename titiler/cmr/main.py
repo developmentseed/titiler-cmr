@@ -8,7 +8,6 @@ from contextlib import asynccontextmanager
 import earthaccess
 import jinja2
 from fastapi import FastAPI
-from logging import config
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 
@@ -49,15 +48,21 @@ class JSONFormatter(logging.Formatter):
 
         # Add extra fields if they exist
         extra_fields = [
-            "method", "path", "query_params", "path_params",
-            "headers", "referer", "origin", "route"
+            "method",
+            "path",
+            "query_params",
+            "path_params",
+            "headers",
+            "referer",
+            "origin",
+            "route",
         ]
 
         for field in extra_fields:
             if hasattr(record, field):
                 value = getattr(record, field)
                 # Convert query_params and path_params to dict if they're not already
-                if field in ["query_params", "path_params"] and hasattr(value, 'items'):
+                if field in ["query_params", "path_params"] and hasattr(value, "items"):
                     value = dict(value)
                 log_entry[field] = value
 
@@ -65,6 +70,7 @@ class JSONFormatter(logging.Formatter):
 
 
 log_level = os.getenv("LOG_LEVEL", "INFO")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -178,41 +184,43 @@ if settings.cors_origins:
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
 # Configure logging with support for extra fields
-logging.config.dictConfig({
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "default": {
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "default": {
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            },
+            "json": {
+                "()": JSONFormatter,
+            },
         },
-        "json": {
-            "()": JSONFormatter,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "level": log_level,
+                "formatter": "default",
+            },
+            "console_request": {
+                "class": "logging.StreamHandler",
+                "level": log_level,
+                "formatter": "json",
+            },
         },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "level": log_level,
-            "formatter": "default",
+        "loggers": {
+            "": {  # Root logger
+                "level": log_level,
+                "handlers": ["console"],
+            },
+            "titiler.requests": {  # Logger used by LoggerMiddleware
+                "level": log_level,
+                "handlers": ["console_request"],
+                "propagate": False,
+            },
         },
-        "console_request": {
-            "class": "logging.StreamHandler",
-            "level": log_level,
-            "formatter": "json",
-        },
-    },
-    "loggers": {
-        "": {  # Root logger
-            "level": log_level,
-            "handlers": ["console"],
-        },
-        "titiler.requests": {  # Logger used by LoggerMiddleware
-            "level": log_level,
-            "handlers": ["console_request"],
-            "propagate": False,
-        },
-    },
-})
+    }
+)
 
 app.add_middleware(
     LoggerMiddleware,
