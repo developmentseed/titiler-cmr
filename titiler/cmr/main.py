@@ -35,13 +35,36 @@ settings = ApiSettings()
 auth_config = AuthSettings()
 
 
-log_level = os.getenv("LOG_LEVEL", "INFO")
-logging.basicConfig(
-    level=getattr(logging, log_level),
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()],
-)
+class JSONFormatter(logging.Formatter):
+    """Custom JSON formatter for request logs."""
 
+    def format(self, record):
+        # Create base log entry
+        log_entry = {
+            "timestamp": self.formatTime(record),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+
+        # Add extra fields if they exist
+        extra_fields = [
+            "method", "path", "query_params", "path_params",
+            "headers", "referer", "origin", "route"
+        ]
+
+        for field in extra_fields:
+            if hasattr(record, field):
+                value = getattr(record, field)
+                # Convert query_params and path_params to dict if they're not already
+                if field in ["query_params", "path_params"] and hasattr(value, 'items'):
+                    value = dict(value)
+                log_entry[field] = value
+
+        return json.dumps(log_entry)
+
+
+log_level = os.getenv("LOG_LEVEL", "INFO")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -154,49 +177,42 @@ if settings.cors_origins:
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
-# config.dictConfig(
-#     {
-#         "version": 1,
-#         "disable_existing_loggers": False,
-#         "formatters": {
-#             "request": {
-#                 "format": (
-#                     "%(asctime)s - %(levelname)s - %(name)s - %(message)s "
-#                     + json.dumps(
-#                         {
-#                             k: f"%({k})s"
-#                             for k in [
-#                                 "method",
-#                                 "referer",
-#                                 "origin",
-#                                 "route",
-#                                 "path",
-#                                 "path_params",
-#                                 "query_params",
-#                                 "headers",
-#                             ]
-#                         }
-#                     )
-#                 ),
-#             },
-#         },
-#         "handlers": {
-#             "console_request": {
-#                 "class": "logging.StreamHandler",
-#                 "level": "DEBUG",
-#                 "formatter": "request",
-#                 "stream": "ext://sys.stdout",
-#             },
-#         },
-#         "loggers": {
-#             "titiler.cmr.requests": {
-#                 "level": "INFO",
-#                 "handlers": ["console_request"],
-#                 "propagate": False,
-#             },
-#         },
-#     }
-# )
+# Configure logging with support for extra fields
+logging.config.dictConfig({
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        },
+        "json": {
+            "()": JSONFormatter,
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": log_level,
+            "formatter": "default",
+        },
+        "console_request": {
+            "class": "logging.StreamHandler",
+            "level": log_level,
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "": {  # Root logger
+            "level": log_level,
+            "handlers": ["console"],
+        },
+        "titiler.requests": {  # Logger used by LoggerMiddleware
+            "level": log_level,
+            "handlers": ["console_request"],
+            "propagate": False,
+        },
+    },
+})
 
 app.add_middleware(
     LoggerMiddleware,
