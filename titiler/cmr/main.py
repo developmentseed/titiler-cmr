@@ -39,7 +39,7 @@ class JSONFormatter(logging.Formatter):
     """Custom JSON formatter for request logs."""
 
     def format(self, record):
-        # Create base log entry
+        """Format a log record as a JSON object."""
         log_entry = {
             "timestamp": self.formatTime(record),
             "level": record.levelname,
