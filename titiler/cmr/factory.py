@@ -940,7 +940,7 @@ class Endpoints(TilerFactory):
                 reader_options=reader_options,
                 auth=request.app.state.cmr_auth,
             ) as src_dst:
-                for feature in fc.features:
+                for feature in fc.iter():
                     shape = feature.model_dump(exclude_none=True)
 
                     if reader_params.backend == "rasterio":
