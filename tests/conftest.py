@@ -5,7 +5,7 @@ from typing import Any, Dict, Tuple
 
 import pytest
 from fastapi.testclient import TestClient
-from geojson_pydantic import Feature, Polygon
+from geojson_pydantic import Feature, FeatureCollection, Polygon
 from vcr.request import Request
 
 from titiler.cmr.backend import CMRBackend
@@ -130,6 +130,32 @@ def mn_geojson(mn_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
         type="Feature",
         properties={},
         geometry=Polygon.from_bounds(*mn_bounds),
+    ).model_dump(exclude_none=True)
+
+
+@pytest.fixture(scope="function")
+def great_lakes_geojson() -> Dict[str, Any]:
+    """geojson FeatureCollection representation of Lake Michigan and Lake Huron"""
+    # Lake Michigan bounds (approximate)
+    lake_michigan_bounds = (-87.5, 41.5, -85.0, 46.0)
+    # Lake Huron bounds (approximate)
+    lake_huron_bounds = (-84.0, 43.0, -79.0, 46.0)
+
+    lake_michigan = Feature(
+        type="Feature",
+        properties={"name": "Lake Michigan"},
+        geometry=Polygon.from_bounds(*lake_michigan_bounds),
+    )
+
+    lake_huron = Feature(
+        type="Feature",
+        properties={"name": "Lake Huron"},
+        geometry=Polygon.from_bounds(*lake_huron_bounds),
+    )
+
+    return FeatureCollection(
+        type="FeatureCollection",
+        features=[lake_michigan, lake_huron],
     ).model_dump(exclude_none=True)
 
 

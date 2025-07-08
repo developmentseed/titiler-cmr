@@ -67,26 +67,46 @@ def test_xarray_tilejson_with_sel(app, xarray_query_params):
 
 
 @pytest.mark.vcr
+@pytest.mark.parametrize("geojson_fixture", ["arctic_geojson", "great_lakes_geojson"])
 def test_xarray_statistics(
-    app, mock_cmr_get_assets, xarray_query_params, arctic_geojson
+    app, mock_cmr_get_assets, xarray_query_params, request, geojson_fixture
 ):
-    """Test /statistics endpoint"""
+    """Test /statistics endpoint with both Feature and FeatureCollection"""
+    geojson = request.getfixturevalue(geojson_fixture)
+
     response = app.post(
         "/statistics",
         params=xarray_query_params(),
-        json=arctic_geojson,
+        json=geojson,
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/geo+json"
     resp = response.json()
-    stats = resp["properties"]["statistics"]
-    assert len(stats) == 1
 
-    # numbers corroborated by QGIS zonal stats for this file and polygon
-    stats = list(stats.values())[0]
-    assert round(stats["median"], 1) == 0.8
-    assert round(stats["sum"]) == 2420
-    assert round(stats["mean"], 2) == 0.53
+    # Handle both Feature and FeatureCollection responses
+    if resp["type"] == "FeatureCollection":
+        # For FeatureCollection, check that we get statistics for each feature
+        assert len(resp["features"]) == 2  # Lake Michigan and Lake Huron
+        for feature in resp["features"]:
+            assert "properties" in feature
+            assert "statistics" in feature["properties"]
+            stats = feature["properties"]["statistics"]
+
+            assert len(stats) == 1
+            stats = list(stats.values())[0]
+            assert round(stats["median"], 1) == 0
+            assert round(stats["sum"]) == 0
+            assert round(stats["mean"], 2) == 0
+    else:
+        # For single Feature, check the properties directly
+        stats = resp["properties"]["statistics"]
+        assert len(stats) == 1
+
+        # numbers corroborated by QGIS zonal stats for this file and polygon
+        stats = list(stats.values())[0]
+        assert round(stats["median"], 1) == 0.8
+        assert round(stats["sum"]) == 2420
+        assert round(stats["mean"], 2) == 0.53
 
 
 @pytest.mark.vcr
