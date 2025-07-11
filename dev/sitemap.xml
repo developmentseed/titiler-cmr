@@ -2,34 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/contributing/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/release-notes/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/datasets/hls_tiling/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/deployment/time_series_api_limits/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/examples/rasterio_backend_example/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/examples/time_series_example/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/examples/xarray_backend_example/</loc>
-         <lastmod>2025-06-26</lastmod>
+         <lastmod>2025-07-11</lastmod>
     </url>
 </urlset>
