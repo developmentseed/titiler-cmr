@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Handle case where `ResolutionAndCoordinateSystem` is not available for calculating time series request size ([#62](https://github.com/developmentseed/titiler-cmr/pull/62))
 
+- Pin geojson-pydantic to >=2.0.0,<3.0 (previously was >=1.1.1) and fixed iteration of `FeatureCollection` ([#68](https://github.com/developmentseed/titiler-cmr/pull/68))
+
 ### Changed
 
 - Add `s3_auth_strategy` and `aws_request_payer` to `AppSettings`: <https://github.com/developmentseed/titiler-cmr/pull/58>
