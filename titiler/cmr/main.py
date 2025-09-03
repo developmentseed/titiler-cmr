@@ -36,7 +36,7 @@ auth_config = AuthSettings()
 log_level = os.getenv("LOG_LEVEL", "INFO")
 logging.basicConfig(
     level=getattr(logging, log_level),
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s",
     handlers=[logging.StreamHandler()],
 )
 
