@@ -50,6 +50,8 @@ uvicorn = [
     "uvicorn",
 ]
 
+lambda = ["mangum==0.19.0"]
+
 [dependency-groups]
 dev = [
     "folium>=0.17.0",
