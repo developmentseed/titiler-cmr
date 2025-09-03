@@ -24,7 +24,8 @@ dependencies = [
     "titiler.core>=0.23.1,<0.24",
     "titiler.mosaic>=0.23.1,<0.24",
     "titiler.xarray>=0.23.1,<0.24",
-    "boto3==1.34.35",
+    "aiobotocore>=2.20",
+    "boto3>=1.34.145",
     "cftime~=1.6.4",
     "earthaccess~=0.11.0",
     "h5netcdf~=1.1.0",
@@ -78,7 +79,7 @@ dev = [
 ]
 deployment = [
     "aws-cdk-lib~=2.177.0",
-    "boto3==1.34.35",
+    "boto3>=1.34.145",
     "constructs>=10.4.2",
     "pydantic-settings~=2.0",
     "python-dotenv>=1.0.1",
