@@ -15,9 +15,8 @@ COPY titiler/ titiler/
 
 # Install system dependencies to compile (numexpr)
 RUN dnf install -y gcc-c++  
-RUN python -m pip install --upgrade pip
-RUN uv export --locked --no-dev --no-hashes --no-binary-package pydantic --format requirements.txt > requirements.txt && \
-  python -m pip install -r requirements.txt -t /asset --no-binary pydantic
+RUN uv export --locked --no-editable --no-emit-workspace --no-dev --format requirements.txt -o requirements.txt && \
+  uv run pip install --target /asset -r requirements.txt  --no-binary pydantic
 
 # copy libexpat.so.1 into /asset which is included in LD_LIBRARY_PATH
 RUN cp /usr/lib64/libexpat.so.1 /asset/
