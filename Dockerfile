@@ -9,7 +9,7 @@ COPY titiler/ titiler/
 COPY README.md README.md
 COPY LICENSE LICENSE
 
-RUN apt-get update && apt-get -y --no-install-recommends install libexpat1 && uv sync --frozen --extra uvicorn
+RUN apt-get update && apt-get -y --no-install-recommends install libexpat1 && uv sync --no-dev --frozen --extra uvicorn
 
 ARG EARTHDATA_USERNAME
 ARG EARTHDATA_PASSWORD
