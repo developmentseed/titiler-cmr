@@ -1905,7 +1905,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_846528dc639fda3940a799ca01a302f6 {
+                #map_bdeb8ace2457d24388647932336ecc23 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -1919,14 +1919,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_846528dc639fda3940a799ca01a302f6" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_bdeb8ace2457d24388647932336ecc23" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_846528dc639fda3940a799ca01a302f6 = L.map(
-                "map_846528dc639fda3940a799ca01a302f6",
+            var map_bdeb8ace2457d24388647932336ecc23 = L.map(
+                "map_bdeb8ace2457d24388647932336ecc23",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -1940,22 +1940,22 @@ m</div>
 
         
     
-            var tile_layer_93637cb7d6f346722cc27bf8281ccec6 = L.tileLayer(
+            var tile_layer_aa447e2dae12ff2663d1e69c90ff87ac = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_93637cb7d6f346722cc27bf8281ccec6.addTo(map_846528dc639fda3940a799ca01a302f6);
+            tile_layer_aa447e2dae12ff2663d1e69c90ff87ac.addTo(map_bdeb8ace2457d24388647932336ecc23);
         
     
-            var tile_layer_d9e2f654cfafe877a1c609d294440254 = L.tileLayer(
+            var tile_layer_482c936c64e2708a7572dc26b2da42d0 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_d9e2f654cfafe877a1c609d294440254.addTo(map_846528dc639fda3940a799ca01a302f6);
+            tile_layer_482c936c64e2708a7572dc26b2da42d0.addTo(map_bdeb8ace2457d24388647932336ecc23);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2081,28 +2081,90 @@ m</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[9], line 30</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> r <span style="color: rgb(98,98,98)">=</span> httpx<span style="color: rgb(98,98,98)">.</span>get(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>titiler_endpoint<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/WebMercatorQuad/tilejson.json</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     params<span style="color: rgb(98,98,98)">=</span>(
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">     27</span>     ),
-<span class="ansi-green-intense-fg ansi-bold">     28</span> )<span style="color: rgb(98,98,98)">.</span>json()
-<span class="ansi-green-fg">---&gt; 30</span> m <span style="color: rgb(98,98,98)">=</span> Map(location<span style="color: rgb(98,98,98)">=</span>(<span style="color: rgb(98,98,98)">47.9221313337365</span>, <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">91.65432884883238</span>), zoom_start<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">r</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">maxzoom</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">]</span> <span style="color: rgb(98,98,98)">-</span> <span style="color: rgb(98,98,98)">1</span>)
-<span class="ansi-green-intense-fg ansi-bold">     33</span> TileLayer(
-<span class="ansi-green-intense-fg ansi-bold">     34</span>     tiles<span style="color: rgb(98,98,98)">=</span>r[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles</span><span style="color: rgb(175,0,0)">"</span>][<span style="color: rgb(98,98,98)">0</span>],
-<span class="ansi-green-intense-fg ansi-bold">     35</span>     opacity<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>,
-<span class="ansi-green-intense-fg ansi-bold">     36</span>     attr<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">NASA</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     37</span> )<span style="color: rgb(98,98,98)">.</span>add_to(m)
-<span class="ansi-green-intense-fg ansi-bold">     39</span> m
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe allowfullscreen="" mozallowfullscreen="" srcdoc='&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8" /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"&gt;&lt;/script&gt;
+    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/&gt;
+    
+            &lt;meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
+            &lt;style&gt;
+                #map_a8dd1a6a6980c5b30fad94e51a0cf5af {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class="folium-map" id="map_a8dd1a6a6980c5b30fad94e51a0cf5af" &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_a8dd1a6a6980c5b30fad94e51a0cf5af = L.map(
+                "map_a8dd1a6a6980c5b30fad94e51a0cf5af",
+                {
+                    center: [47.9221313337365, -91.65432884883238],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 12,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
 
-<span class="ansi-red-fg">KeyError</span>: 'maxzoom'</pre>
+            
+
+        
+    
+            var tile_layer_0ca387e15837a6314ce79aef8f03824c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_0ca387e15837a6314ce79aef8f03824c.addTo(map_a8dd1a6a6980c5b30fad94e51a0cf5af);
+        
+    
+            var tile_layer_20a2a257853d7c0ae234ed24c2b5b88a = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
+                {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_20a2a257853d7c0ae234ed24c2b5b88a.addTo(map_a8dd1a6a6980c5b30fad94e51a0cf5af);
+        
+&lt;/script&gt;
+&lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
 </div>
 </div>
 </div>
@@ -2266,7 +2328,87 @@ print(json.dumps(r, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "message": "Service Unavailable"
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -91.65432884883238,
+              47.9221313337365
+            ],
+            [
+              -91.65432884883238,
+              47.86503396133904
+            ],
+            [
+              -91.53842043960762,
+              47.86503396133904
+            ],
+            [
+              -91.53842043960762,
+              47.9221313337365
+            ],
+            [
+              -91.65432884883238,
+              47.9221313337365
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "statistics": {
+          "(B05-B04)/(B05+B04)": {
+            "min": -111.0,
+            "max": 1.7976931348623157e+308,
+            "mean": null,
+            "count": 57304.8046875,
+            "sum": null,
+            "std": null,
+            "median": 0.28023598820059,
+            "majority": 0.3333333333333333,
+            "minority": -111.0,
+            "unique": 42086.0,
+            "histogram": [
+              [
+                57796,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2
+              ],
+              [
+                -111.0,
+                1.7976931348623158e+307,
+                3.5953862697246315e+307,
+                5.393079404586948e+307,
+                7.190772539449263e+307,
+                8.988465674311579e+307,
+                1.0786158809173895e+308,
+                1.258385194403621e+308,
+                1.4381545078898526e+308,
+                1.6179238213760842e+308,
+                1.7976931348623157e+308
+              ]
+            ],
+            "valid_percent": 100.0,
+            "masked_pixels": 0.0,
+            "valid_pixels": 57798.0,
+            "percentile_2": 0.001119263773162542,
+            "percentile_98": 0.5649122807017544
+          }
+        }
+      }
+    }
+  ]
 }
 </pre>
 </div>
