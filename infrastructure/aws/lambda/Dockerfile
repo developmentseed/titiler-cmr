@@ -5,17 +5,10 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /tmp
 
-COPY uv.lock uv.lock
-COPY pyproject.toml pyproject.toml
-COPY LICENSE LICENSE
-COPY README.md README.md
-COPY titiler/ titiler/
+COPY uv.lock .python-version pyproject.toml LICENSE README.md titiler/ ./
 
-# Install dependencies
-
-# Install system dependencies to compile (numexpr)
 RUN dnf install -y gcc-c++  
-RUN uv export --locked --no-editable --no-emit-workspace --no-dev --format requirements.txt -o requirements.txt && \
+RUN uv export --locked --no-editable --no-emit-workspace --no-dev --extra lambda --format requirements.txt -o requirements.txt && \
   uv pip install --compile-bytecode --no-binary pydantic --target /asset -r requirements.txt 
 
 # copy libexpat.so.1 into /asset which is included in LD_LIBRARY_PATH

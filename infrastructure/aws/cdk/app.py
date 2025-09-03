@@ -12,7 +12,7 @@ from aws_cdk import aws_logs as logs
 from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as subscriptions
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
-from config import StackSettings, AppSettings
+from config import AppSettings, StackSettings
 from constructs import Construct
 
 stack_settings, app_settings = StackSettings(), AppSettings()
@@ -39,7 +39,7 @@ class LambdaStack(Stack):
         id: str,
         memory: int = 1024,
         timeout: int = 30,
-        runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_10,
+        runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_12,
         concurrent: Optional[int] = None,
         permissions: Optional[List[iam.PolicyStatement]] = None,
         role_arn: Optional[str] = None,
