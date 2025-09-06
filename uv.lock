@@ -3199,6 +3199,7 @@ dev = [
     { name = "pytest-recording" },
     { name = "ruff" },
     { name = "seaborn" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -3260,6 +3261,7 @@ dev = [
     { name = "pytest-recording", specifier = ">=0.13.2" },
     { name = "ruff", specifier = ">=0.8.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "uvicorn", specifier = ">=0.32.1" },
 ]
 
 [[package]]

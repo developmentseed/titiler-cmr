@@ -1,5 +1,6 @@
 """TiTiler+cmr FastAPI application."""
 
+import json
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -33,11 +34,52 @@ settings = ApiSettings()
 auth_config = AuthSettings()
 
 
+class JSONFormatter(logging.Formatter):
+    """JSON log formatter similar to AWS Lambda."""
+
+    def format(self, record):
+        """format log record in json"""
+        log_entry = {
+            "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S.%fZ"),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "filename": record.filename,
+            "lineno": record.lineno,
+        }
+
+        # Add any extra fields passed via the extra parameter
+        if hasattr(record, "__dict__"):
+            for key, value in record.__dict__.items():
+                if key not in log_entry and not key.startswith("_"):
+                    # Only add if it's not a standard logging attribute
+                    if not hasattr(logging.LogRecord("", 0, "", 0, "", (), None), key):
+                        log_entry[key] = value
+
+        if record.exc_info:
+            log_entry["exception"] = self.formatException(record.exc_info)
+
+        return json.dumps(log_entry)
+
+
 log_level = os.getenv("LOG_LEVEL", "INFO")
+
+# Configure logging format based on AWS_LAMBDA_LOG_FORMAT
+# Only use custom JSON formatter locally - AWS Lambda handles JSON formatting automatically
+formatter: JSONFormatter | logging.Formatter
+if "AWS_EXECUTION_ENV" not in os.environ:
+    formatter = JSONFormatter()
+else:
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s"
+    )
+
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+
 logging.basicConfig(
     level=getattr(logging, log_level),
-    format="%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()],
+    handlers=[handler],
 )
 logging.getLogger("botocore").setLevel("WARN")
 logging.getLogger("aiobotocore").setLevel("WARN")
