@@ -18,6 +18,8 @@ from constructs import Construct
 stack_settings, app_settings = StackSettings(), AppSettings()
 
 DEFAULT_ENV = {
+    "AWS_LAMBDA_LOG_FORMAT": "JSON",
+    "AWS_LAMBDA_LOG_LEVEL": "INFO",
     "GDAL_CACHEMAX": "200",  # 200 mb
     "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
     "GDAL_INGESTED_BYTES_AT_OPEN": "32768",  # get more bytes when opening the files.

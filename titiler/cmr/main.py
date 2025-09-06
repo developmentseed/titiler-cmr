@@ -39,6 +39,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s",
     handlers=[logging.StreamHandler()],
 )
+logging.getLogger("botocore").setLevel("WARN")
 
 
 @asynccontextmanager
@@ -152,8 +153,7 @@ if settings.cors_origins:
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 
-if settings.debug:
-    app.add_middleware(LoggerMiddleware)
+app.add_middleware(LoggerMiddleware)
 
 ###############################################################################
 # application endpoints
