@@ -1,5 +1,6 @@
 """TiTiler.cmr custom Mosaic Backend."""
 
+import logging
 import os
 import re
 from datetime import datetime
@@ -33,6 +34,8 @@ Access = Literal["direct", "external"]
 cache_config = CacheSettings()
 retry_config = RetrySettings()
 s3_auth_config = AuthSettings()
+
+logger = logging.getLogger()
 
 
 @cached(  # type: ignore
@@ -234,6 +237,7 @@ class CMRBackend(BaseBackend):
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Get Tile from multiple observation."""
+        logger.info("searching for assets")
         mosaic_assets = self.assets_for_tile(
             tile_x,
             tile_y,
@@ -242,6 +246,7 @@ class CMRBackend(BaseBackend):
             access=s3_auth_config.access,
             bands_regex=bands_regex,
         )
+        logger.info(f"found {len(mosaic_assets)} assets")
 
         if not mosaic_assets:
             raise NoAssetFoundError(
@@ -295,6 +300,7 @@ class CMRBackend(BaseBackend):
             ) as src_dst:
                 return src_dst.tile(x, y, z, **kwargs)
 
+        logger.info("reading assets")
         return mosaic_reader(mosaic_assets, _reader, tile_x, tile_y, tile_z, **kwargs)
 
     def point(

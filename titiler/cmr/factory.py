@@ -1,6 +1,7 @@
 """titiler.cmr.factory: router factories."""
 
 import json
+import logging
 import os
 import re
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
@@ -48,8 +49,8 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
+from titiler.xarray.dependencies import CompatXarrayParams, XarrayIOParams
 from titiler.xarray.io import Reader as XarrayReader
-from titiler.xarray.dependencies import XarrayIOParams, CompatXarrayParams
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
@@ -62,6 +63,8 @@ jinja2_env = jinja2.Environment(
 DEFAULT_TEMPLATES = Jinja2Templates(env=jinja2_env)
 
 MOSAIC_THREADS = int(os.getenv("MOSAIC_CONCURRENCY", MAX_THREADS))
+
+logger = logging.getLogger()
 
 
 def create_html_response(
@@ -526,6 +529,7 @@ class Endpoints(TilerFactory):
                 reader_params=reader_params,
             )
 
+            logger.info(f"opening data with reader: {reader}")
             with CMRBackend(
                 tms=tms,
                 reader=reader,
@@ -542,6 +546,7 @@ class Endpoints(TilerFactory):
                     reproject_method=reproject_method,
                     **read_options,
                 )
+                logger.info("successfully generated tile image")
                 dst_colormap = getattr(src_dst, "colormap", None)
 
             if post_process:
