@@ -40,6 +40,7 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()],
 )
 logging.getLogger("botocore").setLevel("WARN")
+logging.getLogger("aiobotocore").setLevel("WARN")
 
 
 @asynccontextmanager
