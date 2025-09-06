@@ -25,6 +25,7 @@ from rio_tiler.models import ImageData
 from rio_tiler.mosaic import mosaic_reader
 from rio_tiler.types import BBox
 
+from titiler.cmr.logger import logger
 from titiler.cmr.settings import AuthSettings, CacheSettings, RetrySettings
 from titiler.cmr.utils import retry
 
@@ -234,6 +235,7 @@ class CMRBackend(BaseBackend):
         **kwargs: Any,
     ) -> Tuple[ImageData, List[str]]:
         """Get Tile from multiple observation."""
+        logger.info("searching for assets")
         mosaic_assets = self.assets_for_tile(
             tile_x,
             tile_y,
@@ -242,6 +244,7 @@ class CMRBackend(BaseBackend):
             access=s3_auth_config.access,
             bands_regex=bands_regex,
         )
+        logger.info(f"found {len(mosaic_assets)} assets")
 
         if not mosaic_assets:
             raise NoAssetFoundError(
@@ -295,6 +298,7 @@ class CMRBackend(BaseBackend):
             ) as src_dst:
                 return src_dst.tile(x, y, z, **kwargs)
 
+        logger.info("reading assets")
         return mosaic_reader(mosaic_assets, _reader, tile_x, tile_y, tile_z, **kwargs)
 
     def point(

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- Upgrade to titiler v0.23. and add more logging statements to help track performance ([#71](https://github.com/developmentseed/titiler-cmr/pull/71))
+
 ## [v0.1.5]
 
 ### Fixed
