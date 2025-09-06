@@ -1,7 +1,6 @@
 """titiler.cmr.factory: router factories."""
 
 import json
-import logging
 import os
 import re
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
@@ -34,6 +33,7 @@ from titiler.cmr.dependencies import (
     cmr_query,
 )
 from titiler.cmr.enums import MediaType
+from titiler.cmr.logger import logger
 from titiler.cmr.reader import MultiFilesBandsReader, xarray_open_dataset
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import (
@@ -63,8 +63,6 @@ jinja2_env = jinja2.Environment(
 DEFAULT_TEMPLATES = Jinja2Templates(env=jinja2_env)
 
 MOSAIC_THREADS = int(os.getenv("MOSAIC_CONCURRENCY", MAX_THREADS))
-
-logger = logging.getLogger()
 
 
 def create_html_response(

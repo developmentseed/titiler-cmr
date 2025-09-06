@@ -1,6 +1,5 @@
 """TiTiler.cmr custom Mosaic Backend."""
 
-import logging
 import os
 import re
 from datetime import datetime
@@ -26,6 +25,7 @@ from rio_tiler.models import ImageData
 from rio_tiler.mosaic import mosaic_reader
 from rio_tiler.types import BBox
 
+from titiler.cmr.logger import logger
 from titiler.cmr.settings import AuthSettings, CacheSettings, RetrySettings
 from titiler.cmr.utils import retry
 
@@ -34,8 +34,6 @@ Access = Literal["direct", "external"]
 cache_config = CacheSettings()
 retry_config = RetrySettings()
 s3_auth_config = AuthSettings()
-
-logger = logging.getLogger()
 
 
 @cached(  # type: ignore

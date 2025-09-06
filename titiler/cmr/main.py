@@ -81,8 +81,9 @@ logging.basicConfig(
     level=getattr(logging, log_level),
     handlers=[handler],
 )
-logging.getLogger("botocore").setLevel("WARN")
-logging.getLogger("aiobotocore").setLevel("WARN")
+
+for module in ["botocore", "aiobotocore", "earthaccess"]:
+    logging.getLogger(module).setLevel("WARN")
 
 
 @asynccontextmanager
