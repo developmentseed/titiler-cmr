@@ -95,7 +95,7 @@ class LambdaStack(Stack):
                     # layer_version_arn=f"arn:aws:lambda:{self.region}:184161586896:layer:opentelemetry-python-0_16_0:1",
                 )
             ],
-            tracing=True,
+            tracing=aws_lambda.Tracing.ACTIVE,
         )
 
         for perm in permissions:
