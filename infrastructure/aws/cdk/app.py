@@ -20,6 +20,7 @@ stack_settings, app_settings = StackSettings(), AppSettings()
 DEFAULT_ENV = {
     "AWS_LAMBDA_LOG_FORMAT": "JSON",
     "AWS_LAMBDA_LOG_LEVEL": "INFO",
+    "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",
     "GDAL_CACHEMAX": "200",  # 200 mb
     "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
     "GDAL_INGESTED_BYTES_AT_OPEN": "32768",  # get more bytes when opening the files.
@@ -86,6 +87,15 @@ class LambdaStack(Stack):
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
+            layers=[
+                aws_lambda.LayerVersion.from_layer_version_arn(
+                    self,
+                    f"{id}-lambda-python-otel-layer",
+                    layer_version_arn=f"arn:aws:lambda:{self.region}:901920570463:layer:aws-otel-python-amd64-ver-1-32-0:2",
+                    # layer_version_arn=f"arn:aws:lambda:{self.region}:184161586896:layer:opentelemetry-python-0_16_0:1",
+                )
+            ],
+            tracing=True,
         )
 
         for perm in permissions:
