@@ -21,6 +21,8 @@ RUN cd /asset && find . -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN cd /asset && find . -type f -a -name '*.py' -print0 | xargs -0 rm -f
 RUN find /asset -type d -a -name 'tests' -print0 | xargs -0 rm -rf
 RUN rm -rdf /asset/numpy/doc/ /asset/bin /asset/geos_license /asset/Misc
+RUN rm -rdf /asset/boto3*
+RUN rm -rdf /asset/botocore*
 
 # Strip debug symbols from compiled C/C++ code (except for numpy.libs!)
 RUN cd /asset && \
