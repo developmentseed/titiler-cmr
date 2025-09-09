@@ -9,7 +9,7 @@ COPY uv.lock .python-version pyproject.toml LICENSE README.md ./
 COPY titiler/ ./titiler/
 
 RUN dnf install -y gcc-c++  
-RUN uv export --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt && \
+RUN uv export --locked --no-editable --no-dev --extra lambda --extra telemetry --format requirements.txt -o requirements.txt && \
   uv pip install --compile-bytecode --no-binary pydantic --target /asset -r requirements.txt 
 
 # copy libexpat.so.1 into /asset which is included in LD_LIBRARY_PATH
