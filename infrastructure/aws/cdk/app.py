@@ -87,14 +87,14 @@ class LambdaStack(Stack):
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
-            layers=[
-                aws_lambda.LayerVersion.from_layer_version_arn(
-                    self,
-                    f"{id}-lambda-python-otel-layer",
-                    layer_version_arn=f"arn:aws:lambda:{self.region}:901920570463:layer:aws-otel-python-amd64-ver-1-32-0:2",
-                    # layer_version_arn=f"arn:aws:lambda:{self.region}:184161586896:layer:opentelemetry-python-0_16_0:1",
-                )
-            ],
+            # layers=[
+            #     aws_lambda.LayerVersion.from_layer_version_arn(
+            #         self,
+            #         f"{id}-lambda-python-otel-layer",
+            #         layer_version_arn=f"arn:aws:lambda:{self.region}:901920570463:layer:aws-otel-python-amd64-ver-1-32-0:2",
+            #         # layer_version_arn=f"arn:aws:lambda:{self.region}:184161586896:layer:opentelemetry-python-0_16_0:1",
+            #     )
+            # ],
             tracing=aws_lambda.Tracing.ACTIVE,
         )
 
