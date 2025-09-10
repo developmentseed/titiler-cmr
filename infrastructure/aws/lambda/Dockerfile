@@ -5,11 +5,12 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /tmp
 
+RUN dnf install -y gcc-c++  
+
 COPY uv.lock .python-version pyproject.toml LICENSE README.md ./
 COPY titiler/ ./titiler/
 
-RUN dnf install -y gcc-c++  
-RUN uv export --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt && \
+RUN uv export --locked --no-editable --no-dev --extra lambda --extra telemetry --format requirements.txt -o requirements.txt && \
   uv pip install --compile-bytecode --no-binary pydantic --target /asset -r requirements.txt 
 
 # copy libexpat.so.1 into /asset which is included in LD_LIBRARY_PATH
@@ -21,6 +22,8 @@ RUN cd /asset && find . -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN cd /asset && find . -type f -a -name '*.py' -print0 | xargs -0 rm -f
 RUN find /asset -type d -a -name 'tests' -print0 | xargs -0 rm -rf
 RUN rm -rdf /asset/numpy/doc/ /asset/bin /asset/geos_license /asset/Misc
+RUN rm -rdf /asset/boto3*
+RUN rm -rdf /asset/botocore*
 
 # Strip debug symbols from compiled C/C++ code (except for numpy.libs!)
 RUN cd /asset && \

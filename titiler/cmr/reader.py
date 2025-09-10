@@ -3,6 +3,7 @@
 Originaly from titiler-xarray
 """
 
+import os
 import pickle
 from typing import Any, Dict, Optional, Type
 from urllib.parse import urlparse
@@ -10,7 +11,6 @@ from urllib.parse import urlparse
 import attr
 import earthaccess
 import fsspec
-import os
 import s3fs
 import xarray
 from cachetools import TTLCache
