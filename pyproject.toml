@@ -25,7 +25,7 @@ dependencies = [
     "titiler.mosaic>=0.23.1,<0.24",
     "titiler.xarray>=0.23.1,<0.24",
     "aiobotocore>=2.24.0",
-    "boto3>=1.40.0",
+    "boto3>=1.39.0",
     "cftime~=1.6.4",
     "earthaccess~=0.11.0",
     "geojson-pydantic>=2.0.0,<3.0",
@@ -52,6 +52,7 @@ uvicorn = [
 
 lambda = [
     "mangum==0.19.0",
+    "aiobotocore>=2.24.0,<2.24.2"
 ]
 telemetry = [
     "titiler.core[telemetry]>=0.23.1,<0.24",
