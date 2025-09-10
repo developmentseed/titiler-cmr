@@ -8,10 +8,7 @@ import pickle
 from typing import Any, Dict, Optional, Type
 from urllib.parse import urlparse
 
-import aiobotocore
 import attr
-import boto3
-import botocore
 import earthaccess
 import fsspec
 import s3fs
@@ -22,7 +19,6 @@ from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
 
-from titiler.cmr.logger import logger
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -41,9 +37,6 @@ def get_filesystem(
     Get the filesystem for the given source path.
     """
     if protocol == "s3":
-        logger.info(f"boto3 version: {boto3.__version__}")
-        logger.info(f"botocore version: {botocore.__version__}")
-        logger.info(f"aiobotocore version: {aiobotocore.__version__}")
         s3_credentials = s3_credentials or {}
         if os.environ.get("AWS_REQUEST_PAYER") == "requester":
             s3_credentials["requester_pays"] = True
