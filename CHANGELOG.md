@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [v0.2.0]
 
+### Fixed
+
+- Upgrade to Python 3.12 runtime to avoid dependency build errors
+
+### Added
+
 - Add OTEL traces
 - Upgrade to titiler v0.23. and add more logging statements to help track performance ([#71](https://github.com/developmentseed/titiler-cmr/pull/71))
 
