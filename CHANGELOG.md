@@ -72,10 +72,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Ability to run locally with Earthdata authentication ([#28](https://github.com/developmentseed/titiler-cmr/pull/28))
 
-[Unreleased]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.5..develop>
-[v0.2.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.2.0..v0.1.5>
-[v0.1.5]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.5..v0.1.4>
-[v0.1.4]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.4..v0.1.3>
-[v0.1.3]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.3..0.1.2>
-[0.1.2]: <https://github.com/developmentseed/titiler-cmr/compare/0.1.2..0.1.1>
-[0.1.1]: <https://github.com/developmentseed/titiler-cmr/compare/0.1.1..0.1.0>
+[Unreleased]: <https://github.com/developmentseed/titiler-cmr/compare/v0.2.0..develop>
+[v0.2.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.5..v0.2.0>
+[v0.1.5]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.4..v0.1.5>
+[v0.1.4]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.3..v0.1.4>
+[v0.1.3]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.2..0.1.3>
+[0.1.2]: <https://github.com/developmentseed/titiler-cmr/compare/0.1.1..0.1.2>
+[0.1.1]: <https://github.com/developmentseed/titiler-cmr/compare/0.1.0..0.1.1>
