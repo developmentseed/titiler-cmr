@@ -19,6 +19,7 @@ from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
 
+from titiler.cmr.logger import logger
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -76,6 +77,7 @@ def xarray_open_dataset(
     """Modified version of titiler.xarray.io.xarray_open_dataset with
     custom handler for earthaccess authentication over https
     """
+    logger.info(f"opening {src_path}")
     # Generate cache key and attempt to fetch the dataset from cache
     cache_key = f"{src_path}_{group}" if group is not None else src_path
     data_bytes = cache_client.get(cache_key, None)

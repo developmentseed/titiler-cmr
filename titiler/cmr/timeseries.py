@@ -41,6 +41,7 @@ from pydantic import BaseModel
 from titiler.cmr.dependencies import ConceptID
 from titiler.cmr.errors import InvalidDatetime
 from titiler.cmr.factory import Endpoints
+from titiler.cmr.logger import logger
 from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import (
     calculate_time_series_request_size,
@@ -157,6 +158,19 @@ class TimeseriesParams(DefaultDependency):
             "Interval: CMR queries will be made for the intervals between the points along the timeseries and results will be mosaiced into a single array before summarization."
         ),
     ] = TemporalMode.interval
+    use_sel_for_datetime: Annotated[
+        bool,
+        Query(
+            description="When True and using xarray backend, datetime values will be converted to sel parameters for within-granule temporal selection. "
+            "This allows time series analysis on datasets with multiple timesteps per granule (e.g., annual files with monthly data)."
+        ),
+    ] = False
+    sel_time_dim: Annotated[
+        str,
+        Query(
+            description="Name of the time dimension in the xarray dataset for sel-based temporal selection. Only used when use_sel_for_datetime=True."
+        ),
+    ] = "time"
 
 
 timeseries_field_names = [field.name for field in fields(TimeseriesParams)]
@@ -208,10 +222,31 @@ def generate_datetime_ranges(
     return ranges
 
 
+def convert_datetime_to_sel(datetime_str: str, time_dim: str = "time") -> str:
+    """Convert a datetime string to xarray sel parameter format.
+
+    Args:
+        datetime_str: Datetime string in ISO format or interval format
+        time_dim: Name of the time dimension in the xarray dataset
+
+    Returns:
+        String in format "time=2018-01-01T00:00:00" for use in sel parameter
+    """
+    if "/" in datetime_str:
+        # For intervals, use the start datetime for selection
+        start_str = datetime_str.split("/")[0]
+        return f"{time_dim}={start_str}"
+    else:
+        # Single datetime
+        return f"{time_dim}={datetime_str}"
+
+
 def build_request_urls(
     base_url: str,
     request: Request,
     param_list: List[BaseModel],
+    use_sel_for_datetime: bool = False,
+    sel_time_dim: str = "time",
 ):
     """Build lower-level request URLs from a base_url, a request, and a list of
     additional query parameters. Preserves multiple values for the same parameter.
@@ -230,10 +265,23 @@ def build_request_urls(
             (str(key), str(value)) for key, value in _params.model_dump().items()
         ]
 
-        url = (
-            f"{base_url}?{urlencode(non_timeseries_params + model_params, doseq=True)}"
-        )
+        # Start with existing parameters
+        all_params = non_timeseries_params + model_params
+
+        # If using sel for datetime, add the datetime sel parameter
+        if use_sel_for_datetime and hasattr(_params, "datetime"):
+            sel_param = convert_datetime_to_sel(_params.datetime, sel_time_dim)
+            all_params.append(("sel", sel_param))
+
+            # Only add sel_method if it's not already present in the request
+            has_sel_method = any(key == "sel_method" for key, _ in all_params)
+            if not has_sel_method:
+                all_params.append(("sel_method", "nearest"))
+
+        url = f"{base_url}?{urlencode(all_params, doseq=True)}"
         urls.append(url)
+
+    logger.info(f"example request url: {urls[0]}")
 
     return urls
 
@@ -403,6 +451,7 @@ class TimeseriesExtension(FactoryExtension):
         def get_timeseries_parameters(
             query=Depends(timeseries_cmr_query),
         ):
+            logger.info("generating timeseries parameters")
             return query
 
     def register_statistics(self, factory: Endpoints):
@@ -429,6 +478,7 @@ class TimeseriesExtension(FactoryExtension):
                 Body(description="GeoJSON Feature or FeatureCollection.", embed=False),
             ],
             query=Depends(timeseries_cmr_query_no_bbox),
+            timeseries_params=Depends(TimeseriesParams),
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(factory.rasterio_dependency),
@@ -443,6 +493,16 @@ class TimeseriesExtension(FactoryExtension):
             """For all points/intervals along a timeseries, calculate summary statistics
             for the pixels that intersect a GeoJSON feature.
             """
+            # Validate parameter combinations
+            if (
+                timeseries_params.use_sel_for_datetime
+                and reader_params.backend != "xarray"
+            ):
+                raise HTTPException(
+                    status_code=400,
+                    detail="use_sel_for_datetime=True requires backend=xarray",
+                )
+
             start_time = time()
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
@@ -487,6 +547,8 @@ class TimeseriesExtension(FactoryExtension):
                 base_url=str(factory.url_for(request, "geojson_statistics")),
                 request=request,
                 param_list=query,
+                use_sel_for_datetime=timeseries_params.use_sel_for_datetime,
+                sel_time_dim=timeseries_params.sel_time_dim,
             )
 
             timestep_requests = await asyncio.gather(
@@ -547,6 +609,7 @@ class TimeseriesExtension(FactoryExtension):
                 Path(description="Identifier for a supported TileMatrixSet"),
             ],
             query=Depends(timeseries_cmr_query),
+            timeseries_params=Depends(TimeseriesParams),
             tile_format: Annotated[
                 Optional[ImageType],
                 Query(
@@ -576,6 +639,16 @@ class TimeseriesExtension(FactoryExtension):
             render_params=Depends(factory.render_dependency),
         ) -> TimeseriesTileJSON:
             """Get a set of tilejsons for all points/intervals along a timeseries."""
+            # Validate parameter combinations
+            if (
+                timeseries_params.use_sel_for_datetime
+                and reader_params.backend != "xarray"
+            ):
+                raise HTTPException(
+                    status_code=400,
+                    detail="use_sel_for_datetime=True requires backend=xarray",
+                )
+
             urls = build_request_urls(
                 base_url=str(
                     factory.url_for(
@@ -584,6 +657,8 @@ class TimeseriesExtension(FactoryExtension):
                 ),
                 request=request,
                 param_list=query,
+                use_sel_for_datetime=timeseries_params.use_sel_for_datetime,
+                sel_time_dim=timeseries_params.sel_time_dim,
             )
 
             timestep_requests = await asyncio.gather(
@@ -624,6 +699,7 @@ class TimeseriesExtension(FactoryExtension):
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = TimeseriesImageType.gif,
             query=Depends(timeseries_cmr_query),
+            timeseries_params=Depends(TimeseriesParams),
             fps: Annotated[
                 int,
                 Query(gt=1, description="Frames per second for the gif"),
@@ -643,6 +719,16 @@ class TimeseriesExtension(FactoryExtension):
 
             Currently only the `GIF` format is supported but `MP4` is on the roadmap.
             """
+            # Validate parameter combinations
+            if (
+                timeseries_params.use_sel_for_datetime
+                and reader_params.backend != "xarray"
+            ):
+                raise HTTPException(
+                    status_code=400,
+                    detail="use_sel_for_datetime=True requires backend=xarray",
+                )
+
             start_time = time()
             process = psutil.Process(os.getpid())
 
@@ -706,6 +792,8 @@ class TimeseriesExtension(FactoryExtension):
                 ),
                 request=request,
                 param_list=query,
+                use_sel_for_datetime=timeseries_params.use_sel_for_datetime,
+                sel_time_dim=timeseries_params.sel_time_dim,
             )
 
             timestep_requests = await asyncio.gather(
