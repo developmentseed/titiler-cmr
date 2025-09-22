@@ -172,6 +172,26 @@ class TimeseriesParams(DefaultDependency):
         ),
     ] = "time"
 
+    def __post_init__(self):
+        """Validate parameter combinations."""
+        if self.use_sel_for_datetime:
+            # Valid case 1: temporal_mode is point AND step is not None
+            if self.temporal_mode == TemporalMode.point and self.step is not None:
+                return
+
+            # Valid case 2: datetime contains only points in time (no ranges)
+            datetime_inputs = self.datetime.split(",")
+            has_ranges = any("/" in dt.strip() for dt in datetime_inputs)
+
+            if not has_ranges:
+                return
+
+            # If neither valid case is met, raise an error
+            raise HTTPException(
+                status_code=400,
+                detail="use_sel_for_datetime=True requires either (temporal_mode='point' AND step is provided) OR datetime parameter to contain only points in time (no ranges with '/')",
+            )
+
 
 timeseries_field_names = [field.name for field in fields(TimeseriesParams)]
 

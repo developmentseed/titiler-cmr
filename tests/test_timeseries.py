@@ -271,3 +271,67 @@ def test_timeseries_mixed_datetime(
         ),
     )
     assert len(mixed_query) == 6
+
+
+def test_timeseries_params_validation():
+    """Test TimeseriesParams validation logic for use_sel_for_datetime"""
+
+    # Valid case 1: temporal_mode='point' with step provided
+    TimeseriesParams(
+        datetime="2024-01-01T00:00:00Z/..",
+        step="P1D",
+        temporal_mode=TemporalMode.point,
+        use_sel_for_datetime=True,
+    )
+    # Should not raise an exception
+
+    # Valid case 2: datetime with only points in time (no ranges)
+    TimeseriesParams(
+        datetime="2024-01-01T00:00:00Z,2024-01-02T00:00:00Z",
+        use_sel_for_datetime=True,
+    )
+    # Should not raise an exception
+
+    # Valid case 3: single point in time
+    TimeseriesParams(
+        datetime="2024-01-01T00:00:00Z",
+        use_sel_for_datetime=True,
+    )
+    # Should not raise an exception
+
+    # Invalid case 1: temporal_mode='point' without step and with ranges
+    with pytest.raises(HTTPException) as exc_info:
+        TimeseriesParams(
+            datetime="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z",
+            temporal_mode=TemporalMode.point,
+            use_sel_for_datetime=True,
+        )
+    assert exc_info.value.status_code == 400
+    assert "use_sel_for_datetime=True requires either" in str(exc_info.value.detail)
+
+    # Invalid case 2: temporal_mode='interval' without step and with ranges
+    with pytest.raises(HTTPException) as exc_info:
+        TimeseriesParams(
+            datetime="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z",
+            temporal_mode=TemporalMode.interval,
+            use_sel_for_datetime=True,
+        )
+    assert exc_info.value.status_code == 400
+    assert "use_sel_for_datetime=True requires either" in str(exc_info.value.detail)
+
+    # Invalid case 3: mixed points and ranges
+    with pytest.raises(HTTPException) as exc_info:
+        TimeseriesParams(
+            datetime="2024-01-01T00:00:00Z,2024-01-02T00:00:00Z/2024-01-03T00:00:00Z",
+            use_sel_for_datetime=True,
+        )
+    assert exc_info.value.status_code == 400
+    assert "use_sel_for_datetime=True requires either" in str(exc_info.value.detail)
+
+    # Valid case when use_sel_for_datetime=False (should never raise)
+    TimeseriesParams(
+        datetime="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z",
+        temporal_mode=TemporalMode.interval,
+        use_sel_for_datetime=False,
+    )
+    # Should not raise an exception
