@@ -15,7 +15,6 @@ from httpx import Response
 from PIL import Image
 
 from titiler.cmr.timeseries import TimeseriesMediaType
-from titiler.core.models.mapbox import TileJSON
 
 
 @pytest.mark.vcr
@@ -229,31 +228,16 @@ def test_timeseries_statistics(
 
 def test_timeseries_tilejson(
     app,
-    mocker,
+    patch_timestep_request,
     mock_cmr_get_assets,
     xarray_query_params,
     arctic_geojson,
 ) -> None:
     """Test /timeseries/tilejson endpoint
 
-    Since the /timeseries/tilejson endpoint sends more requests to internal endpoints
-    we need to catch those requests and mock a response since we can't forward them to
-    the test client.
+    Using the patch_timestep_request fixture, internal API calls are routed through
+    the test client instead of making actual HTTP requests.
     """
-    arctic_tilejson = TileJSON(
-        tiles=["https://testserver/{z}/{x}/{y}"],
-        minzoom=0,
-        maxzoom=1,
-    )
-
-    async def mock_timestep_request(url: str, **kwargs) -> Response:
-        return Response(
-            status_code=200,
-            json=arctic_tilejson.model_dump(exclude_none=True),
-        )
-
-    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
-
     response = app.get(
         "/timeseries/WebMercatorQuad/tilejson.json",
         params={
@@ -423,3 +407,42 @@ def test_timeseries_bbox_limit(
     )
 
     assert response.status_code == 400
+
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
+def test_timeseries_sel_statistics(
+    app: TestClient,
+    patch_timestep_request,
+    mock_cmr_get_assets,
+    mock_earthaccess_search_data,
+    tropess_query_params,
+    arctic_geojson,
+) -> None:
+    """Test /timeseries/statistics endpoint
+
+    Using the patch_timestep_request fixture, internal API calls are routed through
+    the test client instead of making actual HTTP requests.
+    """
+    response = app.post(
+        "/timeseries/statistics",
+        params={
+            **tropess_query_params,
+            "sel": "lev=1000",
+        },
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/geo+json"
+    response_json = response.json()
+    assert set(response_json["properties"]["statistics"].keys()) == {
+        "2021-01-01T00:00:01+00:00",
+        "2021-02-01T00:00:01+00:00",
+    }
+
+    for dt, stats in response_json["properties"]["statistics"].items():
+        assert len(stats) == 1
+        assert (
+            datetime.fromisoformat(dt).date()
+            == datetime.fromisoformat(list(stats.keys())[0]).date()
+        )

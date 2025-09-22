@@ -1,8 +1,11 @@
 """titiler.cmr tests configuration."""
 
+import json
 import os
 from typing import Any, Dict, Tuple
+from urllib.parse import urlparse
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, FeatureCollection, Polygon
@@ -63,6 +66,7 @@ def mock_cmr_get_assets(monkeypatch):
         prefixes = (
             "https://data.lpdaac.earthdatacloud.nasa.gov/",
             "https://archive.podaac.earthdata.nasa.gov/",
+            "https://data.gesdisc.earthdata.nasa.gov/",
         )
         data_dir = os.path.join(os.path.dirname(__file__), "data")
         for asset in assets:
@@ -83,6 +87,46 @@ def mock_cmr_get_assets(monkeypatch):
         return assets
 
     monkeypatch.setattr(CMRBackend, "get_assets", mocked_get_assets)
+
+
+class MockGranule:
+    """Mock class for earthaccess granule results"""
+
+    def __init__(self, data_links_urls, provider_id="GES_DISC"):
+        """init MockGranule"""
+        self.data_links_urls = data_links_urls
+        self.meta = {"provider-id": provider_id}
+
+    def data_links(self, access=None):
+        """get data links"""
+        return self.data_links_urls
+
+    def __getitem__(self, key):
+        """define get method"""
+        if key == "meta":
+            return self.meta
+        raise KeyError(key)
+
+
+@pytest.fixture
+def mock_earthaccess_search_data(monkeypatch):
+    """Mock earthaccess.search_data to return consistent test data"""
+    import os
+
+    import earthaccess
+
+    # Path to test data file
+    test_data_path = os.path.join(
+        os.path.dirname(__file__),
+        "data/data/TCR2_MON_VERTCONCS/TRPSCRO3M3D.1/TROPESS_reanalysis_mon_o3_2021.nc",
+    )
+    file_url = f"file://{test_data_path}"
+
+    def mock_search_data(*args, **kwargs):
+        # Return mock granules that point to our test data file
+        return [MockGranule([file_url])]
+
+    monkeypatch.setattr(earthaccess, "search_data", mock_search_data)
 
 
 @pytest.fixture(scope="function")
@@ -167,8 +211,8 @@ def xarray_query_params() -> Dict[str, str]:
         concept_id: str = "C2036881735-POCLOUD",
         variable: str = "sea_ice_fraction",
         datetime: str = "2024-10-11T00:00:01Z/2024-10-11T23:59:59Z",
-        sel: str = None,
-        sel_method: str = None,
+        sel: str | None = None,
+        sel_method: str | None = None,
     ):
         return {
             "backend": "xarray",
@@ -192,3 +236,98 @@ def rasterio_query_params() -> Dict[str, str]:
         "bands_regex": "Fmask",
         "bands": "Fmask",
     }
+
+
+@pytest.fixture(scope="session")
+def tropess_query_params() -> Dict[str, Any]:
+    """reusable set of query parameters for the tropess dataset"""
+
+    return {
+        "backend": "xarray",
+        "concept_id": "C2837626477-GES_DISC",
+        "variable": "o3",
+        "datetime": "2021-01-01T00:00:01Z/2021-02-28T23:59:59Z",
+        "step": "P1M",
+        "temporal_mode": "point",
+        "use_sel_for_datetime": True,
+        "sel_time_method": True,
+    }
+
+
+def _create_mock_response(tc_response):
+    """Create a mock httpx.Response-like object from TestClient response"""
+
+    class MockResponse:
+        def __init__(self, tc_response):
+            self.status_code = tc_response.status_code
+            self.headers = tc_response.headers
+            self.content = tc_response.content
+            self._json = None
+
+        def json(self):
+            if self._json is None:
+                self._json = json.loads(self.content)
+            return self._json
+
+    return MockResponse(tc_response)
+
+
+def _make_sync_request(app, method: str, path: str, **kwargs):
+    """Execute synchronous request using TestClient"""
+    if method == "GET":
+        return app.get(path)
+    elif method == "POST":
+        json_data = kwargs.get("json")
+        return app.post(path, json=json_data)
+    else:
+        raise ValueError(f"{method} not supported for testserver requests")
+
+
+async def _handle_testserver_request(app, url: str, method: str, **kwargs):
+    """Handle requests to testserver using TestClient"""
+    import asyncio
+    from concurrent.futures import ThreadPoolExecutor
+
+    parsed_url = urlparse(url)
+    path = parsed_url.path
+    if parsed_url.query:
+        path += f"?{parsed_url.query}"
+
+    def sync_request():
+        return _make_sync_request(app, method, path, **kwargs)
+
+    loop = asyncio.get_event_loop()
+    with ThreadPoolExecutor() as executor:
+        response = await loop.run_in_executor(executor, sync_request)
+
+    return _create_mock_response(response)
+
+
+async def _handle_http_request(url: str, method: str, **kwargs):
+    """Handle regular HTTP requests using httpx"""
+    async with httpx.AsyncClient() as client:
+        if method == "POST":
+            _method = client.post
+        elif method == "GET":
+            _method = client.get
+        else:
+            raise ValueError(f"{method} must be one of GET or POST")
+
+        return await _method(url, **kwargs)
+
+
+@pytest.fixture
+def patch_timestep_request(app, monkeypatch):
+    """Patch timestep_request to use TestClient for testserver requests"""
+    from titiler.cmr import timeseries
+
+    async def patched_timestep_request(url: str, method: str, **kwargs):
+        """Route testserver requests through TestClient, others through normal HTTP"""
+        parsed_url = urlparse(url)
+
+        if parsed_url.hostname == "testserver":
+            return await _handle_testserver_request(app, url, method, **kwargs)
+        else:
+            return await _handle_http_request(url, method, **kwargs)
+
+    monkeypatch.setattr(timeseries, "timestep_request", patched_timestep_request)
