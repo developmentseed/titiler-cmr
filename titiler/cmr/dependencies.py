@@ -12,7 +12,7 @@ from typing_extensions import Annotated
 from titiler.cmr.enums import MediaType
 from titiler.cmr.utils import parse_datetime
 from titiler.core.dependencies import DefaultDependency
-from titiler.xarray.dependencies import CompatXarrayParams
+from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr
 
 ResponseType = Literal["json", "html"]
 
@@ -194,10 +194,23 @@ class ReaderParams(DefaultDependency):
     ] = None
 
 
+@dataclass
+class InterpolatedXarrayParams(CompatXarrayParams):
+    """Modified version of CompatXarrayParms that describes {datetime} interpolation."""
+
+    sel: Annotated[
+        Optional[List[SelDimStr]],
+        Query(
+            description="Xarray Indexing using dimension names `{dimension}={value}`."
+            " If value is {datetime}, it will be interpolated from the datetime query parameter.",
+        ),
+    ] = None
+
+
 def interpolated_xarray_ds_params(
-    xarray_params: CompatXarrayParams = Depends(CompatXarrayParams),
+    xarray_params: InterpolatedXarrayParams = Depends(InterpolatedXarrayParams),
     cmr_query_params: Dict = Depends(cmr_query),
-) -> CompatXarrayParams:
+) -> InterpolatedXarrayParams:
     """
     Xarray parameters with string interpolation support for the sel parameter.
 
@@ -221,7 +234,7 @@ def interpolated_xarray_ds_params(
             interpolated_sel.append(sel_item)
 
     # Create a new instance with interpolated sel values
-    return CompatXarrayParams(
+    return InterpolatedXarrayParams(
         variable=xarray_params.variable,
         group=xarray_params.group,
         sel=interpolated_sel,

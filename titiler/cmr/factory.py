@@ -27,6 +27,7 @@ from typing_extensions import Annotated
 from titiler.cmr import models
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.dependencies import (
+    InterpolatedXarrayParams,
     OutputType,
     RasterioParams,
     ReaderParams,
@@ -50,7 +51,7 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
-from titiler.xarray.dependencies import CompatXarrayParams, XarrayIOParams
+from titiler.xarray.dependencies import XarrayIOParams
 from titiler.xarray.io import Reader as XarrayReader
 
 jinja2_env = jinja2.Environment(
@@ -115,7 +116,7 @@ def create_html_response(
 def parse_reader_options(
     rasterio_params: RasterioParams,
     xarray_io_params: XarrayIOParams,
-    xarray_ds_params: CompatXarrayParams,
+    xarray_ds_params: InterpolatedXarrayParams,
     reader_params: ReaderParams,
     image_params: Optional[PartFeatureParams] = None,
 ) -> Tuple[Type[BaseReader], Dict[str, Any], Dict[str, Any]]:
@@ -184,7 +185,7 @@ class Endpoints(TilerFactory):
     supported_tms: TileMatrixSets = default_tms
 
     xarray_io_params: Type[DefaultDependency] = XarrayIOParams
-    xarray_ds_params: Type[DefaultDependency] = CompatXarrayParams
+    xarray_ds_params: Type[DefaultDependency] = InterpolatedXarrayParams
     rasterio_dependency: Type[DefaultDependency] = RasterioParams
     reader_dependency: Type[DefaultDependency] = ReaderParams
     stats_dependency: Type[DefaultDependency] = StatisticsParams

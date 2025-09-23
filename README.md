@@ -90,7 +90,7 @@ The application will be available at this address: [http://localhost:8081/api.ht
 To run the application directly in your local environment, configure the application to access data over `HTTP` then run it using `uvicorn`:
 
 ```bash
-TITILER_CMR_S3_AUTH_ACCESS=external uvicorn titiler.cmr.main:app --reload
+TITILER_CMR_S3_AUTH_ACCESS=external uv run uvicorn titiler.cmr.main:app --reload
 ```
 
 The application will be available at this address: [http://localhost:8000/api.html](http://localhost:8000/api.html)
@@ -105,9 +105,9 @@ Environment variables for the `veda-deploy` deployment should be configured in t
 
 The application-specific (`AppSettings`) environment variables which should be set in the `veda-deploy` AWS secret are:
 
-* `TITILER_CMR_S3_AUTH_STRATEGY=iam`
-* `TITILER_CMR_ROOT_PATH=/api/titiler-cmr`
-* `TITILER_CMR_AWS_REQUEST_PAYER=requester`
+- `TITILER_CMR_S3_AUTH_STRATEGY=iam`
+- `TITILER_CMR_ROOT_PATH=/api/titiler-cmr`
+- `TITILER_CMR_AWS_REQUEST_PAYER=requester`
 
 ### Deployment to a development/test instance
 
