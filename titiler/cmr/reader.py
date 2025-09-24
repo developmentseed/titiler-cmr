@@ -2,6 +2,7 @@
 
 Originaly from titiler-xarray
 """
+from __future__ import annotations
 
 import pickle
 from typing import Any, Dict, Optional, Type
@@ -11,14 +12,17 @@ import attr
 import earthaccess
 import fsspec
 import os
+import obstore
 import s3fs
-import xarray
+import xarray as xr
 from cachetools import TTLCache
 from morecantile import TileMatrixSet
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
-
+from obstore.auth.earthdata import NasaEarthdataCredentialProvider
+from zarr.storage import ObjectStore
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Sequence, Union
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -65,16 +69,172 @@ def get_filesystem(
     else:
         raise ValueError(f"Unsupported protocol: {protocol}")
 
+class ObstoreReader:
+    _reader: ReadableFile
+
+    def __init__(self, store: ObjectStore, path: str) -> None:
+        """
+        Create an obstore file reader that implements the read, readall, seek, and tell methods, which
+        can be used in libraries that expect file-like objects.
+
+        Parameters
+        ----------
+        store
+            [ObjectStore][obstore.store.ObjectStore] for reading the file.
+        path
+            The path to the file within the store. This should not include the prefix.
+        """
+        self._reader = obstore.open_reader(store, path)
+
+    def read(self, size: int, /) -> bytes:
+        return self._reader.read(size).to_bytes()
+
+    def readall(self) -> bytes:
+        return self._reader.read().to_bytes()
+
+    def seek(self, offset: int, whence: int = 0, /):
+        # TODO: Check on default for whence
+        return self._reader.seek(offset, whence)
+
+    def tell(self) -> int:
+        return self._reader.tell()
+
+def resolve_store_and_key(
+    url: str,
+    credential_provider: Optional[object] = None,
+):
+    """
+    Return (store, key_or_local_path):
+
+      s3://bucket/prefix/file.nc   -> (store for s3://bucket, "prefix/file.nc")
+      https://host/path/file.nc    -> (store for https://host, "/path/file.nc")
+      file:///abs/path/file.nc     -> (None, "/abs/path/file.nc")
+      /abs/path/file.nc            -> (None, "/abs/path/file.nc")
+    """
+    p = urlparse(url)
+    scheme = (p.scheme or "").lower()
+
+    if scheme in ("", "file"):
+        local_path = _local_path_from_url(url)
+        return None, unquote(local_path)
+
+    if scheme == "s3":
+        bucket = p.netloc
+        key = unquote(p.path.lstrip("/"))
+        if credential_provider is not None:
+            store = obstore.store.from_url(f"s3://{bucket}", credential_provider=credential_provider)
+        store = obstore.store.from_url(f"s3://{bucket}")
+    elif scheme in ("http", "https"):
+        base = f"{scheme}://{p.netloc}"
+        key = unquote(p.path or "/")
+        store = obstore.store.from_url(base)
+    else:
+        # Fallback: treat the whole URL as a store root (rare)
+        store = obstore.store.from_url(url)
+        key = ""
+
+    if credential_provider is not None:
+        store = obstore.store.with_credentials(store, credential_provider)
+
+    return store, key
+
+
+def parse_url_to_store_and_key(src_path: str, credential_provider=None):
+        """Parse URL to get obstore and file key/path."""
+        parsed = urlparse(src_path)
+        scheme = (parsed.scheme or "").lower()
+        
+        if scheme == "s3":
+            # s3://bucket/path/file.nc
+            bucket = parsed.netloc
+            key = parsed.path.lstrip("/")
+            store = obstore.store.from_url(f"s3://{bucket}", credential_provider=credential_provider)
+            
+        elif scheme in ("http", "https"):
+            # https://host/path/file.nc
+            base = f"{scheme}://{parsed.netloc}"
+            key = parsed.path.lstrip("/")
+            store = obstore.store.from_url(base, credential_provider=credential_provider)
+            
+        elif scheme in ("", "file"):
+            # Local file: file:///path/file.nc or /path/file.nc
+            local_path = parsed.path if scheme == "file" else src_path
+            directory = os.path.dirname(local_path)
+            key = os.path.basename(local_path)
+            store = obstore.store.from_url(f"file://{directory}")
+            
+        else:
+            raise ValueError(f"Unsupported URL scheme: {scheme}")
+        
+        return store, key
+
+
+from urllib.parse import urlparse, unquote
+
+def resolve_store_and_key(
+    url: str,
+    credential_provider: Optional[object] = None,
+):
+    """
+    Return (store, key_or_local_path):
+
+      s3://bucket/prefix/file.nc   -> (store for s3://bucket, "prefix/file.nc")
+      https://host/path/file.nc    -> (store for https://host, "/path/file.nc")
+      file:///abs/path/file.nc     -> (None, "/abs/path/file.nc")
+      /abs/path/file.nc            -> (None, "/abs/path/file.nc")
+    """
+    p = urlparse(url)
+    scheme = (p.scheme or "").lower()
+
+    if scheme in ("", "file"):
+        local_path = _local_path_from_url(url)
+        local_path = unquote(_local_path_from_url(url))
+
+        pathname = os.path.dirname(local_path)
+        filename = os.path.basename(local_path)
+        
+        return pathname, filename
+
+    if scheme == "s3":
+        bucket = p.netloc
+        key = unquote(p.path.lstrip("/"))
+        store = obstore.store.from_url(f"s3://{bucket}")
+    elif scheme in ("http", "https"):
+        base = f"{scheme}://{p.netloc}"
+        key = unquote(p.path or "/")
+        store = obstore.store.from_url(base)
+    else:
+        # Fallback: treat the whole URL as a store root (rare)
+        store = obstore.store.from_url(url)
+        key = ""
+
+    if credential_provider is not None:
+        store = obstore.store.with_credentials(store, credential_provider)
+
+    return store, key
+
+def _local_path_from_url(src_path: str) -> str:
+    """
+    Convert file:// URLs to a local filesystem path. Leave other strings unchanged.
+    """
+    parsed = urlparse(src_path)
+    if parsed.scheme == "file":
+        return parsed.path
+    return src_path
 
 def xarray_open_dataset(
     src_path: str,
-    group: Optional[Any] = None,
-    decode_times: Optional[bool] = True,
-    s3_credentials: Optional[Dict] = None,
-) -> xarray.Dataset:
+    group: Optional[str] = None,
+    decode_times: bool = True,
+    credential_provider: Optional[object] = None,
+    *,
+    consolidated: Optional[bool] = True,
+    use_cache: bool = True,
+    **kwargs: Any,
+):
     # TODO: can we import the internals of titiler.xarray.io.xarray_open_dataset?
-    """Modified version of titiler.xarray.io.xarray_open_dataset with
-    custom handler for earthaccess authentication over https
+    """
+    Open Xarray dataset via obstore (no earthaccess/fsspec/s3fs).
     """
     # Generate cache key and attempt to fetch the dataset from cache
     cache_key = f"{src_path}_{group}" if group is not None else src_path
@@ -84,45 +244,42 @@ def xarray_open_dataset(
 
     parsed = urlparse(src_path)
     protocol = parsed.scheme or "file"
+    host = parsed.hostname or ""
 
-    if any(src_path.lower().endswith(ext) for ext in [".nc", ".nc4"]):
-        xr_engine = "h5netcdf"
-    else:
-        xr_engine = "zarr"
+    is_netcdf = src_path.lower().endswith((".nc", ".nc4"))
 
-    file_handler = get_filesystem(
-        src_path, protocol, xr_engine, s3_credentials=s3_credentials
-    )
+    # pick a default provider for S3/Earthdata if none provided
+    if credential_provider is None and (protocol == "s3" or any(k in host for k in ["nasa.gov", "earthdata", "urs.earthdata"])):
+        credential_provider = NasaEarthdataCredentialProvider()
 
-    # Arguments for xarray.open_dataset
-    # Default args
-    xr_open_args: Dict[str, Any] = {
-        "decode_coords": "all",
-        "decode_times": decode_times,
-    }
-
-    # Argument if we're opening a datatree
-    if group is not None:
-        xr_open_args["group"] = group
-
-    # NetCDF arguments
-    if xr_engine == "h5netcdf":
-        xr_open_args.update(
-            {
-                "engine": "h5netcdf",
-                "lock": False,
-            }
+    if not is_netcdf:
+        # Zarr path: use obstore → zarr
+        store = obstore.store.from_url(src_path, credential_provider=credential_provider)
+        zstore = ObjectStore(store, read_only=True)
+        ds = xr.open_dataset(
+            zstore,
+            group=group,
+            engine="zarr",
+            decode_times=decode_times,
+            decode_coords="all",
+            consolidated=consolidated,
+            **kwargs,
         )
-
-        ds = xarray.open_dataset(file_handler, **xr_open_args)
-
-    # Fallback to Zarr
     else:
-        ds = xarray.open_zarr(file_handler, **xr_open_args)
+        store, key = parse_url_to_store_and_key(src_path)
+        reader = ObstoreReader(store, key)
+
+        ds = xr.open_dataset(
+            reader,
+            engine="h5netcdf",
+            decode_times=decode_times,
+            decode_coords="all",
+            **kwargs,
+            )
 
     # Serialize the dataset to bytes using pickle
-    cache_client[cache_key] = pickle.dumps(ds)
-
+    #cache_client[cache_key] = pickle.dumps(ds)
+    
     return ds
 
 
