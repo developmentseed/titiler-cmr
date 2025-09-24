@@ -118,6 +118,7 @@ def xarray_open_dataset(
     **kwargs: Any,
 ):
     # TODO: can we import the internals of titiler.xarray.io.xarray_open_dataset?
+    ## TODO 2: Virtualizarr??!
     """
     Open Xarray dataset via obstore (no earthaccess/fsspec/s3fs).
     """
@@ -136,8 +137,6 @@ def xarray_open_dataset(
     # pick a default provider for S3/Earthdata if none provided
     #if credential_provider is None and (protocol == "s3" or any(k in host for k in ["nasa.gov", "earthdata", "urs.earthdata"])):
     #    credential_provider = NasaEarthdataCredentialProvider()
-
-
 
     if not is_netcdf:
         # Zarr path: use obstore → zarr
