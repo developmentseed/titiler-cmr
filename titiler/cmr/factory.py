@@ -33,6 +33,7 @@ from titiler.cmr.dependencies import (
     cmr_query,
 )
 from titiler.cmr.enums import MediaType
+from titiler.cmr.logger import logger
 from titiler.cmr.reader import MultiFilesBandsReader, xarray_open_dataset
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import (
@@ -48,8 +49,8 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
+from titiler.xarray.dependencies import CompatXarrayParams, XarrayIOParams
 from titiler.xarray.io import Reader as XarrayReader
-from titiler.xarray.dependencies import XarrayIOParams, CompatXarrayParams
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
@@ -526,6 +527,7 @@ class Endpoints(TilerFactory):
                 reader_params=reader_params,
             )
 
+            logger.info(f"opening data with reader: {reader}")
             with CMRBackend(
                 tms=tms,
                 reader=reader,
@@ -542,6 +544,7 @@ class Endpoints(TilerFactory):
                     reproject_method=reproject_method,
                     **read_options,
                 )
+                logger.info("successfully generated tile image")
                 dst_colormap = getattr(src_dst, "colormap", None)
 
             if post_process:

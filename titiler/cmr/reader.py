@@ -17,6 +17,8 @@ import obstore
 import earthaccess
 from zarr.storage import ObjectStore
 
+
+import xarray
 from cachetools import TTLCache
 from morecantile import TileMatrixSet
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
