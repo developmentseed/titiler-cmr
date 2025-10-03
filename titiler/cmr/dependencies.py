@@ -1,9 +1,10 @@
 """titiler-cmr dependencies."""
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Dict, List, Literal, Optional, Union, get_args
 
-from fastapi import Query
+from fastapi import Depends, Query
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from typing_extensions import Annotated
@@ -11,6 +12,7 @@ from typing_extensions import Annotated
 from titiler.cmr.enums import MediaType
 from titiler.cmr.utils import parse_datetime
 from titiler.core.dependencies import DefaultDependency
+from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr
 
 ResponseType = Literal["json", "html"]
 
@@ -190,3 +192,52 @@ class ReaderParams(DefaultDependency):
             description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
         ),
     ] = None
+
+
+@dataclass
+class InterpolatedXarrayParams(CompatXarrayParams):
+    """Modified version of CompatXarrayParms that describes {datetime} interpolation."""
+
+    sel: Annotated[
+        Optional[List[SelDimStr]],
+        Query(
+            description="Xarray Indexing using dimension names `{dimension}={value}`."
+            " If value is {datetime}, it will be interpolated from the datetime query parameter.",
+        ),
+    ] = None
+
+
+def interpolated_xarray_ds_params(
+    xarray_params: InterpolatedXarrayParams = Depends(InterpolatedXarrayParams),
+    cmr_query_params: Dict = Depends(cmr_query),
+) -> InterpolatedXarrayParams:
+    """
+    Xarray parameters with string interpolation support for the sel parameter.
+
+    Interpolates {datetime} templates in sel parameter values with the actual
+    datetime value from the request in ISO format (e.g., 2025-09-23T00:00:00Z).
+
+    Example:
+        datetime=2025-09-23&sel=time={datetime} → sel=time=2025-09-23T00:00:00Z
+    """
+    if not xarray_params.sel:
+        return xarray_params
+
+    temporal = cmr_query_params["temporal"]
+    dt = temporal if isinstance(temporal, datetime) else temporal[0]
+
+    interpolated_sel = []
+    for sel_item in xarray_params.sel:
+        if isinstance(sel_item, str) and "{datetime}" in sel_item:
+            interpolated_sel.append(sel_item.format(datetime=dt.isoformat()))
+        else:
+            interpolated_sel.append(sel_item)
+
+    # Create a new instance with interpolated sel values
+    return InterpolatedXarrayParams(
+        variable=xarray_params.variable,
+        group=xarray_params.group,
+        sel=interpolated_sel,
+        method=xarray_params.method,
+        decode_times=xarray_params.decode_times,
+    )

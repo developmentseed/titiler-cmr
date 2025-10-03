@@ -27,10 +27,12 @@ from typing_extensions import Annotated
 from titiler.cmr import models
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.dependencies import (
+    InterpolatedXarrayParams,
     OutputType,
     RasterioParams,
     ReaderParams,
     cmr_query,
+    interpolated_xarray_ds_params,
 )
 from titiler.cmr.enums import MediaType
 from titiler.cmr.logger import logger
@@ -49,7 +51,7 @@ from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import MultiBaseStatisticsGeoJSON
 from titiler.core.resources.enums import ImageType, OptionalHeader
 from titiler.core.resources.responses import GeoJSONResponse
-from titiler.xarray.dependencies import CompatXarrayParams, XarrayIOParams
+from titiler.xarray.dependencies import XarrayIOParams
 from titiler.xarray.io import Reader as XarrayReader
 
 jinja2_env = jinja2.Environment(
@@ -114,7 +116,7 @@ def create_html_response(
 def parse_reader_options(
     rasterio_params: RasterioParams,
     xarray_io_params: XarrayIOParams,
-    xarray_ds_params: CompatXarrayParams,
+    xarray_ds_params: InterpolatedXarrayParams,
     reader_params: ReaderParams,
     image_params: Optional[PartFeatureParams] = None,
 ) -> Tuple[Type[BaseReader], Dict[str, Any], Dict[str, Any]]:
@@ -183,7 +185,7 @@ class Endpoints(TilerFactory):
     supported_tms: TileMatrixSets = default_tms
 
     xarray_io_params: Type[DefaultDependency] = XarrayIOParams
-    xarray_ds_params: Type[DefaultDependency] = CompatXarrayParams
+    xarray_ds_params: Type[DefaultDependency] = InterpolatedXarrayParams
     rasterio_dependency: Type[DefaultDependency] = RasterioParams
     reader_dependency: Type[DefaultDependency] = ReaderParams
     stats_dependency: Type[DefaultDependency] = StatisticsParams
@@ -499,7 +501,7 @@ class Endpoints(TilerFactory):
                 "Default will be automatically defined if the output image needs a mask (png) or not (jpeg).",
             ] = None,
             xarray_io_params=Depends(self.xarray_io_params),
-            xarray_ds_params=Depends(self.xarray_ds_params),
+            xarray_ds_params=Depends(interpolated_xarray_ds_params),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
@@ -594,7 +596,7 @@ class Endpoints(TilerFactory):
                 Query(description="Overwrite default maxzoom."),
             ] = None,
             xarray_io_params=Depends(self.xarray_io_params),
-            xarray_ds_params=Depends(self.xarray_ds_params),
+            xarray_ds_params=Depends(interpolated_xarray_ds_params),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(available_algorithms.dependency),
@@ -674,7 +676,7 @@ class Endpoints(TilerFactory):
                 Query(description="Overwrite default maxzoom."),
             ] = None,
             xarray_io_params=Depends(self.xarray_io_params),
-            xarray_ds_params=Depends(self.xarray_ds_params),
+            xarray_ds_params=Depends(interpolated_xarray_ds_params),
             rasterio_params=Depends(self.rasterio_dependency),
             reader_params=Depends(self.reader_dependency),
             ###################################################################
@@ -748,7 +750,7 @@ class Endpoints(TilerFactory):
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(self.rasterio_dependency),
             xarray_io_params=Depends(self.xarray_io_params),
-            xarray_ds_params=Depends(self.xarray_ds_params),
+            xarray_ds_params=Depends(interpolated_xarray_ds_params),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             image_params=Depends(self.img_part_dependency),
@@ -834,7 +836,7 @@ class Endpoints(TilerFactory):
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(self.rasterio_dependency),
             xarray_io_params=Depends(self.xarray_io_params),
-            xarray_ds_params=Depends(self.xarray_ds_params),
+            xarray_ds_params=Depends(interpolated_xarray_ds_params),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             image_params=Depends(self.img_part_dependency),
@@ -918,7 +920,7 @@ class Endpoints(TilerFactory):
             dst_crs=Depends(DstCRSParams),
             rasterio_params=Depends(self.rasterio_dependency),
             xarray_io_params=Depends(self.xarray_io_params),
-            xarray_ds_params=Depends(self.xarray_ds_params),
+            xarray_ds_params=Depends(interpolated_xarray_ds_params),
             reader_params=Depends(self.reader_dependency),
             post_process=Depends(self.process_dependency),
             stats_params=Depends(self.stats_dependency),

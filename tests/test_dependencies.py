@@ -8,6 +8,7 @@ from starlette.requests import Request
 from titiler.cmr import dependencies
 from titiler.cmr.enums import MediaType
 from titiler.cmr.errors import InvalidDatetime
+from titiler.xarray.dependencies import CompatXarrayParams
 
 
 def test_media_type():
@@ -167,3 +168,89 @@ def test_cmr_query_more():
             concept_id="something",
             datetime="2019-02-12T09:00:00Z/2019-02-12",
         )
+
+
+def test_interpolated_xarray_params_single_datetime():
+    """Test InterpolatedXarrayParams with single datetime interpolation."""
+    xarray_params = CompatXarrayParams(
+        variable="temperature", sel=["time={datetime}", "lev=1000"], method="nearest"
+    )
+
+    single_datetime = datetime(2025, 9, 23, 0, 0, 0, tzinfo=timezone.utc)
+    cmr_query_params = {"concept_id": "test_concept", "temporal": single_datetime}
+
+    result = dependencies.interpolated_xarray_ds_params(xarray_params, cmr_query_params)
+
+    assert result.sel == [f"time={single_datetime.isoformat()}", "lev=1000"]
+    assert result.variable == "temperature"
+    assert result.method == "nearest"
+
+
+def test_interpolated_xarray_params_datetime_range():
+    """Test InterpolatedXarrayParams with datetime range (uses start datetime)."""
+    xarray_params = CompatXarrayParams(
+        variable="temperature", sel=["time={datetime}"], method="nearest"
+    )
+
+    start_datetime = datetime(2025, 9, 23, 0, 0, 0, tzinfo=timezone.utc)
+    end_datetime = datetime(2025, 9, 24, 0, 0, 0, tzinfo=timezone.utc)
+    cmr_query_params = {
+        "concept_id": "test_concept",
+        "temporal": (start_datetime, end_datetime),
+    }
+
+    result = dependencies.interpolated_xarray_ds_params(xarray_params, cmr_query_params)
+
+    assert result.sel == [f"time={start_datetime.isoformat()}"]
+
+
+def test_interpolated_xarray_params_no_datetime_template():
+    """Test InterpolatedXarrayParams when sel doesn't contain datetime template."""
+    xarray_params = CompatXarrayParams(
+        variable="temperature",
+        sel=["time=2025-01-01T00:00:00Z", "lev=1000"],
+        method="nearest",
+    )
+
+    single_datetime = datetime(2025, 9, 23, 0, 0, 0, tzinfo=timezone.utc)
+    cmr_query_params = {"concept_id": "test_concept", "temporal": single_datetime}
+
+    result = dependencies.interpolated_xarray_ds_params(xarray_params, cmr_query_params)
+
+    assert result.sel == ["time=2025-01-01T00:00:00Z", "lev=1000"]
+
+
+def test_interpolated_xarray_params_no_sel():
+    """Test InterpolatedXarrayParams when sel is None or empty."""
+    xarray_params = CompatXarrayParams(
+        variable="temperature", sel=None, method="nearest"
+    )
+
+    single_datetime = datetime(2025, 9, 23, 0, 0, 0, tzinfo=timezone.utc)
+    cmr_query_params = {"concept_id": "test_concept", "temporal": single_datetime}
+
+    result = dependencies.interpolated_xarray_ds_params(xarray_params, cmr_query_params)
+
+    assert result.sel is None
+    assert result.variable == "temperature"
+
+
+def test_interpolated_xarray_params_multiple_templates():
+    """Test InterpolatedXarrayParams with multiple datetime templates."""
+    xarray_params = CompatXarrayParams(
+        variable="temperature",
+        sel=["time={datetime}", "start_time={datetime}", "lev=1000"],
+        method="nearest",
+    )
+
+    single_datetime = datetime(2025, 9, 23, 12, 30, 45, tzinfo=timezone.utc)
+    cmr_query_params = {"concept_id": "test_concept", "temporal": single_datetime}
+
+    result = dependencies.interpolated_xarray_ds_params(xarray_params, cmr_query_params)
+
+    expected = [
+        f"time={single_datetime.isoformat()}",
+        f"start_time={single_datetime.isoformat()}",
+        "lev=1000",
+    ]
+    assert result.sel == expected
