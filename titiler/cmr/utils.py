@@ -7,7 +7,7 @@ Code from titiler.pgstac, MIT License.
 import logging
 import time
 from datetime import datetime
-from typing import Any, List, Optional, Sequence, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Type, Union
 
 import earthaccess
 from geojson_pydantic import Feature, FeatureCollection
@@ -16,6 +16,7 @@ from rasterio.crs import CRS
 from rasterio.features import bounds
 from rasterio.warp import transform_bounds
 from rio_tiler.constants import WGS84_CRS
+from urllib3.response import HTTPException
 
 from titiler.cmr.errors import InvalidDatetime
 
@@ -80,10 +81,20 @@ def parse_datetime(
     return datetime_, start, end
 
 
+def get_concept_id_umm(concept_id: str) -> Dict[str, Any]:
+    """Query CMR for the metadata for a concept_id"""
+    results = earthaccess.collection_query().concept_id(concept_id).get(1)
+
+    if not results:
+        raise HTTPException(400, f"concept_id {concept_id} not found")
+
+    return results[0]
+
+
 def get_resolution_degrees(concept_id: str) -> Tuple[Optional[float], Optional[float]]:
     """Query CMR to get the resolution of a dataset using its concept_id. If the units are in meters
     convert to degrees using the rough conversion factor of 0.00001 degrees per meter"""
-    ds = earthaccess.collection_query().concept_id(concept_id).get()[0]
+    ds = get_concept_id_umm(concept_id)
 
     try:
         resolution_info = ds["umm"]["SpatialExtent"]["HorizontalSpatialDomain"][
