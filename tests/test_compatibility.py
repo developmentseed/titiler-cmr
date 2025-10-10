@@ -201,7 +201,7 @@ class TestRasterioCompatibility:
 class TestConceptCompatibility:
     """Test evaluate_concept_compatibility function."""
 
-    @patch("titiler.cmr.utils.get_concept_id_umm")
+    @patch("titiler.cmr.compatibility.get_concept_id_umm")
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
     def evaluate_xarray_succeeds(self, mock_xarray, mock_rasterio, mock_get_umm):
@@ -232,7 +232,7 @@ class TestConceptCompatibility:
         mock_xarray.assert_called_once()
         mock_rasterio.assert_not_called()
 
-    @patch("titiler.cmr.utils.get_concept_id_umm")
+    @patch("titiler.cmr.compatibility.get_concept_id_umm")
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
     def test_fallback_to_rasterio(self, mock_xarray, mock_rasterio, mock_get_umm):
@@ -264,7 +264,7 @@ class TestConceptCompatibility:
         mock_xarray.assert_called_once()
         mock_rasterio.assert_called_once()
 
-    @patch("titiler.cmr.utils.get_concept_id_umm")
+    @patch("titiler.cmr.compatibility.get_concept_id_umm")
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
     def test_both_fail(self, mock_xarray, mock_rasterio, mock_get_umm):
@@ -288,4 +288,4 @@ class TestConceptCompatibility:
             evaluate_concept_compatibility("C1234-TEST", mock_request, mock_auth)
 
         assert exc_info.value.status_code == 400
-        assert "cannot parse concept_id" in str(exc_info.value.detail)
+        assert "cannot parse concept_id" in exc_info.value.detail
