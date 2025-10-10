@@ -5,12 +5,14 @@ from typing import Any, Dict, List, Literal, Optional
 from fastapi import HTTPException
 from pydantic import BaseModel
 from rio_tiler.constants import WEB_MERCATOR_TMS
+from rio_tiler.io.rasterio import Reader
+from rio_tiler.models import Info
 from starlette.requests import Request
 
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.dependencies import ConceptID
 from titiler.cmr.logger import logger
-from titiler.cmr.reader import MultiFilesBandsReader, xarray_open_dataset
+from titiler.cmr.reader import xarray_open_dataset
 from titiler.cmr.settings import AuthSettings
 from titiler.cmr.utils import get_concept_id_umm
 from titiler.xarray.io import Reader as XarrayReader
@@ -26,6 +28,7 @@ class CompatibilityResponse(BaseModel):
     dimensions: Optional[Dict[str, int]] = None
     coordinates: Optional[Dict[str, Dict[str, Any]]] = None
     example_assets: Optional[Dict[str, str] | str] = None
+    sample_asset_raster_info: Optional[Info] = None
 
 
 def extract_xarray_metadata(ds: Any) -> Dict[str, Any]:
@@ -140,7 +143,7 @@ def evaluate_rasterio_compatibility(
 
     with CMRBackend(
         tms=WEB_MERCATOR_TMS,
-        reader=MultiFilesBandsReader,
+        reader=Reader,
         reader_options={"bands": [1]},
         auth=request.app.state.cmr_auth,
     ) as src_dst:
@@ -157,8 +160,16 @@ def evaluate_rasterio_compatibility(
         if not assets:
             raise ValueError("No assets found for MultiFilesBandsReader")
 
+        example_assets: Dict[str, str] = assets[0]["url"]
+
+        with src_dst.reader(
+            input=list(example_assets.values())[0], tms=src_dst.tms
+        ) as _src_dst:
+            info = _src_dst.info()
+
         return {
-            "example_assets": assets[0]["url"],
+            "example_assets": example_assets,
+            "sample_asset_raster_info": info,
             "backend": "rasterio",
         }
 
