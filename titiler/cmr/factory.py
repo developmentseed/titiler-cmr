@@ -26,7 +26,12 @@ from typing_extensions import Annotated
 
 from titiler.cmr import models
 from titiler.cmr.backend import CMRBackend
+from titiler.cmr.compatibility import (
+    CompatibilityResponse,
+    evaluate_concept_compatibility,
+)
 from titiler.cmr.dependencies import (
+    ConceptID,
     InterpolatedXarrayParams,
     OutputType,
     RasterioParams,
@@ -37,6 +42,8 @@ from titiler.cmr.dependencies import (
 from titiler.cmr.enums import MediaType
 from titiler.cmr.logger import logger
 from titiler.cmr.reader import MultiFilesBandsReader, xarray_open_dataset
+from titiler.cmr.settings import AuthSettings
+from titiler.cmr.utils import get_concept_id_umm
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import (
     CoordCRSParams,
@@ -65,6 +72,8 @@ jinja2_env = jinja2.Environment(
 DEFAULT_TEMPLATES = Jinja2Templates(env=jinja2_env)
 
 MOSAIC_THREADS = int(os.getenv("MOSAIC_CONCURRENCY", MAX_THREADS))
+
+s3_auth_config = AuthSettings()
 
 
 def create_html_response(
@@ -217,6 +226,7 @@ class Endpoints(TilerFactory):
         self.register_landing()
         self.register_conformance()
         self.register_tilematrixsets()
+        self.register_info()
         self.register_tiles()
         self.register_map()
         self.register_statistics()
@@ -444,6 +454,57 @@ class Endpoints(TilerFactory):
                 )
 
             return data
+
+    def register_info(self):  # noqa: C901
+        """Register /concept_metadata and /compatibility endpoints"""
+
+        @self.router.get(
+            "/concept_metadata",
+            tags=["Metadata"],
+        )
+        def concept_metadata_endpoint(
+            request: Request,
+            concept_id: ConceptID,
+        ) -> Dict[str, Any]:
+            return get_concept_id_umm(concept_id)
+
+        @self.router.get(
+            "/compatibility",
+            tags=["Metadata"],
+            description=(
+                "Analyzes a CMR dataset to determine the optimal reader backend and extract metadata "
+                "needed for data access requests. This endpoint:\n\n"
+                "**Under the hood:**\n"
+                "- Tests the dataset with XarrayReader first (for multidimensional NetCDF/Zarr data)\n"
+                "- Falls back to a rasterio reader if needed\n"
+                "- Fetches CMR metadata including temporal extent and collection information\n"
+                "- Probes the first available data asset to extract structural metadata\n\n"
+                "**Returns:**\n"
+                "- `backend`: Which reader to use ('xarray' or 'rasterio')\n"
+                "- `datetime`: Temporal extent(s) of the dataset\n"
+                "- `variables`: Available data variables with shape and dtype (xarray only)\n"
+                "- `dimensions`: Dimension names and sizes (xarray only)\n"
+                "- `coordinates`: Coordinate information with ranges (xarray only)\n"
+                "- `example_assets`: Sample data URL from the collection\n\n"
+                "**Use this information to:**\n"
+                "- Set `backend` parameter for /tiles, /bbox, and /feature endpoints\n"
+                "- Choose valid `variable` names for xarray datasets\n"
+                "- Identify available dimensions for selection/interpolation\n"
+                "- Determine temporal coverage for time-based queries\n"
+                "- Understand data structure before making tile/image requests"
+            ),
+            response_model_exclude_none=True,
+        )
+        def compatibility_endpoint(
+            request: Request,
+            concept_id: ConceptID,
+        ) -> CompatibilityResponse:
+            """Test which reader backend is compatible with a CMR concept."""
+            return evaluate_concept_compatibility(
+                concept_id=concept_id,
+                request=request,
+                s3_auth_config=s3_auth_config,
+            )
 
     def register_tiles(self):  # noqa: C901
         """Register tileset endpoints."""

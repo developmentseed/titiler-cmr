@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-- Nothing
+### Added
+
+- interpolate {datetime} in if sel includes {dim}={datetime} ([#78](https://github.com/developmentseed/titiler-cmr/pull/78))
+- /compatibility and /concept_metadata endpoints ([#80](https://github.com/developmentseed/titiler-cmr/pull/80))
 
 ## [v0.2.0]
 
