@@ -20,7 +20,7 @@ RUN dnf install -y gcc-c++ && dnf clean all
 WORKDIR /build
 
 COPY README.md uv.lock .python-version pyproject.toml ./
-COPY src/titiler/ ./src/titiler/
+COPY titiler/ ./titiler/
 
 RUN <<EOF
 uv export --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt
