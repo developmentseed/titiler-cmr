@@ -66,6 +66,7 @@ class LambdaStack(Stack):
             **DEFAULT_ENV,
             "TITILER_CMR_ROOT_PATH": app_settings.root_path,
             "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
+            "TITILER_CMR_TELEMETRY_ENABLED": "TRUE",
             "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": "aws-lambda,requests,urllib3,aiohttp-client",  # Disable aws-lambda auto-instrumentation (handled by otel_wrapper.py)
             "OTEL_PROPAGATORS": "tracecontext,baggage,xray",
             "OPENTELEMETRY_COLLECTOR_CONFIG_URI": "/opt/collector-config/config.yaml",

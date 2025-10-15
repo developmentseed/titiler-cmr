@@ -18,6 +18,7 @@ class ApiSettings(BaseSettings):
     time_series_max_image_size: float = 5.625e7
     time_series_statistics_max_total_size: float = 1.5e10
     time_series_image_max_total_size: float = 1e8
+    telemetry_enabled: bool = False
     debug: bool = False
 
     model_config = {

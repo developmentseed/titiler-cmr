@@ -205,6 +205,6 @@ endpoints = Endpoints(
     title=settings.name,
     templates=templates,
     extensions=[TimeseriesExtension()],
-    enable_telemetry=True,
+    enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(endpoints.router)
