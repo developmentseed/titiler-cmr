@@ -1,5 +1,6 @@
 """AWS Lambda handler optimized for container runtime with OTEL instrumentation."""
 
+import asyncio
 import json
 import logging
 import os
@@ -7,9 +8,13 @@ import warnings
 from datetime import datetime, timezone
 from typing import Any, Dict
 
+import earthaccess
 from mangum import Mangum
 
 from titiler.cmr.main import app
+from titiler.cmr.settings import AuthSettings
+
+auth_config = AuthSettings()
 
 
 def otel_trace_id_to_xray_format(otel_trace_id: str) -> str:
@@ -144,6 +149,16 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+
+@app.on_event("startup")
+async def startup_event() -> None:
+    """startup."""
+    if auth_config.strategy == "environment":
+        app.state.cmr_auth = earthaccess.login(strategy="environment")
+    else:
+        app.state.cmr_auth = None
+
+
 handler = Mangum(
     app,
     lifespan="off",
@@ -155,6 +170,10 @@ handler = Mangum(
         "application/vnd.api+json",
     ],
 )
+
+if "AWS_EXECUTION_ENV" in os.environ:
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(app.router.startup())
 
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
