@@ -54,9 +54,7 @@ lambda = [
     "mangum==0.19.0",
     "aiobotocore>=2.24.0,<2.24.2"
 ]
-telemetry = [
-    "titiler.core[telemetry]>=0.23.1,<0.24",
-]
+
 [dependency-groups]
 dev = [
     "folium>=0.17.0",
