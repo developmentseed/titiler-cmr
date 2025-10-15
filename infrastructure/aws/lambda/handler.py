@@ -139,6 +139,7 @@ root_logger.addHandler(json_handler)
 
 # Set titiler loggers to INFO level
 logging.getLogger("titiler").setLevel(logging.INFO)
+logging.getLogger("titiler-cmr").setLevel(logging.INFO)
 
 # Keep specific loggers at ERROR/WARNING levels
 logging.getLogger("mangum.lifespan").setLevel(logging.ERROR)
@@ -146,7 +147,7 @@ logging.getLogger("mangum.http").setLevel(logging.ERROR)
 logging.getLogger("botocore").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("earthaccess").setLevel(logging.WARNING)
-logging.getLogger("numepxr").setLevel(logging.WARNING)
+logging.getLogger("numexpr").setLevel(logging.WARNING)
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
