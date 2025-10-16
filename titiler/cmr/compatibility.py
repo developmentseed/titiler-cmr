@@ -2,6 +2,7 @@
 
 from typing import Any, Dict, List, Literal, Optional
 
+import numpy as np
 from fastapi import HTTPException
 from pydantic import BaseModel
 from rio_tiler.constants import WEB_MERCATOR_TMS
@@ -18,15 +19,38 @@ from titiler.cmr.utils import get_concept_id_umm
 from titiler.xarray.io import Reader as XarrayReader
 
 
+class VariableInfo(BaseModel):
+    """Metadata for a single xarray variable"""
+
+    shape: List[int]
+    dtype: str
+    min: Optional[float] = None
+    max: Optional[float] = None
+    mean: Optional[float] = None
+    p01: Optional[float] = None
+    p05: Optional[float] = None
+    p95: Optional[float] = None
+    p99: Optional[float] = None
+
+
+class CoordinateInfo(BaseModel):
+    """Metadata for a single xarray coordinate"""
+
+    size: int
+    dtype: str
+    min: Optional[float] = None
+    max: Optional[float] = None
+
+
 class CompatibilityResponse(BaseModel):
     """Compatibility endpoint response model"""
 
     concept_id: ConceptID
     backend: Literal["rasterio", "xarray"]
     datetime: List[Dict[str, Any]]
-    variables: Optional[Dict[str, Dict[str, Any]]] = None
+    variables: Optional[Dict[str, VariableInfo]] = None
     dimensions: Optional[Dict[str, int]] = None
-    coordinates: Optional[Dict[str, Dict[str, Any]]] = None
+    coordinates: Optional[Dict[str, CoordinateInfo]] = None
     example_assets: Optional[Dict[str, str] | str] = None
     sample_asset_raster_info: Optional[Info] = None
 
@@ -40,13 +64,35 @@ def extract_xarray_metadata(ds: Any) -> Dict[str, Any]:
     Returns:
         Dictionary containing variables, dimensions, and coordinates metadata
     """
-    variables = {
-        var: {
+    variables = {}
+    for var in ds.data_vars:
+        var_info: Dict[str, Any] = {
             "shape": list(ds[var].shape),
             "dtype": str(ds[var].dtype),
         }
-        for var in ds.data_vars
-    }
+
+        # Add statistics for numeric variables
+        if ds[var].dtype.kind in ["i", "f", "u"]:
+            try:
+                # Load data into memory once for efficiency
+                var_data = ds[var]
+                values = var_data.values
+
+                var_info["min"] = float(np.nanmin(values))
+                var_info["max"] = float(np.nanmax(values))
+                var_info["mean"] = float(np.nanmean(values))
+
+                # Calculate multiple percentiles in a single pass, filtering out NaNs
+                p01, p05, p95, p99 = np.nanpercentile(values, [1, 5, 95, 99])
+                var_info["p01"] = float(p01)
+                var_info["p05"] = float(p05)
+                var_info["p95"] = float(p95)
+                var_info["p99"] = float(p99)
+            except Exception:
+                # Skip statistics if computation fails (e.g., too large, all NaN values)
+                pass
+
+        variables[var] = var_info
 
     coordinates = {}
     for coord, coord_data in ds.coords.items():
