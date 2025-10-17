@@ -1009,7 +1009,7 @@ The docker container is configured to read the <code>EARTHDATA_USERNAME</code> a
 <p>The application will be available at this address: <a href="http://localhost:8081/api.html">http://localhost:8081/api.html</a></p>
 <h2 id="local-deployment">Local deployment<a class="headerlink" href="#local-deployment" title="Permanent link">&para;</a></h2>
 <p>To run the application directly in your local environment, configure the application to access data over <code>HTTP</code> then run it using <code>uvicorn</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">TITILER_CMR_S3_AUTH_ACCESS</span><span class="o">=</span>external<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>titiler.cmr.main:app<span class="w"> </span>--reload
+<div class="highlight"><pre><span></span><code><span class="nv">TITILER_CMR_S3_AUTH_ACCESS</span><span class="o">=</span>external<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>titiler.cmr.main:app<span class="w"> </span>--reload<span class="w"> </span>--log-level<span class="w"> </span>info
 </code></pre></div>
 <p>The application will be available at this address: <a href="http://localhost:8000/api.html">http://localhost:8000/api.html</a></p>
 <h2 id="deployment-to-aws-via-veda-deploy">Deployment to AWS via <code>veda-deploy</code><a class="headerlink" href="#deployment-to-aws-via-veda-deploy" title="Permanent link">&para;</a></h2>
