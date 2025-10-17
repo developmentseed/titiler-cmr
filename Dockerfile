@@ -26,5 +26,5 @@ RUN if [ -z "$EARTHDATA_USERNAME" ] || [ -z "$EARTHDATA_PASSWORD" ]; then \
 # http://www.uvicorn.org/settings/
 ENV HOST 0.0.0.0
 ENV PORT 80
-CMD uv run uvicorn titiler.cmr.main:app --host ${HOST} --port ${PORT} --log-level debug --reload
+CMD uv run --no-dev uvicorn titiler.cmr.main:app --host ${HOST} --port ${PORT} --log-level debug --reload
 

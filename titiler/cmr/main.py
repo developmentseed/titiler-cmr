@@ -11,11 +11,15 @@ from starlette.templating import Jinja2Templates
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
+from titiler.cmr.logger import configure_logging
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
+
+# Configure logging at application startup
+configure_logging()
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
