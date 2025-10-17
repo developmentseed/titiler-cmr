@@ -1,6 +1,7 @@
 """AWS Lambda handler optimized for container runtime with OTEL instrumentation."""
 
 import asyncio
+import logging
 import os
 import warnings
 from typing import Any, Dict
@@ -16,6 +17,7 @@ configure_logging()
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
+logging.getLogger("numexpr").setLevel(logging.WARNING)
 
 auth_config = AuthSettings()
 
