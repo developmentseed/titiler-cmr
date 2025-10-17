@@ -143,6 +143,16 @@ def configure_logging():
 
     All log levels for application and third-party libraries are configured here.
     """
+
+    logging.getLogger("titiler").setLevel(logging.INFO)
+    logging.getLogger("titiler-cmr").setLevel(logging.INFO)
+
+    logging.getLogger("botocore").setLevel(logging.WARNING)
+    logging.getLogger("aiobotocore").setLevel(logging.WARNING)
+    logging.getLogger("earthaccess").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("numexpr").setLevel(logging.WARNING)
+
     is_lambda = "AWS_EXECUTION_ENV" in os.environ
 
     if is_lambda:
@@ -155,24 +165,14 @@ def configure_logging():
         json_handler = logging.StreamHandler()
         json_handler.setFormatter(XRayJsonFormatter())
         root_logger.addHandler(json_handler)
+
+        logging.getLogger("mangum.lifespan").setLevel(logging.ERROR)
+        logging.getLogger("mangum.http").setLevel(logging.ERROR)
     else:
         formatter = JSONFormatter()
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)
         logging.root.addHandler(handler)
-
-    logging.getLogger("titiler").setLevel(logging.INFO)
-    logging.getLogger("titiler-cmr").setLevel(logging.INFO)
-
-    logging.getLogger("botocore").setLevel(logging.WARNING)
-    logging.getLogger("aiobotocore").setLevel(logging.WARNING)
-    logging.getLogger("earthaccess").setLevel(logging.WARNING)
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-    logging.getLogger("numexpr").setLevel(logging.WARNING)
-
-    if is_lambda:
-        logging.getLogger("mangum.lifespan").setLevel(logging.ERROR)
-        logging.getLogger("mangum.http").setLevel(logging.ERROR)
 
 
 logger = logging.getLogger("titiler-cmr")
