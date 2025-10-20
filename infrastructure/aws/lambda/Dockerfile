@@ -1,36 +1,80 @@
 ARG PYTHON_VERSION=3.12
 
-FROM --platform=linux/amd64 public.ecr.aws/lambda/python:${PYTHON_VERSION}
+# Stage 1: OTEL
+# Download the OpenTelemetry layer
+# ref: https://github.com/athewsey/opentelemetry-lambda-container/blob/98069d5eb6d812ccd28d5c80e2f9d6c8a8c76fb9/python-example/lambda-function/Dockerfile
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} as otel-builder
+RUN <<EOF
+dnf install -y unzip wget
+wget https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.12.1/layer.zip -O /tmp/layer.zip
+mkdir -p /opt-builder
+unzip /tmp/layer.zip -d /opt-builder/
+EOF
+
+# Stage 2: titiler-cmr application and dependencies
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-WORKDIR /tmp
+RUN dnf install -y gcc-c++ && dnf clean all
 
-RUN dnf install -y gcc-c++  
+WORKDIR /build
 
-COPY uv.lock .python-version pyproject.toml LICENSE README.md ./
+COPY README.md uv.lock .python-version pyproject.toml ./
 COPY titiler/ ./titiler/
 
-RUN uv export --locked --no-editable --no-dev --extra lambda --extra telemetry --format requirements.txt -o requirements.txt && \
-  uv pip install --compile-bytecode --no-binary pydantic --target /asset -r requirements.txt 
+RUN <<EOF
+uv export --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt
+uv pip install \
+  --compile-bytecode \
+  --no-binary pydantic \
+  --target /deps \
+  --no-cache-dir \
+  --disable-pip-version-check \
+  -r requirements.txt
+EOF
 
-# copy libexpat.so.1 into /asset which is included in LD_LIBRARY_PATH
-RUN cp /usr/lib64/libexpat.so.1 /asset/
+# Aggressive cleanup to minimize size and optimize for Lambda container
+# Clean up app dependencies in /deps
+WORKDIR /deps
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN <<EOF
+# Convert .pyc files and remove source .py files for faster cold starts
+find . -type f -name '*.pyc' | while read -r f; do n="$(echo "$f" | sed 's/__pycache__\///' | sed 's/.cpython-[0-9]*//')"; cp "$f" "$n"; done
+find . -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
+find . -type f -a -name '*.py' -print0 | xargs -0 rm -f
+# Remove unnecessary files for Lambda runtime
+find . -type d -a -name 'tests' -print0 | xargs -0 rm -rf
+find . -type d -a -name 'test' -print0 | xargs -0 rm -rf
+rm -rf numpy/doc/ bin/ geos_license Misc/
+# Remove unnecessary locale and documentation files
+find . -name '*.mo' -delete
+find . -name '*.po' -delete
+find . -name 'LICENSE*' -delete
+find . -name 'README*' -delete
+find . -name '*.md' -delete
+# Strip debug symbols from shared libraries (preserve numpy.libs)
+find . -type f -name '*.so*' -not -path "*/numpy.libs/*" -exec strip --strip-unneeded {} \; 2>/dev/null || true
+EOF
 
-# Reduce package size and remove useless files
-RUN cd /asset && find . -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-[0-9]*//'); cp $f $n; done;
-RUN cd /asset && find . -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
-RUN cd /asset && find . -type f -a -name '*.py' -print0 | xargs -0 rm -f
-RUN find /asset -type d -a -name 'tests' -print0 | xargs -0 rm -rf
-RUN rm -rdf /asset/numpy/doc/ /asset/bin /asset/geos_license /asset/Misc
-RUN rm -rdf /asset/boto3*
-RUN rm -rdf /asset/botocore*
+# Stage 3: Final runtime stage - minimal Lambda image optimized for container runtime
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
-# Strip debug symbols from compiled C/C++ code (except for numpy.libs!)
-RUN cd /asset && \
-  find . -type f -name '*.so*' \
-  -not -path "./numpy.libs/*" \
-  -exec strip --strip-unneeded {} \;
+ENV PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1
 
-COPY infrastructure/aws/lambda/handler.py /asset/handler.py
+COPY --from=otel-builder /opt-builder/ /opt/
+COPY infrastructure/aws/lambda/collector-config.yaml /opt/collector-config/config.yaml
+COPY --from=builder /deps ${LAMBDA_RUNTIME_DIR}/
+COPY --from=builder /usr/lib64/libexpat.so.1 ${LAMBDA_RUNTIME_DIR}/
+COPY infrastructure/aws/lambda/handler.py ${LAMBDA_RUNTIME_DIR}/
 
-CMD ["echo", "hello world"]
+RUN <<EOF
+chmod 644 "${LAMBDA_RUNTIME_DIR}"/handler.py
+chmod -R 755 /opt/
+# Pre-compile the handler for faster cold starts
+python -c "import py_compile; py_compile.compile('${LAMBDA_RUNTIME_DIR}/handler.py', doraise=True)"
+# Create cache directories with proper permissions
+mkdir -p /tmp/.cache && chmod 777 /tmp/.cache
+EOF
+
+CMD ["handler.lambda_handler"]

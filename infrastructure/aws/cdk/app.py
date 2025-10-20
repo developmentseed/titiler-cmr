@@ -12,6 +12,7 @@ from aws_cdk import aws_logs as logs
 from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as subscriptions
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
+from aws_cdk.aws_ecr_assets import Platform
 from config import AppSettings, StackSettings
 from constructs import Construct
 
@@ -65,27 +66,32 @@ class LambdaStack(Stack):
             **DEFAULT_ENV,
             "TITILER_CMR_ROOT_PATH": app_settings.root_path,
             "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
+            "TITILER_CMR_TELEMETRY_ENABLED": "TRUE",
+            "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": "aws-lambda,requests,urllib3,aiohttp-client",  # Disable aws-lambda auto-instrumentation (handled by otel_wrapper.py)
+            "OTEL_PROPAGATORS": "tracecontext,baggage,xray",
+            "OPENTELEMETRY_COLLECTOR_CONFIG_URI": "/opt/collector-config/config.yaml",
+            # AWS_LAMBDA_LOG_FORMAT not set - using custom JSON formatter in handler.py
+            "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",  # Enable OTEL wrapper to avoid circular import
         }
 
         if app_settings.aws_request_payer:
             lambda_env["AWS_REQUEST_PAYER"] = app_settings.aws_request_payer
 
-        lambda_function = aws_lambda.Function(
+        lambda_function = aws_lambda.DockerImageFunction(
             self,
             f"{id}-lambda",
-            runtime=runtime,
-            code=aws_lambda.Code.from_docker_build(
-                path=os.path.abspath(context_dir),
+            code=aws_lambda.DockerImageCode.from_image_asset(
+                directory=os.path.abspath(context_dir),
                 file="infrastructure/aws/lambda/Dockerfile",
-                platform="linux/amd64",
+                platform=Platform.LINUX_AMD64,
             ),
-            handler="handler.handler",
             memory_size=memory,
             reserved_concurrent_executions=concurrent,
             timeout=Duration.seconds(timeout),
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
+            tracing=aws_lambda.Tracing.ACTIVE,
         )
 
         for perm in permissions:

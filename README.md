@@ -90,7 +90,7 @@ The application will be available at this address: [http://localhost:8081/api.ht
 To run the application directly in your local environment, configure the application to access data over `HTTP` then run it using `uvicorn`:
 
 ```bash
-TITILER_CMR_S3_AUTH_ACCESS=external uv run uvicorn titiler.cmr.main:app --reload
+TITILER_CMR_S3_AUTH_ACCESS=external uv run uvicorn titiler.cmr.main:app --reload --log-level info
 ```
 
 The application will be available at this address: [http://localhost:8000/api.html](http://localhost:8000/api.html)

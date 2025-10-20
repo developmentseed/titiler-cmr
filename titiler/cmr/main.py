@@ -1,8 +1,5 @@
 """TiTiler+cmr FastAPI application."""
 
-import json
-import logging
-import os
 from contextlib import asynccontextmanager
 
 import earthaccess
@@ -14,11 +11,15 @@ from starlette.templating import Jinja2Templates
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
+from titiler.cmr.logger import configure_logging
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
+
+# Configure logging at application startup
+configure_logging()
 
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
@@ -32,58 +33,6 @@ templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 auth_config = AuthSettings()
-
-
-class JSONFormatter(logging.Formatter):
-    """JSON log formatter similar to AWS Lambda."""
-
-    def format(self, record):
-        """format log record in json"""
-        log_entry = {
-            "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S.%fZ"),
-            "level": record.levelname,
-            "logger": record.name,
-            "message": record.getMessage(),
-            "filename": record.filename,
-            "lineno": record.lineno,
-        }
-
-        # Add any extra fields passed via the extra parameter
-        if hasattr(record, "__dict__"):
-            for key, value in record.__dict__.items():
-                if key not in log_entry and not key.startswith("_"):
-                    # Only add if it's not a standard logging attribute
-                    if not hasattr(logging.LogRecord("", 0, "", 0, "", (), None), key):
-                        log_entry[key] = value
-
-        if record.exc_info:
-            log_entry["exception"] = self.formatException(record.exc_info)
-
-        return json.dumps(log_entry)
-
-
-log_level = os.getenv("LOG_LEVEL", "INFO")
-
-# Configure logging format based on AWS_LAMBDA_LOG_FORMAT
-# Only use custom JSON formatter locally - AWS Lambda handles JSON formatting automatically
-formatter: JSONFormatter | logging.Formatter
-if "AWS_EXECUTION_ENV" not in os.environ:
-    formatter = JSONFormatter()
-else:
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s"
-    )
-
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-
-logging.basicConfig(
-    level=getattr(logging, log_level),
-    handlers=[handler],
-)
-
-for module in ["botocore", "aiobotocore", "earthaccess"]:
-    logging.getLogger(module).setLevel("WARN")
 
 
 @asynccontextmanager
@@ -205,5 +154,6 @@ endpoints = Endpoints(
     title=settings.name,
     templates=templates,
     extensions=[TimeseriesExtension()],
+    enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(endpoints.router)
