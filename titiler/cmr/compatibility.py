@@ -55,11 +55,15 @@ class CompatibilityResponse(BaseModel):
     sample_asset_raster_info: Optional[Info] = None
 
 
-def extract_xarray_metadata(ds: Any) -> Dict[str, Any]:
+def extract_xarray_metadata(ds: Any, max_sample_size: int = 100_000) -> Dict[str, Any]:
     """Extract comprehensive metadata from an xarray Dataset.
+
+    For large arrays, uses sampling along each dimension to avoid memory issues.
 
     Args:
         ds: xarray Dataset instance
+        max_sample_size: Maximum number of elements to sample for statistics.
+            Arrays larger than this will be sampled. Default: 1,000,000
 
     Returns:
         Dictionary containing variables, dimensions, and coordinates metadata
@@ -71,12 +75,42 @@ def extract_xarray_metadata(ds: Any) -> Dict[str, Any]:
             "dtype": str(ds[var].dtype),
         }
 
-        # Add statistics for numeric variables
         if ds[var].dtype.kind in ["i", "f", "u"]:
             try:
-                # Load data into memory once for efficiency
                 var_data = ds[var]
-                values = var_data.values
+                total_size = var_data.size
+
+                # Use sampling for large arrays to avoid memory issues
+                if total_size > max_sample_size:
+                    # Calculate stride needed to get approximately max_sample_size elements
+                    # We'll sample along each dimension proportionally
+                    target_fraction = (max_sample_size / total_size) ** (
+                        1.0 / len(var_data.shape)
+                    )
+
+                    indexers = {}
+                    actual_sample_size = 1
+                    for dim in var_data.dims:
+                        dim_size = var_data.sizes[dim]
+                        sample_size = max(1, int(dim_size * target_fraction))
+                        # Random sample of indices along this dimension
+                        indices = np.sort(
+                            np.random.choice(dim_size, size=sample_size, replace=False)
+                        )
+                        indexers[dim] = indices
+                        actual_sample_size *= sample_size
+
+                    # Sample using integer indexing (efficient with chunked data)
+                    sampled = var_data.isel(indexers)
+                    values = sampled.values
+
+                    logger.info(
+                        f"Sampled {actual_sample_size:,} of {total_size:,} elements "
+                        f"from variable '{var}' for statistics"
+                    )
+                else:
+                    # Load entire array for smaller datasets
+                    values = var_data.values
 
                 var_info["min"] = float(np.nanmin(values))
                 var_info["max"] = float(np.nanmax(values))
