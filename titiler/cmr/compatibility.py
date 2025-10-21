@@ -55,7 +55,9 @@ class CompatibilityResponse(BaseModel):
     sample_asset_raster_info: Optional[Info] = None
 
 
-def extract_xarray_metadata(ds: Any, max_sample_size: int = 100_000) -> Dict[str, Any]:
+def extract_xarray_metadata(
+    ds: Any, max_sample_size: float = 100_000.0
+) -> Dict[str, Any]:
     """Extract comprehensive metadata from an xarray Dataset.
 
     For large arrays, uses sampling along each dimension to avoid memory issues.
@@ -82,23 +84,27 @@ def extract_xarray_metadata(ds: Any, max_sample_size: int = 100_000) -> Dict[str
 
                 # Use sampling for large arrays to avoid memory issues
                 if total_size > max_sample_size:
-                    # Calculate stride needed to get approximately max_sample_size elements
-                    # We'll sample along each dimension proportionally
-                    target_fraction = (max_sample_size / total_size) ** (
-                        1.0 / len(var_data.shape)
-                    )
-
+                    # Calculate exact sample size per dimension to stay within budget
                     indexers = {}
                     actual_sample_size = 1
-                    for dim in var_data.dims:
+                    remaining_budget = max_sample_size
+
+                    for i, dim in enumerate(var_data.dims):
                         dim_size = var_data.sizes[dim]
-                        sample_size = max(1, int(dim_size * target_fraction))
+                        # Distribute budget across remaining dimensions
+                        dims_remaining = len(var_data.dims) - i
+                        samples_per_dim = int(
+                            remaining_budget ** (1.0 / dims_remaining)
+                        )
+                        sample_size = min(dim_size, max(1, samples_per_dim))
+
                         # Random sample of indices along this dimension
                         indices = np.sort(
                             np.random.choice(dim_size, size=sample_size, replace=False)
                         )
                         indexers[dim] = indices
                         actual_sample_size *= sample_size
+                        remaining_budget = max_sample_size / actual_sample_size
 
                     # Sample using integer indexing (efficient with chunked data)
                     sampled = var_data.isel(indexers)
