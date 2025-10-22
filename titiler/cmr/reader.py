@@ -19,6 +19,7 @@ from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
 
+from titiler.xarray.io import Reader as XarrayReader
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -125,6 +126,20 @@ def xarray_open_dataset(
 
     return ds
 
+@attr.s
+class CustomXarrayReader(XarrayReader):
+    """Reader: Open Zarr file from S3 with credentials and access DataArray."""
+    s3_credentials: Optional[dict] = attr.ib(default=None)
+
+    def __attrs_post_init__(self):
+        """Set bounds and CRS."""
+        self.ds = self.opener(
+            self.src_path,
+            group=self.group,
+            decode_times=self.decode_times,
+            s3_credentials=self.s3_credentials
+        )
+        super().__attrs_post_init__()
 
 @attr.s
 class MultiFilesBandsReader(MultiBandReader):
