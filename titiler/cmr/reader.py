@@ -127,21 +127,6 @@ def xarray_open_dataset(
     return ds
 
 @attr.s
-class CustomXarrayReader(XarrayReader):
-    """Reader: Open Zarr file from S3 with credentials and access DataArray."""
-    s3_credentials: Optional[dict] = attr.ib(default=None)
-
-    def __attrs_post_init__(self):
-        """Set bounds and CRS."""
-        self.ds = self.opener(
-            self.src_path,
-            group=self.group,
-            decode_times=self.decode_times,
-            s3_credentials=self.s3_credentials
-        )
-        super().__attrs_post_init__()
-
-@attr.s
 class MultiFilesBandsReader(MultiBandReader):
     """Multiple Files as Bands."""
 

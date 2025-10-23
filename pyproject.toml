@@ -21,9 +21,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
-    "titiler.core>=0.23.1,<0.24",
-    "titiler.mosaic>=0.23.1,<0.24",
-    "titiler.xarray>=0.23.1,<0.24",
+    "titiler.core==0.24.2",
+    "titiler.mosaic==0.24.2",
+    "titiler.xarray@git+https://github.com/developmentseed/titiler.git@main#subdirectory=src/titiler/xarray",
     "aiobotocore>=2.24.0",
     "boto3>=1.39.0",
     "cftime~=1.6.4",
