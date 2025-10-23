@@ -371,10 +371,12 @@ class CMRBackend(BaseBackend):
             if s3_credentials:
                 options = {
                     **self.reader_options,
-                    "s3_credentials": {
-                        "key": s3_credentials["accessKeyId"],
-                        "secret": s3_credentials["secretAccessKey"],
-                        "token": s3_credentials["sessionToken"],
+                    "opener_options": {
+                        "s3_credentials": {
+                            "key": s3_credentials["accessKeyId"],
+                            "secret": s3_credentials["secretAccessKey"],
+                            "token": s3_credentials["sessionToken"],
+                        }
                     },
                 }
             else:
@@ -455,10 +457,12 @@ class CMRBackend(BaseBackend):
             if s3_credentials:
                 options = {
                     **self.reader_options,
-                    "s3_credentials": {
-                        "key": s3_credentials["accessKeyId"],
-                        "secret": s3_credentials["secretAccessKey"],
-                        "token": s3_credentials["sessionToken"],
+                    "opener_options": {
+                        "s3_credentials": {
+                            "key": s3_credentials["accessKeyId"],
+                            "secret": s3_credentials["secretAccessKey"],
+                            "token": s3_credentials["sessionToken"],
+                        }
                     },
                 }
             else:
