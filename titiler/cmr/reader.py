@@ -19,7 +19,6 @@ from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
 
-from titiler.xarray.io import Reader as XarrayReader
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -125,6 +124,7 @@ def xarray_open_dataset(
     cache_client[cache_key] = pickle.dumps(ds)
 
     return ds
+
 
 @attr.s
 class MultiFilesBandsReader(MultiBandReader):
