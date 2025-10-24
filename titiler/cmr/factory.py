@@ -166,8 +166,8 @@ def parse_reader_options(
             reader_options = {}
 
         else:
-            assert rasterio_params.bands, (
-                "`bands_regex` must be provided when using the `bands=` option"
+            assert rasterio_params.indexes, (
+                "you must provide `indexes` if not providing `bands_regex` and `bands`"
             )
 
             reader = rasterio.Reader
