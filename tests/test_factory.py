@@ -47,7 +47,7 @@ class TestParseReaderOptions:
 
         with pytest.raises(
             AssertionError,
-            match="you must provide `indexes` if not providing `bands_regex` and `bands`",
+            match="`indexes` must be provided if not providing `bands_regex` and `bands`",
         ):
             parse_reader_options(
                 rasterio_params=rasterio_params,
