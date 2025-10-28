@@ -252,17 +252,19 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            if (
+            if "s3_credentials" in kwargs:
+                s3_credentials = kwargs["s3_credentials"]
+                del kwargs["s3_credentials"]
+            elif (
                 s3_auth_config.strategy == "environment"
                 and s3_auth_config.access == "direct"
                 and self.auth
             ):
                 s3_credentials = aws_s3_credential(self.auth, asset["provider"])
-
             else:
                 s3_credentials = None
 
-            if isinstance(self.reader, Reader):
+            if self.reader == Reader:
                 aws_session = None
                 if s3_credentials:
                     aws_session = rasterio.session.AWSSession(
