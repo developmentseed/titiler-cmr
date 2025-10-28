@@ -21,8 +21,10 @@ classifiers = [
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
-    "titiler.core==0.24.2",
-    "titiler.mosaic==0.24.2",
+    # ~0.24.3 will be the release of opener_options
+    # and approximately equivalent to the range >=0.24.3,<0.25.0
+    "titiler.core~=0.24.2",
+    "titiler.mosaic~=0.24.2",
     "titiler.xarray@git+https://github.com/developmentseed/titiler.git@main#subdirectory=src/titiler/xarray",
     "aiobotocore>=2.24.0",
     "boto3>=1.39.0",
