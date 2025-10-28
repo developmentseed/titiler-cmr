@@ -26,7 +26,7 @@ uv sync --all-extras
 This repo is set to use `pre-commit` to run *isort*, *flake8*, *pydocstring*, *black* ("uncompromising Python code formatter") and mypy when committing new code.
 
 ```bash
-uv pre-commit install
+uv run pre-commit install
 ```
 
 ## Testing
