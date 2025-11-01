@@ -252,7 +252,7 @@ class CMRBackend(BaseBackend):
             )
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            s3_credentials = self._get_s3_credentials(asset, kwargs)
+            s3_credentials = self._get_s3_credentials(asset)
 
             if isinstance(self.reader, type) and self.reader == Reader:
                 aws_session = self._create_aws_session(s3_credentials)
@@ -316,7 +316,7 @@ class CMRBackend(BaseBackend):
             raise NoAssetFoundError("No assets found for bbox input")
 
         def _reader(asset: Asset, bbox: BBox, **kwargs: Any) -> ImageData:
-            s3_credentials = self._get_s3_credentials(asset, kwargs)
+            s3_credentials = self._get_s3_credentials(asset)
 
             if isinstance(self.reader, type) and self.reader == Reader:
                 aws_session = self._create_aws_session(s3_credentials)
@@ -345,15 +345,9 @@ class CMRBackend(BaseBackend):
             **kwargs,
         )
 
-    def _get_s3_credentials(
-        self, asset: Asset, kwargs: Dict[str, Any]
-    ) -> Optional[Dict]:
+    def _get_s3_credentials(self, asset: Asset) -> Optional[Dict]:
         """Get s3 credentials from kwargs or via auth."""
-        if "s3_credentials" in kwargs:
-            s3_credentials = kwargs["s3_credentials"]
-            del kwargs["s3_credentials"]
-            return s3_credentials
-        elif (
+        if (
             s3_auth_config.strategy == "environment"
             and s3_auth_config.access == "direct"
             and self.auth
@@ -421,7 +415,7 @@ class CMRBackend(BaseBackend):
             raise NoAssetFoundError("No assets found for Geometry")
 
         def _reader(asset: Asset, shape: Dict, **kwargs: Any) -> ImageData:
-            s3_credentials = self._get_s3_credentials(asset, kwargs)
+            s3_credentials = self._get_s3_credentials(asset)
 
             if isinstance(self.reader, type) and self.reader == Reader:
                 aws_session = self._create_aws_session(s3_credentials)

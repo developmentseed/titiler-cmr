@@ -29,29 +29,12 @@ def test_get_assets(access: Access, expectation: str) -> None:
     assert asset_url[band].startswith(expectation)
 
 
-# Shared test setup
 @pytest.fixture
-def aws_s3_credentials():
-    """Fixture for AWS S3 credentials"""
-    return {
-        "s3_credentials": {
-            "accessKeyId": "test_key",
-            "secretAccessKey": "test_secret",
-            "sessionToken": "test_token",
-        }
-    }
-
-
-@pytest.fixture
-def reader_options(aws_s3_credentials):
+def reader_options():
     """Fixture for reader options with S3 credentials"""
     from titiler.cmr.reader import xarray_open_dataset
 
-    return {
-        "variable": "foo",
-        "opener": xarray_open_dataset,
-        "opener_options": aws_s3_credentials,
-    }
+    return {"variable": "foo", "opener": xarray_open_dataset}
 
 
 @pytest.fixture
@@ -77,6 +60,7 @@ def setup_backend_with_mock(
         reader_options: Configuration for the reader
         mock_method_name: Name of the method to mock (e.g., 'assets_for_tile')
         mock_return_value: List of assets to return from the mocked method
+        expected_s3_credentials: S3 credentials to return from _get_s3_credentials
 
     Returns:
         tuple: (backend, mock_init)
@@ -86,6 +70,15 @@ def setup_backend_with_mock(
     mock_init = mocker.patch.object(Reader, "__init__", return_value=None)
     backend = CMRBackend(reader=Reader, reader_options=reader_options)
     setattr(backend, mock_method_name, lambda *args, **kwargs: mock_return_value)
+
+    aws_s3_credentials = {
+        "accessKeyId": "test_key",
+        "secretAccessKey": "test_secret",
+        "sessionToken": "test_token",
+    }
+
+    # Mock _get_s3_credentials to return test credentials
+    mocker.patch.object(backend, "_get_s3_credentials", return_value=aws_s3_credentials)
 
     return backend, mock_init
 
@@ -102,23 +95,22 @@ def assert_opener_options_passed(mock_init, expected_opener_options):
     [
         (
             "tile",
-            lambda backend, creds: backend.tile(
-                tile_x=0, tile_y=0, tile_z=0, cmr_query={}, bands_regex="", **creds
+            lambda backend: backend.tile(
+                tile_x=0, tile_y=0, tile_z=0, cmr_query={}, bands_regex=""
             ),
         ),
         (
             "part",
-            lambda backend, creds: backend.part(
-                bbox=(0, 0, 1, 1), cmr_query={}, bands_regex="", **creds
+            lambda backend: backend.part(
+                bbox=(0, 0, 1, 1), cmr_query={}, bands_regex=""
             ),
         ),
         (
             "feature",
-            lambda backend, creds: backend.feature(
+            lambda backend: backend.feature(
                 shape={"type": "Point", "coordinates": [0, 0]},
                 cmr_query={},
                 bands_regex="",
-                **creds,
             ),
         ),
     ],
@@ -126,7 +118,6 @@ def assert_opener_options_passed(mock_init, expected_opener_options):
 def test_opener_options_passed_to_reader(
     mocker,
     reader_options,
-    aws_s3_credentials,
     expected_opener_options,
     method_name,
     method_call,
@@ -146,7 +137,7 @@ def test_opener_options_passed_to_reader(
 
     # Call the method - we expect it to fail after Reader.__init__, which is fine
     try:
-        method_call(backend, aws_s3_credentials)
+        method_call(backend)
     except (AttributeError, Exception):
         pass  # Expected - we only care about __init__ call
 
