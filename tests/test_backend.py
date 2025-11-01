@@ -31,7 +31,7 @@ def test_get_assets(access: Access, expectation: str) -> None:
 
 @pytest.fixture
 def reader_options():
-    """Fixture for reader options with S3 credentials"""
+    """Fixture for reader options"""
     from titiler.cmr.reader import xarray_open_dataset
 
     return {"variable": "foo", "opener": xarray_open_dataset}
@@ -60,7 +60,6 @@ def setup_backend_with_mock(
         reader_options: Configuration for the reader
         mock_method_name: Name of the method to mock (e.g., 'assets_for_tile')
         mock_return_value: List of assets to return from the mocked method
-        expected_s3_credentials: S3 credentials to return from _get_s3_credentials
 
     Returns:
         tuple: (backend, mock_init)
