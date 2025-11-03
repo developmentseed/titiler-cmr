@@ -8,6 +8,9 @@ from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, FeatureCollection, Polygon
 from vcr.request import Request
 
+import numpy as np
+from rio_tiler.models import ImageData
+
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.settings import AuthSettings
 
@@ -192,3 +195,13 @@ def rasterio_query_params() -> Dict[str, str]:
         "bands_regex": "Fmask",
         "bands": "Fmask",
     }
+
+
+@pytest.fixture
+def image_data():
+    """
+    Create a proper ImageData object to return from tile
+    """
+    return ImageData(
+        np.zeros((3, 256, 256), dtype=np.uint8)  # RGB image
+    )

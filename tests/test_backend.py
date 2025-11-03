@@ -2,9 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pytest
-from rio_tiler.models import ImageData
 
 from titiler.cmr.backend import Access, CMRBackend
 
@@ -34,7 +32,40 @@ def test_get_assets(access: Access, expectation: str) -> None:
     assert asset_url[band].startswith(expectation)
 
 
-def test_s3_credentials_used_for_session_creation() -> None:
+cmr_query = {
+    "concept_id": "C2021957657-LPCLOUD",
+    "temporal": ("2024-02-11", "2024-02-13"),
+}
+
+
+@pytest.mark.parametrize(
+    "method_name,method_call",
+    [
+        (
+            "tile",
+            lambda backend: backend.tile(
+                tile_x=0, tile_y=0, tile_z=0, cmr_query=cmr_query, bands_regex=""
+            ),
+        ),
+        (
+            "part",
+            lambda backend: backend.part(
+                bbox=(0, 0, 1, 1), cmr_query=cmr_query, bands_regex=""
+            ),
+        ),
+        (
+            "feature",
+            lambda backend: backend.feature(
+                shape={"type": "Point", "coordinates": [0, 0]},
+                cmr_query=cmr_query,
+                bands_regex="",
+            ),
+        ),
+    ],
+)
+def test_s3_credentials_used_for_session_creation(
+    method_name, method_call, image_data
+) -> None:
     """Test that s3_credentials from _get_s3_credentials are used to create AWS session."""
     from rio_tiler.io import Reader
 
@@ -51,11 +82,6 @@ def test_s3_credentials_used_for_session_creation() -> None:
         "provider": "TEST_PROVIDER",
     }
 
-    # Create a proper ImageData object to return from tile
-    mock_image_data = ImageData(
-        np.zeros((3, 256, 256), dtype=np.uint8)  # RGB image
-    )
-
     # Create a mock class that will pass isinstance checks
     class MockReader:
         def __init__(self, *args, **kwargs):
@@ -63,22 +89,25 @@ def test_s3_credentials_used_for_session_creation() -> None:
 
         def __enter__(self):
             mock_instance = MagicMock()
-            mock_instance.tile.return_value = mock_image_data
+            # Set the method to return the image_data
+            getattr(mock_instance, method_name).return_value = image_data
             return mock_instance
-
-        def __eq__(other):
-            # Make MockReader == Reader return True
-            if other is Reader:
-                return True
-            return super().__eq__(other)
 
         def __exit__(self, *args):
             pass
 
+    def class_eq(self, other):
+        if other is MockReader:
+            return True
+        return type.__eq__(self, other)
+
     with CMRBackend(reader=MockReader) as backend:
-        # Mock assets_for_tile to return our test asset
+        # Mock asset methods to return our test asset
         with (
             patch.object(backend, "assets_for_tile", return_value=[mock_asset]),
+            patch.object(backend, "assets_for_bbox", return_value=[mock_asset]),
+            patch.object(backend, "get_assets", return_value=[mock_asset]),
+            patch.object(type(Reader), "__eq__", class_eq),
             patch.object(
                 backend, "_get_s3_credentials", return_value=mock_s3_credentials
             ) as mock_get_creds,
@@ -90,15 +119,7 @@ def test_s3_credentials_used_for_session_creation() -> None:
             mock_create_session.return_value = mock_session
 
             # Call tile, which should trigger the credential flow
-            backend.tile(
-                0,
-                0,
-                0,
-                cmr_query={
-                    "concept_id": "C2021957657-LPCLOUD",
-                    "temporal": ("2024-02-11", "2024-02-13"),
-                },
-            )
+            method_call(backend)
 
         # Verify that _get_s3_credentials was called with the asset
         mock_get_creds.assert_called_once_with(mock_asset)

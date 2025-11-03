@@ -294,7 +294,7 @@ class CMRBackend(BaseBackend):
         s3_credentials = self._get_s3_credentials(asset)
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            if isinstance(self.reader, type) and self.reader.__eq__(Reader):
+            if isinstance(self.reader, type) and self.reader == Reader:
                 aws_session = self._create_aws_session(s3_credentials)
 
                 with rasterio.Env(aws_session):
@@ -355,9 +355,10 @@ class CMRBackend(BaseBackend):
         if not mosaic_assets:
             raise NoAssetFoundError("No assets found for bbox input")
 
-        def _reader(asset: Asset, bbox: BBox, **kwargs: Any) -> ImageData:
-            s3_credentials = self._get_s3_credentials(asset)
+        asset = mosaic_assets[0]
+        s3_credentials = self._get_s3_credentials(asset)
 
+        def _reader(asset: Asset, bbox: BBox, **kwargs: Any) -> ImageData:
             if isinstance(self.reader, type) and self.reader == Reader:
                 aws_session = self._create_aws_session(s3_credentials)
 
@@ -415,9 +416,10 @@ class CMRBackend(BaseBackend):
         if not mosaic_assets:
             raise NoAssetFoundError("No assets found for Geometry")
 
-        def _reader(asset: Asset, shape: Dict, **kwargs: Any) -> ImageData:
-            s3_credentials = self._get_s3_credentials(asset)
+        asset = mosaic_assets[0]
+        s3_credentials = self._get_s3_credentials(asset)
 
+        def _reader(asset: Asset, shape: Dict, **kwargs: Any) -> ImageData:
             if isinstance(self.reader, type) and self.reader == Reader:
                 aws_session = self._create_aws_session(s3_credentials)
 
