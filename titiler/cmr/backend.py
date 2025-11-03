@@ -112,6 +112,45 @@ class CMRBackend(BaseBackend):
         """This method is not used but is required by the abstract class."""
         pass
 
+    def _get_s3_credentials(self, asset: Asset) -> Optional[Dict]:
+        """Get s3 credentials from kwargs or via auth."""
+        if (
+            s3_auth_config.strategy == "environment"
+            and s3_auth_config.access == "direct"
+            and self.auth
+        ):
+            return aws_s3_credential(self.auth, asset["provider"])
+        else:
+            return None
+
+    def _build_reader_options(self, s3_credentials: Optional[Dict]) -> Dict:
+        """Build reader options with opener_options if s3_credentials provided."""
+        if s3_credentials:
+            return {
+                **self.reader_options,
+                "opener_options": {
+                    "s3_credentials": {
+                        "key": s3_credentials["accessKeyId"],
+                        "secret": s3_credentials["secretAccessKey"],
+                        "token": s3_credentials["sessionToken"],
+                    }
+                },
+            }
+        else:
+            return self.reader_options
+
+    def _create_aws_session(
+        self, s3_credentials: Optional[Dict]
+    ) -> Optional[rasterio.session.AWSSession]:
+        """Create rasterio AWSSession from s3 credentials."""
+        if s3_credentials:
+            return rasterio.session.AWSSession(
+                aws_access_key_id=s3_credentials["accessKeyId"],
+                aws_secret_access_key=s3_credentials["secretAccessKey"],
+                aws_session_token=s3_credentials["sessionToken"],
+            )
+        return None
+
     def assets_for_tile(
         self, x: int, y: int, z: int, access: Access = "direct", **kwargs: Any
     ) -> List[Asset]:
@@ -344,45 +383,6 @@ class CMRBackend(BaseBackend):
             dst_crs=dst_crs or bounds_crs,
             **kwargs,
         )
-
-    def _get_s3_credentials(self, asset: Asset) -> Optional[Dict]:
-        """Get s3 credentials from kwargs or via auth."""
-        if (
-            s3_auth_config.strategy == "environment"
-            and s3_auth_config.access == "direct"
-            and self.auth
-        ):
-            return aws_s3_credential(self.auth, asset["provider"])
-        else:
-            return None
-
-    def _build_reader_options(self, s3_credentials: Optional[Dict]) -> Dict:
-        """Build reader options with opener_options if s3_credentials provided."""
-        if s3_credentials:
-            return {
-                **self.reader_options,
-                "opener_options": {
-                    "s3_credentials": {
-                        "key": s3_credentials["accessKeyId"],
-                        "secret": s3_credentials["secretAccessKey"],
-                        "token": s3_credentials["sessionToken"],
-                    }
-                },
-            }
-        else:
-            return self.reader_options
-
-    def _create_aws_session(
-        self, s3_credentials: Optional[Dict]
-    ) -> Optional[rasterio.session.AWSSession]:
-        """Create rasterio AWSSession from s3 credentials."""
-        if s3_credentials:
-            return rasterio.session.AWSSession(
-                aws_access_key_id=s3_credentials["accessKeyId"],
-                aws_secret_access_key=s3_credentials["secretAccessKey"],
-                aws_session_token=s3_credentials["sessionToken"],
-            )
-        return None
 
     def feature(
         self,
