@@ -151,12 +151,14 @@ class AWSSessionsReader(Reader):
 
     def __enter__(self):
         """
-        Create and enter AWS session context
+        Setup the environment context manager with the instance's AWSSession
         """
+
+        # Enter the Rasterio environment with AWS credentials
         self.env_ctx = rasterio.Env(session=self.aws_session)
         self.env_ctx.__enter__()
 
-        # Call parent's __enter__
+        # Call parent's __enter__ to perform its initialization
         return super().__enter__()
 
     def __exit__(self, *args):
