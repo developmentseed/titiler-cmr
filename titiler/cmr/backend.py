@@ -28,6 +28,7 @@ from rio_tiler.types import BBox
 from titiler.cmr.logger import logger
 from titiler.cmr.settings import AuthSettings, CacheSettings, RetrySettings
 from titiler.cmr.utils import retry
+from titiler.cmr.reader import AWSSessionsReader, MultiFilesBandsReader
 
 Access = Literal["direct", "external"]
 
@@ -125,9 +126,18 @@ class CMRBackend(BaseBackend):
 
     def _build_reader_options(self, s3_credentials: Optional[Dict]) -> Dict:
         """Build reader options with opener_options if s3_credentials provided."""
+        options = {**self.reader_options}
+        if self.reader == Reader or self.reader == MultiFilesBandsReader:
+            if s3_credentials:
+                options["reader_options"] = options.get("reader_options", {})
+                options["reader_options"]["s3_credentials"] = s3_credentials
+                options["reader"] = AWSSessionsReader
+            return options
+
+        # For xarray-based openers
         if s3_credentials:
             return {
-                **self.reader_options,
+                **options,
                 "opener_options": {
                     "s3_credentials": {
                         "key": s3_credentials["accessKeyId"],
@@ -137,7 +147,7 @@ class CMRBackend(BaseBackend):
                 },
             }
         else:
-            return self.reader_options
+            return options
 
     def _create_aws_session(
         self, s3_credentials: Optional[Dict]
@@ -292,18 +302,6 @@ class CMRBackend(BaseBackend):
 
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
             s3_credentials = self._get_s3_credentials(asset)
-
-            if isinstance(self.reader, type) and self.reader == Reader:
-                aws_session = self._create_aws_session(s3_credentials)
-
-                with rasterio.Env(aws_session):
-                    with self.reader(
-                        asset["url"],
-                        tms=self.tms,
-                        **self.reader_options,
-                    ) as src_dst:
-                        return src_dst.tile(x, y, z, **kwargs)
-
             options = self._build_reader_options(s3_credentials)
 
             with self.reader(
@@ -356,17 +354,6 @@ class CMRBackend(BaseBackend):
 
         def _reader(asset: Asset, bbox: BBox, **kwargs: Any) -> ImageData:
             s3_credentials = self._get_s3_credentials(asset)
-
-            if isinstance(self.reader, type) and self.reader == Reader:
-                aws_session = self._create_aws_session(s3_credentials)
-
-                with rasterio.Env(aws_session):
-                    with self.reader(
-                        asset["url"],
-                        **self.reader_options,
-                    ) as src_dst:
-                        return src_dst.part(bbox, **kwargs)
-
             options = self._build_reader_options(s3_credentials)
 
             with self.reader(
@@ -416,17 +403,6 @@ class CMRBackend(BaseBackend):
 
         def _reader(asset: Asset, shape: Dict, **kwargs: Any) -> ImageData:
             s3_credentials = self._get_s3_credentials(asset)
-
-            if isinstance(self.reader, type) and self.reader == Reader:
-                aws_session = self._create_aws_session(s3_credentials)
-
-                with rasterio.Env(aws_session):
-                    with self.reader(
-                        asset["url"],
-                        **self.reader_options,
-                    ) as src_dst:
-                        return src_dst.feature(shape, **kwargs)
-
             options = self._build_reader_options(s3_credentials)
 
             with self.reader(

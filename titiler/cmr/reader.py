@@ -19,6 +19,9 @@ from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
 from rio_tiler.io import BaseReader, MultiBandReader, Reader
 
+import rasterio
+from rasterio.session import AWSSession
+
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -124,6 +127,46 @@ def xarray_open_dataset(
     cache_client[cache_key] = pickle.dumps(ds)
 
     return ds
+
+
+class AWSSessionsReader(Reader):
+    """Reader that adds AWS session context to tile operations."""
+
+    s3_credentials: Dict[str, str] = attr.ib()
+
+    def __init__(self, *args, s3_credentials: dict, **kwargs):
+        """
+        Args:
+            s3_credentials: Dict with accessKeyId, secretAccessKey, sessionToken
+            *args, **kwargs: Passed to parent Reader class
+        """
+        self.aws_session = AWSSession(
+            aws_access_key_id=s3_credentials["accessKeyId"],
+            aws_secret_access_key=s3_credentials["secretAccessKey"],
+            aws_session_token=s3_credentials["sessionToken"],
+        )
+        with rasterio.Env(session=self.aws_session):
+            super().__init__(*args, **kwargs)
+        self.env_ctx = None
+
+    def __enter__(self):
+        """
+        Create and enter AWS session context
+        """
+        self.env_ctx = rasterio.Env(session=self.aws_session)
+        self.env_ctx.__enter__()
+
+        # Call parent's __enter__
+        return super().__enter__()
+
+    def __exit__(self, *args):
+        """
+        Exit context in reverse order
+        """
+        result = super().__exit__(*args)
+        if self.env_ctx:
+            self.env_ctx.__exit__(*args)
+        return result
 
 
 @attr.s
