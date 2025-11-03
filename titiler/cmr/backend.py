@@ -7,8 +7,6 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypedDict, U
 
 import attr
 import earthaccess
-import rasterio
-import rasterio.session
 from cachetools import TTLCache, cached
 from cachetools.keys import hashkey
 from cogeo_mosaic.backends import BaseBackend
@@ -149,18 +147,6 @@ class CMRBackend(BaseBackend):
             }
         else:
             return options
-
-    def _create_aws_session(
-        self, s3_credentials: Optional[Dict]
-    ) -> Optional[rasterio.session.AWSSession]:
-        """Create rasterio AWSSession from s3 credentials."""
-        if s3_credentials:
-            return rasterio.session.AWSSession(
-                aws_access_key_id=s3_credentials["accessKeyId"],
-                aws_secret_access_key=s3_credentials["secretAccessKey"],
-                aws_session_token=s3_credentials["sessionToken"],
-            )
-        return None
 
     def assets_for_tile(
         self, x: int, y: int, z: int, access: Access = "direct", **kwargs: Any
