@@ -35,14 +35,14 @@ class TestAWSSessionsReader:
         # Create reader
         reader = AWSSessionsReader(test_file, s3_credentials=s3_credentials)
 
-        # Before entering context, session should be None
+        # reader.aws_session should be set on init, but not env_ctx
         assert isinstance(reader.aws_session, AWSSession)
         assert reader.env_ctx is None
 
         # Enter context
         reader.__enter__()
 
-        # After entering, Env context should be created
+        # After entering, env context should be created
         assert isinstance(reader.env_ctx, RasterioEnv)
 
         # Clean up
@@ -69,8 +69,9 @@ class TestMultiFilesBandsReader:
         }
 
         # Create input dictionary mapping band names to URLs
+        band_url = "s3://test-bucket/red.tif"
         input_files = {
-            "red": "s3://test-bucket/red.tif",
+            "red": band_url,
         }
 
         # Create reader options that include s3_credentials
@@ -88,15 +89,11 @@ class TestMultiFilesBandsReader:
         assert multi_reader.reader == AWSSessionsReader
         assert multi_reader.reader_options == reader_options
 
-        # Now test that when we create a reader instance (as MultiBandReader.tile does),
-        # the AWSSessionsReader gets the s3_credentials
-        url = multi_reader._get_band_url("red")
-
         # Mock the parent __attrs_post_init__ to avoid opening files
         with patch("rio_tiler.io.rasterio.Reader.__attrs_post_init__"):
             # Create a reader instance the same way MultiBandReader.tile does
             reader_instance = multi_reader.reader(
-                url, tms=multi_reader.tms, **multi_reader.reader_options
+                band_url, tms=multi_reader.tms, **multi_reader.reader_options
             )
 
             # Verify the reader instance has the s3_credentials
