@@ -290,10 +290,11 @@ class CMRBackend(BaseBackend):
                 f"No assets found for tile {tile_z}-{tile_x}-{tile_y}"
             )
 
-        def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
-            s3_credentials = self._get_s3_credentials(asset)
+        asset = mosaic_assets[0]
+        s3_credentials = self._get_s3_credentials(asset)
 
-            if isinstance(self.reader, type) and self.reader == Reader:
+        def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
+            if isinstance(self.reader, type) and self.reader.__eq__(Reader):
                 aws_session = self._create_aws_session(s3_credentials)
 
                 with rasterio.Env(aws_session):
