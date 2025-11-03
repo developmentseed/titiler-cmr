@@ -1124,6 +1124,7 @@
 <ul>
 <li>interpolate {datetime} in if sel includes {dim}={datetime} (<a href="https://github.com/developmentseed/titiler-cmr/pull/78">#78</a>)</li>
 <li>/compatibility and /concept_metadata endpoints (<a href="https://github.com/developmentseed/titiler-cmr/pull/80">#80</a>)</li>
+<li>implemented a new reader class <code>AWSSessionsReader</code> and use it with <code>MultiFilesBandsReader</code> in <code>CMRBackend</code> to address sessions not being passed to child threads in a multi-threaded context when using <code>rasterio.Env(session=)</code> (<a href="https://github.com/developmentseed/titiler-cmr/pull/95">#95</a>). Adresses #91.</li>
 </ul>
 <h2 id="v020"><a href="https://github.com/developmentseed/titiler-cmr/compare/v0.1.5..v0.2.0">v0.2.0</a><a class="headerlink" href="#v020" title="Permanent link">&para;</a></h2>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
