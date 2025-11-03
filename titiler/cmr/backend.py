@@ -126,6 +126,7 @@ class CMRBackend(BaseBackend):
 
     def _build_reader_options(self, s3_credentials: Optional[Dict]) -> Dict:
         """Build reader options with opener_options if s3_credentials provided."""
+        # Create a shallow copy of `reader_options` to avoid mutating self.reader_options directly.
         options = {**self.reader_options}
         if self.reader == Reader or self.reader == MultiFilesBandsReader:
             if s3_credentials:
