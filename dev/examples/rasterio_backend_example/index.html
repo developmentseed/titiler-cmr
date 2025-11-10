@@ -437,9 +437,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#examine-a-granule" class="md-nav__link">
+  <a href="#explore-the-collection-using-the-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
-      Examine a granule
+      Explore the collection using the endpoint
     </span>
   </a>
   
@@ -761,9 +761,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#examine-a-granule" class="md-nav__link">
+  <a href="#explore-the-collection-using-the-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
-      Examine a granule
+      Explore the collection using the endpoint
     </span>
   </a>
   
@@ -1311,15 +1311,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">earthaccess</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">earthaccess</span>
 <span class="kn">import</span> <span class="nn">httpx</span>
-<span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">import earthaccess
+<div class="clipboard-copy-txt" id="cell-1">import json
+
+import earthaccess
 import httpx
-import json
 
 from folium import Map, TileLayer</div>
 </div>
@@ -1347,16 +1349,20 @@ from folium import Map, TileLayer</div>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># titiler_endpoint = "http://localhost:8081"  # docker network endpoint</span>
+<span class="c1"># titiler_endpoint = (</span>
+<span class="c1">#     "https://staging.openveda.cloud/api/titiler-cmr"  # VEDA staging endpoint</span>
+<span class="c1"># )</span>
 <span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># VEDA staging endpoint</span>
+    <span class="s2">"https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"</span>  <span class="c1"># dev endpoint</span>
 <span class="p">)</span>
-<span class="c1"># titiler_endpoint = "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"  # dev endpoint</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2"># titiler_endpoint = "http://localhost:8081"  # docker network endpoint
+# titiler_endpoint = (
+#     "https://staging.openveda.cloud/api/titiler-cmr"  # VEDA staging endpoint
+# )
 titiler_endpoint = (
-    "https://staging.openveda.cloud/api/titiler-cmr"  # VEDA staging endpoint
-)
-# titiler_endpoint = "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"  # dev endpoint</div>
+    "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"  # dev endpoint
+)</div>
 </div>
 </div>
 </div>
@@ -1490,7 +1496,7 @@ Improvements/Changes from Previous Versions
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="examine-a-granule">Examine a granule<a class="anchor-link" href="#examine-a-granule">¶</a></h2><p>Each granule contains the data for a single point in time for an MGRS tile.</p>
+<h2 id="explore-the-collection-using-the-compatibility-endpoint">Explore the collection using the <code>/compatibility</code> endpoint<a class="anchor-link" href="#explore-the-collection-using-the-compatibility-endpoint">¶</a></h2><p>The <code>/compatibility</code> endpoint will display information about the collection and return some details about a sample granule. The output is helpful for understanding the structure of the collection and the granules so that you can craft the right set of parameters for visualization or statistics requests.</p>
 </div>
 </div>
 </div>
@@ -1513,49 +1519,21 @@ Improvements/Changes from Previous Versions
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">earthaccess</span>
-<span class="kn">import</span> <span class="nn">morecantile</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">compatibility_response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/compatibility"</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">"concept_id"</span><span class="p">:</span> <span class="n">concept_id</span><span class="p">},</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-<span class="n">tms</span> <span class="o">=</span> <span class="n">morecantile</span><span class="o">.</span><span class="n">tms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"WebMercatorQuad"</span><span class="p">)</span>
-
-<span class="n">bounds</span> <span class="o">=</span> <span class="n">tms</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="mi">62</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
-<span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">)</span>
-<span class="n">concept_id</span> <span class="o">=</span> <span class="s2">"C2021957295-LPCLOUD"</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_data</span><span class="p">(</span>
-    <span class="n">bounding_box</span><span class="o">=</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span>
-    <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">concept_id</span><span class="o">=</span><span class="n">concept_id</span><span class="p">,</span>
-    <span class="n">temporal</span><span class="o">=</span><span class="p">(</span><span class="s2">"2024-02-11"</span><span class="p">,</span> <span class="s2">"2024-02-13"</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Granules:"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Example of COGs URL: "</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data_links</span><span class="p">(</span><span class="n">access</span><span class="o">=</span><span class="s2">"direct"</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">compatibility_response</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">import earthaccess
-import morecantile
+<div class="clipboard-copy-txt" id="cell-4">compatibility_response = httpx.get(
+    f"{titiler_endpoint}/compatibility",
+    params={"concept_id": concept_id},
+    timeout=None,
+).json()
 
-tms = morecantile.tms.get("WebMercatorQuad")
-
-bounds = tms.bounds(62, 44, 7)
-xmin, ymin, xmax, ymax = (round(n, 8) for n in bounds)
-concept_id = "C2021957295-LPCLOUD"
-
-results = earthaccess.search_data(
-    bounding_box=(xmin, ymin, xmax, ymax),
-    count=1,
-    concept_id=concept_id,
-    temporal=("2024-02-11", "2024-02-13"),
-)
-print("Granules:")
-print(results)
-print()
-print("Example of COGs URL: ")
-for link in results[0].data_links(access="direct"):
-    print(link)</div>
+print(json.dumps(compatibility_response, indent=2))</div>
 </div>
 </div>
 </div>
@@ -1567,35 +1545,102 @@ for link in results[0].data_links(access="direct"):
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Granules:
-[Collection: {'EntryTitle': 'HLS Sentinel-2 Multi-spectral Instrument Surface Reflectance Daily Global 30m v2.0'}
-Spatial coverage: {'HorizontalSpatialDomain': {'Geometry': {'GPolygons': [{'Boundary': {'Points': [{'Longitude': -5.71462895, 'Latitude': 48.63303181}, {'Longitude': -5.04818328, 'Latitude': 48.64735841}, {'Longitude': -4.57847134, 'Latitude': 49.64196234}, {'Longitude': -5.76906794, 'Latitude': 49.61959687}, {'Longitude': -5.71462895, 'Latitude': 48.63303181}]}}]}}}
-Temporal coverage: {'RangeDateTime': {'BeginningDateTime': '2024-02-11T11:37:33.939Z', 'EndingDateTime': '2024-02-11T11:37:33.939Z'}}
-Size(MB): 134.71638679504395
-Data: ['https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.Fmask.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SAA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B8A.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VAA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SZA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VZA.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif', 'https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif']]
-
-Example of COGs URL: 
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.Fmask.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SAA.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B8A.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VAA.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.SZA.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.VZA.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif
-s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif
+<pre>{
+  "concept_id": "C2021957295-LPCLOUD",
+  "backend": "rasterio",
+  "datetime": [
+    {
+      "RangeDateTimes": [
+        {
+          "BeginningDateTime": "2015-11-28T00:00:00.000Z"
+        }
+      ],
+      "EndsAtPresentFlag": true,
+      "PrecisionOfSeconds": 0,
+      "TemporalResolution": {
+        "Value": 1,
+        "Unit": "Day"
+      }
+    }
+  ],
+  "example_assets": {
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif"
+  },
+  "sample_asset_raster_info": {
+    "bounds": [
+      699960.0,
+      -2909760.0,
+      809760.0,
+      -2799960.0
+    ],
+    "crs": "http://www.opengis.net/def/crs/EPSG/0/32655",
+    "band_metadata": [
+      [
+        "b1",
+        {}
+      ]
+    ],
+    "band_descriptions": [
+      [
+        "b1",
+        "NIR_Broad"
+      ]
+    ],
+    "dtype": "int16",
+    "nodata_type": "Nodata",
+    "colorinterp": [
+      "gray"
+    ],
+    "scales": [
+      0.0001
+    ],
+    "offsets": [
+      0.0
+    ],
+    "driver": "GTiff",
+    "count": 1,
+    "width": 3660,
+    "height": 3660,
+    "overviews": [
+      2,
+      4,
+      8,
+      16
+    ],
+    "nodata_value": -9999.0
+  }
+}
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>The details from the sample granule show that it has 18 assets (you would need to look more into what each of the assets represents). To properly configure the assets for titiler-cmr we will need to use the <code>bands_regex</code> parameter to identify the bands that we want to be available for visualizations. The <code>datetime</code> key shows the reported temporal range from CMR which indicates that the dataset has granules from <code>2015-11-28</code> to present.</p>
 </div>
 </div>
 </div>
@@ -1642,7 +1687,7 @@ s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30
         <span class="n">temporal</span><span class="o">=</span><span class="p">(</span><span class="s2">"2024-02-11"</span><span class="p">,</span> <span class="s2">"2024-02-13"</span><span class="p">),</span>
     <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">assets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">assets</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">from titiler.cmr.backend import CMRBackend
 from titiler.cmr.reader import MultiFilesBandsReader
@@ -1657,7 +1702,7 @@ with CMRBackend(reader=MultiFilesBandsReader) as backend:
         temporal=("2024-02-11", "2024-02-13"),
     )
 
-print(assets[0])</div>
+print(json.dumps(assets[0], indent=2))</div>
 </div>
 </div>
 </div>
@@ -1669,7 +1714,23 @@ print(assets[0])</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'url': {'B12': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif', 'B11': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif', 'B07': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif', 'B04': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif', 'B03': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif', 'B05': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif', 'B02': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif', 'B01': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif', 'B06': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif', 'B08': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif', 'B09': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif', 'B10': 's3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif'}, 'provider': 'LPCLOUD'}
+<pre>{
+  "url": {
+    "B12": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B12.tif",
+    "B11": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B11.tif",
+    "B07": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B07.tif",
+    "B04": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B04.tif",
+    "B03": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B03.tif",
+    "B05": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B05.tif",
+    "B02": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B02.tif",
+    "B01": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B01.tif",
+    "B06": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B06.tif",
+    "B08": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B08.tif",
+    "B09": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B09.tif",
+    "B10": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T30UUV.2024042T113311.v2.0/HLS.S30.T30UUV.2024042T113311.v2.0.B10.tif"
+  },
+  "provider": "LPCLOUD"
+}
 </pre>
 </div>
 </div>
@@ -1724,7 +1785,7 @@ IFrame(f"{titiler_endpoint}/api.html", 900, 500)</div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<iframe allowfullscreen="" frameborder="0" height="500" src="https://staging.openveda.cloud/api/titiler-cmr/api.html" width="900"></iframe>
+<iframe allowfullscreen="" frameborder="0" height="500" src="https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/api.html" width="900"></iframe>
 </div>
 </div>
 </div>
@@ -1785,6 +1846,7 @@ IFrame(f"{titiler_endpoint}/api.html", 900, 500)</div>
         <span class="p">(</span><span class="s2">"minzoom"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"maxzoom"</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span>
     <span class="p">),</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -1814,6 +1876,7 @@ IFrame(f"{titiler_endpoint}/api.html", 900, 500)</div>
         ("minzoom", 8),
         ("maxzoom", 13),
     ),
+    timeout=None,
 ).json()
 
 print(r)</div>
@@ -1828,7 +1891,7 @@ print(r)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
+<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
 </pre>
 </div>
 </div>
@@ -1911,7 +1974,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_bf326275f0fac531787d198bbaa5f5fd {
+                #map_0a9c471d47cccc8f2d8a369243ddabb3 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -1925,14 +1988,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_bf326275f0fac531787d198bbaa5f5fd" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_0a9c471d47cccc8f2d8a369243ddabb3" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_bf326275f0fac531787d198bbaa5f5fd = L.map(
-                "map_bf326275f0fac531787d198bbaa5f5fd",
+            var map_0a9c471d47cccc8f2d8a369243ddabb3 = L.map(
+                "map_0a9c471d47cccc8f2d8a369243ddabb3",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -1946,22 +2009,22 @@ m</div>
 
         
     
-            var tile_layer_481c414e977926f843f345b08e26ebd3 = L.tileLayer(
+            var tile_layer_c6a3c67a3542eee0554077a7e96708f8 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_481c414e977926f843f345b08e26ebd3.addTo(map_bf326275f0fac531787d198bbaa5f5fd);
+            tile_layer_c6a3c67a3542eee0554077a7e96708f8.addTo(map_0a9c471d47cccc8f2d8a369243ddabb3);
         
     
-            var tile_layer_1822787fadc8a7196f56fb030d056999 = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
+            var tile_layer_ddb0f608dc684d249a872f94ef101386 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_1822787fadc8a7196f56fb030d056999.addTo(map_bf326275f0fac531787d198bbaa5f5fd);
+            tile_layer_ddb0f608dc684d249a872f94ef101386.addTo(map_0a9c471d47cccc8f2d8a369243ddabb3);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2027,6 +2090,7 @@ m</div>
         <span class="p">(</span><span class="s2">"minzoom"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">"maxzoom"</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span>
     <span class="p">),</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
 <span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mf">47.9221313337365</span><span class="p">,</span> <span class="o">-</span><span class="mf">91.65432884883238</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s2">"maxzoom"</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
@@ -2067,6 +2131,7 @@ m</div>
         ("minzoom", 8),
         ("maxzoom", 13),
     ),
+    timeout=None,
 ).json()
 
 m = Map(location=(47.9221313337365, -91.65432884883238), zoom_start=r["maxzoom"] - 1)
@@ -2117,7 +2182,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_01fd08c7986233509f0e536194b95f52 {
+                #map_385e6904f6c038dca9e7a04d388d350b {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2131,14 +2196,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_01fd08c7986233509f0e536194b95f52" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_385e6904f6c038dca9e7a04d388d350b" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_01fd08c7986233509f0e536194b95f52 = L.map(
-                "map_01fd08c7986233509f0e536194b95f52",
+            var map_385e6904f6c038dca9e7a04d388d350b = L.map(
+                "map_385e6904f6c038dca9e7a04d388d350b",
                 {
                     center: [47.9221313337365, -91.65432884883238],
                     crs: L.CRS.EPSG3857,
@@ -2152,22 +2217,22 @@ m</div>
 
         
     
-            var tile_layer_e5e2806f68e3d8f6eb49321f136e9f8b = L.tileLayer(
+            var tile_layer_1c0a0a0336390a0e87f66c557936df5a = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_e5e2806f68e3d8f6eb49321f136e9f8b.addTo(map_01fd08c7986233509f0e536194b95f52);
+            tile_layer_1c0a0a0336390a0e87f66c557936df5a.addTo(map_385e6904f6c038dca9e7a04d388d350b);
         
     
-            var tile_layer_d3bb461080d433475c29f8482aeaa2ae = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
+            var tile_layer_503875242603353871467340b4c94be0 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_d3bb461080d433475c29f8482aeaa2ae.addTo(map_01fd08c7986233509f0e536194b95f52);
+            tile_layer_503875242603353871467340b4c94be0.addTo(map_385e6904f6c038dca9e7a04d388d350b);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2293,7 +2358,7 @@ m</div>
         <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
     <span class="p">),</span>
     <span class="n">json</span><span class="o">=</span><span class="n">geojson</span><span class="p">,</span>
-    <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -2318,7 +2383,7 @@ m</div>
         ("bands", "B04"),
     ),
     json=geojson,
-    timeout=30,
+    timeout=None,
 ).json()
 
 print(json.dumps(r, indent=2))</div>
