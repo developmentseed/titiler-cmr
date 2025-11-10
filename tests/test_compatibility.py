@@ -2,6 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pytest
 from fastapi import HTTPException
 
@@ -24,14 +25,14 @@ class TestExtractXarrayMetadata:
         # Mock data variables
         mock_var = MagicMock()
         mock_var.shape = (365, 1800, 3600)
-        mock_var.dtype = "float32"
+        mock_var.dtype = np.dtype("float32")
         mock_ds.data_vars = ["temperature"]
         mock_ds.__getitem__ = lambda self, key: mock_var
 
         # Mock coordinates
         mock_coord = MagicMock()
         mock_coord.size = 365
-        mock_coord.dtype.kind = "f"
+        mock_coord.dtype = np.dtype("float64")
         mock_coord.min.return_value = 0.0
         mock_coord.max.return_value = 364.0
 
@@ -61,14 +62,14 @@ class TestExtractXarrayMetadata:
         # Mock data variables
         mock_var = MagicMock()
         mock_var.shape = (10,)
-        mock_var.dtype = "float32"
+        mock_var.dtype = np.dtype("float32")
         mock_ds.data_vars = ["data"]
         mock_ds.__getitem__ = lambda self, key: mock_var
 
         # Mock string coordinate (no min/max)
         mock_coord = MagicMock()
         mock_coord.size = 10
-        mock_coord.dtype.kind = "U"  # Unicode string
+        mock_coord.dtype = np.dtype("U10")  # Unicode string
 
         # Create a proper mock for coords
         mock_coords = MagicMock()
@@ -114,7 +115,7 @@ class TestXarrayCompatibility:
         mock_ds = MagicMock()
         mock_var = MagicMock()
         mock_var.shape = (10, 20)
-        mock_var.dtype = "float32"
+        mock_var.dtype = np.dtype("float32")
         mock_ds.data_vars = ["temp"]
         mock_ds.__getitem__ = lambda self, key: mock_var
 
