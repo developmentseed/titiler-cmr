@@ -5,18 +5,29 @@ on:
       - develop
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., 0.1.4, or "dev" for develop branch)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: docs-deployment
+  cancel-in-progress: false
+
 jobs:
   deploy-versions:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Important for mike to work with tags
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.version != 'dev' && format('v{0}', inputs.version) || github.ref }}
 
       - uses: astral-sh/setup-uv@v7
         with:
@@ -38,19 +49,35 @@ jobs:
       
       - name: Deploy docs
         env:
-          EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}  
-          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}  
+          EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}
+          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
         run: |
           echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
+
+          # Handle manual workflow dispatch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+            if [[ "$VERSION" == "dev" ]]; then
+              uv run mike deploy --push --update-aliases dev
+              uv run mike set-default --push dev
+            else
+              uv run mike deploy --push $VERSION
+
+              # Check if this should be the latest version
+              LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
+              if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
+                uv run mike alias --push --update-aliases $VERSION latest
+              fi
+            fi
+          elif [[ $GITHUB_REF == refs/tags/* ]]; then
             # For tags, deploy the tagged version
             VERSION=${GITHUB_REF#refs/tags/v}
             uv run mike deploy --push $VERSION
-            
+
             # If this is the latest version, update the 'latest' alias
             LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
           if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
-            uv run mike alias --push $VERSION latest
+            uv run mike alias --push --update-aliases $VERSION latest
           fi
           else
             # For develop branch, deploy to 'dev'
