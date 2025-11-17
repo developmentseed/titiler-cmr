@@ -6,11 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [v0.3.0]
+
 ### Added
 
 - interpolate {datetime} in if sel includes {dim}={datetime} ([#78](https://github.com/developmentseed/titiler-cmr/pull/78))
 - /compatibility and /concept_metadata endpoints ([#80](https://github.com/developmentseed/titiler-cmr/pull/80))
 - add dataset statistics to /compatibility endpoint output for xarray datasets ([#80](https://github.com/developmentseed/titiler-cmr/pull/82))
+
+- export traces to X-Ray from AWS Lambda ([#81](https://github.com/developmentseed/titiler-cmr/pull/81))
+
+### Fixed
+
+- Fix bands + indexes + bands_regex logic ([#89](https://github.com/developmentseed/titiler-cmr/pull/89))
+- DRY out the AWS credential logic in backend.py ([#93](https://github.com/developmentseed/titiler-cmr/pull/93))
+
+### Changed
+
+- Switch from a zip package to a containerized Lambda function ([#81](https://github.com/developmentseed/titiler-cmr/pull/81))
 
 ## [v0.2.0]
 
