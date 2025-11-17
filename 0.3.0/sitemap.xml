@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/contributing/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/release-notes/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/datasets/hls_tiling/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/deployment/time_series_api_limits/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/examples/rasterio_backend_example/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/examples/time_series_example/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/0.3.0/examples/xarray_backend_example/</loc>
+         <lastmod>2025-11-17</lastmod>
+    </url>
+</urlset>
