@@ -35,6 +35,7 @@ nav:
     - deployment/time_series_api_limits.ipynb 
   - Development - Contributing: contributing.md
   - Release notes: release-notes.md
+  - Compatibility: compatibility/index.ipynb
 
 watch:
   - titiler/cmr
