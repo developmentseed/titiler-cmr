@@ -147,6 +147,10 @@ class LambdaStack(Stack):
 
 
 app = App()
+if stack_settings.bootstrap_qualifier:
+    app.node.set_context(
+        "@aws-cdk/core:bootstrapQualifier", stack_settings.bootstrap_qualifier
+    )
 
 perms = []
 if app_settings.buckets:

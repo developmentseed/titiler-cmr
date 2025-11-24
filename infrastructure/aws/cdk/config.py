@@ -2,6 +2,7 @@
 
 from typing import List, Optional
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,6 +13,11 @@ class StackSettings(BaseSettings):
     stage: str = "production"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    bootstrap_qualifier: Optional[str] = Field(
+        None,
+        description="Custom bootstrap qualifier override if not using a default installation of AWS CDK Toolkit to synthesize app.",
+    )
 
 
 class AppSettings(BaseSettings):
