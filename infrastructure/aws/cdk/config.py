@@ -19,6 +19,11 @@ class StackSettings(BaseSettings):
         description="Custom bootstrap qualifier override if not using a default installation of AWS CDK Toolkit to synthesize app.",
     )
 
+    permissions_boundary_policy_name: Optional[str] = Field(
+        None,
+        description="Name of IAM policy to define stack permissions boundary",
+    )
+
 
 class AppSettings(BaseSettings):
     """Application settings"""
