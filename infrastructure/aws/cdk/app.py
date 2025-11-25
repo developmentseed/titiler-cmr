@@ -3,7 +3,7 @@
 import os
 from typing import Any, List, Optional
 
-from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda
+from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda, Aspects
 from aws_cdk import aws_apigatewayv2 as apigw
 from aws_cdk import aws_cloudwatch as cloudwatch
 from aws_cdk import aws_cloudwatch_actions as cloudwatch_actions
@@ -15,6 +15,7 @@ from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from aws_cdk.aws_ecr_assets import Platform
 from config import AppSettings, StackSettings
 from constructs import Construct
+from permissions_boundary.construct import PermissionsBoundaryAspect
 
 stack_settings, app_settings = StackSettings(), AppSettings()
 
@@ -42,7 +43,6 @@ class LambdaStack(Stack):
         id: str,
         memory: int = 1024,
         timeout: int = 30,
-        runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_12,
         concurrent: Optional[int] = None,
         permissions: Optional[List[iam.PolicyStatement]] = None,
         role_arn: Optional[str] = None,
@@ -51,6 +51,15 @@ class LambdaStack(Stack):
     ) -> None:
         """Define stack."""
         super().__init__(scope, id, *kwargs)
+
+        if stack_settings.permissions_boundary_policy_name:
+            permissions_boundary_policy = iam.ManagedPolicy.from_managed_policy_name(
+                self,
+                "permissions-boundary",
+                stack_settings.permissions_boundary_policy_name,
+            )
+            iam.PermissionsBoundary.of(self).apply(permissions_boundary_policy)
+            Aspects.of(self).add(PermissionsBoundaryAspect(permissions_boundary_policy))
 
         permissions = permissions or []
 
