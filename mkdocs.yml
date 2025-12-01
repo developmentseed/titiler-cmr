@@ -47,11 +47,10 @@ plugins:
       include_source: True
       include_requirejs: True
       execute: True
+      execute_ignore: ["*.py"]  # Don't execute these
       remove_tag_config:
         remove_input_tags:
           - hide_code
-      include_requirejs: true
-      execute_ignore: ["*.py"]  # Don't execute these
 
 theme:
   name: material
