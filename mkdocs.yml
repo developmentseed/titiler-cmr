@@ -50,6 +50,8 @@ plugins:
       remove_tag_config:
         remove_input_tags:
           - hide_code
+      include_requirejs: true
+      execute_ignore: ["*.py"]  # Don't execute these
 
 theme:
   name: material
