@@ -1,7 +1,8 @@
 """titiler.cmr tests configuration."""
 
 import os
-from typing import Any, Dict, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -20,7 +21,9 @@ custom_auth_settings = AuthSettings(
 
 def before_record_cb(request: Request):
     """Do not cache requests to the test client"""
-    if request.host == "testserver":  # This is the default host for TestClient
+    # testserver is the default host for TestClient
+    # find_or_create_token is an EDL API call, but we do NOT want to record tokens
+    if request.host == "testserver" or request.path.endswith("find_or_create_token"):
         return None
     return request
 
@@ -86,13 +89,13 @@ def mock_cmr_get_assets(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def arctic_bounds() -> Tuple[float, float, float, float]:
+def arctic_bounds() -> tuple[float, float, float, float]:
     """bbox coordinates for an area in the arctic"""
     return -20.799, 75.011, 14.483, 83.559
 
 
 @pytest.fixture(scope="function")
-def arctic_geojson(arctic_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
+def arctic_geojson(arctic_bounds: tuple[float, float, float, float]) -> dict[str, Any]:
     """geojson representation of an area in the arctic"""
     return Feature(
         type="Feature",
@@ -102,13 +105,13 @@ def arctic_geojson(arctic_bounds: Tuple[float, float, float, float]) -> Dict[str
 
 
 @pytest.fixture(scope="function")
-def global_bounds() -> Tuple[float, float, float, float]:
+def global_bounds() -> tuple[float, float, float, float]:
     """bbox coordinates for the globe"""
     return -180, -90, 180, 90
 
 
 @pytest.fixture(scope="function")
-def global_geojson(global_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
+def global_geojson(global_bounds: tuple[float, float, float, float]) -> dict[str, Any]:
     """geojson representation of the whole globe"""
     return Feature(
         type="Feature",
@@ -118,13 +121,13 @@ def global_geojson(global_bounds: Tuple[float, float, float, float]) -> Dict[str
 
 
 @pytest.fixture(scope="function")
-def mn_bounds() -> Tuple[float, float, float, float]:
+def mn_bounds() -> tuple[float, float, float, float]:
     """bbox coordinates for an area in northern minnesota"""
     return -91.705, 48.179, -91.459, 48.3
 
 
 @pytest.fixture(scope="function")
-def mn_geojson(mn_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
+def mn_geojson(mn_bounds: tuple[float, float, float, float]) -> dict[str, Any]:
     """geojson representation of an area in northern minnesota"""
     return Feature(
         type="Feature",
@@ -134,7 +137,7 @@ def mn_geojson(mn_bounds: Tuple[float, float, float, float]) -> Dict[str, Any]:
 
 
 @pytest.fixture(scope="function")
-def great_lakes_geojson() -> Dict[str, Any]:
+def great_lakes_geojson() -> dict[str, Any]:
     """geojson FeatureCollection representation of Lake Michigan and Lake Huron"""
     # Lake Michigan bounds (approximate)
     lake_michigan_bounds = (-87.5, 41.5, -85.0, 46.0)
@@ -160,15 +163,15 @@ def great_lakes_geojson() -> Dict[str, Any]:
 
 
 @pytest.fixture(scope="session")
-def xarray_query_params() -> Dict[str, str]:
+def xarray_query_params() -> Callable[..., dict[str, str]]:
     """reusable set of query parameters for xarray backend requests"""
 
     def _xarray_query_params(
         concept_id: str = "C2036881735-POCLOUD",
         variable: str = "sea_ice_fraction",
         datetime: str = "2024-10-11T00:00:01Z/2024-10-11T23:59:59Z",
-        sel: str = None,
-        sel_method: str = None,
+        sel: str | None = None,
+        sel_method: str | None = None,
     ):
         return {
             "backend": "xarray",
@@ -183,7 +186,7 @@ def xarray_query_params() -> Dict[str, str]:
 
 
 @pytest.fixture(scope="session")
-def rasterio_query_params() -> Dict[str, str]:
+def rasterio_query_params() -> dict[str, str]:
     """reusable set of query parameters for rasterio backend requests"""
     return {
         "concept_id": "C2021957657-LPCLOUD",
