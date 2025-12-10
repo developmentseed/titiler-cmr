@@ -1,7 +1,7 @@
 """Test timeseries module"""
 
+from collections.abc import Callable
 from datetime import datetime
-from typing import Dict, Tuple
 
 import pytest
 from fastapi import HTTPException
@@ -160,8 +160,8 @@ def test_generate_datetime_ranges_small_timesteps():
 
 @pytest.mark.vcr
 def test_timeseries_query(
-    xarray_query_params: Dict[str, str],
-    arctic_bounds: Tuple[float, float, float, float],
+    xarray_query_params: Callable[..., dict[str, str]],
+    arctic_bounds: tuple[float, float, float, float],
 ) -> None:
     """Test timeseries_query"""
     start_datetime, end_datetime = xarray_query_params()["datetime"].split("/")
@@ -232,8 +232,8 @@ def test_timeseries_query(
 
 @freeze_time("2024-10-01T00:00:00Z")
 def test_timeseries_query_unbounded_intervals(
-    xarray_query_params: Dict[str, str],
-    arctic_bounds: Tuple[float, float, float, float],
+    xarray_query_params: Callable[..., dict[str, str]],
+    arctic_bounds: tuple[float, float, float, float],
 ) -> None:
     """Test unbounded intervals"""
     # expect an error if an interval is provided with an unbounded start datetime
@@ -258,8 +258,8 @@ def test_timeseries_query_unbounded_intervals(
 
 
 def test_timeseries_mixed_datetime(
-    xarray_query_params: Dict[str, str],
-    arctic_bounds: Tuple[float, float, float, float],
+    xarray_query_params: Callable[..., dict[str, str]],
+    arctic_bounds: tuple[float, float, float, float],
 ) -> None:
     """Test comma-separated mixed points and intervals"""
     mixed_query = timeseries_cmr_query(
@@ -267,7 +267,7 @@ def test_timeseries_mixed_datetime(
         timeseries_params=TimeseriesParams(
             datetime="2023-01-01T00:00:00Z,2024-01-01T00:00:00Z/2024-01-05T00:00:00Z",
             step="P1D",
-            temporal_mode="point",
+            temporal_mode=TemporalMode.point,
         ),
     )
     assert len(mixed_query) == 6

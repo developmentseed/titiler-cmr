@@ -153,10 +153,10 @@ namespace_packages = true
 explicit_package_bases = true
 
 [tool.pytest.ini_options]
+# Address PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+asyncio_default_fixture_loop_scope = "function"
 filterwarnings = [
     "ignore::rasterio.errors.NotGeoreferencedWarning",
 ]
 markers = "vcr: records network activity"
 addopts = "-Werror --cov=titiler.cmr --cov-report=term-missing --cov-report=xml -vv --benchmark-skip"
-
-
