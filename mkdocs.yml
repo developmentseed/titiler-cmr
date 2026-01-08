@@ -34,11 +34,10 @@ nav:
     - api/rasterio_backend_example.ipynb
     - api/sel_parameter_example.ipynb
   - Benchmarking:
-    - Benchmarking Tile Generation: benchmarking/tiles.ipynb
-    - Benchmarking Statistics: benchmarking/stats.ipynb
-    - Example using HLS: benchmarking/hls_tiling.ipynb
+    - benchmarking/tiles.ipynb
+    - benchmarking/hls_tiling.ipynb
   - Compatibility Testing:
-    - Compatibility Report: compatibility/index.ipynb
+    - Compatibility Report: compatibility/report.ipynb
     - Compatibility Testing Tool: compatibility/tool.ipynb
   - Development + Contributing: contributing.md
   - Release notes: release-notes.md
