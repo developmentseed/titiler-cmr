@@ -25,17 +25,23 @@ extra:
 
 nav:
   - Home: index.md
-  - Examples:
-    - examples/xarray_backend_example.ipynb
-    - examples/rasterio_backend_example.ipynb
-    - examples/time_series_example.ipynb
-  - Dataset configuration:
-    - datasets/hls_tiling.ipynb
-  - Deployment:
-    - deployment/time_series_api_limits.ipynb 
-  - Development - Contributing: contributing.md
+  - How to use the API:
+    - api/compatibility_api_example.ipynb
+    - api/tiling_api_xarray_backend_example.ipynb
+    - api/statistics_api_example.ipynb
+    - api/time_series_example.ipynb
+    - api/time_series_api_limits.ipynb
+    - api/rasterio_backend_example.ipynb
+    - api/sel_parameter_example.ipynb
+  - Benchmarking:
+    - Benchmarking Tile Generation: benchmarking/tiles.ipynb
+    - Benchmarking Statistics: benchmarking/stats.ipynb
+    - Example using HLS: benchmarking/hls_tiling.ipynb
+  - Compatibility Testing:
+    - Compatibility Report: compatibility/index.ipynb
+    - Compatibility Testing Tool: compatibility/tool.ipynb
+  - Development + Contributing: contributing.md
   - Release notes: release-notes.md
-  - Compatibility: compatibility/index.ipynb
 
 watch:
   - titiler/cmr
@@ -46,7 +52,7 @@ plugins:
   - mkdocs-jupyter:
       include_source: True
       include_requirejs: True
-      execute: True
+      execute: False
       execute_ignore: ["*.py"]  # Don't execute these
       remove_tag_config:
         remove_input_tags:
