@@ -81,7 +81,7 @@ def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCreden
         if not (creds := auth.get_s3_credentials(provider=provider)):
             # We cannot tell what the underlying exception was, since it was
             # swallowed by earthaccess, so we're just making one up.
-            raise HTTPException(500)
+            raise HTTPException(500, "earthaccess failed to retrieve S3 credentials")
 
         return t.cast(AWSCredentials, creds)
 
