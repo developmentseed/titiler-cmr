@@ -602,7 +602,7 @@ class Endpoints(TilerFactory):
                 tms=tms,
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 image, _ = src_dst.tile(
                     x,
@@ -704,7 +704,7 @@ class Endpoints(TilerFactory):
             # TODO: can we get metadata from the CMR dataset?
             with CMRBackend(
                 tms=tms,
-                auth=request.app.state.cmr_auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 minx, miny, maxx, maxy = zip(
                     [-180, -90, 180, 90],
@@ -837,7 +837,7 @@ class Endpoints(TilerFactory):
             with CMRBackend(
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 if reader_params.backend == "rasterio":
                     read_options.update(
@@ -923,7 +923,7 @@ class Endpoints(TilerFactory):
             with CMRBackend(
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 if reader_params.backend == "rasterio":
                     read_options.update(
@@ -1011,7 +1011,7 @@ class Endpoints(TilerFactory):
             with CMRBackend(
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 for feature in fc.iter():
                     shape = feature.model_dump(exclude_none=True)

@@ -21,9 +21,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
-    "titiler.core>=0.23.1,<0.24",
-    "titiler.mosaic>=0.23.1,<0.24",
-    "titiler.xarray>=0.23.1,<0.24",
+    "titiler.core~=0.25.0",
+    "titiler.mosaic~=0.25.0",
+    "titiler.xarray~=0.25.0",
     "aiobotocore>=2.24.0",
     "boto3>=1.39.0",
     "cftime~=1.6.4",
@@ -42,6 +42,7 @@ dependencies = [
     "rioxarray~=0.13.4",
     "s3fs~=2025.9.0",
     "xarray~=2024.9.0",
+    "cachetools>=6.0.0",
 ]
 dynamic = ["version"]
 
@@ -81,6 +82,8 @@ dev = [
     "seaborn>=0.13.2",
     "uvicorn>=0.32.1",
     "pyarrow>=22.0.0",
+    "moto[s3,server]>=5.1.18",
+    "boto3-stubs[s3]>=1.42.24",
 ]
 deployment = [
     "aws-cdk-lib~=2.177.0",
@@ -132,7 +135,7 @@ known_third_party = [
 default_section = "THIRDPARTY"
 
 [tool.ruff]
-select = [
+lint.select = [
     "D1",  # pydocstyle errors
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -140,7 +143,7 @@ select = [
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
 ]
-ignore = [
+lint.ignore = [
     "E501",  # line too long, handled by black
     "B008",  # do not perform function calls in argument defaults
     "B905",  # ignore zip() without an explicit strict= parameter, only support with python >3.10

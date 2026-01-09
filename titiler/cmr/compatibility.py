@@ -184,7 +184,7 @@ def evaluate_xarray_compatibility(
         tms=WEB_MERCATOR_TMS,
         reader=XarrayReader,
         reader_options={},
-        auth=request.app.state.cmr_auth,
+        get_s3_credentials=request.app.state.get_s3_credentials,
     ) as src_dst:
         assets = src_dst.assets_for_tile(
             0,
@@ -231,7 +231,7 @@ def evaluate_rasterio_compatibility(
         tms=WEB_MERCATOR_TMS,
         reader=Reader,
         reader_options={"bands": [1]},
-        auth=request.app.state.cmr_auth,
+        get_s3_credentials=request.app.state.get_s3_credentials,
     ) as src_dst:
         assets = src_dst.assets_for_tile(
             0,

@@ -1,19 +1,25 @@
 """TiTiler+cmr FastAPI application."""
 
+import threading
+import typing as t
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 
+import cachetools
 import earthaccess
 import jinja2
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 
 from titiler.cmr import __version__ as titiler_cmr_version
+from titiler.cmr.backend import AWSCredentials
 from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
 from titiler.cmr.logger import configure_logging
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
+from titiler.cmr.utils import retry
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
@@ -24,7 +30,7 @@ configure_logging()
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
         [
-            jinja2.PackageLoader(__package__, "templates"),
+            jinja2.PackageLoader(__package__, "templates"),  # type: ignore
             jinja2.PackageLoader("titiler.core"),
         ]
     ),
@@ -38,12 +44,48 @@ auth_config = AuthSettings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI Lifespan."""
+
     if auth_config.strategy == "environment" and auth_config.access == "direct":
-        app.state.cmr_auth = earthaccess.login(strategy="environment")
+        auth = earthaccess.login(strategy=auth_config.strategy)
+        app.state.get_s3_credentials = make_get_s3_credentials(auth)
     else:
-        app.state.cmr_auth = None
+        app.state.get_s3_credentials = None
 
     yield
+
+
+def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
+    """Create a function that returns temporary S3 credentials for a CMR provider.
+
+    Wraps an authenticated earthaccess client with a TTL-based cache to limit
+    calls for temporary S3 credentials while keeping them fresh.
+
+    Args:
+        auth: Authenticated earthaccess client used to request S3 credentials.
+
+    Returns:
+        A callable that accepts a provider identifier and returns temporary S3
+        credentials for that provider, via the ``auth`` object.
+    """
+
+    @cachetools.cached(
+        cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
+        condition=threading.Condition(),  # Prevent race conditions
+    )
+    @retry(5, HTTPException, 1)
+    def get_s3_credentials_for_provider(provider: str) -> AWSCredentials:
+        # NOTE: Frustratingly, Auth.get_s3_credentials simply returns an empty
+        # dict if any sort of request fails, rather than raising an error.
+        # Therefore, we are forced to check the result and raise our own error
+        # if the result is empty.
+        if not (creds := auth.get_s3_credentials(provider=provider)):
+            # We cannot tell what the underlying exception was, since it was
+            # swallowed by earthaccess, so we're just making one up.
+            raise HTTPException(500)
+
+        return t.cast(AWSCredentials, creds)
+
+    return get_s3_credentials_for_provider
 
 
 description = """A TiTiler-based dynamic tiling application for the Common Metadata Repository (CMR).

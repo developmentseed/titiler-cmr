@@ -1,12 +1,16 @@
 """titiler.cmr tests configuration."""
 
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Iterator, Mapping
 from typing import Any
 
+import boto3
+import moto
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, FeatureCollection, Polygon
+from moto.server import ThreadedMotoServer
+from mypy_boto3_s3.service_resource import Bucket, Object, S3ServiceResource
 from vcr.request import Request
 
 from titiler.cmr.backend import CMRBackend
@@ -194,4 +198,98 @@ def rasterio_query_params() -> dict[str, str]:
         "backend": "rasterio",
         "bands_regex": "Fmask",
         "bands": "Fmask",
+    }
+
+
+@pytest.fixture(scope="session")
+def fake_tif_bytes() -> bytes:
+    """Create a random RGB image as a GeoTIFF."""
+    import numpy as np
+    from rasterio.io import MemoryFile
+    from rasterio.transform import from_bounds
+
+    # Generate synthetic data
+    height, width = 256, 256
+    red = np.linspace(0, 255, height * width).reshape((height, width)).astype(np.uint8)
+    green = np.fliplr(red).copy()
+    blue = np.flipud(red).copy()
+    array = np.stack([red, green, blue])
+
+    transform = from_bounds(
+        west=-180, south=-85.06, east=180, north=85.06, width=width, height=height
+    )
+    profile = {
+        "driver": "GTiff",
+        "width": width,
+        "height": height,
+        "count": 3,
+        "crs": "EPSG:4326",
+        "transform": transform,
+        "dtype": array.dtype,
+    }
+
+    with MemoryFile() as memfile:
+        with memfile.open(**profile) as dataset:
+            dataset.write(array)
+
+        return memfile.read()
+
+
+@pytest.fixture(scope="session")
+def moto_server_netloc():
+    """Fixture to run a mocked AWS S3 server for testing."""
+    # Note: pass `port=0` to get a random free port.
+    server = ThreadedMotoServer(ip_address="localhost", port=0)
+    server.start()
+    host, port = server.get_host_and_port()
+
+    try:
+        yield f"{host}:{port}"
+    finally:
+        server.stop()
+
+
+@pytest.fixture
+def aws_credentials(monkeypatch: pytest.MonkeyPatch):
+    """Mock AWS Credentials for moto."""
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "testing")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "testing")
+    monkeypatch.setenv("AWS_SECURITY_TOKEN", "testing")
+    monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
+
+
+@pytest.fixture
+def s3_resource(
+    aws_credentials, moto_server_netloc: str
+) -> Iterator[S3ServiceResource]:
+    """Yield a mocked S3 client."""
+    with moto.mock_aws():
+        yield boto3.resource("s3", endpoint_url=f"http://{moto_server_netloc}")
+
+
+@pytest.fixture
+def test_bucket(s3_resource: S3ServiceResource) -> Bucket:
+    """Create a mock bucket named 'test-bucket'."""
+    bucket = s3_resource.Bucket("test-bucket")
+    bucket.create()
+
+    return bucket
+
+
+@pytest.fixture
+def test_s3_object_tif(fake_tif_bytes: bytes, test_bucket: Bucket) -> Object:
+    """Write a dummy ImageData object as a TIF file to an S3 bucket."""
+    return test_bucket.put_object(Key="test-file.tif", Body=fake_tif_bytes)
+
+
+@pytest.fixture
+def rasterio_env_kwargs(moto_server_netloc: str) -> Mapping[str, Any]:
+    """Return kwargs suitable for rasterio.Env during testing with S3."""
+
+    # These settings allow GDAL to play nicely with Moto.
+    return {
+        "AWS_HTTPS": False,
+        "AWS_VIRTUAL_HOSTING": False,
+        "AWS_S3_ENDPOINT": moto_server_netloc,
     }
