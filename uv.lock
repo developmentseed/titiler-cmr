@@ -3900,9 +3900,9 @@ requires-dist = [
     { name = "rio-tiler", extras = ["s3"], specifier = ">=7.2.0,<8.0" },
     { name = "rioxarray", specifier = "~=0.13.4" },
     { name = "s3fs", specifier = "~=2025.9.0" },
-    { name = "titiler-core", specifier = "~=0.25.0" },
-    { name = "titiler-mosaic", specifier = "~=0.25.0" },
-    { name = "titiler-xarray", specifier = "~=0.25.0" },
+    { name = "titiler-core", specifier = ">=0.25.0,<0.26" },
+    { name = "titiler-mosaic", specifier = ">=0.25.0,<0.26" },
+    { name = "titiler-xarray", specifier = ">=0.25.0,<0.26" },
     { name = "uvicorn", marker = "extra == 'uvicorn'" },
     { name = "xarray", specifier = "~=2024.9.0" },
 ]
