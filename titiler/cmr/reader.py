@@ -152,6 +152,15 @@ class MultiFilesBandsReader(MultiBandReader):
         self.bands = list(self.input)
         self.bounds = (-180.0, -90, 180.0, 90)
         self.crs = WGS84_CRS
+
+        print(
+            f"MultiFilesBandReader was initialized with a reader of type {self.reader.__class__}"
+        )
+
+        import traceback
+
+        traceback.print_stack()
+
         # with self.reader(
         #     self.input[0],
         #     tms=self.tms,
