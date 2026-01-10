@@ -3,6 +3,7 @@
 Originaly from titiler-xarray
 """
 
+import logging
 import os
 import pickle
 from typing import Any, Dict, Optional, Type
@@ -24,6 +25,8 @@ from titiler.cmr.settings import CacheSettings
 # Use simple in-memory cache for now (we can switch to redis later)
 cache_config = CacheSettings()
 cache_client: Any = TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl)
+
+logger = logging.getLogger(__name__)
 
 
 def get_filesystem(
@@ -153,13 +156,13 @@ class MultiFilesBandsReader(MultiBandReader):
         self.bounds = (-180.0, -90, 180.0, 90)
         self.crs = WGS84_CRS
 
-        print(
+        logger.info(
             f"MultiFilesBandReader was initialized with a reader of type {self.reader.__class__}"
         )
 
         import traceback
 
-        traceback.print_stack()
+        logger.info(traceback.format_stack())
 
         # with self.reader(
         #     self.input[0],
