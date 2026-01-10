@@ -16,7 +16,7 @@ from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.backend import AWSCredentials
 from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
-from titiler.cmr.logger import configure_logging
+from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
 from titiler.cmr.utils import retry
@@ -74,14 +74,25 @@ def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCreden
     )
     @retry(5, HTTPException, 1)
     def get_s3_credentials_for_provider(provider: str) -> AWSCredentials:
+        logger.info("Fetching temporary S3 credentials for provider %s", provider)
+
         # NOTE: Frustratingly, Auth.get_s3_credentials simply returns an empty
         # dict if any sort of request fails, rather than raising an error.
         # Therefore, we are forced to check the result and raise our own error
         # if the result is empty.
         if not (creds := auth.get_s3_credentials(provider=provider)):
+            logger.error(
+                "Failed to fetch temporary S3 credentials for provider %s", provider
+            )
             # We cannot tell what the underlying exception was, since it was
             # swallowed by earthaccess, so we're just making one up.
             raise HTTPException(500, "earthaccess failed to retrieve S3 credentials")
+
+        logger.info(
+            "Fetched temporary S3 credentials for provider %s, expiring at %s.",
+            provider,
+            creds.get("expiration", "an unknown time"),
+        )
 
         return t.cast(AWSCredentials, creds)
 

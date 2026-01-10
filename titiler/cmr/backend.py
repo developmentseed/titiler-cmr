@@ -321,25 +321,27 @@ class CMRBackend(BaseBackend):
         def _reader(asset: Asset, x: int, y: int, z: int, **kwargs: Any) -> ImageData:
             s3_credentials = self._get_s3_credentials(asset)
 
-            if isinstance(self.reader, type) and self.reader == Reader:
-                aws_session = self._create_aws_session(s3_credentials)
+            if any(
+                field.name == "opener_options" for field in attr.fields(self.reader)
+            ):
+                options = self._build_reader_options(s3_credentials)
 
-                with rasterio.Env(aws_session, **self.rasterio_env_kwargs):
+                with self.reader(
+                    asset["url"],
+                    tms=self.tms,  # type: ignore
+                    **options,
+                ) as src_dst:
+                    return src_dst.tile(x, y, z, **kwargs)
+            else:
+                with rasterio.Env(
+                    self._create_aws_session(s3_credentials), **self.rasterio_env_kwargs
+                ):
                     with self.reader(
                         asset["url"],
                         tms=self.tms,  # type: ignore
                         **self.reader_options,
                     ) as src_dst:
                         return src_dst.tile(x, y, z, **kwargs)
-
-            options = self._build_reader_options(s3_credentials)
-
-            with self.reader(
-                asset["url"],
-                tms=self.tms,  # type: ignore
-                **options,
-            ) as src_dst:
-                return src_dst.tile(x, y, z, **kwargs)
 
         logger.info("reading assets")
         return mosaic_reader(mosaic_assets, _reader, tile_x, tile_y, tile_z, **kwargs)
