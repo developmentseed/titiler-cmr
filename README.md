@@ -16,6 +16,8 @@
 
 An API for creating image tiles from CMR queries.
 
+See also the [API documentation](https://openveda.cloud/api/titiler-cmr/api.html).
+
 ## Features
 
 - Render tiles from assets discovered via queries to [NASA's CMR](https://cmr.earthdata.nasa.gov/search)
