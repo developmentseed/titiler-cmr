@@ -65,7 +65,7 @@ jobs:
 
               # Check if this should be the latest version
               LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-              if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
+              if [[ "$VERSION" == "$LATEST_TAG" ]]; then
                 uv run mike alias --push --update-aliases $VERSION latest
               fi
             fi
