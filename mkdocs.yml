@@ -37,8 +37,8 @@ nav:
     - benchmarking/tiles.ipynb
     - benchmarking/hls_tiling.ipynb
   - Compatibility Testing:
+    - Compatibility Testing Tool: compatibility/tool.ipynb  
     - Compatibility Report: compatibility/report.ipynb
-    - Compatibility Testing Tool: compatibility/tool.ipynb
   - Development + Contributing: contributing.md
   - Release notes: release-notes.md
 
@@ -51,7 +51,7 @@ plugins:
   - mkdocs-jupyter:
       include_source: True
       include_requirejs: True
-      execute: False
+      execute: True
       execute_ignore: ["*.py"]  # Don't execute these
       remove_tag_config:
         remove_input_tags:
