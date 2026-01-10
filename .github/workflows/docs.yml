@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - develop
-    tags:
+    gits:
       - '*'
   workflow_dispatch:
     inputs:
@@ -76,7 +76,7 @@ jobs:
 
             # If this is the latest version, update the 'latest' alias
             LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-          if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
+          if [[ "$VERSION" == "$LATEST_TAG" ]]; then
             uv run mike alias --push --update-aliases $VERSION latest
           fi
           else
