@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - develop
-    gits:
-      - '*'
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version:
@@ -65,18 +65,18 @@ jobs:
 
               # Check if this should be the latest version
               LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-              if [[ "$VERSION" == "$LATEST_TAG" ]]; then
+              if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
                 uv run mike alias --push --update-aliases $VERSION latest
               fi
             fi
           elif [[ $GITHUB_REF == refs/tags/* ]]; then
             # For tags, deploy the tagged version
-            VERSION=${GITHUB_REF#refs/tags/}
+            VERSION=${GITHUB_REF#refs/tags/v}
             uv run mike deploy --push $VERSION
 
             # If this is the latest version, update the 'latest' alias
             LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-          if [[ "$VERSION" == "$LATEST_TAG" ]]; then
+          if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
             uv run mike alias --push --update-aliases $VERSION latest
           fi
           else
