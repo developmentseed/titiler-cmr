@@ -4,7 +4,7 @@ on:
     branches:
       - develop
     tags:
-      - 'v*'
+      - '*'
   workflow_dispatch:
     inputs:
       version:
@@ -71,7 +71,7 @@ jobs:
             fi
           elif [[ $GITHUB_REF == refs/tags/* ]]; then
             # For tags, deploy the tagged version
-            VERSION=${GITHUB_REF#refs/tags/v}
+            VERSION=${GITHUB_REF#refs/tags/}
             uv run mike deploy --push $VERSION
 
             # If this is the latest version, update the 'latest' alias
