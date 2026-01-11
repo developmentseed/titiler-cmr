@@ -21,7 +21,7 @@ logging.getLogger("numexpr").setLevel(logging.WARNING)
 
 handler = Mangum(
     app,
-    lifespan="on",
+    lifespan="off",
     text_mime_types=[
         "application/json",
         "application/javascript",

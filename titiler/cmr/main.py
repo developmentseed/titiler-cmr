@@ -3,7 +3,6 @@
 import threading
 import typing as t
 from collections.abc import Callable
-from contextlib import asynccontextmanager
 
 import cachetools
 import earthaccess
@@ -39,19 +38,6 @@ templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 auth_config = AuthSettings()
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """FastAPI Lifespan."""
-
-    if auth_config.strategy == "environment" and auth_config.access == "direct":
-        auth = earthaccess.login(strategy=auth_config.strategy)
-        app.state.get_s3_credentials = make_get_s3_credentials(auth)
-    else:
-        app.state.get_s3_credentials = None
-
-    yield
 
 
 def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
@@ -179,7 +165,6 @@ app = FastAPI(
     description=description,
     version=titiler_cmr_version,
     root_path=settings.root_path,
-    lifespan=lifespan,
     openapi_tags=tags_metadata,
 )
 
@@ -210,3 +195,9 @@ endpoints = Endpoints(
     enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(endpoints.router)
+
+if auth_config.strategy == "environment" and auth_config.access == "direct":
+    auth = earthaccess.login(strategy=auth_config.strategy)
+    app.state.get_s3_credentials = make_get_s3_credentials(auth)
+else:
+    app.state.get_s3_credentials = None
