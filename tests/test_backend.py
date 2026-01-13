@@ -60,7 +60,11 @@ def stub_find_granules(count: int = -1, **kwargs: t.Any) -> list[DataGranule]:
                         {
                             "Type": "GET DATA VIA DIRECT ACCESS",
                             "URL": "s3://test-bucket/test-file.tif",
-                        }
+                        },
+                        {
+                            "Type": "",
+                            "URL": "https://foo.bar/s3credentials",
+                        },
                     ],
                 },
             }
@@ -125,7 +129,11 @@ def test_s3_credentials_used_for_session_creation(
         image_data: ImageData
         image_data, assets = method_call(backend)
         expected_assets = [
-            {"url": "s3://test-bucket/test-file.tif", "provider": "TEST_PROVIDER"}
+            {
+                "url": "s3://test-bucket/test-file.tif",
+                "provider": "TEST_PROVIDER",
+                "s3_credentials_url": "https://foo.bar/s3credentials",
+            }
         ]
 
         assert called_get_s3_credentials

@@ -65,6 +65,7 @@ class Asset(TypedDict, total=True):
 
     url: Union[str, Mapping[str, str]]
     provider: str
+    s3_credentials_url: str | None
 
 
 class FindGranules(Protocol):
@@ -100,6 +101,7 @@ class CMRBackend(BaseBackend):
     _backend_name: str = attr.ib(default="CMR")
 
     find_granules: FindGranules = attr.ib(default=earthaccess.search_data)
+    auth: earthaccess.Auth | None = attr.ib(default=None)
     get_s3_credentials: Callable[[str], AWSCredentials] | None = attr.ib(default=None)
     rasterio_env_kwargs: Mapping[str, Any] = attr.ib(factory=dict)
 
@@ -140,26 +142,31 @@ class CMRBackend(BaseBackend):
     def _get_s3_credentials(self, asset: Asset) -> Optional[AWSCredentials]:
         """Get s3 credentials from kwargs or via auth."""
         return (
-            self.get_s3_credentials(provider)
-            if (provider := asset.get("provider", None)) and self.get_s3_credentials
+            self.get_s3_credentials(endpoint)
+            if self.get_s3_credentials
+            and (endpoint := asset.get("s3_credentials_url", None))
             else None
         )
 
     def _build_reader_options(self, s3_credentials: Optional[AWSCredentials]) -> Dict:
         """Build reader options with opener_options if s3_credentials provided."""
-        if s3_credentials:
-            return {
-                **self.reader_options,
-                "opener_options": {
-                    "s3_credentials": {
-                        "key": s3_credentials["accessKeyId"],
-                        "secret": s3_credentials["secretAccessKey"],
-                        "token": s3_credentials["sessionToken"],
-                    }
+        return {
+            **self.reader_options,
+            "opener_options": {
+                "auth": self.auth,
+                **{
+                    "s3_credentials": (
+                        {
+                            "key": s3_credentials["accessKeyId"],
+                            "secret": s3_credentials["secretAccessKey"],
+                            "token": s3_credentials["sessionToken"],
+                        }
+                        if s3_credentials
+                        else {}
+                    )
                 },
-            }
-        else:
-            return self.reader_options
+            },
+        }
 
     def _create_aws_session(
         self, s3_credentials: Optional[AWSCredentials]
@@ -273,6 +280,7 @@ class CMRBackend(BaseBackend):
                         {
                             "url": urls,
                             "provider": r["meta"]["provider-id"],
+                            "s3_credentials_url": r.get_s3_credentials_endpoint(),
                         }
                     )
 
@@ -281,6 +289,7 @@ class CMRBackend(BaseBackend):
                     {
                         "url": r.data_links(access=access)[0],
                         "provider": r["meta"]["provider-id"],
+                        "s3_credentials_url": r.get_s3_credentials_endpoint(),
                     }
                 )
 
@@ -333,15 +342,18 @@ class CMRBackend(BaseBackend):
                 ) as src_dst:
                     return src_dst.tile(x, y, z, **kwargs)
             else:
-                with rasterio.Env(
-                    self._create_aws_session(s3_credentials), **self.rasterio_env_kwargs
-                ):
-                    with self.reader(
+                with (
+                    rasterio.Env(
+                        self._create_aws_session(s3_credentials),
+                        **self.rasterio_env_kwargs,
+                    ),
+                    self.reader(
                         asset["url"],
                         tms=self.tms,  # type: ignore
                         **self.reader_options,
-                    ) as src_dst:
-                        return src_dst.tile(x, y, z, **kwargs)
+                    ) as src_dst,
+                ):
+                    return src_dst.tile(x, y, z, **kwargs)
 
         logger.info("reading assets")
         return mosaic_reader(mosaic_assets, _reader, tile_x, tile_y, tile_z, **kwargs)
@@ -389,23 +401,28 @@ class CMRBackend(BaseBackend):
         def _reader(asset: Asset, bbox: BBox, **kwargs: Any) -> ImageData:
             s3_credentials = self._get_s3_credentials(asset)
 
-            if isinstance(self.reader, type) and self.reader == Reader:
-                aws_session = self._create_aws_session(s3_credentials)
+            if any(
+                field.name == "opener_options" for field in attr.fields(self.reader)
+            ):
+                options = self._build_reader_options(s3_credentials)
 
-                with rasterio.Env(aws_session, **self.rasterio_env_kwargs):
-                    with self.reader(
+                with self.reader(
+                    asset["url"],  # type: ignore
+                    **options,
+                ) as src_dst:
+                    return src_dst.part(bbox, **kwargs)
+            else:
+                with (
+                    rasterio.Env(
+                        self._create_aws_session(s3_credentials),
+                        **self.rasterio_env_kwargs,
+                    ),
+                    self.reader(
                         asset["url"],  # type: ignore
                         **self.reader_options,
-                    ) as src_dst:
-                        return src_dst.part(bbox, **kwargs)
-
-            options = self._build_reader_options(s3_credentials)
-
-            with self.reader(
-                asset["url"],  # type: ignore
-                **options,
-            ) as src_dst:
-                return src_dst.part(bbox, **kwargs)
+                    ) as src_dst,
+                ):
+                    return src_dst.part(bbox, **kwargs)
 
         return mosaic_reader(
             mosaic_assets,
@@ -452,23 +469,28 @@ class CMRBackend(BaseBackend):
         def _reader(asset: Asset, shape: Dict, **kwargs: Any) -> ImageData:
             s3_credentials = self._get_s3_credentials(asset)
 
-            if isinstance(self.reader, type) and self.reader == Reader:
-                aws_session = self._create_aws_session(s3_credentials)
+            if any(
+                field.name == "opener_options" for field in attr.fields(self.reader)
+            ):
+                options = self._build_reader_options(s3_credentials)
 
-                with rasterio.Env(aws_session, **self.rasterio_env_kwargs):
-                    with self.reader(
+                with self.reader(
+                    asset["url"],  # type: ignore
+                    **options,
+                ) as src_dst:
+                    return src_dst.feature(shape, **kwargs)
+            else:
+                with (
+                    rasterio.Env(
+                        self._create_aws_session(s3_credentials),
+                        **self.rasterio_env_kwargs,
+                    ),
+                    self.reader(
                         asset["url"],  # type: ignore
                         **self.reader_options,
-                    ) as src_dst:
-                        return src_dst.feature(shape, **kwargs)
-
-            options = self._build_reader_options(s3_credentials)
-
-            with self.reader(
-                asset["url"],  # type: ignore
-                **options,
-            ) as src_dst:
-                return src_dst.feature(shape, **kwargs)
+                    ) as src_dst,
+                ):
+                    return src_dst.feature(shape, **kwargs)
 
         return mosaic_reader(
             mosaic_assets,

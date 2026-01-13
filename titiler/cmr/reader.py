@@ -14,11 +14,13 @@ import fsspec
 import s3fs
 import xarray
 from cachetools import TTLCache
-from morecantile import TileMatrixSet
+from morecantile.models import TileMatrixSet
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidBandName
-from rio_tiler.io import BaseReader, MultiBandReader, Reader
+from rio_tiler.io.base import BaseReader, MultiBandReader
+from rio_tiler.io.rasterio import Reader
 
+from titiler.cmr.logger import logger
 from titiler.cmr.settings import CacheSettings
 
 # Use simple in-memory cache for now (we can switch to redis later)
@@ -30,44 +32,74 @@ def get_filesystem(
     src_path: str,
     protocol: str,
     xr_engine: str,
+    auth: earthaccess.Auth,
     anon: bool = True,
     s3_credentials: Optional[Dict] = None,
 ):
-    """
-    Get the filesystem for the given source path.
-    """
+    """Get the filesystem for the given source path."""
+
     if protocol == "s3":
-        s3_credentials = s3_credentials or {}
-        if os.environ.get("AWS_REQUEST_PAYER") == "requester":
-            s3_credentials["requester_pays"] = True
-        s3_filesystem = s3fs.S3FileSystem(**s3_credentials)
+        s3_filesystem = s3fs.S3FileSystem(
+            requester_pays=os.environ.get("AWS_REQUEST_PAYER") == "requester",
+            **(s3_credentials or {}),
+        )
+
+        logger.info(
+            "Using fsspec to open %s %s temporary S3 credentials.",
+            src_path,
+            "with" if s3_credentials else "without",
+        )
+
         return (
             s3_filesystem.open(src_path)
             if xr_engine == "h5netcdf"
             else s3fs.S3Map(root=src_path, s3=s3_filesystem)
         )
 
-    elif protocol == "reference":
+    if protocol == "reference":
         reference_args = {"fo": src_path, "remote_options": {"anon": anon}}
         return fsspec.filesystem("reference", **reference_args).get_mapper("")
 
-    elif protocol in ["https", "http", "file"]:
-        if protocol in ["https", "http"]:
-            filesystem = earthaccess.get_fsspec_https_session()
+    if protocol in {"https", "http", "file"}:
+        if protocol in {"https", "http"}:
+            filesystem = get_fsspec_filesystem(auth)
         else:
             filesystem = fsspec.filesystem(protocol)  # type: ignore
+
         return (
             filesystem.open(src_path)
             if xr_engine == "h5netcdf"
             else filesystem.get_mapper(src_path)
         )
 
-    else:
-        raise ValueError(f"Unsupported protocol: {protocol}")
+    raise ValueError(f"Unsupported protocol: {protocol}")
+
+
+def get_fsspec_filesystem(auth: earthaccess.Auth) -> fsspec.AbstractFileSystem:
+    """Get fsspec HTTPS filesystem with EDL Authorization header."""
+
+    # Since earthaccess does not override the terrible fsspec defaults in its
+    # get_fsspec_https_session function, we don't use it.  Further, even if we
+    # were to use it, it would not use the Store object associated with the Auth
+    # instance we created, but rather it would implicitly create separate Auth
+    # and Store instances.
+    return fsspec.filesystem(
+        "https",
+        cache_type="background",
+        block_size=8 * 1024 * 1024,
+        client_kwargs={
+            "headers": {
+                # We are assuming that the access token was populated during
+                # call to earthaccess.login.
+                "Authorization": f"Bearer {auth.token['access_token']}",  # type: ignore
+            },
+        },
+    )
 
 
 def xarray_open_dataset(
     src_path: str,
+    auth: earthaccess.Auth,
     group: Optional[Any] = None,
     decode_times: Optional[bool] = True,
     s3_credentials: Optional[Dict] = None,
@@ -91,7 +123,12 @@ def xarray_open_dataset(
         xr_engine = "zarr"
 
     file_handler = get_filesystem(
-        src_path, protocol, xr_engine, s3_credentials=s3_credentials
+        src_path,
+        protocol,
+        xr_engine,
+        anon=(s3_credentials is None),
+        auth=auth,
+        s3_credentials=s3_credentials,
     )
 
     # Arguments for xarray.open_dataset

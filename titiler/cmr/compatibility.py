@@ -180,10 +180,13 @@ def evaluate_xarray_compatibility(
     """
     logger.info("Testing XarrayReader")
 
+    auth = request.app.state.auth
+
     with CMRBackend(
         tms=WEB_MERCATOR_TMS,
         reader=XarrayReader,
         reader_options={},
+        auth=auth,
         get_s3_credentials=request.app.state.get_s3_credentials,
     ) as src_dst:
         assets = src_dst.assets_for_tile(
@@ -198,7 +201,7 @@ def evaluate_xarray_compatibility(
         if not assets:
             raise ValueError("No assets found for XarrayReader")
 
-        with xarray_open_dataset(assets[0]["url"]) as ds:
+        with xarray_open_dataset(assets[0]["url"], auth=auth) as ds:
             result = extract_xarray_metadata(ds)
             result["example_assets"] = assets[0]["url"]
             return result
@@ -231,6 +234,7 @@ def evaluate_rasterio_compatibility(
         tms=WEB_MERCATOR_TMS,
         reader=Reader,
         reader_options={"bands": [1]},
+        auth=request.app.state.auth,
         get_s3_credentials=request.app.state.get_s3_credentials,
     ) as src_dst:
         assets = src_dst.assets_for_tile(

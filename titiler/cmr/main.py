@@ -41,7 +41,7 @@ auth_config = AuthSettings()
 
 
 def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
-    """Create a function that returns temporary S3 credentials for a CMR provider.
+    """Create a function that returns temporary S3 credentials for an endpoint.
 
     Wraps an authenticated earthaccess client with a TTL-based cache to limit
     calls for temporary S3 credentials while keeping them fresh.
@@ -50,8 +50,8 @@ def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCreden
         auth: Authenticated earthaccess client used to request S3 credentials.
 
     Returns:
-        A callable that accepts a provider identifier and returns temporary S3
-        credentials for that provider, via the ``auth`` object.
+        A callable that accepts an (HTTPS) endpoint and returns temporary S3
+        credentials from the endpoint, via the ``auth`` object.
     """
 
     @cachetools.cached(
@@ -59,30 +59,28 @@ def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCreden
         condition=threading.Condition(),  # Prevent race conditions
     )
     @retry(5, HTTPException, 1)
-    def get_s3_credentials_for_provider(provider: str) -> AWSCredentials:
-        logger.info("Fetching temporary S3 credentials for provider %s", provider)
+    def get_s3_credentials(endpoint: str) -> AWSCredentials:
+        logger.info("Fetching temporary S3 credentials from %s", endpoint)
 
         # NOTE: Frustratingly, Auth.get_s3_credentials simply returns an empty
         # dict if any sort of request fails, rather than raising an error.
         # Therefore, we are forced to check the result and raise our own error
         # if the result is empty.
-        if not (creds := auth.get_s3_credentials(provider=provider)):
-            logger.error(
-                "Failed to fetch temporary S3 credentials for provider %s", provider
-            )
+        if not (creds := auth.get_s3_credentials(endpoint=endpoint)):
+            logger.error("Failed to fetch temporary S3 credentials from %s", endpoint)
             # We cannot tell what the underlying exception was, since it was
             # swallowed by earthaccess, so we're just making one up.
             raise HTTPException(500, "earthaccess failed to retrieve S3 credentials")
 
         logger.info(
-            "Fetched temporary S3 credentials for provider %s, expiring at %s.",
-            provider,
+            "Fetched temporary S3 credentials from %s, expiring at %s.",
+            endpoint,
             creds.get("expiration", "an unknown time"),
         )
 
         return t.cast(AWSCredentials, creds)
 
-    return get_s3_credentials_for_provider
+    return get_s3_credentials
 
 
 description = """A TiTiler-based dynamic tiling application for the Common Metadata Repository (CMR).
@@ -196,8 +194,7 @@ endpoints = Endpoints(
 )
 app.include_router(endpoints.router)
 
-if auth_config.strategy == "environment" and auth_config.access == "direct":
-    auth = earthaccess.login(strategy=auth_config.strategy)
-    app.state.get_s3_credentials = make_get_s3_credentials(auth)
-else:
-    app.state.get_s3_credentials = None
+app.state.auth = (auth := earthaccess.login(strategy="environment"))
+app.state.get_s3_credentials = (
+    make_get_s3_credentials(auth) if auth_config.access == "direct" else None
+)
