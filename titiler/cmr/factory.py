@@ -64,7 +64,7 @@ from titiler.xarray.io import Reader as XarrayReader
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
         [
-            jinja2.PackageLoader(__package__, "templates"),
+            jinja2.PackageLoader("titiler.cmr"),
             jinja2.PackageLoader("titiler.core"),
         ]
     ),

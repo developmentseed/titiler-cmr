@@ -30,7 +30,7 @@ configure_logging()
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
         [
-            jinja2.PackageLoader(__package__, "templates"),  # type: ignore
+            jinja2.PackageLoader("titiler.cmr"),
             jinja2.PackageLoader("titiler.core"),
         ]
     ),
