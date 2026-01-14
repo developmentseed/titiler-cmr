@@ -12,7 +12,12 @@ class JSONFormatter(logging.Formatter):
     def format(self, record):
         """Format log record as JSON."""
         log_entry = {
-            "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S.%fZ"),
+            # The %f format specifier is recognized by datetime.strftime, but
+            # not by time.strftime.  See note (1) below the table of directives:
+            # https://docs.python.org/3/library/time.html#time.strftime
+            "timestamp": datetime.fromtimestamp(
+                record.created, tz=timezone.utc
+            ).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),

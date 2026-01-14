@@ -21,4 +21,5 @@ repos:
         - types-cachetools
         - types-attrs
         - types-python-dateutil
+        - types-requests
         - pydantic>=2.4

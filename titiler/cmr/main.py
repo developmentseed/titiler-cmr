@@ -1,19 +1,25 @@
 """TiTiler+cmr FastAPI application."""
 
-from contextlib import asynccontextmanager
+import threading
+import typing as t
+from collections.abc import Callable
 
+import cachetools
 import earthaccess
 import jinja2
-from fastapi import FastAPI
+import requests
+from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 
 from titiler.cmr import __version__ as titiler_cmr_version
+from titiler.cmr.backend import AWSCredentials
 from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
 from titiler.cmr.factory import Endpoints
-from titiler.cmr.logger import configure_logging
+from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
+from titiler.cmr.utils import retry
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
@@ -24,7 +30,7 @@ configure_logging()
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
         [
-            jinja2.PackageLoader(__package__, "templates"),
+            jinja2.PackageLoader(__package__, "templates"),  # type: ignore
             jinja2.PackageLoader("titiler.core"),
         ]
     ),
@@ -35,15 +41,47 @@ settings = ApiSettings()
 auth_config = AuthSettings()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """FastAPI Lifespan."""
-    if auth_config.strategy == "environment" and auth_config.access == "direct":
-        app.state.cmr_auth = earthaccess.login(strategy="environment")
-    else:
-        app.state.cmr_auth = None
+def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
+    """Create a function that returns temporary S3 credentials for an endpoint.
 
-    yield
+    Wraps an authenticated earthaccess client with a TTL-based cache to limit
+    calls for temporary S3 credentials while keeping them fresh.
+
+    Args:
+        auth: Authenticated earthaccess client used to request S3 credentials.
+
+    Returns:
+        A callable that accepts an (HTTPS) endpoint and returns temporary S3
+        credentials from the endpoint, via the ``auth`` object.
+    """
+
+    @cachetools.cached(
+        cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
+        condition=threading.Condition(),  # Prevent race conditions
+    )
+    @retry(5, requests.RequestException, 1)
+    def get_s3_credentials(endpoint: str) -> AWSCredentials:
+        logger.info("Fetching temporary S3 credentials from %s", endpoint)
+
+        # NOTE: Frustratingly, Auth.get_s3_credentials simply returns an empty
+        # dict if any sort of request fails, rather than raising an error.
+        # Therefore, we are forced to check the result and raise our own error
+        # if the result is empty.
+        if not (creds := auth.get_s3_credentials(endpoint=endpoint)):
+            logger.error("Failed to fetch temporary S3 credentials from %s", endpoint)
+            # We cannot tell what the underlying exception was, since it was
+            # swallowed by earthaccess, so we're just making one up.
+            raise HTTPException(500, "earthaccess failed to retrieve S3 credentials")
+
+        logger.info(
+            "Fetched temporary S3 credentials from %s, expiring at %s.",
+            endpoint,
+            creds.get("expiration", "an unknown time"),
+        )
+
+        return t.cast(AWSCredentials, creds)
+
+    return get_s3_credentials
 
 
 description = """A TiTiler-based dynamic tiling application for the Common Metadata Repository (CMR).
@@ -126,7 +164,6 @@ app = FastAPI(
     description=description,
     version=titiler_cmr_version,
     root_path=settings.root_path,
-    lifespan=lifespan,
     openapi_tags=tags_metadata,
 )
 
@@ -157,3 +194,8 @@ endpoints = Endpoints(
     enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(endpoints.router)
+
+app.state.auth = (auth := earthaccess.login(strategy="environment"))
+app.state.get_s3_credentials = (
+    make_get_s3_credentials(auth) if auth_config.access == "direct" else None
+)
