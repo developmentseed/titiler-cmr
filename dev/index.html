@@ -1003,6 +1003,11 @@ You can do this in two ways:</p>
 <p class="admonition-title">Note</p>
 <p>Direct S3 access configuration will only work if the application is running in the same AWS region as the data are stored!</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>At the moment, setting Earthdata credentials as environment variables does not
+work for the rasterio backend.</p>
+</div>
 <h3 id="external-access">External access<a class="headerlink" href="#external-access" title="Permanent link">&para;</a></h3>
 <p>When running outside of the AWS context (e.g. locally) you will need to configure the application to access data over <code>HTTP</code>.
 You can do this by creating an Earthdata account, configuring your <code>.netrc</code> file with your Earthdata login credentials (which GDAL will find when trying to access data over the network), and setting a few environment variables:</p>
@@ -1024,7 +1029,7 @@ You can do this by creating an Earthdata account, configuring your <code>.netrc<
 <h2 id="docker-deployment">Docker deployment<a class="headerlink" href="#docker-deployment" title="Permanent link">&para;</a></h2>
 <p>You can run the application in a docker container using the docker-compose.yml file.
 The docker container is configured to read the <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> environment variables so make sure set those before starting the docker network.</p>
-<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build<span class="w"> </span>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build
 </code></pre></div>
 <p>The application will be available at this address: <a href="http://localhost:8081/api.html">http://localhost:8081/api.html</a></p>
 <h2 id="local-deployment">Local deployment<a class="headerlink" href="#local-deployment" title="Permanent link">&para;</a></h2>
