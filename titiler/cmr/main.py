@@ -7,6 +7,7 @@ from collections.abc import Callable
 import cachetools
 import earthaccess
 import jinja2
+import requests
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
@@ -58,7 +59,7 @@ def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCreden
         cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
         condition=threading.Condition(),  # Prevent race conditions
     )
-    @retry(5, HTTPException, 1)
+    @retry(5, requests.RequestException, 1)
     def get_s3_credentials(endpoint: str) -> AWSCredentials:
         logger.info("Fetching temporary S3 credentials from %s", endpoint)
 
