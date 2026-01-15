@@ -8,7 +8,7 @@ import numpy as np
 
 
 def create_pie_chart(
-    labels, sizes, title="Pie Chart", legend=False, top_n=-1, legend_position="best"
+    labels, sizes, title="Pie Chart", *, legend=False, top_n=-1, legend_position="best"
 ):
     """
     Create a pie chart with automatic color generation
