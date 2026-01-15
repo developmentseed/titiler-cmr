@@ -47,8 +47,8 @@ def create_pie_chart(labels, sizes, title="Pie Chart", legend=False, top_n=-1):
         legend_labels = [f"{label}: {size}" for label, size in zip(labels, sizes)]
         plt.legend(
             legend_labels,
-            loc="center left",
-            bbox_to_anchor=(1, 0.5),
+            loc="best",
+            bbox_to_anchor=(1, 1),
             fontsize=10,
             title="Counts",
         )
