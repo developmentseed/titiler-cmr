@@ -7,7 +7,14 @@ import matplotlib.cm as cm
 import numpy as np
 
 
-def create_pie_chart(labels, sizes, title="Pie Chart", legend=False, top_n=-1):
+def create_pie_chart(
+    labels: list[str],
+    sizes: list[float],
+    title: str = "Pie Chart",
+    legend: bool = False,
+    top_n: int = -1,
+    legend_position: str = "best",
+):
     """
     Create a pie chart with automatic color generation
 
@@ -47,8 +54,8 @@ def create_pie_chart(labels, sizes, title="Pie Chart", legend=False, top_n=-1):
         legend_labels = [f"{label}: {size}" for label, size in zip(labels, sizes)]
         plt.legend(
             legend_labels,
-            loc="center left",
-            bbox_to_anchor=(1, 0.5),
+            loc=legend_position,
+            bbox_to_anchor=(1, 1),
             fontsize=10,
             title="Counts",
         )
