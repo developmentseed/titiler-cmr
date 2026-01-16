@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET
@@ -79,7 +79,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET

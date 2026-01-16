@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET
@@ -68,7 +68,7 @@ interactions:
       Cookie:
       - _urs-gui_session=da448ca82f7d68d4b478f0bb8e71ab36
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET
@@ -204,7 +204,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET
@@ -274,7 +274,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET

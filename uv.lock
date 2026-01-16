@@ -996,23 +996,23 @@ wheels = [
 
 [[package]]
 name = "earthaccess"
-version = "0.11.0"
+version = "0.15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fsspec" },
     { name = "importlib-resources" },
     { name = "multimethod" },
-    { name = "numpy" },
     { name = "pqdm" },
     { name = "python-cmr" },
     { name = "requests" },
     { name = "s3fs" },
+    { name = "tenacity" },
     { name = "tinynetrc" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/fd/ba1208bd4497c4d7415a3006cecdd432c109d0ef1a80235e2c633102a1f2/earthaccess-0.11.0.tar.gz", hash = "sha256:1d07f0d9fa700339750e263f4a9a6d977dd8291afc94d25633d15420bc869418", size = 6099358, upload-time = "2024-10-01T18:29:29.884Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/51/de/35432b8d2935a16b9840bde85b6572c85aaec4a23cdec4c43110cda77b0a/earthaccess-0.15.1.tar.gz", hash = "sha256:67ad29f7c8d54eb17ae92972e00d95f4bb2d78f6cadb770727384efc324f1fc5", size = 7285812, upload-time = "2025-09-16T21:26:41.589Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fb/ce/06c227460fda7e049099b11ef150af0a23a41357fc8f487175d20336970e/earthaccess-0.11.0-py3-none-any.whl", hash = "sha256:1a4d95fdac2c8b29ff44e7a29d7bb4fb12a7d9f77d1000f233658309f3d1c210", size = 59396, upload-time = "2024-10-01T18:29:28.19Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/f4/1eacb58cf0b417c0049b22f69cd58e6f1de389ccc1457ad9feb146fde169/earthaccess-0.15.1-py3-none-any.whl", hash = "sha256:8b5d8cabdfa14aeaca7a66561bafa85f63c0d6f0f1ebc42f7e60474c6df2ad9e", size = 70466, upload-time = "2025-09-16T21:26:39.333Z" },
 ]
 
 [[package]]
@@ -3885,7 +3885,7 @@ requires-dist = [
     { name = "boto3", specifier = ">=1.39.0" },
     { name = "cachetools", specifier = ">=6.0.0" },
     { name = "cftime", specifier = "~=1.6.4" },
-    { name = "earthaccess", specifier = "~=0.11.0" },
+    { name = "earthaccess", specifier = "~=0.15.0" },
     { name = "geojson-pydantic", specifier = ">=2.0.0,<3.0" },
     { name = "h5netcdf", specifier = "~=1.1.0" },
     { name = "httpx", specifier = ">=0.27.2" },
