@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add Earthdata Login based S3 access, except for the rasterio backend, to be
   addressed separately.
   ([#112](https://github.com/developmentseed/titiler-cmr/pull/112))
+- Update deployment application to add EARTHDATA_USERNAME and EARTHDATA_PASSWORD to Lambda environment ([#120](https://github.com/developmentseed/titiler-cmr/pull/120))
 
 ### Fixed
 
