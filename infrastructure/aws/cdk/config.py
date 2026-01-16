@@ -1,25 +1,25 @@
 """STACK Configs."""
 
-from typing import List, Optional
+from typing import List
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class StackSettings(BaseSettings):
     """Stack settings"""
 
-    veda_custom_host: Optional[str] = None
+    veda_custom_host: str | None = None
     stage: str = "production"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    bootstrap_qualifier: Optional[str] = Field(
+    bootstrap_qualifier: str | None = Field(
         None,
         description="Custom bootstrap qualifier override if not using a default installation of AWS CDK Toolkit to synthesize app.",
     )
 
-    permissions_boundary_policy_name: Optional[str] = Field(
+    permissions_boundary_policy_name: str | None = Field(
         None,
         description="Name of IAM policy to define stack permissions boundary",
     )
@@ -30,9 +30,9 @@ class AppSettings(BaseSettings):
 
     name: str = "titiler-cmr"
 
-    owner: Optional[str] = None
-    client: Optional[str] = None
-    project: Optional[str] = None
+    owner: str | None = None
+    client: str | None = None
+    project: str | None = None
 
     # S3 bucket names where TiTiler could do HEAD and GET Requests
     # specific private and public buckets MUST be added if you want to use s3:// urls
@@ -46,16 +46,31 @@ class AppSettings(BaseSettings):
     timeout: int = 30
     memory: int = 10240
 
-    role_arn: Optional[str] = None
+    role_arn: str | None = None
 
     # The maximum of concurrent executions you want to reserve for the function.
     # Default: - No specific limit - account limit.
-    max_concurrent: Optional[int] = None
-    alarm_email: Optional[str] = None
-    root_path: Optional[str] = None
-    s3_auth_strategy: Optional[str] = "environment"
-    aws_request_payer: Optional[str] = None
+    max_concurrent: int | None = None
+    alarm_email: str | None = None
+    root_path: str | None = None
+    s3_auth_strategy: str | None = "environment"
+    earthdata_username: str | None = Field(None, validation_alias="EARTHDATA_USERNAME")
+    earthdata_password: str | None = Field(None, validation_alias="EARTHDATA_PASSWORD")
+
+    aws_request_payer: str | None = None
+    telemetry_enabled: bool = True
 
     model_config = SettingsConfigDict(
         env_prefix="TITILER_CMR_", env_file=".env", extra="ignore"
     )
+
+    @model_validator(mode="after")
+    def validate_earthdata_creds(self):
+        """Validate earthdata credentials and s3 auth strategy"""
+        if self.s3_auth_strategy == "environment":
+            if not (self.earthdata_username and self.earthdata_password):
+                raise ValueError(
+                    "If TITILER_CMR_S3_AUTH_STRATEGY is set to 'environment' you must provide "
+                    "EARTHDATA_USERNAME and EARTHDATA_PASSWORD"
+                )
+        return self
