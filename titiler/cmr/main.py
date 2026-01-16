@@ -11,6 +11,9 @@ import requests
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
+from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
+from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
+from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.backend import AWSCredentials
@@ -20,9 +23,6 @@ from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
 from titiler.cmr.utils import retry
-from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
-from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
-from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 
 # Configure logging at application startup
 configure_logging()

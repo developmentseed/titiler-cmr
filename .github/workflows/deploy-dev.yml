@@ -18,6 +18,7 @@ jobs:
   deploy:
     name: Deploy to dev 🚀
     runs-on: ubuntu-latest
+    environment: dev
     if: >
       github.event_name != 'pull_request' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-dev'))    
@@ -52,9 +53,10 @@ jobs:
           dir: "./infrastructure/aws"
           env_aws_secret_name: ""
         env:
-          # I'm not sure this is in use anymore, should we remove it?
+          EARTHDATA_USERNAME: ${{ vars.earthdata_username }}
+          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
+          STAGE: ${{ vars.stage }}
+          TITILER_CMR_AWS_REQUEST_PAYER: ${{ vars.titiler_cmr_aws_request_payer }}
           TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
           TITILER_CMR_ROOT_PATH: ''
-          STAGE: dev
-          TITILER_CMR_AWS_REQUEST_PAYER: requester
-          TITILER_CMR_S3_AUTH_STRATEGY: iam
+          TITILER_CMR_S3_AUTH_STRATEGY: ${{ vars.titiler_cmr_s3_auth_strategy }}
