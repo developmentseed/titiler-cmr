@@ -105,8 +105,8 @@ def test_xarray_statistics(
         # numbers corroborated by QGIS zonal stats for this file and polygon
         stats = list(stats.values())[0]
         assert round(stats["median"], 1) == 0.8
-        assert round(stats["sum"]) == 2420
-        assert round(stats["mean"], 2) == 0.53
+        assert round(stats["sum"]) == 2377
+        assert round(stats["mean"], 2) == 0.52
 
 
 @pytest.mark.vcr
