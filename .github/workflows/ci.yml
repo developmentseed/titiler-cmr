@@ -31,6 +31,7 @@ permissions:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    environment: dev
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12']
@@ -57,4 +58,7 @@ jobs:
           uv run pre-commit run --all-files
 
       - name: Run tests
+        env:
+          EARTHDATA_USERNAME: ${{ vars.EARTHDATA_USERNAME }}
+          EARTHDATA_PASSWORD: ${{ secrets.EARTHDATA_PASSWORD }}
         run: uv run pytest
