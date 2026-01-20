@@ -263,6 +263,7 @@ class CMRBackend(BaseBackend):
                 **kwargs,
             )
         except Exception:
+            logger.exception("Granule search failed")
             return assets
 
         for r in results:
