@@ -22,7 +22,7 @@ class MissingCollectionCatalog(TilerError):
 
 
 DEFAULT_STATUS_CODES = {
-    InvalidBBox: status.HTTP_422_UNPROCESSABLE_CONTENT,
-    InvalidDatetime: status.HTTP_422_UNPROCESSABLE_CONTENT,
+    InvalidBBox: status.HTTP_422_UNPROCESSABLE_ENTITY,
+    InvalidDatetime: status.HTTP_422_UNPROCESSABLE_ENTITY,
     MissingCollectionCatalog: status.HTTP_500_INTERNAL_SERVER_ERROR,
 }
