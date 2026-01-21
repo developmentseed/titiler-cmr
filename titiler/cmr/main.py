@@ -1,8 +1,10 @@
 """TiTiler+cmr FastAPI application."""
 
+import os
 import threading
 import typing as t
 from collections.abc import Callable
+from contextlib import asynccontextmanager
 
 import cachetools
 import earthaccess
@@ -39,6 +41,29 @@ templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 auth_config = AuthSettings()
+auth: earthaccess.Auth | None = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI Lifespan."""
+
+    global auth
+
+    if os.environ.get("PYTEST_VERSION"):
+        # Avoid earthaccess login during testing
+        app.state.auth = None
+        app.state.get_s3_credentials = None
+    elif auth is None:
+        # Set global auth instance only if not already set.  This allows for
+        # Lambda functions to avoid repeated logins during warm starts, also
+        # maintaining the s3 credential cache across warm starts.
+        app.state.auth = (auth := earthaccess.login(strategy="environment"))
+        app.state.get_s3_credentials = (
+            make_get_s3_credentials(auth) if auth_config.access == "direct" else None
+        )
+
+    yield
 
 
 def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
@@ -164,6 +189,7 @@ app = FastAPI(
     description=description,
     version=titiler_cmr_version,
     root_path=settings.root_path,
+    lifespan=lifespan,
     openapi_tags=tags_metadata,
 )
 
@@ -194,8 +220,3 @@ endpoints = Endpoints(
     enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(endpoints.router)
-
-app.state.auth = (auth := earthaccess.login(strategy="environment"))
-app.state.get_s3_credentials = (
-    make_get_s3_credentials(auth) if auth_config.access == "direct" else None
-)
