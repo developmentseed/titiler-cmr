@@ -55,8 +55,8 @@ def app():
     """Create a TestClient instance for the app."""
     from titiler.cmr.main import app
 
-    with TestClient(app) as client:
-        yield client
+    # Do NOT use a context manager so that we do NOT invoke lifespan during testing.
+    return TestClient(app)
 
 
 @pytest.fixture
