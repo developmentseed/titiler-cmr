@@ -1,14 +1,12 @@
 """AWS Lambda handler optimized for container runtime with OTEL instrumentation."""
 
-import asyncio
 import logging
-import os
 import warnings
 
 from mangum import Mangum
 
 from titiler.cmr.logger import configure_logging
-from titiler.cmr.main import app
+from titiler.cmr.main import app, startup
 
 configure_logging()
 
@@ -16,9 +14,13 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("numexpr").setLevel(logging.WARNING)
 
+startup(app)
+
 lambda_handler = Mangum(
     app,
-    lifespan="off" if "AWS_EXECUTION_ENV" in os.environ else "auto",
+    # Prevent mangum from running lifespan because it will do so on every
+    # invocation, rather than only during cold starts.
+    lifespan="off",
     text_mime_types=[
         "application/json",
         "application/javascript",
@@ -26,15 +28,3 @@ lambda_handler = Mangum(
         "application/vnd.api+json",
     ],
 )
-
-
-# Run lifespan only during cold starts.
-if not hasattr(app.state, "startup_done"):
-
-    async def run_lifespan():
-        """Manually trigger lifecyle startup/shutdown."""
-        async with app.router.lifespan_context(app):
-            app.state.startup_done = True
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_lifespan())

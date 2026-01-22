@@ -48,6 +48,13 @@ auth: earthaccess.Auth | None = None
 async def lifespan(app: FastAPI):
     """FastAPI Lifespan."""
 
+    startup(app)
+    yield
+    shutdown(app)
+
+
+def startup(app: FastAPI) -> None:
+    """Perform application startup."""
     global auth
 
     logger.info("Starting up")
@@ -65,8 +72,9 @@ async def lifespan(app: FastAPI):
             make_get_s3_credentials(auth) if auth_config.access == "direct" else None
         )
 
-    yield
 
+def shutdown(app: FastAPI) -> None:
+    """Perform application shutdown."""
     logger.info("Shutting down")
 
 
