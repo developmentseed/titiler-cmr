@@ -1,7 +1,7 @@
 *
-!infrastructure/aws/lambda
 !titiler/
 !LICENSE
 !pyproject.toml
 !README.md
 !uv.lock
+**/__pycache__
