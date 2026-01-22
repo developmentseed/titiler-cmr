@@ -50,6 +50,8 @@ async def lifespan(app: FastAPI):
 
     global auth
 
+    logger.info("Starting up")
+
     if os.environ.get("PYTEST_VERSION"):
         # Avoid earthaccess login during testing
         app.state.auth = None
@@ -64,6 +66,8 @@ async def lifespan(app: FastAPI):
         )
 
     yield
+
+    logger.info("Shutting down")
 
 
 def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
