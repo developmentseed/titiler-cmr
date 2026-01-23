@@ -3,7 +3,16 @@
 import os
 from typing import Any
 
-from aws_cdk import App, Aspects, CfnOutput, Duration, Stack, Tags, aws_lambda
+from aws_cdk import (
+    App,
+    Aspects,
+    CfnOutput,
+    Duration,
+    IgnoreMode,
+    Stack,
+    Tags,
+    aws_lambda,
+)
 from aws_cdk import aws_apigatewayv2 as apigw
 from aws_cdk import aws_cloudwatch as cloudwatch
 from aws_cdk import aws_cloudwatch_actions as cloudwatch_actions
@@ -106,6 +115,7 @@ class LambdaStack(Stack):
                 directory=os.path.abspath(context_dir),
                 file="infrastructure/aws/lambda/Dockerfile",
                 platform=Platform.LINUX_AMD64,
+                ignore_mode=IgnoreMode.DOCKER,
             ),
             memory_size=app_settings.memory,
             reserved_concurrent_executions=app_settings.max_concurrent,
@@ -113,9 +123,11 @@ class LambdaStack(Stack):
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
-            tracing=aws_lambda.Tracing.ACTIVE
-            if app_settings.telemetry_enabled
-            else aws_lambda.Tracing.DISABLED,
+            tracing=(
+                aws_lambda.Tracing.ACTIVE
+                if app_settings.telemetry_enabled
+                else aws_lambda.Tracing.DISABLED
+            ),
         )
 
         if app_settings.buckets:
