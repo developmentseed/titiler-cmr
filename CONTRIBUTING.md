@@ -55,3 +55,13 @@ To preview the documentation in your browser you can run:
 ```bash
 uv run mkdocs serve -o
 ```
+
+### Previewing documentation changes
+
+You can also deploy a specific branch to the documentation site for previewing the documentation live using Github's workflow dispatch. This will create a new version of the documentation that you should to delete when you are done:
+
+  uv run mike delete feat-reorg-documentation --push
+
+This will:
+1. Delete the feat-reorg-documentation version from the documentation
+2. Push the changes to the gh-pages branch
