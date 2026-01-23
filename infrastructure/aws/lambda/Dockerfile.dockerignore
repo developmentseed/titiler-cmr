@@ -1,4 +1,5 @@
 *
+!infrastructure/
 !titiler/
 !.python-version
 !LICENSE
@@ -6,3 +7,4 @@
 !README.md
 !uv.lock
 **/__pycache__
+**/cdk.out
