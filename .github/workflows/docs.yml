@@ -35,7 +35,6 @@ jobs:
           enable-cache: true
       - name: Sync
         run: |
-          uv cache clean
           uv sync
           git restore uv.lock
 
