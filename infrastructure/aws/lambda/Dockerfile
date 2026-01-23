@@ -10,7 +10,7 @@ dnf install -y unzip wget
 dnf clean all
 wget -q https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.12.1/layer.zip -O /tmp/layer.zip
 mkdir -p /opt-builder
-unzip /tmp/layer.zip -d /opt-builder/
+unzip -q /tmp/layer.zip -d /opt-builder/
 EOF
 
 # Stage 2: titiler-cmr application and dependencies
@@ -25,13 +25,12 @@ COPY README.md uv.lock .python-version pyproject.toml ./
 COPY titiler/ ./titiler/
 
 RUN <<EOF
-uv export --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt
+uv export --quiet --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt
 uv pip install \
   --compile-bytecode \
   --no-binary pydantic \
   --target /deps \
   --no-cache-dir \
-  --disable-pip-version-check \
   -r requirements.txt
 EOF
 
