@@ -1,7 +1,9 @@
 *
+!infrastructure/aws
 !titiler/
 !LICENSE
 !pyproject.toml
 !README.md
 !uv.lock
 **/__pycache__
+**/cdk.out
