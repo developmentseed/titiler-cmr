@@ -1,7 +1,10 @@
 *
+!infrastructure/
 !titiler/
+!.python-version
 !LICENSE
 !pyproject.toml
 !README.md
 !uv.lock
 **/__pycache__
+**/cdk.out
