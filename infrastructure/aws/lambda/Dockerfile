@@ -3,10 +3,12 @@ ARG PYTHON_VERSION=3.12
 # Stage 1: OTEL
 # Download the OpenTelemetry layer
 # ref: https://github.com/athewsey/opentelemetry-lambda-container/blob/98069d5eb6d812ccd28d5c80e2f9d6c8a8c76fb9/python-example/lambda-function/Dockerfile
-FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} as otel-builder
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS otel-builder
+
 RUN <<EOF
 dnf install -y unzip wget
-wget https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.12.1/layer.zip -O /tmp/layer.zip
+dnf clean all
+wget -q https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.12.1/layer.zip -O /tmp/layer.zip
 mkdir -p /opt-builder
 unzip /tmp/layer.zip -d /opt-builder/
 EOF

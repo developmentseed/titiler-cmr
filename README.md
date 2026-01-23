@@ -55,6 +55,10 @@ You can do this in two ways:
 > [!NOTE]
 > Direct S3 access configuration will only work if the application is running in the same AWS region as the data are stored!
 
+> [!WARNING]
+> At the moment, setting Earthdata credentials as environment variables does not
+> work for the rasterio backend.
+
 ### External access
 
 When running outside of the AWS context (e.g. locally) you will need to configure the application to access data over `HTTP`.
@@ -82,7 +86,7 @@ You can run the application in a docker container using the docker-compose.yml f
 The docker container is configured to read the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment variables so make sure set those before starting the docker network.
 
 ```bash
-docker compose up --build 
+docker compose up --build
 ```
 
 The application will be available at this address: [http://localhost:8081/api.html](http://localhost:8081/api.html)

@@ -94,7 +94,7 @@ class TestXarrayCompatibility:
         """Test successful xarray compatibility check."""
         # Mock request
         mock_request = MagicMock()
-        mock_request.app.state.cmr_auth = None
+        mock_request.app.state.get_s3_credentials = None
 
         # Mock auth config
         mock_auth = MagicMock()
@@ -139,7 +139,7 @@ class TestXarrayCompatibility:
     def test_xarray_no_assets(self, mock_backend):
         """Test xarray compatibility with no assets found."""
         mock_request = MagicMock()
-        mock_request.app.state.cmr_auth = None
+        mock_request.app.state.get_s3_credentials = None
         mock_auth = MagicMock()
 
         # Mock backend returning empty assets
@@ -161,7 +161,7 @@ class TestRasterioCompatibility:
     def evaluate_rasterio_success(self, mock_backend):
         """Test successful rasterio compatibility check."""
         mock_request = MagicMock()
-        mock_request.app.state.cmr_auth = None
+        mock_request.app.state.get_s3_credentials = None
         mock_auth = MagicMock()
         mock_auth.access = "external"
 
@@ -184,7 +184,7 @@ class TestRasterioCompatibility:
     def evaluate_rasterio_no_assets(self, mock_backend):
         """Test rasterio compatibility with no assets found."""
         mock_request = MagicMock()
-        mock_request.app.state.cmr_auth = None
+        mock_request.app.state.get_s3_credentials = None
         mock_auth = MagicMock()
 
         # Mock backend returning empty assets

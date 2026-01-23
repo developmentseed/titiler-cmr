@@ -162,9 +162,6 @@ def parse_reader_options(
                 "resampling_method": rasterio_params.resampling_method,
                 "bands_regex": rasterio_params.bands_regex,
             }
-            read_options = {k: v for k, v in options.items() if v is not None}
-            reader_options = {}
-
         else:
             assert rasterio_params.indexes, (
                 "`bidx` must be provided if not providing `bands_regex` and `bands`"
@@ -177,8 +174,9 @@ def parse_reader_options(
                 "unscale": rasterio_params.unscale,
                 "resampling_method": resampling_method,
             }
-            read_options = {k: v for k, v in options.items() if v is not None}
-            reader_options = {}
+
+        read_options = {k: v for k, v in options.items() if v is not None}
+        reader_options = {}
 
     if image_params:
         read_options.update(image_params.as_dict())
@@ -602,7 +600,8 @@ class Endpoints(TilerFactory):
                 tms=tms,
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                auth=request.app.state.auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 image, _ = src_dst.tile(
                     x,
@@ -704,7 +703,8 @@ class Endpoints(TilerFactory):
             # TODO: can we get metadata from the CMR dataset?
             with CMRBackend(
                 tms=tms,
-                auth=request.app.state.cmr_auth,
+                auth=request.app.state.auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 minx, miny, maxx, maxy = zip(
                     [-180, -90, 180, 90],
@@ -837,7 +837,8 @@ class Endpoints(TilerFactory):
             with CMRBackend(
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                auth=request.app.state.auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 if reader_params.backend == "rasterio":
                     read_options.update(
@@ -923,7 +924,8 @@ class Endpoints(TilerFactory):
             with CMRBackend(
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                auth=request.app.state.auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 if reader_params.backend == "rasterio":
                     read_options.update(
@@ -1011,7 +1013,8 @@ class Endpoints(TilerFactory):
             with CMRBackend(
                 reader=reader,
                 reader_options=reader_options,
-                auth=request.app.state.cmr_auth,
+                auth=request.app.state.auth,
+                get_s3_credentials=request.app.state.get_s3_credentials,
             ) as src_dst:
                 for feature in fc.iter():
                     shape = feature.model_dump(exclude_none=True)
