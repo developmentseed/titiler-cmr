@@ -37,6 +37,7 @@ jobs:
         run: |
           uv sync
           git restore uv.lock
+          uv pip install -e docs/packages/datacube_benchmark
 
       - name: Configure Git
         run: |
