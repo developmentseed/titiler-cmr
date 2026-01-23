@@ -56,7 +56,7 @@ def startup(app: FastAPI) -> None:
 
     logger.info("Starting up")
 
-    if not hasattr(app.state, "auth"):
+    if getattr(app.state, "auth", None) is None:
         logger.info("Logging into earthaccess")
         auth = earthaccess.login(strategy="environment")
 
