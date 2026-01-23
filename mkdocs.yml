@@ -33,7 +33,7 @@ nav:
     - api/time_series_api_limits.ipynb
     - api/rasterio_backend_example.ipynb
     - api/sel_parameter_example.ipynb
-  - Benchmarking:
+  - Advanced:
     - benchmarking/tiles.ipynb
     - benchmarking/hls_tiling.ipynb
   - Compatibility Testing:
