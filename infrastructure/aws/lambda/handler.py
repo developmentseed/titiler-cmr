@@ -5,7 +5,7 @@ import warnings
 
 from mangum import Mangum
 
-from titiler.cmr.logger import configure_logging, logger
+from titiler.cmr.logger import configure_logging
 from titiler.cmr.main import app, startup
 
 configure_logging()
@@ -14,7 +14,6 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("numexpr").setLevel(logging.WARNING)
 
-logger.info("Cold starting Lambda")
 startup(app)
 
 lambda_handler = Mangum(
