@@ -107,9 +107,6 @@ build-backend = "pdm.pep517.api"
 [tool.pdm.version]
 source = "scm"
 
-[tool.setuptools_scm]
-local_scheme = "no-local-version"
-
 [tool.pdm.build]
 includes = ["titiler/cmr"]
 excludes = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
