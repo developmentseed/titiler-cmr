@@ -35,7 +35,7 @@ jobs:
           enable-cache: true
       - name: Sync
         run: |
-          uv sync
+          uv sync --no-build-isolation-package titiler-cmr
           git restore uv.lock
           uv pip install -e docs/packages/datacube_benchmark
 
