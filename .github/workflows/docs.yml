@@ -65,6 +65,7 @@ jobs:
               # Branch name detected (contains /)
               # Sanitize branch name for use as mike version (replace / with -)
               SAFE_VERSION=$(echo "$VERSION" | sed 's/\//-/g')
+              echo "Deploying branch version: $SAFE_VERSION"
               uv run mike deploy --push $SAFE_VERSION
             else
               # Assume it's a version number
