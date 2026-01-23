@@ -157,6 +157,7 @@ def configure_logging():
     logging.getLogger("earthaccess").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("numexpr").setLevel(logging.WARNING)
+    logging.getLogger("fsspec").setLevel(logging.WARNING)
 
     is_lambda = "AWS_EXECUTION_ENV" in os.environ
 

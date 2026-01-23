@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?has_granules=true&include_granule_counts=true&concept_id%5B%5D=C2036881735-POCLOUD&page_size=2000
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id%5B%5D=C2036881735-POCLOUD&page_size=2000
   response:
     body:
       string: !!binary |
@@ -149,11 +149,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - earthaccess v0.11.0
+      - earthaccess v0.15.1
       authorization:
       - DUMMY
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?has_granules=true&include_granule_counts=true&concept_id%5B%5D=C2036881735-POCLOUD&page_size=1
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id%5B%5D=C2036881735-POCLOUD&page_size=1
   response:
     body:
       string: !!binary |

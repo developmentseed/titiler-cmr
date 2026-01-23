@@ -45,7 +45,11 @@ class CacheSettings(BaseSettings):
     # Whether or not caching is enabled
     disable: bool = False
 
-    model_config = {"env_prefix": "TITILER_CMR_CACHE_", "env_file": ".env"}
+    model_config = {
+        "env_prefix": "TITILER_CMR_CACHE_",
+        "env_file": ".env",
+        "extra": "ignore",
+    }
 
     @model_validator(mode="after")
     def check_enable(self):
@@ -79,4 +83,5 @@ class AuthSettings(BaseSettings):
     model_config = {
         "env_prefix": "TITILER_CMR_S3_AUTH_",
         "env_file": ".env",
+        "extra": "ignore",
     }
