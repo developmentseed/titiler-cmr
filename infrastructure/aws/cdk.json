@@ -1,6 +1,7 @@
 {
   "app": "python3 -m cdk.app",
   "context": {
-    "cli-telemetry": false
+    "cli-telemetry": false,
+    "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true
   }
 }
