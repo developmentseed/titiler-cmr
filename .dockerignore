@@ -1,5 +1,5 @@
 *
-!infrastructure/aws
+!infrastructure/
 !titiler/
 !LICENSE
 !pyproject.toml
