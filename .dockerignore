@@ -1,3 +1,15 @@
+# This file is used only during CDK deployment, when the
+# infrastructure/aws/lambda/Dockerfile is used to build the Lambda image.
+# Unfortunately, the CDK CLI does not support multiple dockerignore files, so
+# moving this file to infrastructure/aws/lambda/Dockerfile.dockerignore will not
+# work, as the CDK looks *only* for .dockerignore at the root of the context.
+# See https://github.com/aws/aws-cdk/issues/17686
+#
+# For ignoring files for local Docker development work, see the file
+# Dockerfile.dockerignore at the root of this repo, which is used in combination
+# with Dockerfile at the root.  Since Dockerfile.dockerignore exists, this file
+# is used only during CDK deployment, and is not used with the local Docker
+# development image.
 *
 !infrastructure/
 !titiler/
