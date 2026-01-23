@@ -109,6 +109,10 @@ build-backend = "pdm.pep517.api"
 [tool.pdm.version]
 source = "scm"
 
+[tool.setuptools_scm]
+write_to = "src/titiler/cmr/_version.py"
+local_scheme = "no-local-version"  # This prevents the .dYYYYMMDD suffix
+
 [tool.pdm.build]
 includes = ["titiler/cmr"]
 excludes = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
