@@ -634,7 +634,7 @@
             
   
   <span class="md-ellipsis">
-    Benchmarking
+    Advanced
   </span>
   
 
@@ -644,7 +644,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Benchmarking
+            Advanced
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1394,7 +1394,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-1">
@@ -1445,13 +1445,13 @@ You can find the <code>HLSL30.002</code> dataset using the earthaccess.search_da
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
@@ -1481,6 +1481,74 @@ print("Abstract: ", ds["umm"]["Abstract"])</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Concept-Id:  C2021957295-LPCLOUD
+Abstract:  The Harmonized Landsat Sentinel-2 (HLS) project provides consistent surface reflectance data from the Operational Land Imager (OLI) aboard the joint NASA/USGS Landsat 8 satellite and the Multi-Spectral Instrument (MSI) aboard Europe’s Copernicus Sentinel-2A, Sentinel-2B, and Sentinel-2C satellites. The combined measurement enables global observations of the land every 2–3 days at 30-meter (m) spatial resolution. The HLS project uses a set of algorithms to obtain seamless products from OLI and MSI that include atmospheric correction, cloud and cloud-shadow masking, spatial co-registration and common gridding, illumination and view angle normalization, and spectral bandpass adjustment. 
+
+The HLSS30 product provides 30-m Nadir Bidirectional Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) and is derived from Sentinel-2A, Sentinel-2B, and Sentinel-2C MSI data products. The HLSS30 and [HLSL30](https://doi.org/10.5067/HLS/HLSL30.002) products are gridded to the same resolution and Military Grid Reference System ([MGRS](https://hls.gsfc.nasa.gov/products-description/tiling-system/)) tiling system and thus are “stackable” for time series analysis.
+
+The HLSS30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each band is distributed as a separate COG. There are 13 bands included in the HLSS30 product along with four angle bands and a quality assessment (QA) band. See the User Guide for a more detailed description of the individual bands provided in the HLSS30 product.
+
+Known Issues
+
+* Unrealistically high aerosol and low surface reflectance over bright areas: The atmospheric correction over bright targets occasionally retrieves unrealistically high aerosol and thus makes the surface reflectance too low. High aerosol retrievals, both false high aerosol and realistically high aerosol, are masked when quality bits 6 and 7 are both set to 1 (see Table 9 in the [User Guide](https://lpdaac.usgs.gov/documents/1698/HLS_User_Guide_V2.pdf)); the corresponding spectral data should be discarded from analysis.
+
+* Issues over high latitudes: For scenes greater than or equal to 80 degrees north, multiple overpasses can be gridded into a single MGRS tile resulting in an L30 granule with data sensed at two different times. In this same area, it is also possible that Landsat overpasses that should be gridded into a single MGRS tile are actually written as separate data files. Finally, for scenes with a latitude greater than or equal to 65 degrees north, ascending Landsat scenes may have a slightly higher error in the BRDF correction because the algorithm is calibrated using descending scenes.
+
+* Fmask omission errors: There are known issues regarding the Fmask band of this data product that impacts HLSL30 data prior to April of 2022. The HLS Fmask data band may have omission errors in water detection for cases where water detection using spectral data alone is difficult, and omission and commission errors in cloud shadow detection for areas with great topographic relief. This issue does not impact other bands in the dataset.
+
+* Inconsistent snow surface reflectance between Landsat and Sentinel-2: The HLS snow surface reflectance can be highly inconsistent between Landsat and Sentinel-2. When assessed on same-day acquisitions from Landsat and Sentinel-2, Landsat reflectance is generally higher than Sentinel-2 reflectance in the visible bands.
+
+* Unrealistically high snow surface reflectance in the visible bands: By design, the Land Surface Reflectance Code (LaSRC) atmospheric correction does not attempt aerosol retrieval over snow; instead, a default aerosol optical thickness (AOT) is used to drive the snow surface reflectance. If the snow detection fails, the full LaSRC is used in both AOT retrieval and surface reflectance derivation over snow, which produces surface reflectance values as high as 1.6 in the visible bands. This is a common problem for spring images at high latitudes.
+
+* Unrealistically low surface reflectance surrounding snow/ice: Related to the above, the AOT retrieval over snow/ice is generally too high. When this artificially high AOT is used to derive the surface reflectance of the neighboring non-snow pixels, very low surface reflectance will result. These pixels will appear very dark in the visible bands. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. In Figure 1, the pixels in front of the glaciers have surface reflectance values that are too low.  
+
+* Unrealistically low reflectance surrounding clouds: Like for snow, the HLS atmospheric correction does not attempt aerosol retrieval over clouds and a default AOT is used instead. But if the cloud detection fails, an artificially high AOT will be retrieved over clouds. If the high AOT is used to derive the surface reflectance of the neighboring cloud-free pixels, very low surface reflectance values will result. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. 
+
+* Unusually low reflectance around other bright land targets: While the HLS atmospheric correction retrieves AOT over non-cloud, non-snow bright pixels, the retrieved AOT over bright targets can be unrealistically high in some cases, similar to cloud or snow. If this unrealistically high AOT is used to derive the surface reflectance of the neighboring pixels, very low surface reflectance values can result as shown in Figure 2. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. These types of bright targets are mostly man-made, such as buildings, parking lots, and roads.  
+
+* Dark plumes over water: The HLS atmospheric correction does not attempt aerosol retrieval over water. For water pixels, the AOT retrieved from the nearest land pixels is used to derive the surface reflectance, but if the retrieval is incorrect, e.g. from a cloud pixel, this high AOT will create dark stripes over water, as shown in Figure 3. This happens more often over large water bodies, such as lakes and bays, than over narrow rivers.  
+
+* Landsat WRS-2 Path/Row boundary in L30 reflectance: HLS performs atmospheric correction on Landsat Level 1 images in the original Worldwide Reference System 2 (WRS2) path/row before the derived surface reflectance is reprojected into Military Grid Reference System (MGRS) tiles. If a WRS-2 Landsat image is very cloudy, the AOT from a few remaining clear pixels might be used for the atmospheric correction of the entire image. The AOT that is used can be quite different from the value for the adjacent row in the same path, which results in an artificial abrupt change from one row to the next, as shown in Figure 4. This occurrence is very rare.  
+ 
+* Landsat WRS2 path/row boundary in cloud masks: The cloud mask algorithm Fmask creates mask labels by applying thresholds to the histograms of some metrics for each path/row independently. If two adjacent rows in the same path have distinct distributions within the metrics, abrupt changes in masking patterns can appear across the row boundary, as shown in Figure 5. This occurrence is very rare.  
+
+* Fmask configuration was deficient for 2-3 months in 2021: The HLS installation of Fmask failed to include auxiliary digital elevation model (DEM) and European Space Agency (ESA) Global Surface Water Occurrence data for a 2-3 month run in 2021. This impacted the masking results over water and in mountainous regions. 
+
+* The reflectance “scale_factor” and “offset” for some L30 and S30 bands were not set: The HLS reflectance scaling factor is 0.0001 and offset is 0. However, this information was not set in the Cloud Optimized GeoTIFF (COG) files of some bands for a small number of granules. The lack of this information creates a problem for automatic conversion of the reflectance data, requiring explicit scaling in applications. The problem has been corrected, but the affected granules have not been reprocessed. 
+
+* Incomplete map projection information: For a time, HLS imagery was produced with an incomplete coordinate reference system (CRS). The metadata contains the Universal Transverse Mercator (UTM) zone and coordinates necessary to geolocate pixels within the image but might not be in a standard form, especially for granules produced early in the HLS mission. As a result, an error will occur in certain image processing packages due to the incomplete CRS. The simplest solution is to update to the latest version of Geospatial Data Abstraction Library (GDAL) and/or rasterio, which use the available information without error. 
+
+* False northing of 10^7 for the L30 angle data: The L30 and S30 products do not use a false northing for the UTM projection, and the angle data are supposed to follow the same convention. However, the L30 angle data incorrectly uses a false northing of 10^7. There is no problem with the angle data itself, but the false northing needs to be set to 0 for it to be aligned with the reflectance.
+
+* L30 from Landsat L1GT scenes: Landsat L1GT scenes were not intended for HLS due to their poor geolocation. However, some scenes made it through screening for a short period of HLS production. L1GT L30 scenes mainly consist of extensive cloud or snow that can be eliminated using the Fmask quality bits layer. Users can also identify an L1GT-originated L30 granule by examining the HLS cmr.xml metadata file.
+
+* The UTC dates in the L30/S30 filenames may not be the local dates: UTC dates are used by ESA and the U.S. Geological Survey (USGS) in naming their Level 1 images, and HLS processing retains this information to name the L30 and S30 products. Landsat and Sentinel-2 overpass eastern Australia and New Zealand around 10AM local solar time, but this area is in either UTC+10:00 or +11:00 zone; therefore, the UTC time for some orbits is in fact near the end of the preceding UTC day. For example, HLS.S30.T59HQS.2016117T221552.v2.0 was acquired in the 22nd hour of day 117 of year 2016 in UTC, but the time was 10:15:52 of day 118 locally. Approximately 100 minutes later HLS.S30.T56JML.2016117T235252.v2.0 was acquired in the next orbit in eastern Australia.  
+
+     This issue also occurs for Landsat. For example, HLS.L30.T59HQS.2016117T221209.v2.0 was acquired on the same day as the first S30 example given above, but both on day 118 of 2016 locally. Adding to the confusion for L30, in the same region, Landsat 8 and 9 can each overpass once in one of the two adjacent WRS-2 Paths (91/92/93) over a two-day period on a local calendar, but based on UTC time, the two overpasses can appear to be on the same day. For example, in the following seemingly same-day pair, the second L30 is actually for day 168 locally:  
+     HLS.L30.T55GCN.2023167T000407.v2.0  
+     HLS.L30.T55GCN.2023167T235747.v2.0  
+     Bear in mind, the date peculiarity for the data occurs when the overpass time is during the late hours of a UTC day.  
+
+* The atmospheric ancillary data from the wrong date was used for LaSRC: Related to the above, for eastern Australia and New Zealand, L30 and S30 surface reflectance on certain days was created using the atmospheric ancillary data from a date that was one day too early. The exact geographic extent of the affected HLS products and the impact on the surface reflectance quality are under investigation. Practice caution when using data with overpass times during the late hours of a UTC day.
+
+* Duplicates in L30: The Landsat 9 acquisitions from October 2021 to March 2023 in Landsat Collection 2 were reprocessed by USGS in March 2023. This reprocessing updated the overpass time by a fraction of a second for some scenes. Since HLS uses overpass time as part of the L30 filename, the older L30 granules were not automatically overwritten due to the different filenames. For example, the first L30 granule in the following pair originated from an older version of L1TP of Landsat 9 with the second granule originating from the reprocessed version.  
+HLS.L30.T11SLC.2022166T182646.v2.0  
+HLS.L30.T11SLC.2022166T182645.v2.0  
+There are other causes of duplicate L30 granules, but the overall number of duplicates is very small.
+
+* Poor Geolocation: A large amount of granules that were processed for May through July 2023 were created with L1GT input scenes which were deemed undesirable due to a poor geolocation issue. These granules were removed from the archive. (see the full list of removed [granules](https://lpdaac.usgs.gov/documents/2161/L30_L1GT_granules_May_July_2023.csv))
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -1493,13 +1561,13 @@ print("Abstract: ", ds["umm"]["Abstract"])</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
@@ -1531,6 +1599,100 @@ print(json.dumps(compatibility_response, indent=2))</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{
+  "concept_id": "C2021957295-LPCLOUD",
+  "backend": "rasterio",
+  "datetime": [
+    {
+      "RangeDateTimes": [
+        {
+          "BeginningDateTime": "2015-11-28T00:00:00.000Z"
+        }
+      ],
+      "EndsAtPresentFlag": true,
+      "PrecisionOfSeconds": 0,
+      "TemporalResolution": {
+        "Value": 1,
+        "Unit": "Day"
+      }
+    }
+  ],
+  "example_assets": {
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif"
+  },
+  "sample_asset_raster_info": {
+    "bounds": [
+      699960.0,
+      -2909760.0,
+      809760.0,
+      -2799960.0
+    ],
+    "crs": "http://www.opengis.net/def/crs/EPSG/0/32655",
+    "band_metadata": [
+      [
+        "b1",
+        {}
+      ]
+    ],
+    "band_descriptions": [
+      [
+        "b1",
+        "NIR_Broad"
+      ]
+    ],
+    "dtype": "int16",
+    "nodata_type": "Nodata",
+    "colorinterp": [
+      "gray"
+    ],
+    "scales": [
+      0.0001
+    ],
+    "offsets": [
+      0.0
+    ],
+    "driver": "GTiff",
+    "count": 1,
+    "width": 3660,
+    "height": 3660,
+    "overviews": [
+      2,
+      4,
+      8,
+      16
+    ],
+    "nodata_value": -9999.0
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -1554,13 +1716,13 @@ print(json.dumps(compatibility_response, indent=2))</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
@@ -1584,6 +1746,18 @@ IFrame(f"{titiler_endpoint}/api.html", 900, 500)</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<iframe allowfullscreen="" frameborder="0" height="500" src="https://staging.openveda.cloud/api/titiler-cmr/api.html" width="900"></iframe>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -1596,13 +1770,13 @@ IFrame(f"{titiler_endpoint}/api.html", 900, 500)</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
@@ -1678,14 +1852,27 @@ print(r)</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
@@ -1721,6 +1908,98 @@ m</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe allowfullscreen="" mozallowfullscreen="" srcdoc='&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8" /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"&gt;&lt;/script&gt;
+    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/&gt;
+    
+            &lt;meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
+            &lt;style&gt;
+                #map_e24e363851fdbf3c94e4f66f22f9157e {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class="folium-map" id="map_e24e363851fdbf3c94e4f66f22f9157e" &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_e24e363851fdbf3c94e4f66f22f9157e = L.map(
+                "map_e24e363851fdbf3c94e4f66f22f9157e",
+                {
+                    center: [47.590266824611675, -91.03729840730689],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 11,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_49f96d1d9bd0f0baed7ea9fdb5793237 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_49f96d1d9bd0f0baed7ea9fdb5793237.addTo(map_e24e363851fdbf3c94e4f66f22f9157e);
+        
+    
+            var tile_layer_8b3cf327229219576adb19ae2f5a74da = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
+                {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_8b3cf327229219576adb19ae2f5a74da.addTo(map_e24e363851fdbf3c94e4f66f22f9157e);
+        
+&lt;/script&gt;
+&lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -1733,13 +2012,13 @@ m</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
@@ -1837,6 +2116,98 @@ m</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe allowfullscreen="" mozallowfullscreen="" srcdoc='&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8" /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"&gt;&lt;/script&gt;
+    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/&gt;
+    
+            &lt;meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
+            &lt;style&gt;
+                #map_7c2ac9ebd7c8f9b000323e2fa470890d {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class="folium-map" id="map_7c2ac9ebd7c8f9b000323e2fa470890d" &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_7c2ac9ebd7c8f9b000323e2fa470890d = L.map(
+                "map_7c2ac9ebd7c8f9b000323e2fa470890d",
+                {
+                    center: [47.9221313337365, -91.65432884883238],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 12,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_960d58e9b688608dc1a26361d511b75e = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_960d58e9b688608dc1a26361d511b75e.addTo(map_7c2ac9ebd7c8f9b000323e2fa470890d);
+        
+    
+            var tile_layer_762fbc7b675332fe41306aef38a545fd = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
+                {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_762fbc7b675332fe41306aef38a545fd.addTo(map_7c2ac9ebd7c8f9b000323e2fa470890d);
+        
+&lt;/script&gt;
+&lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -1855,7 +2226,7 @@ m</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
@@ -1916,13 +2287,13 @@ m</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
@@ -1984,6 +2355,101 @@ m</div>
 ).json()
 
 print(json.dumps(r, indent=2))</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -91.65432884883238,
+              47.9221313337365
+            ],
+            [
+              -91.65432884883238,
+              47.86503396133904
+            ],
+            [
+              -91.53842043960762,
+              47.86503396133904
+            ],
+            [
+              -91.53842043960762,
+              47.9221313337365
+            ],
+            [
+              -91.65432884883238,
+              47.9221313337365
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "statistics": {
+          "(B05-B04)/(B05+B04)": {
+            "min": -111.0,
+            "max": 1.7976931348623157e+308,
+            "mean": null,
+            "count": 57304.8046875,
+            "sum": null,
+            "std": null,
+            "median": 0.28023598820059,
+            "majority": 0.3333333333333333,
+            "minority": -111.0,
+            "unique": 42086.0,
+            "histogram": [
+              [
+                57796,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2
+              ],
+              [
+                -111.0,
+                1.7976931348623158e+307,
+                3.5953862697246315e+307,
+                5.393079404586948e+307,
+                7.190772539449263e+307,
+                8.988465674311579e+307,
+                1.0786158809173895e+308,
+                1.258385194403621e+308,
+                1.4381545078898526e+308,
+                1.6179238213760842e+308,
+                1.7976931348623157e+308
+              ]
+            ],
+            "valid_percent": 100.0,
+            "masked_pixels": 0.0,
+            "valid_pixels": 57798.0,
+            "percentile_2": 0.001119263773162542,
+            "percentile_98": 0.5649122807017544
+          }
+        }
+      }
+    }
+  ]
+}
+</pre>
 </div>
 </div>
 </div>

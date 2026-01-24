@@ -523,7 +523,7 @@
             
   
   <span class="md-ellipsis">
-    Benchmarking
+    Advanced
   </span>
   
 
@@ -533,7 +533,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Benchmarking
+            Advanced
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1508,7 +1508,7 @@ except Exception:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
@@ -1546,7 +1546,7 @@ print("Abstract:", ds["umm"]["Abstract"])</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Concept-Id:  C1996881146-POCLOUD
-Abstract: A Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface temperature analysis produced as a retrospective dataset (four day latency) and near-real-time dataset (one day latency) at the JPL Physical Oceanography DAAC using wavelets as basis functions in an optimal interpolation approach on a global 0.01 degree grid. The version 4 Multiscale Ultrahigh Resolution (MUR) L4 analysis is based upon nighttime GHRSST L2P skin and subskin SST observations from several instruments including the NASA Advanced Microwave Scanning Radiometer-EOS (AMSR-E), the JAXA Advanced Microwave Scanning Radiometer 2 on GCOM-W1, the Moderate Resolution Imaging Spectroradiometers (MODIS) on the NASA Aqua and Terra platforms, the US Navy microwave WindSat radiometer, the Advanced Very High Resolution Radiometer (AVHRR) on several NOAA satellites, and in situ SST observations from the NOAA iQuam project. The ice concentration data are from the archives at the EUMETSAT Ocean and Sea Ice Satellite Application Facility (OSI SAF) High Latitude Processing Center and are also used for an improved SST parameterization for the high-latitudes.  The dataset also contains additional variables for some granules including a SST anomaly derived from a MUR climatology and the temporal distance to the nearest IR measurement for each pixel.This dataset is funded by the NASA MEaSUREs program ( http://earthdata.nasa.gov/our-community/community-data-system-programs/measures-projects ), and created by a team led by Dr. Toshio M. Chin from JPL. It adheres to the GHRSST Data Processing Specification (GDS) version 2 format specifications. Use the file global metadata "history:" attribute to determine if a granule is near-realtime or retrospective.
+Abstract: A Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface temperature analysis produced as a retrospective dataset (four day latency) and near-real-time dataset (one day latency) at the JPL Physical Oceanography DAAC using wavelets as basis functions in an optimal interpolation approach on a global 0.01 degree grid. The version 4 Multiscale Ultrahigh Resolution (MUR) L4 analysis is based upon nighttime GHRSST L2P skin and subskin SST observations from several instruments including the NASA Advanced Microwave Scanning Radiometer-EOS (AMSR-E), the JAXA Advanced Microwave Scanning Radiometer 2 on GCOM-W1, the Moderate Resolution Imaging Spectroradiometers (MODIS) on the NASA Aqua and Terra platforms, the US Navy microwave WindSat radiometer, the Advanced Very High Resolution Radiometer (AVHRR) on several NOAA satellites, and in situ SST observations from the NOAA iQuam project. The ice concentration data are from the archives at the EUMETSAT Ocean and Sea Ice Satellite Application Facility (OSI SAF) High Latitude Processing Center and are also used for an improved SST parameterization for the high-latitudes.  The dataset also contains additional variables for some granules including the SST anomaly (variable sst_anomaly) derived from a MUR climatology, and the temporal distance in hours to the nearest IR measurement for each pixel (variable dt_1km_data). Variable dt_1km_data first appears in the time series on October 4, 2015,  while sst_anomaly starts July 23, 2019.  This dataset was originally funded by the NASA MEaSUREs program (http://earthdata.nasa.gov/our-community/community-data-system-programs/measures-projects), and created by a team led by Dr. Toshio M. Chin from JPL. It adheres to the GHRSST Data Processing Specification (GDS) version 2 format specifications. Use the file global metadata "history:" attribute to determine if a granule is near-realtime or retrospective.
 </pre>
 </div>
 </div>
@@ -1825,11 +1825,23 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Compatibility Check ===
-Client: 12 physical / 12 logical cores | RAM: 24.00 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
 Dataset: C2723754864-GES_DISC (xarray)
-Found 1 timesteps/granules from TileJSON
-Using random bounds for compatibility check: [54.53787500640737, -63.93123274530238, 135.0363221963998, -23.68200915030617]
-Statistics returned 1 timesteps
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Found 1 timesteps/granules from TileJSON
+Using random bounds for compatibility check: [-141.57304321925167, -59.587113009317974, -61.07459602925925, -19.33788941432176]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Statistics returned 1 timesteps
 Compatibility: compatible
 </pre>
 </div>
@@ -1882,14 +1894,14 @@ Compatibility: compatible
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Statistics preview:
-                       timestamp  min        max     mean         count  \
-0  2024-10-12T00:00:00.000000000  0.0  40.779999  2.35053  324133.21875   
+                       timestamp  min         max      mean         count  \
+0  2024-10-12T00:00:00.000000000  0.0  206.704987  1.824664  324133.21875   
 
-        sum       std  median  majority  minority   unique  valid_percent  \
-0  761885.0  3.993006    0.27       0.0     0.075  15281.0          100.0   
+           sum       std  median  majority  minority   unique  valid_percent  \
+0  591434.3125  7.280604    0.08       0.0     0.075  14331.0          100.0   
 
    masked_pixels  valid_pixels  percentile_2  percentile_98  
-0            0.0      325624.0           0.0      15.189999  
+0            0.0      324818.0           0.0      12.075001  
 </pre>
 </div>
 </div>
@@ -1971,11 +1983,23 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Compatibility Check ===
-Client: 12 physical / 12 logical cores | RAM: 24.00 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
-Found 1 timesteps/granules from TileJSON
-Using random bounds for compatibility check: [87.77920359643309, 15.481429969298983, 168.2776507864255, 55.730653564295196]
-~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Found 1 timesteps/granules from TileJSON
+Using random bounds for compatibility check: [23.07594296277076, 37.02887982671798, 103.57439015276319, 77.27810342171419]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://staging.openveda.cloud/api/titiler-cmr/timeseries/statistics?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2024-07-01T00%3A00%3A00Z%2F2024-07-10T23%3A59%3A59Z&amp;bands=B04&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point
 Error: 400 Bad Request
 Body: {"detail":"The AOI for this request is too large for the /statistics endpoint for this dataset. Try again with either a smaller AOI"}
@@ -2051,10 +2075,16 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Compatibility Check ===
-Client: 12 physical / 12 logical cores | RAM: 24.00 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
 Found 1 timesteps/granules from TileJSON
-Statistics returned 0 timesteps
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Statistics returned 0 timesteps
 Compatibility: compatible
 </pre>
 </div>
@@ -2119,11 +2149,23 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Compatibility Check ===
-Client: 12 physical / 12 logical cores | RAM: 24.00 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
-Found 1 timesteps/granules from TileJSON
-Using random bounds for compatibility check: [75.61319226787242, -81.66673075692103, 76.75161222553305, -81.09752077809071]
-Statistics returned 0 timesteps
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Found 1 timesteps/granules from TileJSON
+Using random bounds for compatibility check: [141.2770597625355, 13.305375664269494, 142.41547972019612, 13.874585643099802]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Statistics returned 0 timesteps
 Compatibility: compatible
 </pre>
 </div>
