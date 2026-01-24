@@ -7,20 +7,38 @@ Code from titiler.pgstac, MIT License.
 import logging
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+)
 
 import earthaccess
 from geojson_pydantic import Feature, FeatureCollection
 from isodate import parse_datetime as _parse_datetime
-from rasterio.crs import CRS
 from rasterio.features import bounds
 from rasterio.warp import transform_bounds
-from rio_tiler.constants import WGS84_CRS
 from urllib3.response import HTTPException
 
 from titiler.cmr.errors import InvalidDatetime
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    # During development, enable proper type checking and code completion for
+    # CRS and WGS84_CRS.
+    from pyproj import CRS
+
+    WGS84_CRS = CRS.from_epsg(4326)
+else:
+    from rasterio.crs import CRS
+    from rio_tiler.constants import WGS84_CRS
 
 
 def retry(
@@ -121,14 +139,60 @@ def get_resolution_degrees(concept_id: str) -> Tuple[Optional[float], Optional[f
 
 
 def get_bbox_degrees(
-    minx: float, miny: float, maxx: float, maxy: float, coord_crs: CRS
-) -> Tuple[float, float, float, float]:
-    """Get bounding box coordinates in WGS84 decimal degrees"""
-    coord_crs = coord_crs or WGS84_CRS
-    if coord_crs != WGS84_CRS:
-        minx, miny, miny, maxy = transform_bounds(
-            coord_crs, WGS84_CRS, minx, miny, maxx, maxy
-        )
+    minx: float,
+    miny: float,
+    maxx: float,
+    maxy: float,
+    coord_crs: CRS | None = WGS84_CRS,
+) -> tuple[float, float, float, float]:
+    """Convert bounding box coordinates to WGS84 decimal degrees.
+
+    If ``coord_crs`` is `None` or `WGS84_CRS`, the input coordinates are
+    returned unchanged.  In the case of `None`, it is assumed that the inputs
+    are already in WGS84 coordinates; no validation is performed.
+
+    Parameters
+    ----------
+    minx
+        Minimum X coordinate of the input bounding box.
+    miny
+        Minimum Y coordinate of the input bounding box.
+    maxx
+        Maximum X coordinate of the input bounding box.
+    maxy
+        Maximum Y coordinate of the input bounding box.
+    coord_crs
+        Coordinate reference system of the input bounding box. If ``None`` or
+        equal to WGS84, no transformation is applied.
+
+    Returns
+    -------
+    tuple[float, float, float, float]
+        Bounding box coordinates expressed in WGS84 degrees as
+        `(minx, miny, maxx, maxy)`.
+
+    Examples
+    --------
+    Specifying no CRS or specifying WGS84 simply results in the same bounding
+    box as given:
+
+    >>> import pyproj
+    >>> WGS84_CRS = pyproj.CRS.from_epsg(4326)
+    >>> get_bbox_degrees(-180, -90, 180, 90)
+    (-180, -90, 180, 90)
+    >>> get_bbox_degrees(-180, -90, 180, 90, WGS84_CRS)
+    (-180, -90, 180, 90)
+
+    Specifying a CRS other than WGS84 results in an appropriately transformed
+    bounding box:
+
+    >>> WEB_MERCATOR_CRS = pyproj.CRS.from_epsg(3857)
+    >>> valencia_wm_bbox = (-55_660, 4_777_695, -27_830, 4_800_765)
+    >>> get_bbox_degrees(*valencia_wm_bbox, WEB_MERCATOR_CRS)
+    (-0.50, 39.39, -0.25, 39.55)
+    """
+    if coord_crs is not None and coord_crs != WGS84_CRS:
+        return transform_bounds(coord_crs, WGS84_CRS, minx, miny, maxx, maxy)
 
     return minx, miny, maxx, maxy
 

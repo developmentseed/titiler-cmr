@@ -1,0 +1,13 @@
+# This file is used only when the sibling Dockerfile is used during local
+# development.  Since this file has the same prefix as the sibling Dockerfile,
+# it is used as the file indicating what to ignore (or not ignore), and the
+# .dockerignore file is not used by direct docker commands.  It is used only
+# by the CDK CLI, which recognized *only* the file named .dockerignore at the
+# root of the context.
+*
+!titiler/
+!LICENSE
+!pyproject.toml
+!README.md
+!uv.lock
+**/__pycache__

@@ -3,6 +3,7 @@
 import threading
 import typing as t
 from collections.abc import Callable
+from contextlib import asynccontextmanager
 
 import cachetools
 import earthaccess
@@ -11,6 +12,9 @@ import requests
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
+from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
+from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
+from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.backend import AWSCredentials
@@ -20,9 +24,6 @@ from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.settings import ApiSettings, AuthSettings
 from titiler.cmr.timeseries import TimeseriesExtension
 from titiler.cmr.utils import retry
-from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
-from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
-from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 
 # Configure logging at application startup
 configure_logging()
@@ -30,7 +31,7 @@ configure_logging()
 jinja2_env = jinja2.Environment(
     loader=jinja2.ChoiceLoader(
         [
-            jinja2.PackageLoader(__package__, "templates"),  # type: ignore
+            jinja2.PackageLoader("titiler.cmr"),
             jinja2.PackageLoader("titiler.core"),
         ]
     ),
@@ -39,6 +40,31 @@ templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 auth_config = AuthSettings()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI Lifespan."""
+
+    startup(app)
+    yield
+    shutdown(app)
+
+
+def startup(app: FastAPI) -> None:
+    """Perform application startup."""
+
+    auth = earthaccess.login(strategy="environment")
+
+    app.state.auth = auth
+    app.state.get_s3_credentials = (
+        make_get_s3_credentials(auth) if auth_config.access == "direct" else None
+    )
+
+
+def shutdown(app: FastAPI) -> None:
+    """Perform application shutdown."""
+    logger.info("Shutting down")
 
 
 def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
@@ -164,8 +190,12 @@ app = FastAPI(
     description=description,
     version=titiler_cmr_version,
     root_path=settings.root_path,
+    lifespan=lifespan,
     openapi_tags=tags_metadata,
 )
+
+app.state.auth = None
+app.state.get_s3_credentials = None
 
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 add_exception_handlers(app, MOSAIC_STATUS_CODES)
@@ -194,8 +224,3 @@ endpoints = Endpoints(
     enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(endpoints.router)
-
-app.state.auth = (auth := earthaccess.login(strategy="environment"))
-app.state.get_s3_credentials = (
-    make_get_s3_credentials(auth) if auth_config.access == "direct" else None
-)

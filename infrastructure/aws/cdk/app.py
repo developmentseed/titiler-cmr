@@ -1,9 +1,18 @@
 """Construct App."""
 
 import os
-from typing import Any, List, Optional
+from typing import Any
 
-from aws_cdk import App, CfnOutput, Duration, Stack, Tags, aws_lambda, Aspects
+from aws_cdk import (
+    App,
+    Aspects,
+    CfnOutput,
+    Duration,
+    IgnoreMode,
+    Stack,
+    Tags,
+    aws_lambda,
+)
 from aws_cdk import aws_apigatewayv2 as apigw
 from aws_cdk import aws_cloudwatch as cloudwatch
 from aws_cdk import aws_cloudwatch_actions as cloudwatch_actions
@@ -13,11 +22,15 @@ from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as subscriptions
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from aws_cdk.aws_ecr_assets import Platform
-from config import AppSettings, StackSettings
 from constructs import Construct
-from permissions_boundary.construct import PermissionsBoundaryAspect
 
-stack_settings, app_settings = StackSettings(), AppSettings()
+from .config import AppSettings, StackSettings
+from .permissions_boundary.construct import PermissionsBoundaryAspect
+
+stack_settings, app_settings = (
+    StackSettings(),
+    AppSettings(),
+)
 
 DEFAULT_ENV = {
     "AWS_LAMBDA_LOG_FORMAT": "JSON",
@@ -41,11 +54,8 @@ class LambdaStack(Stack):
         self,
         scope: Construct,
         id: str,
-        memory: int = 1024,
-        timeout: int = 30,
-        concurrent: Optional[int] = None,
-        permissions: Optional[List[iam.PolicyStatement]] = None,
-        role_arn: Optional[str] = None,
+        app_settings: AppSettings,
+        stack_settings: StackSettings,
         context_dir: str = "../../",
         **kwargs: Any,
     ) -> None:
@@ -61,27 +71,39 @@ class LambdaStack(Stack):
             iam.PermissionsBoundary.of(self).apply(permissions_boundary_policy)
             Aspects.of(self).add(PermissionsBoundaryAspect(permissions_boundary_policy))
 
-        permissions = permissions or []
-
         iam_reader_role = None
-        if role_arn:
+        if app_settings.role_arn:
             iam_reader_role = iam.Role.from_role_arn(
                 self,
                 "veda-reader-dev-role",
-                role_arn=role_arn,
+                role_arn=app_settings.role_arn,
             )
 
         lambda_env = {
             **DEFAULT_ENV,
             "TITILER_CMR_ROOT_PATH": app_settings.root_path,
             "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
-            "TITILER_CMR_TELEMETRY_ENABLED": "TRUE",
-            "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": "aws-lambda,requests,urllib3,aiohttp-client",  # Disable aws-lambda auto-instrumentation (handled by otel_wrapper.py)
-            "OTEL_PROPAGATORS": "tracecontext,baggage,xray",
-            "OPENTELEMETRY_COLLECTOR_CONFIG_URI": "/opt/collector-config/config.yaml",
-            # AWS_LAMBDA_LOG_FORMAT not set - using custom JSON formatter in handler.py
-            "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",  # Enable OTEL wrapper to avoid circular import
         }
+
+        if app_settings.telemetry_enabled:
+            lambda_env.update(
+                {
+                    "TITILER_CMR_TELEMETRY_ENABLED": "TRUE",
+                    "OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": "aws-lambda,requests,urllib3,aiohttp-client",  # Disable aws-lambda auto-instrumentation (handled by otel_wrapper.py)
+                    "OTEL_PROPAGATORS": "tracecontext,baggage,xray",
+                    "OPENTELEMETRY_COLLECTOR_CONFIG_URI": "/opt/collector-config/config.yaml",
+                    # AWS_LAMBDA_LOG_FORMAT not set - using custom JSON formatter in handler.py
+                    "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",  # Enable OTEL wrapper to avoid circular import
+                }
+            )
+
+        if app_settings.s3_auth_strategy == "environment":
+            lambda_env.update(
+                {
+                    "EARTHDATA_USERNAME": app_settings.earthdata_username,
+                    "EARTHDATA_PASSWORD": app_settings.earthdata_password,
+                }
+            )
 
         if app_settings.aws_request_payer:
             lambda_env["AWS_REQUEST_PAYER"] = app_settings.aws_request_payer
@@ -93,18 +115,29 @@ class LambdaStack(Stack):
                 directory=os.path.abspath(context_dir),
                 file="infrastructure/aws/lambda/Dockerfile",
                 platform=Platform.LINUX_AMD64,
+                ignore_mode=IgnoreMode.DOCKER,
             ),
-            memory_size=memory,
-            reserved_concurrent_executions=concurrent,
-            timeout=Duration.seconds(timeout),
+            memory_size=app_settings.memory,
+            reserved_concurrent_executions=app_settings.max_concurrent,
+            timeout=Duration.seconds(app_settings.timeout),
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             role=iam_reader_role,
-            tracing=aws_lambda.Tracing.ACTIVE,
+            tracing=(
+                aws_lambda.Tracing.ACTIVE
+                if app_settings.telemetry_enabled
+                else aws_lambda.Tracing.DISABLED
+            ),
         )
 
-        for perm in permissions:
-            lambda_function.add_to_role_policy(perm)
+        if app_settings.buckets:
+            for bucket in app_settings.buckets:
+                lambda_function.add_to_role_policy(
+                    iam.PolicyStatement(
+                        actions=["s3:GetObject"],
+                        resources=[f"arn:aws:s3:::{bucket}*"],
+                    )
+                )
 
         api = apigw.HttpApi(
             self,
@@ -161,23 +194,11 @@ if stack_settings.bootstrap_qualifier:
         "@aws-cdk/core:bootstrapQualifier", stack_settings.bootstrap_qualifier
     )
 
-perms = []
-if app_settings.buckets:
-    perms.append(
-        iam.PolicyStatement(
-            actions=["s3:GetObject"],
-            resources=[f"arn:aws:s3:::{bucket}*" for bucket in app_settings.buckets],
-        )
-    )
-
 lambda_stack = LambdaStack(
     app,
     f"{app_settings.name}-{stack_settings.stage}",
-    memory=app_settings.memory,
-    timeout=app_settings.timeout,
-    concurrent=app_settings.max_concurrent,
-    role_arn=app_settings.role_arn,
-    permissions=perms,
+    app_settings=app_settings,
+    stack_settings=stack_settings,
 )
 # Tag infrastructure
 for key, value in {
