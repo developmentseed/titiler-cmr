@@ -58,9 +58,17 @@ uv run mkdocs serve -o
 
 ### Previewing documentation changes
 
-You can also deploy a specific branch to the documentation site for previewing the documentation live using Github's workflow dispatch. This will create a new version of the documentation that you should to delete when you are done:
+To preview documentation changes on a specific branch, you can deploy a specific branch to the documentation site using Github Actions workflow dispatch. This will create a new "version" of the documentation which is discoverable in the documentation drop down.
 
-  uv run mike delete feat-reorg-documentation --push
+![Docs Dropdown](./docs/assets/docs-dropdown.png)
+
+This "version" of the documentation is really just a new directory of the documentation in the gh-pages branch of this repository. 
+
+Remember to delete that branch when you are done:
+
+```
+uv run mike delete feat-reorg-documentation --push
+```
 
 This will:
 1. Delete the feat-reorg-documentation version from the documentation
