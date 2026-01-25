@@ -58,7 +58,7 @@ uv run mkdocs serve -o
 
 ### Previewing documentation changes
 
-To preview documentation changes on a specific branch, you can deploy a specific branch to the documentation site using Github Actions workflow dispatch. This will create a new "version" of the documentation which is discoverable in the documentation drop down.
+To preview documentation changes on a specific branch, you can deploy a specific branch to the documentation site using Github Actions workflow dispatch. This will create a new "version" of the documentation which is discoverable in the documentation drop down:
 
 <img alt="Docs Dropdown" src="./docs/assets/docs-dropdown.png" style="width: 350px"/>
 
