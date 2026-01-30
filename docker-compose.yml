@@ -24,7 +24,7 @@ services:
       - PORT=8081
       - WEB_CONCURRENCY=1
       - TITILER_CMR_DEBUG=TRUE
-      - TITILER_CMR_S3_AUTH_STRATEGY=iam
+      - TITILER_CMR_S3_AUTH_STRATEGY=netrc
       - TITILER_CMR_S3_AUTH_ACCESS=external
       # GDAL Config
       # This option controls the default GDAL raster block cache size.
