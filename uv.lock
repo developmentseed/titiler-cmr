@@ -1044,7 +1044,7 @@ wheels = [
 
 [[package]]
 name = "earthaccess"
-version = "0.15.1"
+version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fsspec" },
@@ -1058,9 +1058,9 @@ dependencies = [
     { name = "tinynetrc" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/51/de/35432b8d2935a16b9840bde85b6572c85aaec4a23cdec4c43110cda77b0a/earthaccess-0.15.1.tar.gz", hash = "sha256:67ad29f7c8d54eb17ae92972e00d95f4bb2d78f6cadb770727384efc324f1fc5", size = 7285812, upload-time = "2025-09-16T21:26:41.589Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/2b/c8f47a23fecdcd873209d18c30b3bd11509e1b4dba29af8a52325b256f64/earthaccess-0.16.0.tar.gz", hash = "sha256:e19337682c205b807c52edd691b9ca43bfbd6250acb044c30af1e925fa469a1a", size = 7288951, upload-time = "2026-01-30T20:04:59.909Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c8/f4/1eacb58cf0b417c0049b22f69cd58e6f1de389ccc1457ad9feb146fde169/earthaccess-0.15.1-py3-none-any.whl", hash = "sha256:8b5d8cabdfa14aeaca7a66561bafa85f63c0d6f0f1ebc42f7e60474c6df2ad9e", size = 70466, upload-time = "2025-09-16T21:26:39.333Z" },
+    { url = "https://files.pythonhosted.org/packages/70/13/5193c501614cae2cb241f3efd82b711e562ba562435a4930ea8213db86d4/earthaccess-0.16.0-py3-none-any.whl", hash = "sha256:a8fd36fc0516898dbf87ac6fffaff5a9a5a2357aae24508d1622c35e130b9e52", size = 71249, upload-time = "2026-01-30T20:04:57.225Z" },
 ]
 
 [[package]]
@@ -3935,7 +3935,7 @@ requires-dist = [
     { name = "boto3", specifier = ">=1.39.0" },
     { name = "cachetools", specifier = ">=6.0.0" },
     { name = "cftime", specifier = "~=1.6.4" },
-    { name = "earthaccess", specifier = "~=0.15.0" },
+    { name = "earthaccess", specifier = "~=0.16.0" },
     { name = "geojson-pydantic", specifier = ">=2.0.0,<3.0" },
     { name = "h5netcdf", specifier = "~=1.1.0" },
     { name = "httpx", specifier = ">=0.27.2" },
