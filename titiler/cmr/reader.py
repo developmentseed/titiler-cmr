@@ -5,12 +5,16 @@ Originaly from titiler-xarray
 
 import os
 import pickle
-from typing import Any, Dict, Optional, Type
+from collections.abc import Callable
+from functools import wraps
+from typing import Any, Dict, Optional, cast
 from urllib.parse import urlparse
 
 import attr
 import earthaccess
 import fsspec
+import rasterio
+import rasterio.env
 import s3fs
 import xarray
 from cachetools import TTLCache
@@ -167,11 +171,11 @@ def xarray_open_dataset(
 class MultiFilesBandsReader(MultiBandReader):
     """Multiple Files as Bands."""
 
-    input: Dict[str, str] = attr.ib()
+    input: dict[str, str] = attr.ib()
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
 
-    reader_options: Dict = attr.ib(factory=dict)
-    reader: Type[BaseReader] = attr.ib(default=Reader)
+    reader_options: dict[str, Any] = attr.ib(factory=dict)
+    reader: type[BaseReader] = attr.ib(default=Reader)
 
     minzoom: int = attr.ib()
     maxzoom: int = attr.ib()
@@ -189,15 +193,8 @@ class MultiFilesBandsReader(MultiBandReader):
         self.bands = list(self.input)
         self.bounds = (-180.0, -90, 180.0, 90)
         self.crs = WGS84_CRS
-        # with self.reader(
-        #     self.input[0],
-        #     tms=self.tms,
-        #     **self.reader_options,
-        # ) as cog:
-        #     self.bounds = cog.bounds
-        #     self.crs = cog.crs
-        #     self.minzoom = cog.minzoom
-        #     self.maxzoom = cog.maxzoom
+
+        self.reader = make_env_inheriting_reader(self.reader)
 
     def _get_band_url(self, band: str) -> str:
         """Validate band's name and return band's url."""
@@ -205,3 +202,71 @@ class MultiFilesBandsReader(MultiBandReader):
             raise InvalidBandName(f"{band} is not valid")
 
         return self.input[band]
+
+
+def make_env_inheriting_reader[R: BaseReader](reader_type: type[R]) -> type[R]:
+    """Decorate a BaseReader type to inherit the current rasterio environment.
+
+    Decorates the specified type's initialization method (`__init__`) such that
+    it executes within a rasterio environment that is configured identically to
+    the rasterio environment that is active at the time this function is
+    invoked.
+
+    This allows initialization to occur in another thread, but within the
+    context of a rasterio environment configured the same as the current
+    environment (which may be in a different thread).
+
+    Parameters
+    ----------
+    reader_type
+        The base reader class to decorate.
+
+    Returns
+    -------
+    type[R]
+        A new reader class that inherits the current (at the time of invoking
+        this function) rasterio environment during initialization of instances
+        of the class.
+    """
+    EnvInheritingReader = type(
+        "EnvInheritingReader",
+        (reader_type,),
+        {"__init__": inherit_rasterio_env(reader_type.__init__)},
+    )
+
+    return cast(type[R], EnvInheritingReader)
+
+
+def inherit_rasterio_env[**P, R](f: Callable[P, R]) -> Callable[P, R]:
+    """Wrap a function to run in a rasterio environment like the current one.
+
+    This function differs from the function
+    `rasterio.env.ensure_env_with_credentials` in that this function copies the
+    rasterio environment active at the time this function is invoked, rather
+    than at the time the returned function is invoked. This enables replicating
+    the environment from one thread (the one active at the time this function is
+    invoked) to another thread (the one active at the time the returned function
+    is invoked).
+
+    Parameters
+    ----------
+    f
+        The function to wrap.
+
+    Returns
+    -------
+    Callable[P, R]
+        A function that executes within a rasterio environment configured
+        identically to the currently active environment, or the original
+        function if no rasterio environment is currently active.
+    """
+    if (env := rasterio.env.getenv() if rasterio.env.hasenv() else None) is None:
+        return f
+
+    @wraps(f)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        with rasterio.Env():
+            rasterio.env.setenv(**env)
+            return f(*args, **kwargs)
+
+    return wrapper
