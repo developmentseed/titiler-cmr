@@ -1,19 +1,4 @@
-# check=skip=JSONArgsRecommended
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
-
-ARG EARTHDATA_USERNAME
-ARG EARTHDATA_PASSWORD
-
-# Check if EARTHDATA_USERNAME and EARTHDATA_PASSWORD are provided
-RUN <<'EOF'
-if [ -z "$EARTHDATA_USERNAME" ] || [ -z "$EARTHDATA_PASSWORD" ]; then
-  echo "Error: EARTHDATA_USERNAME and EARTHDATA_PASSWORD build args must be provided"
-  exit 1
-fi
-
-echo "machine urs.earthdata.nasa.gov login ${EARTHDATA_USERNAME} password ${EARTHDATA_PASSWORD}" > ~/.netrc
-unset EARTHDATA_USERNAME EARTHDATA_PASSWORD
-EOF
 
 RUN <<'EOF'
 apt-get update
@@ -24,11 +9,16 @@ EOF
 WORKDIR /app
 
 COPY pyproject.toml uv.lock README.md LICENSE ./
+RUN uv sync --no-dev --frozen --extra uvicorn
+
 COPY titiler ./titiler
 
-RUN uv sync --no-dev --frozen --extra uvicorn
+RUN \
+  --mount=type=secret,id=earthdata-username,required,env=EARTHDATA_USERNAME \
+  --mount=type=secret,id=earthdata-password,required,env=EARTHDATA_PASSWORD \
+  echo "machine urs.earthdata.nasa.gov login ${EARTHDATA_USERNAME} password ${EARTHDATA_PASSWORD}" > ~/.netrc
 
 # http://www.uvicorn.org/settings/
 ENV HOST=0.0.0.0
 ENV PORT=80
-CMD uv run --no-dev uvicorn titiler.cmr.main:app --host ${HOST} --port ${PORT} --log-level debug --reload
+CMD ["/bin/sh", "-c", "uv run --no-dev uvicorn titiler.cmr.main:app --host ${HOST} --port ${PORT} --log-level debug --reload"]
