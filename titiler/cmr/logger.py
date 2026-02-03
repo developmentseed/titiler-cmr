@@ -20,18 +20,24 @@ class JSONFormatter(logging.Formatter):
             ).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             "level": record.levelname,
             "logger": record.name,
+            "threadName": record.threadName,
             "message": record.getMessage(),
             "filename": record.filename,
             "lineno": record.lineno,
         }
 
+        if record.exc_info:
+            log_entry["exception"] = self.formatException(record.exc_info)
+
         # Add any extra fields passed via the extra parameter
         if hasattr(record, "__dict__"):
             for key, value in record.__dict__.items():
-                if key not in log_entry and not key.startswith("_"):
-                    # Only add if it's not a standard logging attribute
-                    if not hasattr(logging.LogRecord("", 0, "", 0, "", (), None), key):
-                        log_entry[key] = value
+                if (
+                    key not in log_entry
+                    and not key.startswith("_")
+                    and not hasattr(logging.LogRecord("", 0, "", 0, "", (), None), key)
+                ):
+                    log_entry[key] = value
 
         if record.exc_info:
             log_entry["exception"] = self.formatException(record.exc_info)

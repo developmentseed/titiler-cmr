@@ -54,7 +54,7 @@ async def lifespan(app: FastAPI):
 def startup(app: FastAPI) -> None:
     """Perform application startup."""
 
-    auth = earthaccess.login(strategy="environment")
+    auth = earthaccess.login(strategy=auth_config.strategy)
 
     app.state.auth = auth
     app.state.get_s3_credentials = (

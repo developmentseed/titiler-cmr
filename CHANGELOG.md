@@ -11,11 +11,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add Earthdata Login based S3 access, except for the rasterio backend, to be
   addressed separately.
   ([#112](https://github.com/developmentseed/titiler-cmr/pull/112))
-- Update deployment application to add EARTHDATA_USERNAME and EARTHDATA_PASSWORD to Lambda environment ([#120](https://github.com/developmentseed/titiler-cmr/pull/120))
+- Update deployment application to add EARTHDATA_USERNAME and EARTHDATA_PASSWORD
+  to Lambda environment
+  ([#120](https://github.com/developmentseed/titiler-cmr/pull/120))
 
 ### Fixed
 
-- Fixed the missing parameter error message "`indexes` must be provided if not providing `bands_regex` and `bands`". The [alias](https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alias-parameters) for the `indexes` parameter is `bidx`, so the `bidx` parameter is what is missing from the parameter string. ([#101](https://github.com/developmentseed/titiler-cmr/pull/101))
+- Fix the missing parameter error message "`indexes` must be provided if not
+  providing `bands_regex` and `bands`". The
+  [alias](https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alias-parameters)
+  for the `indexes` parameter is `bidx`, so the `bidx` parameter is what is
+  missing from the parameter string.
+  ([#101](https://github.com/developmentseed/titiler-cmr/pull/101))
+- Fix rasterio/GDAL environment inheritence when using multithreaded reads
+  ([#91](https://github.com/developmentseed/titiler-cmr/issues/91))
 
 ## [v0.3.0]
 
