@@ -1249,11 +1249,20 @@
 <li>Add Earthdata Login based S3 access, except for the rasterio backend, to be
   addressed separately.
   (<a href="https://github.com/developmentseed/titiler-cmr/pull/112">#112</a>)</li>
-<li>Update deployment application to add EARTHDATA_USERNAME and EARTHDATA_PASSWORD to Lambda environment (<a href="https://github.com/developmentseed/titiler-cmr/pull/120">#120</a>)</li>
+<li>Update deployment application to add EARTHDATA_USERNAME and EARTHDATA_PASSWORD
+  to Lambda environment
+  (<a href="https://github.com/developmentseed/titiler-cmr/pull/120">#120</a>)</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Fixed the missing parameter error message "<code>indexes</code> must be provided if not providing <code>bands_regex</code> and <code>bands</code>". The <a href="https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alias-parameters">alias</a> for the <code>indexes</code> parameter is <code>bidx</code>, so the <code>bidx</code> parameter is what is missing from the parameter string. (<a href="https://github.com/developmentseed/titiler-cmr/pull/101">#101</a>)</li>
+<li>Fix the missing parameter error message "<code>indexes</code> must be provided if not
+  providing <code>bands_regex</code> and <code>bands</code>". The
+  <a href="https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alias-parameters">alias</a>
+  for the <code>indexes</code> parameter is <code>bidx</code>, so the <code>bidx</code> parameter is what is
+  missing from the parameter string.
+  (<a href="https://github.com/developmentseed/titiler-cmr/pull/101">#101</a>)</li>
+<li>Fix rasterio/GDAL environment inheritence when using multithreaded reads
+  (<a href="https://github.com/developmentseed/titiler-cmr/issues/91">#91</a>)</li>
 </ul>
 <h2 id="v030"><a href="https://github.com/developmentseed/titiler-cmr/compare/v0.2.0..v0.3.0">v0.3.0</a><a class="headerlink" href="#v030" title="Permanent link">&para;</a></h2>
 <h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
