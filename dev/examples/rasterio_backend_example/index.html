@@ -1564,7 +1564,86 @@ print(json.dumps(compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "detail": "AioSession.__init__() got an unexpected keyword argument 'accessKeyId'"
+  "concept_id": "C2021957295-LPCLOUD",
+  "backend": "rasterio",
+  "datetime": [
+    {
+      "RangeDateTimes": [
+        {
+          "BeginningDateTime": "2015-11-28T00:00:00.000Z"
+        }
+      ],
+      "EndsAtPresentFlag": true,
+      "PrecisionOfSeconds": 0,
+      "TemporalResolution": {
+        "Value": 1,
+        "Unit": "Day"
+      }
+    }
+  ],
+  "example_assets": {
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif",
+    "HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif"
+  },
+  "sample_asset_raster_info": {
+    "bounds": [
+      699960.0,
+      -2909760.0,
+      809760.0,
+      -2799960.0
+    ],
+    "crs": "http://www.opengis.net/def/crs/EPSG/0/32655",
+    "band_metadata": [
+      [
+        "b1",
+        {}
+      ]
+    ],
+    "band_descriptions": [
+      [
+        "b1",
+        "NIR_Broad"
+      ]
+    ],
+    "dtype": "int16",
+    "nodata_type": "Nodata",
+    "colorinterp": [
+      "gray"
+    ],
+    "scales": [
+      0.0001
+    ],
+    "offsets": [
+      0.0
+    ],
+    "driver": "GTiff",
+    "count": 1,
+    "width": 3660,
+    "height": 3660,
+    "overviews": [
+      2,
+      4,
+      8,
+      16
+    ],
+    "nodata_value": -9999.0
+  }
 }
 </pre>
 </div>
@@ -1914,7 +1993,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_1a1db40d70e58403fff759a89670e3ba {
+                #map_6e3f24d99c77e4f4538bab6a0858798f {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -1928,14 +2007,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_1a1db40d70e58403fff759a89670e3ba" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_6e3f24d99c77e4f4538bab6a0858798f" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_1a1db40d70e58403fff759a89670e3ba = L.map(
-                "map_1a1db40d70e58403fff759a89670e3ba",
+            var map_6e3f24d99c77e4f4538bab6a0858798f = L.map(
+                "map_6e3f24d99c77e4f4538bab6a0858798f",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -1949,22 +2028,22 @@ m</div>
 
         
     
-            var tile_layer_810f2b2e7fa5048a507a4159fd94d451 = L.tileLayer(
+            var tile_layer_3edec794b9683f4f464faf5969fd609c = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_810f2b2e7fa5048a507a4159fd94d451.addTo(map_1a1db40d70e58403fff759a89670e3ba);
+            tile_layer_3edec794b9683f4f464faf5969fd609c.addTo(map_6e3f24d99c77e4f4538bab6a0858798f);
         
     
-            var tile_layer_c8a11762d85b02c3ea8a40874a7292bc = L.tileLayer(
+            var tile_layer_e07e61aa1bae0b72734deb0050dfe79e = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_c8a11762d85b02c3ea8a40874a7292bc.addTo(map_1a1db40d70e58403fff759a89670e3ba);
+            tile_layer_e07e61aa1bae0b72734deb0050dfe79e.addTo(map_6e3f24d99c77e4f4538bab6a0858798f);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2122,7 +2201,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_d54e802cc22dfbe817ea6725da9204ee {
+                #map_2a13d347ed099741bc0580526069f535 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2136,14 +2215,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_d54e802cc22dfbe817ea6725da9204ee" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_2a13d347ed099741bc0580526069f535" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_d54e802cc22dfbe817ea6725da9204ee = L.map(
-                "map_d54e802cc22dfbe817ea6725da9204ee",
+            var map_2a13d347ed099741bc0580526069f535 = L.map(
+                "map_2a13d347ed099741bc0580526069f535",
                 {
                     center: [47.9221313337365, -91.65432884883238],
                     crs: L.CRS.EPSG3857,
@@ -2157,22 +2236,22 @@ m</div>
 
         
     
-            var tile_layer_64e9128364df33d4033a686b7b4e3dd0 = L.tileLayer(
+            var tile_layer_2faa28d8e347ba8f0cc1b2933cd7b038 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_64e9128364df33d4033a686b7b4e3dd0.addTo(map_d54e802cc22dfbe817ea6725da9204ee);
+            tile_layer_2faa28d8e347ba8f0cc1b2933cd7b038.addTo(map_2a13d347ed099741bc0580526069f535);
         
     
-            var tile_layer_755494ac360bc8a338967a570f186e0a = L.tileLayer(
+            var tile_layer_3a31833160bc0668cec5e7511b86063d = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_755494ac360bc8a338967a570f186e0a.addTo(map_d54e802cc22dfbe817ea6725da9204ee);
+            tile_layer_3a31833160bc0668cec5e7511b86063d.addTo(map_2a13d347ed099741bc0580526069f535);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
