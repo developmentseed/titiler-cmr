@@ -32,6 +32,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   interpolation, such that the response status is 400, not 500
   ([#122](https://github.com/developmentseed/titiler-cmr/issues/122))
 
+### Changed
+
+- Simplify function `get_geojson_bounds` and add illustrative examples to its
+  docstring ([#115](https://github.com/developmentseed/titiler-cmr/issues/115))
+
 ## [v0.3.0]
 
 ### Added

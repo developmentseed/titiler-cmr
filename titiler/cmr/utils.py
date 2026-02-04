@@ -11,9 +11,9 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 import earthaccess
+import rasterio.features
 from geojson_pydantic import Feature, FeatureCollection
 from isodate import parse_datetime as _parse_datetime
-from rasterio.features import bounds
 from rasterio.warp import transform_bounds
 from urllib3.response import HTTPException  # type: ignore
 
@@ -212,18 +212,76 @@ def calculate_time_series_request_size(
 def get_geojson_bounds(
     geojson: Feature | FeatureCollection,
 ) -> tuple[float, float, float, float]:
-    """Get the global bounding box for a geojson Feature or FeatureCollection"""
-    fc = geojson
-    if isinstance(fc, Feature):
-        fc = FeatureCollection(type="FeatureCollection", features=[geojson])
+    """Get the global bounding box for a GeoJSON Feature or FeatureCollection.
 
-    all_bounds = [
-        bounds(feature.model_dump(exclude_none=True)) for feature in fc.features
-    ]
+    Parameters
+    ----------
+    geojson
+        A GeoJSON Feature or FeatureCollection whose coordinates are expressed
+        in WGS84 longitude/latitude.
 
-    minx = min(bound[0] for bound in all_bounds)
-    miny = min(bound[1] for bound in all_bounds)
-    maxx = max(bound[2] for bound in all_bounds)
-    maxy = max(bound[3] for bound in all_bounds)
+    Returns
+    -------
+    tuple[float, float, float, float]
+        A tuple of `(minx, miny, maxx, maxy)` representing the bounding box in
+        WGS84 degrees.
 
-    return (minx, miny, maxx, maxy)
+    Examples
+    --------
+    The bounding box for a point is simply the same point at both corners of the
+    box:
+
+    >>> point = Feature(
+    ...     **{
+    ...         "type": "Feature",
+    ...         "geometry": {
+    ...             "type": "Point",
+    ...             "coordinates": [12.38272, 53.46385],
+    ...         },
+    ...         "properties": None,
+    ...     }
+    ... )
+    >>> get_geojson_bounds(point)
+    (12.38272, 53.46385, 12.38272, 53.46385)
+
+    For a polygon, the bounds are simply the smallest and largest coordinates
+    in both the x and y directions amongst all points of the polygon:
+
+    >>> polygon = Feature(
+    ...     **{
+    ...         "type": "Feature",
+    ...         "geometry": {
+    ...             "type": "Polygon",
+    ...             "coordinates": [
+    ...                 [
+    ...                     [13.38272, 52.46385],
+    ...                     [13.42786, 52.46385],
+    ...                     [13.42786, 52.48445],
+    ...                     [13.38272, 52.48445],
+    ...                     [13.38272, 52.46385],
+    ...                 ]
+    ...             ],
+    ...         },
+    ...         "properties": None,
+    ...     }
+    ... )
+    >>> get_geojson_bounds(polygon)
+    (13.38272, 52.46385, 13.42786, 52.48445)
+
+    For a feature collection, the bounds are the smallest and largest
+    coordinates across all points of all geometries in the collection, as if a
+    single feature with all points from all geometries were supplied instead:
+
+    >>> fc = FeatureCollection(type="FeatureCollection", features=[point, polygon])
+    >>> get_geojson_bounds(fc)
+    (12.38272, 52.46385, 13.42786, 53.46385)
+
+    Notice that in the result above, the `minx` (first) and `maxy` (last)
+    coordinates come from the point, because it sits to the west and north of
+    the polygon, while the others (`maxx` and `miny`) come from the polygon.
+    """
+    return rasterio.features.bounds(
+        FeatureCollection(type="FeatureCollection", features=[geojson])
+        if isinstance(geojson, Feature)
+        else geojson
+    )
