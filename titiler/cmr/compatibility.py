@@ -3,12 +3,15 @@
 from typing import Any, Dict, List, Literal, Optional
 
 import numpy as np
+import rasterio
 from fastapi import HTTPException
 from pydantic import BaseModel
+from rasterio.session import AWSSession
 from rio_tiler.constants import WEB_MERCATOR_TMS
 from rio_tiler.io.rasterio import Reader
 from rio_tiler.models import Info
 from starlette.requests import Request
+from titiler.xarray.io import Reader as XarrayReader
 
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.dependencies import ConceptID
@@ -16,7 +19,6 @@ from titiler.cmr.logger import logger
 from titiler.cmr.reader import xarray_open_dataset
 from titiler.cmr.settings import AuthSettings
 from titiler.cmr.utils import get_concept_id_umm
-from titiler.xarray.io import Reader as XarrayReader
 
 
 class VariableInfo(BaseModel):
@@ -201,7 +203,18 @@ def evaluate_xarray_compatibility(
         if not assets:
             raise ValueError("No assets found for XarrayReader")
 
-        with xarray_open_dataset(assets[0]["url"], auth=auth) as ds:
+        asset = assets[0]
+
+        s3_credentials = (
+            src_dst.get_s3_credentials(endpoint)
+            if src_dst.get_s3_credentials
+            and (endpoint := asset.get("s3_credentials_url", None))
+            else None
+        )
+
+        with xarray_open_dataset(
+            assets[0]["url"], auth=auth, s3_credentials=s3_credentials
+        ) as ds:
             result = extract_xarray_metadata(ds)
             result["example_assets"] = assets[0]["url"]
             return result
@@ -250,11 +263,33 @@ def evaluate_rasterio_compatibility(
         if not assets:
             raise ValueError("No assets found for MultiFilesBandsReader")
 
+        s3_credentials = (
+            src_dst.get_s3_credentials(endpoint)
+            if src_dst.get_s3_credentials
+            and (endpoint := assets[0].get("s3_credentials_url", None))
+            else None
+        )
+
         example_assets: Dict[str, str] = assets[0]["url"]
 
-        with src_dst.reader(
-            input=list(example_assets.values())[0], tms=src_dst.tms
-        ) as _src_dst:
+        session = (
+            AWSSession(
+                aws_access_key_id=s3_credentials["accessKeyId"],
+                aws_secret_access_key=s3_credentials["secretAccessKey"],
+                aws_session_token=s3_credentials["sessionToken"],
+            )
+            if s3_credentials
+            else None
+        )
+        with (
+            rasterio.Env(
+                session,
+            ),
+            src_dst.reader(
+                input=list(example_assets.values())[0],
+                tms=src_dst.tms,
+            ) as _src_dst,
+        ):
             info = _src_dst.info()
 
         return {
