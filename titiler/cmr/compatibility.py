@@ -213,7 +213,7 @@ def evaluate_xarray_compatibility(
         )
 
         with xarray_open_dataset(
-            assets[0]["url"],
+            asset["url"],
             auth=auth,
             s3_credentials={
                 "key": s3_credentials["accessKeyId"],
@@ -224,7 +224,7 @@ def evaluate_xarray_compatibility(
             else None,
         ) as ds:
             result = extract_xarray_metadata(ds)
-            result["example_assets"] = assets[0]["url"]
+            result["example_assets"] = asset["url"]
             return result
 
 
