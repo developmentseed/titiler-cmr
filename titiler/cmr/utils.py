@@ -6,25 +6,16 @@ Code from titiler.pgstac, MIT License.
 
 import logging
 import time
+from collections.abc import Sequence
 from datetime import datetime
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import TYPE_CHECKING, Any
 
 import earthaccess
 from geojson_pydantic import Feature, FeatureCollection
 from isodate import parse_datetime as _parse_datetime
 from rasterio.features import bounds
 from rasterio.warp import transform_bounds
-from urllib3.response import HTTPException
+from urllib3.response import HTTPException  # type: ignore
 
 from titiler.cmr.errors import InvalidDatetime
 
@@ -43,7 +34,7 @@ else:
 
 def retry(
     tries: int,
-    exceptions: Union[Type[Exception], Sequence[Type[Exception]]] = Exception,
+    exceptions: type[Exception] | Sequence[type[Exception]] = Exception,
     delay: float = 0.0,
 ):
     """Retry Decorator"""
@@ -75,7 +66,7 @@ def _parse_date(date: str) -> datetime:
 
 def parse_datetime(
     datetime_str: str,
-) -> Tuple[Optional[datetime], Optional[datetime], Optional[datetime]]:
+) -> tuple[datetime | None, datetime | None, datetime | None]:
     """Parse datetime string input into datetime objects"""
     datetime_, start, end = None, None, None
     dt = datetime_str.split("/")
@@ -83,7 +74,7 @@ def parse_datetime(
         datetime_ = _parse_date(dt[0])
 
     elif len(dt) == 2:
-        dates: List[Optional[str]] = [None, None]
+        dates: list[str | None] = [None, None]
         dates[0] = dt[0] if dt[0] not in ["..", ""] else None
         dates[1] = dt[1] if dt[1] not in ["..", ""] else None
 
@@ -99,17 +90,15 @@ def parse_datetime(
     return datetime_, start, end
 
 
-def get_concept_id_umm(concept_id: str) -> Dict[str, Any]:
+def get_concept_id_umm(concept_id: str) -> dict[str, Any]:
     """Query CMR for the metadata for a concept_id"""
-    results = earthaccess.collection_query().concept_id(concept_id).get(1)
-
-    if not results:
-        raise HTTPException(400, f"concept_id {concept_id} not found")
+    if not (results := earthaccess.collection_query().concept_id(concept_id).get(1)):
+        raise HTTPException(404, f"concept_id {concept_id} not found")
 
     return results[0]
 
 
-def get_resolution_degrees(concept_id: str) -> Tuple[Optional[float], Optional[float]]:
+def get_resolution_degrees(concept_id: str) -> tuple[float | None, float | None]:
     """Query CMR to get the resolution of a dataset using its concept_id. If the units are in meters
     convert to degrees using the rough conversion factor of 0.00001 degrees per meter"""
     ds = get_concept_id_umm(concept_id)
@@ -221,8 +210,8 @@ def calculate_time_series_request_size(
 
 
 def get_geojson_bounds(
-    geojson: Union[Feature, FeatureCollection],
-) -> Tuple[float, float, float, float]:
+    geojson: Feature | FeatureCollection,
+) -> tuple[float, float, float, float]:
     """Get the global bounding box for a geojson Feature or FeatureCollection"""
     fc = geojson
     if isinstance(fc, Feature):

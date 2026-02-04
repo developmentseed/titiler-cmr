@@ -25,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ([#101](https://github.com/developmentseed/titiler-cmr/pull/101))
 - Fix rasterio/GDAL environment inheritence when using multithreaded reads
   ([#91](https://github.com/developmentseed/titiler-cmr/issues/91))
+- Fix `get_concept_id_umm` function to raise 404, not 400, when there is no
+  concept found for the given concept ID
+  ([#113](https://github.com/developmentseed/titiler-cmr/issues/113))
 
 ## [v0.3.0]
 
