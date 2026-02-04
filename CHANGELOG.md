@@ -28,6 +28,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `get_concept_id_umm` function to raise 404, not 400, when there is no
   concept found for the given concept ID
   ([#113](https://github.com/developmentseed/titiler-cmr/issues/113))
+- Fix response when `temporal` parameter is not supplied for datetime
+  interpolation, such that the response status is 400, not 500
+  ([#122](https://github.com/developmentseed/titiler-cmr/issues/122))
 
 ## [v0.3.0]
 

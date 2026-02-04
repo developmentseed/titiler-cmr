@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Literal, Optional, Union, get_args
 
-from fastapi import Depends, Query
+from fastapi import Depends, HTTPException, Query
 from rio_tiler.types import RIOResampling, WarpResampling
 from starlette.requests import Request
 from typing_extensions import Annotated
@@ -209,7 +209,7 @@ class InterpolatedXarrayParams(CompatXarrayParams):
 
 def interpolated_xarray_ds_params(
     xarray_params: InterpolatedXarrayParams = Depends(InterpolatedXarrayParams),
-    cmr_query_params: Dict = Depends(cmr_query),
+    cmr_query_params: dict[str, Any] = Depends(cmr_query),
 ) -> InterpolatedXarrayParams:
     """
     Xarray parameters with string interpolation support for the sel parameter.
@@ -222,6 +222,9 @@ def interpolated_xarray_ds_params(
     """
     if not xarray_params.sel:
         return xarray_params
+
+    if "temporal" not in cmr_query_params:
+        raise HTTPException(400, "A 'temporal' parameter is required")
 
     temporal = cmr_query_params["temporal"]
     dt = temporal if isinstance(temporal, datetime) else temporal[0]
