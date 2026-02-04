@@ -289,4 +289,4 @@ class TestConceptCompatibility:
             evaluate_concept_compatibility("C1234-TEST", mock_request, mock_auth)
 
         assert exc_info.value.status_code == 400
-        assert "cannot parse concept_id" in exc_info.value.detail
+        assert "Could not open a sample granule" in exc_info.value.detail
