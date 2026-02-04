@@ -341,6 +341,7 @@ def evaluate_concept_compatibility(
             **result,
         )
     except (ValueError, HTTPException, OSError, KeyError) as e:
+        xarray_error = e
         logger.warning(f"XarrayReader failed: {e}")
 
     # Fall back to rasterio
@@ -352,7 +353,13 @@ def evaluate_concept_compatibility(
             **result,
         )
     except (ValueError, HTTPException, OSError, KeyError) as e:
+        rasterio_error = e
         logger.warning(f"MultiFilesBandsReader failed: {e}")
 
     # Both failed
-    raise HTTPException(400, f"cannot parse concept_id {concept_id}")
+    raise HTTPException(
+        400,
+        f"Could not open a sample granule for concept_id {concept_id} "
+        "with either the rasterio or xarray backends.\n\n "
+        f"xarray error: {xarray_error} \n\n rasterio_error: {rasterio_error}",
+    )
