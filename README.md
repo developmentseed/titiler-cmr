@@ -44,18 +44,41 @@ The behavior of the application is controlled by the S3 authentication settings 
 
 ### Direct from S3
 
-When running in an AWS context (e.g. Lambda), you should configure the application to access the data directly from `S3`.
-You can do this in two ways:
+When running in an AWS context (e.g., Lambda), you should configure the
+application to access the data directly from `S3`. You can do this in two ways:
 
-- Configure an AWS IAM role for your runtime environment that has read access to the NASA buckets so that `rasterio/GDAL` can find the AWS credentials when reading data
-- Set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment variables so that the `earthaccess` package can issue temporary AWS credentials
+- **Option 1:** Configure an AWS IAM role for your runtime environment that has
+  read access to the NASA buckets so that `rasterio/GDAL` can find the AWS
+  credentials when reading data.
+- **Option 2:** Set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD`
+  environment variables so that temporary AWS credentials can be retrieved for
+  reading from the relevant NASA buckets.
+
+> [!IMPORTANT]
+>
+> Direct S3 access configuration will only work if the application is running in
+> the same AWS region as the data are stored!
 
 > [!NOTE]
-> Direct S3 access configuration will only work if the application is running in the same AWS region as the data are stored!
-
-> [!WARNING]
-> At the moment, setting Earthdata credentials as environment variables does not
-> work for the rasterio backend.
+>
+> To avoid placing heavy load on the endpoints that issue temporary AWS (S3)
+> credentials, and to improve Lambda performance, such credentials are fetched
+> only when necessary, and are held in a cache (keyed by the endpoint URL), and
+> are automatically refreshed 10 minutes prior to their expiration (as a
+> freshness leeway).
+>
+> However, this caching occurs on a per-Lambda basis. That is, each Lambda
+> function maintains its own cache, so the load on the credentials enpoints is
+> still greater than necessary. Each Lambda must repopulate its cache upon cold
+> start (but the cache is maintained across warm starts).
+>
+> Therefore, we plan to explore the use of a distributed cache to be shared
+> across all Lambda instances to not only absolutely minimize our load on the
+> endpoints, but also to improve overall Lambda performance by avoiding having
+> every Lambda fetch credentials for the same endpoints. Further, a distributed
+> cache would be unaffected by Lambda cold starts, so even a cold-starting
+> Lambda would avoid the need to fetch credentials that are already in the
+> cache.
 
 ### External access
 
