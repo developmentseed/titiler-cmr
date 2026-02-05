@@ -993,20 +993,39 @@ uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 <p><code>titiler-cmr</code> can read data either over <code>HTTP</code> (external) or directly from <code>AWS S3</code> (direct) depending on the app configuration.
 The behavior of the application is controlled by the S3 authentication settings in <code>settings.py</code>, which you can set either with environment variables (<code>TITILER_CMR_S3_AUTH_ACCESS</code>, <code>TITILER_CMR_S3_AUTH_STRATEGY</code>) or in an environment file (<code>.env</code>).</p>
 <h3 id="direct-from-s3">Direct from S3<a class="headerlink" href="#direct-from-s3" title="Permanent link">&para;</a></h3>
-<p>When running in an AWS context (e.g. Lambda), you should configure the application to access the data directly from <code>S3</code>.
-You can do this in two ways:</p>
+<p>When running in an AWS context (e.g., Lambda), you should configure the
+application to access the data directly from <code>S3</code>. You can do this in two ways:</p>
 <ul>
-<li>Configure an AWS IAM role for your runtime environment that has read access to the NASA buckets so that <code>rasterio/GDAL</code> can find the AWS credentials when reading data</li>
-<li>Set the <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> environment variables so that the <code>earthaccess</code> package can issue temporary AWS credentials</li>
+<li><strong>Option 1:</strong> Configure an AWS IAM role for your runtime environment that has
+  read access to the NASA buckets so that <code>rasterio/GDAL</code> can find the AWS
+  credentials when reading data.</li>
+<li><strong>Option 2:</strong> Set the <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code>
+  environment variables so that temporary AWS credentials can be retrieved for
+  reading from the relevant NASA buckets.</li>
 </ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Direct S3 access configuration will only work if the application is running in
+the same AWS region as the data are stored!</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Direct S3 access configuration will only work if the application is running in the same AWS region as the data are stored!</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>At the moment, setting Earthdata credentials as environment variables does not
-work for the rasterio backend.</p>
+<p>To avoid placing heavy load on the endpoints that issue temporary AWS (S3)
+credentials, and to improve Lambda performance, such credentials are fetched
+only when necessary, and are held in a cache (keyed by the endpoint URL), and
+are automatically refreshed 10 minutes prior to their expiration (as a
+freshness leeway).</p>
+<p>However, this caching occurs on a per-Lambda basis. That is, each Lambda
+function maintains its own cache, so the load on the credentials enpoints is
+still greater than necessary. Each Lambda must repopulate its cache upon cold
+start (but the cache is maintained across warm starts).</p>
+<p>Therefore, we plan to explore the use of a distributed cache to be shared
+across all Lambda instances to not only absolutely minimize our load on the
+endpoints, but also to improve overall Lambda performance by avoiding having
+every Lambda fetch credentials for the same endpoints. Further, a distributed
+cache would be unaffected by Lambda cold starts, so even a cold-starting
+Lambda would avoid the need to fetch credentials that are already in the
+cache.</p>
 </div>
 <h3 id="external-access">External access<a class="headerlink" href="#external-access" title="Permanent link">&para;</a></h3>
 <p>When running outside of the AWS context (e.g. locally) you will need to configure the application to access data over <code>HTTP</code>.
