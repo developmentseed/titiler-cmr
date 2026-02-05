@@ -1,3 +1,26 @@
+secrets:
+  # To generate the secret files, run the following command:
+  #
+  #    uv run scripts/write-secrets.py
+  #
+  # See comments in the script describing how it obtains the values to write.
+  #
+  # Unfortunately, when specifying secrets via docker compose, we are currently
+  # forced to use secret files rather than the more convenient environment
+  # variable option due to a bug in how docker compose passes env-var-based
+  # secret values to the docker build process.
+  #
+  # Although the following issues are closed, there still appears to be broken
+  # behavior, and there are other related issues mentioned in various comments:
+  #
+  # - https://github.com/docker/compose/issues/13255
+  # - https://github.com/docker/compose/issues/13235
+  #
+  earthdata-username:
+    file: ./secrets/earthdata-username.txt
+  earthdata-password:
+    file: ./secrets/earthdata-password.txt
+
 services:
   tiler:
     container_name: tiler-cmr
@@ -5,9 +28,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        EARTHDATA_USERNAME: ${EARTHDATA_USERNAME}
-        EARTHDATA_PASSWORD: ${EARTHDATA_PASSWORD}
+      secrets:
+        - earthdata-username
+        - earthdata-password
     ports:
       - "8081:8081"
     volumes:
@@ -20,9 +43,6 @@ services:
       - TITILER_CMR_DEBUG=TRUE
       - TITILER_CMR_S3_AUTH_STRATEGY=netrc
       - TITILER_CMR_S3_AUTH_ACCESS=external
-      # earthdata authentication
-      - EARTHDATA_USERNAME=${EARTHDATA_USERNAME}
-      - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD}
       # GDAL Config
       # This option controls the default GDAL raster block cache size.
       # If its value is small (less than 100000), it is assumed to be measured in megabytes, otherwise in bytes.

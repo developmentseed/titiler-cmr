@@ -103,8 +103,27 @@ echo "machine urs.earthdata.nasa.gov login ${EARTHDATA_USERNAME} password ${EART
 
 ## Docker deployment
 
-You can run the application in a docker container using the docker-compose.yml file.
-The docker container is configured to read the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment variables so make sure set those before starting the docker network.
+You can run the application in a docker container using the `docker-compose.yml`
+file. The docker container is configured to use secrets for your Earthdata Login
+credentials, so make sure the secrets exist by first running the following
+script:
+
+```bash
+uv run scripts/write-secrets.py
+```
+
+The script will look for your Earthdata Login credentials in the following
+places, in descending order of precedence:
+
+- Exported `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment variables
+- A `.env.secrets` file
+- A `.env` file
+- A netrc file (defaults to `~/.netrc`, but can be set via `NETRC` environment
+  variable)
+- As a last resort, prompts for input
+
+If you ever change your credentials, rerun the script to repopulate the secrets.
+Once the secrets are generated, you can start the application as follows:
 
 ```bash
 docker compose up --build
