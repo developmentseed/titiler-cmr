@@ -1293,14 +1293,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="kn">import</span> <span class="nn">httpx</span>
 
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># production endpoint</span>
+<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># staging endpoint</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import json
 from datetime import datetime, timezone
 
 import httpx
 
-titiler_endpoint = "https://openveda.cloud/api/titiler-cmr"  # production endpoint</div>
+titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint</div>
 </div>
 </div>
 </div>
@@ -1418,7 +1418,87 @@ print(json.dumps(r, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "detail": "Forbidden"
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -20.79973248834736,
+              83.55979308678764
+            ],
+            [
+              -20.79973248834736,
+              75.0115425216471
+            ],
+            [
+              14.483337068956956,
+              75.0115425216471
+            ],
+            [
+              14.483337068956956,
+              83.55979308678764
+            ],
+            [
+              -20.79973248834736,
+              83.55979308678764
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "statistics": {
+          "2021-10-01T00:00:00.000000000": {
+            "min": 12.448402404785156,
+            "max": 30.805774688720703,
+            "mean": 25.221195220947266,
+            "count": 232.1199951171875,
+            "sum": 5854.34375,
+            "std": 3.496363112659205,
+            "median": 25.481826782226562,
+            "majority": 12.448402404785156,
+            "minority": 12.448402404785156,
+            "unique": 273.0,
+            "histogram": [
+              [
+                2,
+                1,
+                0,
+                7,
+                36,
+                38,
+                45,
+                46,
+                40,
+                58
+              ],
+              [
+                12.448402404785156,
+                14.284139633178711,
+                16.119876861572266,
+                17.95561408996582,
+                19.791351318359375,
+                21.62708854675293,
+                23.462825775146484,
+                25.29856300354004,
+                27.134300231933594,
+                28.97003746032715,
+                30.805774688720703
+              ]
+            ],
+            "valid_percent": 94.79,
+            "masked_pixels": 15.0,
+            "valid_pixels": 273.0,
+            "percentile_2": 18.29606056213379,
+            "percentile_98": 30.397979736328125
+          }
+        }
+      }
+    }
+  ]
 }
 </pre>
 </div>
@@ -1505,7 +1585,87 @@ print(json.dumps(r, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "detail": "Forbidden"
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -20.79973248834736,
+              83.55979308678764
+            ],
+            [
+              -20.79973248834736,
+              75.0115425216471
+            ],
+            [
+              14.483337068956956,
+              75.0115425216471
+            ],
+            [
+              14.483337068956956,
+              83.55979308678764
+            ],
+            [
+              -20.79973248834736,
+              83.55979308678764
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "statistics": {
+          "2021-12-01T00:00:00.000000000": {
+            "min": 18.230709075927734,
+            "max": 37.22050476074219,
+            "mean": 27.73312759399414,
+            "count": 188.1199951171875,
+            "sum": 5217.15576171875,
+            "std": 4.665600495935212,
+            "median": 28.000490188598633,
+            "majority": 18.230709075927734,
+            "minority": 18.230709075927734,
+            "unique": 225.0,
+            "histogram": [
+              [
+                1,
+                23,
+                40,
+                21,
+                17,
+                20,
+                44,
+                35,
+                15,
+                9
+              ],
+              [
+                18.230709075927734,
+                20.129688262939453,
+                22.028667449951172,
+                23.92764663696289,
+                25.826627731323242,
+                27.72560691833496,
+                29.62458610534668,
+                31.52356719970703,
+                33.42254638671875,
+                35.32152557373047,
+                37.22050476074219
+              ]
+            ],
+            "valid_percent": 78.12,
+            "masked_pixels": 63.0,
+            "valid_pixels": 225.0,
+            "percentile_2": 20.764251708984375,
+            "percentile_98": 36.73855972290039
+          }
+        }
+      }
+    }
+  ]
 }
 </pre>
 </div>

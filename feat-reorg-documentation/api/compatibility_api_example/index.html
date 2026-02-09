@@ -1327,13 +1327,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span> <span class="nn">earthaccess</span>
 <span class="kn">import</span> <span class="nn">httpx</span>
 
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># production endpoint</span>
+<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># staging endpoint</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import json
 import earthaccess
 import httpx
 
-titiler_endpoint = "https://openveda.cloud/api/titiler-cmr"  # production endpoint</div>
+titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint</div>
 </div>
 </div>
 </div>
@@ -1460,7 +1460,103 @@ print(json.dumps(compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "detail": "cannot parse concept_id C1996881146-POCLOUD"
+  "concept_id": "C1996881146-POCLOUD",
+  "backend": "xarray",
+  "datetime": [
+    {
+      "RangeDateTimes": [
+        {
+          "BeginningDateTime": "2002-05-31T21:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "analysed_sst": {
+      "shape": [
+        1,
+        17999,
+        36000
+      ],
+      "dtype": "float64",
+      "min": 271.34999999999997,
+      "max": 305.996,
+      "mean": 286.41380160841123,
+      "p01": 271.34999999999997,
+      "p05": 271.34999999999997,
+      "p95": 302.74334999999996,
+      "p99": 303.53999999999996
+    },
+    "analysis_error": {
+      "shape": [
+        1,
+        17999,
+        36000
+      ],
+      "dtype": "float64",
+      "min": 0.34,
+      "max": 0.42,
+      "mean": 0.3765029702383597,
+      "p01": 0.34,
+      "p05": 0.35000000000000003,
+      "p95": 0.4,
+      "p99": 0.41000000000000003
+    },
+    "mask": {
+      "shape": [
+        1,
+        17999,
+        36000
+      ],
+      "dtype": "float32",
+      "min": 1.0,
+      "max": 13.0,
+      "mean": 2.591031074523926,
+      "p01": 1.0,
+      "p05": 1.0,
+      "p95": 9.0,
+      "p99": 9.0
+    },
+    "sea_ice_fraction": {
+      "shape": [
+        1,
+        17999,
+        36000
+      ],
+      "dtype": "float64",
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.4130772408095828,
+      "p01": 0.0,
+      "p05": 0.0,
+      "p95": 1.0,
+      "p99": 1.0
+    }
+  },
+  "dimensions": {
+    "time": 1,
+    "lat": 17999,
+    "lon": 36000
+  },
+  "coordinates": {
+    "time": {
+      "size": 1,
+      "dtype": "datetime64[ns]"
+    },
+    "lat": {
+      "size": 17999,
+      "dtype": "float32",
+      "min": -89.98999786376953,
+      "max": 89.98999786376953
+    },
+    "lon": {
+      "size": 36000,
+      "dtype": "float32",
+      "min": -179.99000549316406,
+      "max": 180.0
+    }
+  },
+  "example_assets": "s3://podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20020601090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc"
 }
 </pre>
 </div>

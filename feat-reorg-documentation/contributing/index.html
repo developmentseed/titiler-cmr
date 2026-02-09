@@ -921,8 +921,12 @@ Record the new responses and commit them to the repository.</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>-o
 </code></pre></div>
 <h3 id="previewing-documentation-changes">Previewing documentation changes<a class="headerlink" href="#previewing-documentation-changes" title="Permanent link">&para;</a></h3>
-<p>You can also deploy a specific branch to the documentation site for previewing the documentation live using Github's workflow dispatch. This will create a new version of the documentation that you should to delete when you are done:</p>
-<p>uv run mike delete feat-reorg-documentation --push</p>
+<p>To preview documentation changes on a specific branch, you can deploy a specific branch to the documentation site using Github Actions workflow dispatch. This will create a new "version" of the documentation which is discoverable in the documentation drop down:</p>
+<p><img alt="Docs Dropdown" src="./docs/assets/docs-dropdown.png" style="width: 350px"/></p>
+<p>This "version" of the documentation is really just a new directory of the documentation in the gh-pages branch of this repository. </p>
+<p>Remember to delete that branch when you are done:</p>
+<div class="highlight"><pre><span></span><code>uv run mike delete feat-reorg-documentation --push
+</code></pre></div>
 <p>This will:
 1. Delete the feat-reorg-documentation version from the documentation
 2. Push the changes to the gh-pages branch</p>
