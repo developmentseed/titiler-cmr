@@ -16,7 +16,7 @@
 
 An API for creating image tiles from CMR queries.
 
-See also the [API documentation](https://openveda.cloud/api/titiler-cmr/api.html).
+See also the [API documentation](https://staging.openveda.cloud/api/titiler-cmr/api.html).
 
 ## Features
 
