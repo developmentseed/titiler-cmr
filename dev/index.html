@@ -1046,8 +1046,24 @@ You can do this by creating an Earthdata account, configuring your <code>.netrc<
 <p>See <a href="https://uat.urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget">NASA's docs</a> for details</p>
 </div>
 <h2 id="docker-deployment">Docker deployment<a class="headerlink" href="#docker-deployment" title="Permanent link">&para;</a></h2>
-<p>You can run the application in a docker container using the docker-compose.yml file.
-The docker container is configured to read the <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> environment variables so make sure set those before starting the docker network.</p>
+<p>You can run the application in a docker container using the <code>docker-compose.yml</code>
+file. The docker container is configured to use secrets for your Earthdata Login
+credentials, so make sure the secrets exist by first running the following
+script:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>scripts/write-secrets.py
+</code></pre></div>
+<p>The script will look for your Earthdata Login credentials in the following
+places, in descending order of precedence:</p>
+<ul>
+<li>Exported <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> environment variables</li>
+<li>A <code>.env.secrets</code> file</li>
+<li>A <code>.env</code> file</li>
+<li>A netrc file (defaults to <code>~/.netrc</code>, but can be set via <code>NETRC</code> environment
+  variable)</li>
+<li>As a last resort, prompts for input</li>
+</ul>
+<p>If you ever change your credentials, rerun the script to repopulate the secrets.
+Once the secrets are generated, you can start the application as follows:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build
 </code></pre></div>
 <p>The application will be available at this address: <a href="http://localhost:8081/api.html">http://localhost:8081/api.html</a></p>
