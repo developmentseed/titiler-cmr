@@ -55,3 +55,21 @@ To preview the documentation in your browser you can run:
 ```bash
 uv run mkdocs serve -o
 ```
+
+### Previewing documentation changes
+
+To preview documentation changes on a specific branch, you can deploy a specific branch to the documentation site using Github Actions workflow dispatch. This will create a new "version" of the documentation which is discoverable in the documentation drop down:
+
+<img alt="Docs Dropdown" src="./docs/assets/docs-dropdown.png" style="width: 350px"/>
+
+This "version" of the documentation is really just a new directory of the documentation in the gh-pages branch of this repository. 
+
+Remember to delete that branch when you are done:
+
+```
+uv run mike delete feat-reorg-documentation --push
+```
+
+This will:
+1. Delete the feat-reorg-documentation version from the documentation
+2. Push the changes to the gh-pages branch
