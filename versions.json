@@ -1,12 +1,5 @@
 [
   {
-    "version": "feat-reorg-documentation",
-    "title": "feat-reorg-documentation",
-    "aliases": [
-      "latest"
-    ]
-  },
-  {
     "version": "dev",
     "title": "dev",
     "aliases": []

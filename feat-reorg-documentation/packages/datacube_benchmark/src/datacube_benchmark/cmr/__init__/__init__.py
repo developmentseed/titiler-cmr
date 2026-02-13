@@ -1,3 +1,0 @@
-"""
-datacube_benchmark.cmr
-"""
