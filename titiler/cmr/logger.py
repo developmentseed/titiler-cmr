@@ -18,9 +18,9 @@ class JSONFormatter(logging.Formatter):
             "timestamp": datetime.fromtimestamp(
                 record.created, tz=timezone.utc
             ).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "thread": record.thread,
             "level": record.levelname,
             "logger": record.name,
-            "threadName": record.threadName,
             "message": record.getMessage(),
             "filename": record.filename,
             "lineno": record.lineno,
