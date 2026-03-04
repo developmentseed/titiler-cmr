@@ -10,14 +10,14 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-import earthaccess
 import rasterio.features
 from geojson_pydantic import Feature, FeatureCollection
+from httpx import Client
 from isodate import parse_datetime as _parse_datetime
 from rasterio.warp import transform_bounds
-from urllib3.response import HTTPException  # type: ignore
 
 from titiler.cmr.errors import InvalidDatetime
+from titiler.cmr.query import get_collection
 
 logger = logging.getLogger(__name__)
 
@@ -90,43 +90,6 @@ def parse_datetime(
     return datetime_, start, end
 
 
-def get_concept_id_umm(concept_id: str) -> dict[str, Any]:
-    """Query CMR for the metadata for a concept_id"""
-    if not (results := earthaccess.collection_query().concept_id(concept_id).get(1)):
-        raise HTTPException(404, f"concept_id {concept_id} not found")
-
-    return results[0]
-
-
-def get_resolution_degrees(concept_id: str) -> tuple[float | None, float | None]:
-    """Query CMR to get the resolution of a dataset using its concept_id. If the units are in meters
-    convert to degrees using the rough conversion factor of 0.00001 degrees per meter"""
-    ds = get_concept_id_umm(concept_id)
-
-    try:
-        resolution_info = ds["umm"]["SpatialExtent"]["HorizontalSpatialDomain"][
-            "ResolutionAndCoordinateSystem"
-        ]["HorizontalDataResolution"]["GenericResolutions"][0]
-    except KeyError:
-        logger.warning(
-            f"could not find HorizontalDataResolution for concept_id {concept_id}"
-        )
-        return (None, None)
-
-    units = resolution_info["Unit"].lower()
-    if units not in ["meters", "decimal degrees"]:
-        raise ValueError(
-            f"cannot convert the coordinate units for concept_id {concept_id}: {units}"
-        )
-
-    conversion_factor = 0.00001 if units == "meters" else 1
-
-    return (
-        resolution_info["XDimension"] * conversion_factor,
-        resolution_info["YDimension"] * conversion_factor,
-    )
-
-
 def get_bbox_degrees(
     minx: float,
     miny: float,
@@ -188,6 +151,7 @@ def get_bbox_degrees(
 
 def calculate_time_series_request_size(
     concept_id: str,
+    client: Client,
     n_time_steps: int,
     minx: float,
     miny: float,
@@ -198,8 +162,12 @@ def calculate_time_series_request_size(
     """Calculate the approximate magnitude of a time series request expressed
     as a total number of pixels read across the entire time series
     """
-    xres, yres = get_resolution_degrees(concept_id)
+    collection = get_collection(concept_id, client)
+    xres, yres = collection.resolution_degrees
     if not (xres and yres):
+        logger.warning(
+            f"could not find HorizontalDataResolution for concept_id {concept_id}"
+        )
         return 0
 
     minx, miny, maxx, maxy = get_bbox_degrees(minx, miny, maxx, maxy, coord_crs)

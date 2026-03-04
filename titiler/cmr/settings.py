@@ -1,10 +1,18 @@
 """API settings."""
 
-from typing import Literal
-
 from pydantic import Field, field_validator, model_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Annotated
+
+
+class EarthdataSettings(BaseSettings):
+    """Earthdata Settings"""
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    earthdata_username: str | None = None
+    earthdata_password: str | None = None
+    earthdata_s3_direct_access: bool = False
 
 
 class ApiSettings(BaseSettings):
@@ -69,19 +77,6 @@ class RetrySettings(BaseSettings):
 
     model_config = {
         "env_prefix": "TITILER_CMR_",
-        "env_file": ".env",
-        "extra": "ignore",
-    }
-
-
-class AuthSettings(BaseSettings):
-    """AWS credential settings."""
-
-    strategy: Literal["environment", "iam", "netrc"] = "environment"
-    access: Literal["direct", "external"] = "direct"
-
-    model_config = {
-        "env_prefix": "TITILER_CMR_S3_AUTH_",
         "env_file": ".env",
         "extra": "ignore",
     }

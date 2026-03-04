@@ -1,103 +1,90 @@
-"""TiTiler+cmr FastAPI application."""
+"""TiTiler+CMR FastAPI application."""
 
 import threading
 import typing as t
 from collections.abc import Callable
 from contextlib import asynccontextmanager
+from typing import TypedDict
 
 import cachetools
-import earthaccess
-import jinja2
-import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
+from httpx import Client, HTTPError
 from starlette.middleware.cors import CORSMiddleware
-from starlette.templating import Jinja2Templates
+from titiler.core.dependencies import AssetsExprParams
+from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
+from titiler.xarray.dependencies import DatasetParams as XarrayDatasetParams
 
 from titiler.cmr import __version__ as titiler_cmr_version
-from titiler.cmr.backend import AWSCredentials
-from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
-from titiler.cmr.factory import Endpoints
+from titiler.cmr.dependencies import CMRAssetsParams, XarrayReaderOptions
+from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.logger import configure_logging, logger
-from titiler.cmr.settings import ApiSettings, AuthSettings
-from titiler.cmr.timeseries import TimeseriesExtension
+from titiler.cmr.query import CMR_GRANULE_SEARCH_API
+from titiler.cmr.reader import GranuleReader
+from titiler.cmr.settings import ApiSettings, EarthdataSettings
 from titiler.cmr.utils import retry
 
-# Configure logging at application startup
 configure_logging()
 
-jinja2_env = jinja2.Environment(
-    loader=jinja2.ChoiceLoader(
-        [
-            jinja2.PackageLoader("titiler.cmr"),
-            jinja2.PackageLoader("titiler.core"),
-        ]
-    ),
-)
-templates = Jinja2Templates(env=jinja2_env)
-
 settings = ApiSettings()
-auth_config = AuthSettings()
+earthdata_settings = EarthdataSettings()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """FastAPI Lifespan."""
+class AWSCredentials(TypedDict, total=True):
+    """AWS S3 temporary credentials."""
 
-    startup(app)
-    yield
-    shutdown(app)
-
-
-def startup(app: FastAPI) -> None:
-    """Perform application startup."""
-
-    auth = earthaccess.login(strategy=auth_config.strategy)
-
-    app.state.auth = auth
-    app.state.get_s3_credentials = (
-        make_get_s3_credentials(auth) if auth_config.access == "direct" else None
-    )
+    accessKeyId: str
+    secretAccessKey: str
+    sessionToken: str
+    expiration: str
 
 
-def shutdown(app: FastAPI) -> None:
-    """Perform application shutdown."""
-    logger.info("Shutting down")
+def _fetch_earthdata_token(username: str, password: str) -> str:
+    """Fetch an Earthdata Login bearer token via find-or-create."""
+    with Client() as client:
+        response = client.post(
+            "https://urs.earthdata.nasa.gov/api/users/find_or_create_token",
+            auth=(username, password),
+            headers={"Accept": "application/json"},
+            timeout=10,
+        )
+        response.raise_for_status()
+        return response.json()["access_token"]
 
 
-def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
+def make_get_s3_credentials(auth_token: str) -> Callable[[str], AWSCredentials]:
     """Create a function that returns temporary S3 credentials for an endpoint.
 
-    Wraps an authenticated earthaccess client with a TTL-based cache to limit
-    calls for temporary S3 credentials while keeping them fresh.
+    Wraps an httpx request with a TTL-based cache to limit calls for temporary
+    S3 credentials while keeping them fresh.
 
     Args:
-        auth: Authenticated earthaccess client used to request S3 credentials.
+        auth_token: Earthdata Login bearer token used to authenticate requests.
 
     Returns:
-        A callable that accepts an (HTTPS) endpoint and returns temporary S3
-        credentials from the endpoint, via the ``auth`` object.
+        A callable that accepts an S3 credentials endpoint URL and returns
+        temporary AWS S3 credentials.
     """
 
     @cachetools.cached(
         cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
         condition=threading.Condition(),  # Prevent race conditions
     )
-    @retry(5, requests.RequestException, 1)
+    @retry(5, HTTPError, 1)
     def get_s3_credentials(endpoint: str) -> AWSCredentials:
         logger.info("Fetching temporary S3 credentials from %s", endpoint)
 
-        # NOTE: Frustratingly, Auth.get_s3_credentials simply returns an empty
-        # dict if any sort of request fails, rather than raising an error.
-        # Therefore, we are forced to check the result and raise our own error
-        # if the result is empty.
-        if not (creds := auth.get_s3_credentials(endpoint=endpoint)):
-            logger.error("Failed to fetch temporary S3 credentials from %s", endpoint)
-            # We cannot tell what the underlying exception was, since it was
-            # swallowed by earthaccess, so we're just making one up.
-            raise HTTPException(500, "earthaccess failed to retrieve S3 credentials")
+        with Client() as client:
+            response = client.get(
+                endpoint,
+                headers={"Authorization": f"Bearer {auth_token}"},
+                timeout=10,
+            )
+
+        response.raise_for_status()
+        creds = response.json()
 
         logger.info(
             "Fetched temporary S3 credentials from %s, expiring at %s.",
@@ -108,6 +95,53 @@ def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCreden
         return t.cast(AWSCredentials, creds)
 
     return get_s3_credentials
+
+
+def startup(app: FastAPI) -> None:
+    """Perform application startup.
+
+    Called directly by the Lambda handler (which bypasses the lifespan) and
+    also from within the lifespan context manager for non-Lambda deployments.
+    """
+    app.state.client = Client(base_url=CMR_GRANULE_SEARCH_API)
+
+    app.state.s3_access = earthdata_settings.earthdata_s3_direct_access
+    logger.info("S3 direct access: %s", app.state.s3_access)
+
+    app.state.earthdata_token = None
+    app.state.get_s3_credentials = None
+
+    if earthdata_settings.earthdata_username and earthdata_settings.earthdata_password:
+        logger.info("Fetching earthdata token")
+        app.state.earthdata_token = _fetch_earthdata_token(
+            earthdata_settings.earthdata_username,
+            earthdata_settings.earthdata_password,
+        )
+        logger.info("Earthdata bearer token acquired")
+
+        if app.state.s3_access:
+            # TODO: wire app.state.get_s3_credentials into GranuleReader for S3 direct access
+            app.state.get_s3_credentials = make_get_s3_credentials(
+                app.state.earthdata_token
+            )
+    else:
+        logger.warning(
+            "EARTHDATA_USERNAME/EARTHDATA_PASSWORD not set; authenticated access unavailable"
+        )
+
+
+def shutdown(app: FastAPI) -> None:
+    """Perform application shutdown."""
+    app.state.client.close()
+    logger.info("Shutting down")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI Lifespan."""
+    startup(app)
+    yield
+    shutdown(app)
 
 
 description = """A TiTiler-based dynamic tiling application for the Common Metadata Repository (CMR).
@@ -123,64 +157,17 @@ description = """A TiTiler-based dynamic tiling application for the Common Metad
 This API allows you to interact with data in CMR using many of the familiar TiTiler functions.
 Users can specify a CMR query for a specific concept id (e.g. C123456-LPDAAC_ECS) and datetime
 and get a TileJSON, XYZ tile image, statistics report (for a GeoJSON) and more.
-
-## Timeseries
-The Timeseries Extension provides endpoints for requesting results for all points or intervals
-along a timeseries. The [/timeseries family of endpoints](#/Timeseries) works by converting
-the provided timeseries parameters (`datetime`, `step`, and `temporal_mode`) into a set of
-`datetime` query parameters for the corresponding lower-level endpoint, running asynchronous
-requests to the lower-level endpoint, then collecting the results and formatting them in a
-coherent format for the user.
-
-The timeseries structure is defined by the `datetime`, `step`, and `temporal_mode` parameters.
-
-The `temporal_mode` mode parameter controls whether or not CMR is queried for a particular
-point-in-time (`temporal_mode=point`) or over an entire interval (`temporal_mode=interval`).
-In general, it is best to use `temporal_mode=point` for datasets where granules overlap completely
-in space (e.g. daily sea surface temperature predictions) because the /timeseries endpoints will
-create a mosaic of all assets returned by the query and the first asset to cover a pixel will
-be used. For datasets where it requires granules from multiple timestamps to fully cover an AOI,
-`temporal_mode=interval` is appropriate. For example, you can get weekly composites of satellite
-imagery for visualization purposes with `step=P1W & temporal_mode=interval`.
-
-To get a timeseries for all granules between two datetimes, you can simply specify
-`datetime={start}/{end}` and a query will be sent to CMR to identify all of the granule timestamps
-between the provided `start` and `end` datetimes.
-
-To get a weekly sample of granules you can specify `datetime={start}/{end}`, `step=P1W`, and
-`temporal_mode=point`.
 """
 
 
 tags_metadata = [
     {
-        "name": "Raster Tiles",
+        "name": "Xarray Backend",
     },
     {
-        "name": "TileJSON",
+        "name": "Rasterio Backend",
     },
-    {
-        "name": "Map",
-    },
-    {
-        "name": "Statistics",
-    },
-    {
-        "name": "Images",
-    },
-    {
-        "name": "Timeseries",
-        "description": "A family of endpoints for timeseries analysis and visualization.",
-    },
-    {
-        "name": "Tiling Schemes",
-    },
-    {
-        "name": "Landing Page",
-    },
-    {
-        "name": "Conformance",
-    },
+    # TODO: re-implement timeseries endpoints
 ]
 
 app = FastAPI(
@@ -194,12 +181,10 @@ app = FastAPI(
     openapi_tags=tags_metadata,
 )
 
-app.state.auth = None
 app.state.get_s3_credentials = None
 
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 add_exception_handlers(app, MOSAIC_STATUS_CODES)
-add_exception_handlers(app, CMR_STATUS_CODES)
 
 # Set all CORS enabled origins
 if settings.cors_origins:
@@ -212,15 +197,36 @@ if settings.cors_origins:
     )
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
-
 app.add_middleware(LoggerMiddleware)
+
+if settings.telemetry_enabled:
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+    FastAPIInstrumentor.instrument_app(app)
 
 ###############################################################################
 # application endpoints
-endpoints = Endpoints(
-    title=settings.name,
-    templates=templates,
-    extensions=[TimeseriesExtension()],
-    enable_telemetry=settings.telemetry_enabled,
+
+xarray = CMRTilerFactory(
+    router_prefix="/xarray",
+    dataset_reader=GranuleReader,
+    reader_dependency=XarrayReaderOptions,
+    dataset_dependency=XarrayDatasetParams,
+    add_statistics=True,
+    add_viewer=True,
+    add_part=True,
+    add_ogc_maps=False,
 )
-app.include_router(endpoints.router)
+app.include_router(xarray.router, tags=["Xarray Backend"], prefix="/xarray")
+
+rasterio = CMRTilerFactory(
+    router_prefix="/rasterio",
+    reader_dependency=CMRAssetsParams,
+    dataset_dependency=RasterioDatasetParams,
+    layer_dependency=AssetsExprParams,
+    add_statistics=True,
+    add_viewer=True,
+    add_part=True,
+    add_ogc_maps=False,
+)
+app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")

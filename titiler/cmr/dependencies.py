@@ -1,233 +1,142 @@
-"""titiler-cmr dependencies."""
+"""titiler.cmr FastAPI dependencies."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Literal, Optional, Union, get_args
+from typing import Annotated, List, Optional
 
-from fastapi import Depends, HTTPException, Query
-from rio_tiler.types import RIOResampling, WarpResampling
-from starlette.requests import Request
-from typing_extensions import Annotated
-
-from titiler.cmr.enums import MediaType
-from titiler.cmr.utils import parse_datetime
+from fastapi import Depends, HTTPException, Query, Request
+from httpx import Client
 from titiler.core.dependencies import DefaultDependency
-from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr
+from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr, XarrayParams
 
-ResponseType = Literal["json", "html"]
-
-
-def accept_media_type(accept: str, mediatypes: List[MediaType]) -> Optional[MediaType]:
-    """Return MediaType based on accept header and available mediatype.
-
-    Links:
-    - https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-    - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
-
-    """
-    accept_values = {}
-    for m in accept.replace(" ", "").split(","):
-        values = m.split(";")
-        if len(values) == 1:
-            name = values[0]
-            quality = 1.0
-        else:
-            name = values[0]
-            groups = dict([param.split("=") for param in values[1:]])  # type: ignore
-            try:
-                q = groups.get("q")
-                quality = float(q) if q else 1.0
-            except ValueError:
-                quality = 0
-
-        # if quality is 0 we ignore encoding
-        if quality:
-            accept_values[name] = quality
-
-    # Create Preference matrix
-    media_preference = {
-        v: [n for (n, q) in accept_values.items() if q == v]
-        for v in sorted(set(accept_values.values()), reverse=True)
-    }
-
-    # Loop through available compression and encoding preference
-    for _, pref in media_preference.items():
-        for media in mediatypes:
-            if media.value in pref:
-                return media
-
-    # If no specified encoding is supported but "*" is accepted,
-    # take one of the available compressions.
-    if "*" in accept_values and mediatypes:
-        return mediatypes[0]
-
-    return None
+from titiler.cmr.models import (
+    BBox,
+    CloudCover,
+    ConceptID,
+    GranuleSearch,
+    GranuleUr,
+    SortKey,
+    Temporal,
+)
+from titiler.cmr.utils import parse_datetime
 
 
-def OutputType(
-    request: Request,
-    f: Annotated[
-        Optional[ResponseType],
-        Query(
-            description="Response MediaType. Defaults to endpoint's default or value defined in `accept` header."
-        ),
-    ] = None,
-) -> Optional[MediaType]:
-    """Output MediaType: json or html."""
-    if f:
-        return MediaType[f]
-
-    accepted_media = [MediaType[v] for v in get_args(ResponseType)]
-    return accept_media_type(request.headers.get("accept", ""), accepted_media)
-
-
-ConceptID = Annotated[
-    str,
-    Query(
-        description="""A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>
-- concept-type-prefix is a single capital letter prefix indicating the concept type. "C" is used for collections
-- unique-number is a single number assigned by the CMR during ingest.
-- provider-id is the short name for the provider. i.e. "LPDAAC_ECS"
-        """
-    ),
-]
+def GranuleSearchParams(
+    collection_concept_id: ConceptID | None = None,
+    granule_ur: GranuleUr | None = None,
+    temporal: Temporal | None = None,
+    cloud_cover: CloudCover | None = None,
+    bounding_box: BBox | None = None,
+    sort_key: SortKey = None,
+) -> GranuleSearch:
+    """Build GranuleSearch parameters from query string inputs."""
+    return GranuleSearch(
+        collection_concept_id=collection_concept_id,
+        granule_ur=granule_ur,
+        temporal=temporal,
+        cloud_cover=cloud_cover,
+        bounding_box=bounding_box,
+        sort_key=sort_key,
+    )
 
 
-def cmr_query(
-    concept_id: ConceptID,
-    datetime: Annotated[
-        Optional[str],
-        Query(
-            description="Either a date-time or an interval. Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format. Intervals may be bounded or half-bounded (double-dots at start or end).",
-            openapi_examples={
-                "A date-time": {"value": "2018-02-12T09:00:00Z"},
-                "A bounded interval": {
-                    "value": "2018-02-12T09:00:00Z/2018-03-18T09:00:00Z"
-                },
-                "Half-bounded intervals (start)": {"value": "2018-02-12T09:00:00Z/.."},
-                "Half-bounded intervals (end)": {"value": "../2018-03-18T09:00:00Z"},
-            },
-        ),
-    ] = None,
-) -> Dict:
-    """CMR Query options."""
-    query: Dict[str, Any] = {"concept_id": concept_id}
+@dataclass(init=False)
+class BackendParams(DefaultDependency):
+    """backend parameters."""
 
-    if datetime:
-        datetime_, start, end = parse_datetime(datetime)
-        query["temporal"] = datetime_ if datetime_ else (start, end)
+    client: Client = field(init=False)
+    auth_token: str | None = field(init=False)
+    s3_access: bool = field(init=False)
 
-    return query
+    def __init__(self, request: Request):
+        """Initialize BackendParams"""
+        self.client = request.app.state.client
+        self.auth_token = getattr(request.app.state, "earthdata_token", None)
+        self.s3_access = getattr(request.app.state, "s3_access", False)
 
 
 @dataclass
-class RasterioParams(DefaultDependency):
-    """Rasterio backend parameters"""
+class GranuleSearchBackendParams(DefaultDependency):
+    """PgSTAC parameters."""
 
-    indexes: Annotated[
-        Optional[List[int]],
+    items_limit: Annotated[
+        int | None,
         Query(
-            title="Band indexes",
-            alias="bidx",
-            description="Dataset band indexes",
+            description="Return as soon as we have N items per geometry.",
         ),
     ] = None
-    expression: Annotated[
-        Optional[str],
+    exitwhenfull: Annotated[
+        bool,
         Query(
-            title="Band Math expression",
-            description="rio-tiler's band math expression",
+            description="Return as soon as the geometry is fully covered.",
         ),
-    ] = None
-    bands: Annotated[
-        Optional[List[str]],
+    ] = True
+    skipcovered: Annotated[
+        bool | None,
         Query(
-            title="Band names",
-            description="Band names.",
-        ),
-    ] = None
-    bands_regex: Annotated[
-        Optional[str],
-        Query(
-            title="Regex expression to parse dataset links",
-            description="Regex expression to parse dataset links.",
-        ),
-    ] = None
-    unscale: Annotated[
-        Optional[bool],
-        Query(
-            title="Apply internal Scale/Offset",
-            description="Apply internal Scale/Offset. Defaults to `False`.",
-        ),
-    ] = None
-    resampling_method: Annotated[
-        Optional[RIOResampling],
-        Query(
-            alias="resampling",
-            description="RasterIO resampling algorithm. Defaults to `nearest`.",
+            description="Skip any items that would show up completely under the previous items",
         ),
     ] = None
 
 
-# TODO:can we replace this with titiler.xarray.dependencies.DatasetParams?
 @dataclass
-class ReaderParams(DefaultDependency):
-    """Reader parameters"""
+class XarrayReaderParams(DefaultDependency):
+    """Xarray reader options wrapper."""
 
-    backend: Annotated[
-        Literal["rasterio", "xarray"],
-        Query(description="Backend to read the CMR dataset"),
-    ] = "rasterio"
-    nodata: Annotated[
-        Optional[Union[str, int, float]],
-        Query(
-            title="Nodata value",
-            description="Overwrite internal Nodata value",
-        ),
-    ] = None
-    reproject_method: Annotated[
-        Optional[WarpResampling],
-        Query(
-            alias="reproject",
-            description="WarpKernel resampling algorithm (only used when doing re-projection). Defaults to `nearest`.",
-        ),
+    reader_options: dict
+
+
+def XarrayReaderOptions(
+    xarray_params: Annotated[XarrayParams, Depends()],
+) -> XarrayReaderParams:
+    """Build XarrayReaderParams from xarray query parameters."""
+    return XarrayReaderParams(reader_options=xarray_params.as_dict())
+
+
+@dataclass
+class CMRAssetsParams(DefaultDependency):
+    """Parameters for filtering CMR assets by filename regex."""
+
+    assets_regex: Annotated[
+        str | None, Query(description="regex to extract asset keys from filenames")
     ] = None
 
 
 @dataclass
 class InterpolatedXarrayParams(CompatXarrayParams):
-    """Modified version of CompatXarrayParms that describes {datetime} interpolation."""
+    """Modified version of CompatXarrayParams that describes {datetime} interpolation."""
 
     sel: Annotated[
         Optional[List[SelDimStr]],
         Query(
             description="Xarray Indexing using dimension names `{dimension}={value}`."
-            " If value is {datetime}, it will be interpolated from the datetime query parameter.",
+            " If value is {datetime}, it will be interpolated from the temporal query parameter.",
         ),
     ] = None
 
 
 def interpolated_xarray_ds_params(
     xarray_params: InterpolatedXarrayParams = Depends(InterpolatedXarrayParams),
-    cmr_query_params: dict[str, Any] = Depends(cmr_query),
+    granule_search: GranuleSearch = Depends(GranuleSearchParams),
 ) -> InterpolatedXarrayParams:
     """
     Xarray parameters with string interpolation support for the sel parameter.
 
     Interpolates {datetime} templates in sel parameter values with the actual
-    datetime value from the request in ISO format (e.g., 2025-09-23T00:00:00Z).
+    datetime value from the temporal query parameter in ISO format
+    (e.g., 2025-09-23T00:00:00Z).
 
     Example:
-        datetime=2025-09-23&sel=time={datetime} → sel=time=2025-09-23T00:00:00Z
+        temporal=2025-09-23T00:00:00Z&sel=time={datetime} → sel=time=2025-09-23T00:00:00Z
     """
     if not xarray_params.sel:
         return xarray_params
 
-    if "temporal" not in cmr_query_params:
+    if not granule_search.temporal:
         raise HTTPException(400, "A 'temporal' parameter is required")
 
-    temporal = cmr_query_params["temporal"]
-    dt = temporal if isinstance(temporal, datetime) else temporal[0]
+    datetime_, start, _ = parse_datetime(granule_search.temporal)
+    dt: datetime = datetime_ if datetime_ else start  # type: ignore[assignment]
 
     interpolated_sel = []
     for sel_item in xarray_params.sel:
@@ -236,11 +145,9 @@ def interpolated_xarray_ds_params(
         else:
             interpolated_sel.append(sel_item)
 
-    # Create a new instance with interpolated sel values
     return InterpolatedXarrayParams(
         variable=xarray_params.variable,
         group=xarray_params.group,
         sel=interpolated_sel,
-        method=xarray_params.method,
         decode_times=xarray_params.decode_times,
     )
