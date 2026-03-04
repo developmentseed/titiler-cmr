@@ -1,14 +1,12 @@
 """TiTiler+CMR FastAPI application."""
 
 import threading
-import typing as t
 from collections.abc import Callable
 from contextlib import asynccontextmanager
-from typing import TypedDict
 
 import cachetools
 from fastapi import FastAPI
-from httpx import Client, HTTPError
+from httpx import Client
 from starlette.middleware.cors import CORSMiddleware
 from titiler.core.dependencies import AssetsExprParams
 from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
@@ -21,27 +19,18 @@ from titiler.xarray.dependencies import (
 from titiler.xarray.dependencies import XarrayParams
 
 from titiler.cmr import __version__ as titiler_cmr_version
+from titiler.cmr.credentials import EarthdataS3CredentialProvider
 from titiler.cmr.dependencies import CMRAssetsParams
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings, EarthdataSettings
-from titiler.cmr.utils import retry
 
 configure_logging()
 
 settings = ApiSettings()
 earthdata_settings = EarthdataSettings()
-
-
-class AWSCredentials(TypedDict, total=True):
-    """AWS S3 temporary credentials."""
-
-    accessKeyId: str
-    secretAccessKey: str
-    sessionToken: str
-    expiration: str
 
 
 def _fetch_earthdata_token(username: str, password: str) -> str:
@@ -57,45 +46,29 @@ def _fetch_earthdata_token(username: str, password: str) -> str:
         return response.json()["access_token"]
 
 
-def make_get_s3_credentials(auth_token: str) -> Callable[[str], AWSCredentials]:
-    """Create a function that returns temporary S3 credentials for an endpoint.
+def make_get_s3_credentials(
+    auth_token: str,
+) -> Callable[[str], EarthdataS3CredentialProvider]:
+    """Create a factory that returns an S3 credential provider for an endpoint.
 
-    Wraps an httpx request with a TTL-based cache to limit calls for temporary
-    S3 credentials while keeping them fresh.
+    Wraps provider creation with a TTL-based cache so the same provider instance
+    (with its own internal credential cache) is reused across requests for the
+    same endpoint.
 
     Args:
         auth_token: Earthdata Login bearer token used to authenticate requests.
 
     Returns:
         A callable that accepts an S3 credentials endpoint URL and returns
-        temporary AWS S3 credentials.
+        an EarthdataS3CredentialProvider instance.
     """
 
     @cachetools.cached(
         cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
         condition=threading.Condition(),  # Prevent race conditions
     )
-    @retry(5, HTTPError, 1)
-    def get_s3_credentials(endpoint: str) -> AWSCredentials:
-        logger.info("Fetching temporary S3 credentials from %s", endpoint)
-
-        with Client() as client:
-            response = client.get(
-                endpoint,
-                headers={"Authorization": f"Bearer {auth_token}"},
-                timeout=10,
-            )
-
-        response.raise_for_status()
-        creds = response.json()
-
-        logger.info(
-            "Fetched temporary S3 credentials from %s, expiring at %s.",
-            endpoint,
-            creds.get("expiration", "an unknown time"),
-        )
-
-        return t.cast(AWSCredentials, creds)
+    def get_s3_credentials(endpoint: str) -> EarthdataS3CredentialProvider:
+        return EarthdataS3CredentialProvider(endpoint, auth_token)
 
     return get_s3_credentials
 
@@ -123,7 +96,6 @@ def startup(app: FastAPI) -> None:
         logger.info("Earthdata bearer token acquired")
 
         if app.state.s3_access:
-            # TODO: wire app.state.get_s3_credentials into GranuleReader for S3 direct access
             app.state.get_s3_credentials = make_get_s3_credentials(
                 app.state.earthdata_token
             )

@@ -1,5 +1,6 @@
 """CMR mosaic backend."""
 
+from collections.abc import Callable
 from typing import Any, Type
 
 import attr
@@ -33,12 +34,15 @@ class CMRBackend(BaseBackend):
 
     auth_token: str | None = attr.ib(default=None)
     s3_access: bool = attr.ib(default=False)
+    get_s3_credentials: Callable | None = attr.ib(default=None)
 
     def __attrs_post_init__(self):
         """Initialize reader options from auth_token and s3_access."""
         if self.auth_token:
             self.reader_options["auth_token"] = self.auth_token
         self.reader_options["s3_access"] = self.s3_access
+        if self.get_s3_credentials is not None:
+            self.reader_options["get_s3_credentials"] = self.get_s3_credentials
 
     crs: CRS = attr.ib(default=WGS84_CRS)
 

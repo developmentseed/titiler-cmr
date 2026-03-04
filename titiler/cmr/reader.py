@@ -20,6 +20,7 @@ import rasterio
 from cachetools import TTLCache
 from morecantile import TileMatrixSet
 from obspec_utils.readers import BlockStoreReader
+from rasterio.session import AWSSession
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidAssetName, MissingAssets
 from rio_tiler.io.base import MultiBaseReader
@@ -30,7 +31,8 @@ from titiler.xarray.io import get_variable
 from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
 
-from titiler.cmr.errors import InvalidMediaType
+from titiler.cmr.credentials import EarthdataS3CredentialProvider
+from titiler.cmr.errors import InvalidMediaType, S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
 from titiler.cmr.models import Granule
 from titiler.cmr.settings import CacheSettings
@@ -59,6 +61,7 @@ def open_dataset(
     decode_times: bool = True,
     decode_coords: Literal["all", "coordinates"] = "all",
     auth_token: str | None = None,
+    credential_provider: EarthdataS3CredentialProvider | None = None,
     **kwargs,
 ) -> Dataset:
     """Open a remote NetCDF/HDF5 dataset, using a cache to avoid redundant fetches."""
@@ -72,13 +75,19 @@ def open_dataset(
         return pickle.loads(data_bytes)
 
     parsed = urllib.parse.urlparse(src_path)
-
     store_root = f"{parsed.scheme}://{parsed.netloc}"
-    client_options: ClientConfig = {}
-    if auth_token:
-        client_options["default_headers"] = {"Authorization": f"Bearer {auth_token}"}
 
-    store = obstore.store.from_url(store_root, client_options=client_options)
+    if credential_provider is not None:
+        store = obstore.store.from_url(
+            store_root, credential_provider=credential_provider
+        )
+    elif auth_token:
+        client_options: ClientConfig = {
+            "default_headers": {"Authorization": f"Bearer {auth_token}"}
+        }
+        store = obstore.store.from_url(store_root, client_options=client_options)
+    else:
+        store = obstore.store.from_url(store_root)
 
     reader = BlockStoreReader(store, parsed.path, block_size=8 * 1024**2)
 
@@ -136,6 +145,7 @@ class MultiBaseGranuleReader(MultiBaseReader):
     assets_regex: str | None = attr.ib(default=None)
     s3_access: bool = attr.ib(default=False)
     auth_token: str | None = attr.ib(default=None)
+    get_s3_credentials: Callable | None = attr.ib(default=None)
 
     include_assets: Set[str] | None = attr.ib(default=None)
     exclude_assets: Set[str] | None = attr.ib(default=None)
@@ -153,6 +163,10 @@ class MultiBaseGranuleReader(MultiBaseReader):
 
     ctx: rasterio.Env = attr.ib(default=rasterio.Env)
 
+    _credential_provider: EarthdataS3CredentialProvider | None = attr.ib(
+        init=False, default=None
+    )
+
     def __attrs_post_init__(self):
         """Load asset list and set attributes"""
 
@@ -167,6 +181,17 @@ class MultiBaseGranuleReader(MultiBaseReader):
             raise MissingAssets(
                 "No valid asset found. Asset's media types not supported"
             )
+
+        if self.s3_access and self.get_s3_credentials is not None:
+            try:
+                endpoint = self.granule.s3_credentials_endpoint
+                self._credential_provider = self.get_s3_credentials(endpoint)
+            except S3CredentialsEndpointMissing:
+                logger.warning(
+                    "No S3 credentials endpoint found for granule %s; "
+                    "falling back to unauthenticated S3 access",
+                    self.granule.id,
+                )
 
     def get_asset_list(self) -> list[str]:
         """Get valid asset list"""
@@ -194,8 +219,24 @@ class MultiBaseGranuleReader(MultiBaseReader):
 
         reader_options = self.reader_options.copy()
         if media_type in [NETCDF, HDF5]:
-            opener = functools.partial(open_dataset, auth_token=self.auth_token)
+            if self._credential_provider is not None:
+                opener = functools.partial(
+                    open_dataset, credential_provider=self._credential_provider
+                )
+            else:
+                opener = functools.partial(open_dataset, auth_token=self.auth_token)
             reader_options.update({"opener": opener})
+
+        env = {}
+        if self._credential_provider is not None and media_type not in [NETCDF, HDF5]:
+            creds = self._credential_provider()
+            env = {
+                "aws_session": AWSSession(
+                    aws_access_key_id=creds["access_key_id"],
+                    aws_secret_access_key=creds["secret_access_key"],
+                    aws_session_token=creds["token"],
+                )
+            }
 
         info = AssetInfo(
             name=asset,
@@ -203,6 +244,7 @@ class MultiBaseGranuleReader(MultiBaseReader):
             media_type=media_type,
             reader_options=reader_options,
             method_options={},
+            env=env,
         )
 
         return info
@@ -223,6 +265,7 @@ class XarrayGranuleReader(XarrayReader):
 
     s3_access: bool = attr.ib(default=False)
     auth_token: str | None = attr.ib(default=None)
+    get_s3_credentials: Callable | None = attr.ib(default=None)
 
     group: str | None = attr.ib(default=None)
     decode_times: bool = attr.ib(default=True)
@@ -245,9 +288,24 @@ class XarrayGranuleReader(XarrayReader):
         opener_options = {
             "group": self.group,
             "decode_times": self.decode_times,
-            "auth_token": self.auth_token,
             **self.opener_options,
         }
+        if self.s3_access and self.get_s3_credentials is not None:
+            try:
+                endpoint = self.src_path.s3_credentials_endpoint
+                opener_options["credential_provider"] = self.get_s3_credentials(
+                    endpoint
+                )
+            except S3CredentialsEndpointMissing:
+                logger.warning(
+                    "No S3 credentials endpoint found for granule %s; "
+                    "falling back to unauthenticated S3 access",
+                    self.src_path.id,
+                )
+                opener_options["auth_token"] = self.auth_token
+        else:
+            opener_options["auth_token"] = self.auth_token
+
         assets = self.src_path.get_assets()
         asset = assets["0"]
         href = asset.direct_href if self.s3_access else asset.external_href

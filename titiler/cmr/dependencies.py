@@ -1,5 +1,6 @@
 """titiler.cmr FastAPI dependencies."""
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Annotated, List, Optional
@@ -47,12 +48,14 @@ class BackendParams(DefaultDependency):
     client: Client = field(init=False)
     auth_token: str | None = field(init=False)
     s3_access: bool = field(init=False)
+    get_s3_credentials: Callable | None = field(init=False)
 
     def __init__(self, request: Request):
         """Initialize BackendParams"""
         self.client = request.app.state.client
         self.auth_token = getattr(request.app.state, "earthdata_token", None)
         self.s3_access = getattr(request.app.state, "s3_access", False)
+        self.get_s3_credentials = getattr(request.app.state, "get_s3_credentials", None)
 
 
 @dataclass
