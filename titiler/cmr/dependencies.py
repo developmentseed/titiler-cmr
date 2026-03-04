@@ -7,7 +7,7 @@ from typing import Annotated, List, Optional
 from fastapi import Depends, HTTPException, Query, Request
 from httpx import Client
 from titiler.core.dependencies import DefaultDependency
-from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr, XarrayParams
+from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr
 
 from titiler.cmr.models import (
     BBox,
@@ -77,20 +77,6 @@ class GranuleSearchBackendParams(DefaultDependency):
             description="Skip any items that would show up completely under the previous items",
         ),
     ] = None
-
-
-@dataclass
-class XarrayReaderParams(DefaultDependency):
-    """Xarray reader options wrapper."""
-
-    reader_options: dict
-
-
-def XarrayReaderOptions(
-    xarray_params: Annotated[XarrayParams, Depends()],
-) -> XarrayReaderParams:
-    """Build XarrayReaderParams from xarray query parameters."""
-    return XarrayReaderParams(reader_options=xarray_params.as_dict())
 
 
 @dataclass

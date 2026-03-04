@@ -15,7 +15,7 @@ from rio_tiler.types import BBox
 from titiler.cmr.logger import logger
 from titiler.cmr.models import Granule, GranuleSearch
 from titiler.cmr.query import get_granules
-from titiler.cmr.reader import GranuleReader
+from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
 
 
 @attr.s
@@ -24,10 +24,8 @@ class CMRBackend(BaseBackend):
 
     # CMR search parameters
     input: GranuleSearch = attr.ib()
-
     client: Client = attr.ib()
-
-    reader: Type[GranuleReader] = attr.ib(default=GranuleReader)
+    reader: Type[MultiBaseGranuleReader] | Type[XarrayGranuleReader] = attr.ib()
 
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
 

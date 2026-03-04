@@ -14,6 +14,9 @@ from titiler.mosaic.factory import MosaicTilerFactory as BaseFactory
 from titiler.xarray.dependencies import (
     DatasetParams as XarrayDatasetParams,
 )
+from titiler.xarray.dependencies import (
+    XarrayParams,
+)
 
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.dependencies import (
@@ -22,9 +25,8 @@ from titiler.cmr.dependencies import (
     GranuleSearch,
     GranuleSearchBackendParams,
     GranuleSearchParams,
-    XarrayReaderParams,
 )
-from titiler.cmr.reader import GranuleReader
+from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
 
 
 @define(kw_only=True)
@@ -32,13 +34,12 @@ class CMRTilerFactory(BaseFactory):
     """Custom MosaicTiler for CMR Mosaic Backend."""
 
     path_dependency: Callable[..., GranuleSearch] = field(default=GranuleSearchParams)
-    dataset_reader: Type[GranuleReader] = field(default=GranuleReader)
+    dataset_reader: Type[MultiBaseGranuleReader] | Type[XarrayGranuleReader] = field(
+        default=MultiBaseGranuleReader
+    )
 
     reader_dependency: (
-        type[DefaultDependency]
-        | type[CMRAssetsParams]
-        | type[XarrayReaderParams]
-        | Callable
+        type[DefaultDependency] | type[CMRAssetsParams] | type[XarrayParams] | Callable
     ) = field(default=DefaultDependency)
 
     # Rasterio Dataset Options (nodata, unscale, resampling, reproject)

@@ -6,6 +6,7 @@ import urllib.parse
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Iterator,
     Literal,
     Sequence,
@@ -21,11 +22,12 @@ from morecantile import TileMatrixSet
 from obspec_utils.readers import BlockStoreReader
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidAssetName, MissingAssets
-from rio_tiler.io.base import BaseReader, MultiBaseReader
+from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
+from rio_tiler.io.xarray import Options, XarrayReader
 from rio_tiler.types import AssetInfo
-from titiler.xarray.io import Reader as XarrayReader
-from xarray import Dataset
+from titiler.xarray.io import get_variable
+from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
 
 from titiler.cmr.errors import InvalidMediaType
@@ -121,7 +123,7 @@ def _to_granule(granule: Granule | dict) -> Granule:
 
 
 @attr.s
-class GranuleReader(MultiBaseReader):
+class MultiBaseGranuleReader(MultiBaseReader):
     """CMR Granule Reader."""
 
     granule: Granule = attr.ib(converter=_to_granule)
@@ -144,7 +146,7 @@ class GranuleReader(MultiBaseReader):
     assets: Sequence[str] = attr.ib(init=False)
     default_assets: Sequence[str] | None = attr.ib(default=["0"])
 
-    reader: Type[BaseReader] = attr.ib(default=Reader)
+    reader: Type[Reader] | Type[XarrayReader] = attr.ib(default=Reader)
     reader_options: dict[str, Any] = attr.ib(factory=dict)
 
     fetch_options: dict[str, Any] = attr.ib(factory=dict)
@@ -177,13 +179,6 @@ class GranuleReader(MultiBaseReader):
             )
         )
 
-    def _get_reader(self, asset_info: AssetInfo) -> type[Reader] | type[XarrayReader]:
-        """Get Asset Reader."""
-        if asset_info["media_type"] in [NETCDF, HDF5]:
-            return XarrayReader
-        else:
-            return Reader
-
     def _get_asset_info(self, asset: str) -> AssetInfo:
         """Validate asset names and return asset's info."""
         if asset not in self.assets:
@@ -211,3 +206,58 @@ class GranuleReader(MultiBaseReader):
         )
 
         return info
+
+
+@attr.s
+class XarrayGranuleReader(XarrayReader):
+    """Custom Xarray Reader that gets the asset href from a Granule"""
+
+    src_path: Granule = attr.ib()
+    variable: str = attr.ib()
+
+    options: Options = attr.ib(factory=dict)
+
+    # xarray.Dataset options
+    opener: Callable[..., Dataset] = attr.ib(default=open_dataset)
+    opener_options: dict = attr.ib(factory=dict)
+
+    s3_access: bool = attr.ib(default=False)
+    auth_token: str | None = attr.ib(default=None)
+
+    group: str | None = attr.ib(default=None)
+    decode_times: bool = attr.ib(default=True)
+
+    # xarray.DataArray options
+    sel: list[str] | None = attr.ib(default=None)
+    method: Literal["nearest", "pad", "ffill", "backfill", "bfill"] | None = attr.ib(
+        default=None
+    )
+
+    tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
+
+    ds: Dataset = attr.ib(init=False)
+    input: DataArray = attr.ib(init=False)
+
+    _dims: list = attr.ib(init=False, factory=list)
+
+    def __attrs_post_init__(self):
+        """Set bounds and CRS."""
+        opener_options = {
+            "group": self.group,
+            "decode_times": self.decode_times,
+            "auth_token": self.auth_token,
+            **self.opener_options,
+        }
+        assets = self.src_path.get_assets()
+        asset = assets["0"]
+        href = asset.direct_href if self.s3_access else asset.external_href
+
+        # for this reader the assets are keyed with numeric index
+        # the real data asset is assumed to be the first one
+        self.ds = self.opener(href, **opener_options)
+        self.input = get_variable(
+            self.ds,
+            self.variable,
+            sel=self.sel,
+        )
+        super().__attrs_post_init__()

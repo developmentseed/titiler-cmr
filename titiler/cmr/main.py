@@ -15,14 +15,17 @@ from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
-from titiler.xarray.dependencies import DatasetParams as XarrayDatasetParams
+from titiler.xarray.dependencies import (
+    DatasetParams as XarrayDatasetParams,
+)
+from titiler.xarray.dependencies import XarrayParams
 
 from titiler.cmr import __version__ as titiler_cmr_version
-from titiler.cmr.dependencies import CMRAssetsParams, XarrayReaderOptions
+from titiler.cmr.dependencies import CMRAssetsParams
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
-from titiler.cmr.reader import GranuleReader
+from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings, EarthdataSettings
 from titiler.cmr.utils import retry
 
@@ -209,8 +212,8 @@ if settings.telemetry_enabled:
 
 xarray = CMRTilerFactory(
     router_prefix="/xarray",
-    dataset_reader=GranuleReader,
-    reader_dependency=XarrayReaderOptions,
+    dataset_reader=XarrayGranuleReader,
+    reader_dependency=XarrayParams,
     dataset_dependency=XarrayDatasetParams,
     add_statistics=True,
     add_viewer=True,
@@ -221,6 +224,7 @@ app.include_router(xarray.router, tags=["Xarray Backend"], prefix="/xarray")
 
 rasterio = CMRTilerFactory(
     router_prefix="/rasterio",
+    dataset_reader=MultiBaseGranuleReader,
     reader_dependency=CMRAssetsParams,
     dataset_dependency=RasterioDatasetParams,
     layer_dependency=AssetsExprParams,
