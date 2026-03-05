@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import Annotated, Any, List
 
 from fastapi import Query
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 from shapely.geometry import shape
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
@@ -98,6 +98,20 @@ class GranuleSearch(BaseModel):
     bounding_box: BBox | None = None
     sort_key: List[str] | None = None
 
+    @field_validator("temporal")
+    @classmethod
+    def normalize_temporal(cls, v: str | None) -> str | None:
+        """Convert a singleton datetime to a closed interval.
+
+        CMR interprets a bare datetime (e.g. "2024-01-01T00:00:00Z") as an
+        open-ended range starting at that date. Convert it to a closed interval
+        ("2024-01-01T00:00:00Z/2024-01-01T00:00:00Z") so only granules for
+        that exact instant are matched.
+        """
+        if v is not None and "/" not in v:
+            return f"{v}/{v}"
+        return v
+
 
 # ---------------------------------------------------------------------------
 # Granule response models
@@ -156,6 +170,8 @@ class Granule(BaseModel):
     links: list[Link]
     polygons: list[list[str]] | None = None
     boxes: list[str] | None = None
+    time_start: str | None = None
+    time_end: str | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property

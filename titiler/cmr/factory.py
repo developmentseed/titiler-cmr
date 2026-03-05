@@ -1,6 +1,6 @@
 """titiler.cmr.factory: router factories."""
 
-from typing import Callable, Type
+from typing import Callable
 
 from attrs import define, field
 from titiler.core.dependencies import (
@@ -34,7 +34,7 @@ class CMRTilerFactory(BaseFactory):
     """Custom MosaicTiler for CMR Mosaic Backend."""
 
     path_dependency: Callable[..., GranuleSearch] = field(default=GranuleSearchParams)
-    dataset_reader: Type[MultiBaseGranuleReader] | Type[XarrayGranuleReader] = field(
+    dataset_reader: type[MultiBaseGranuleReader] | type[XarrayGranuleReader] = field(
         default=MultiBaseGranuleReader
     )
 

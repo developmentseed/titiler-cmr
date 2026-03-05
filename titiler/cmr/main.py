@@ -27,6 +27,7 @@ from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings, EarthdataSettings
+from titiler.cmr.timeseries import TimeseriesExtension, timeseries_router
 
 configure_logging()
 
@@ -80,7 +81,9 @@ def startup(app: FastAPI) -> None:
     Called directly by the Lambda handler (which bypasses the lifespan) and
     also from within the lifespan context manager for non-Lambda deployments.
     """
-    app.state.client = Client(base_url=CMR_GRANULE_SEARCH_API)
+    app.state.client = Client(
+        base_url=CMR_GRANULE_SEARCH_API, timeout=settings.cmr_timeout
+    )
 
     app.state.s3_access = earthdata_settings.earthdata_s3_direct_access
     logger.info("S3 direct access: %s", app.state.s3_access)
@@ -143,7 +146,9 @@ tags_metadata = [
     {
         "name": "Rasterio Backend",
     },
-    # TODO: re-implement timeseries endpoints
+    {
+        "name": "Timeseries",
+    },
 ]
 
 app = FastAPI(
@@ -188,6 +193,7 @@ xarray = CMRTilerFactory(
     dataset_reader=XarrayGranuleReader,
     reader_dependency=XarrayParams,
     dataset_dependency=XarrayDatasetParams,
+    extensions=[TimeseriesExtension()],
     add_statistics=True,
     add_viewer=True,
     add_part=True,
@@ -201,6 +207,7 @@ rasterio = CMRTilerFactory(
     reader_dependency=CMRAssetsParams,
     dataset_dependency=RasterioDatasetParams,
     layer_dependency=AssetsExprParams,
+    extensions=[TimeseriesExtension()],
     add_statistics=True,
     add_viewer=True,
     add_part=True,
@@ -208,3 +215,4 @@ rasterio = CMRTilerFactory(
 )
 app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")
 app.include_router(compatibility_router, tags=["Compatibility"])
+app.include_router(timeseries_router, tags=["Timeseries"])
