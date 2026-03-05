@@ -3,22 +3,16 @@
 from typing import Any, Dict, List, Literal, Optional
 
 import numpy as np
-import rasterio
-from fastapi import HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from rasterio.session import AWSSession
-from rio_tiler.constants import WEB_MERCATOR_TMS
-from rio_tiler.io.rasterio import Reader
 from rio_tiler.models import Info
 from starlette.requests import Request
-from titiler.xarray.io import Reader as XarrayReader
 
-from titiler.cmr.backend import CMRBackend
-from titiler.cmr.dependencies import ConceptID
+from titiler.cmr.errors import S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
-from titiler.cmr.reader import xarray_open_dataset
-from titiler.cmr.settings import AuthSettings
-from titiler.cmr.utils import get_concept_id_umm
+from titiler.cmr.models import GranuleSearch
+from titiler.cmr.query import get_collection, get_granules
+from titiler.cmr.reader import MultiBaseGranuleReader, open_dataset
 
 
 class VariableInfo(BaseModel):
@@ -44,10 +38,19 @@ class CoordinateInfo(BaseModel):
     max: Optional[float] = None
 
 
+class TemplateLink(BaseModel):
+    """A URL template link for a compatibility response."""
+
+    rel: str
+    href: str
+    title: Optional[str] = None
+    type: Optional[str] = None
+
+
 class CompatibilityResponse(BaseModel):
     """Compatibility endpoint response model"""
 
-    concept_id: ConceptID
+    concept_id: str
     backend: Literal["rasterio", "xarray"]
     datetime: List[Dict[str, Any]]
     variables: Optional[Dict[str, VariableInfo]] = None
@@ -55,6 +58,7 @@ class CompatibilityResponse(BaseModel):
     coordinates: Optional[Dict[str, CoordinateInfo]] = None
     example_assets: Optional[Dict[str, str] | str] = None
     sample_asset_raster_info: Optional[Info] = None
+    links: Optional[List[TemplateLink]] = None
 
 
 def extract_xarray_metadata(
@@ -160,16 +164,14 @@ def extract_xarray_metadata(
 
 
 def evaluate_xarray_compatibility(
-    concept_id: ConceptID,
+    concept_id: str,
     request: Request,
-    s3_auth_config: AuthSettings,
 ) -> Dict[str, Any]:
     """Test XarrayReader compatibility with a concept.
 
     Args:
         concept_id: CMR concept ID to test
         request: FastAPI request object
-        s3_auth_config: S3 authentication configuration
 
     Returns:
         Dictionary with xarray compatibility information
@@ -182,63 +184,58 @@ def evaluate_xarray_compatibility(
     """
     logger.info("Testing XarrayReader")
 
-    auth = request.app.state.auth
+    client = request.app.state.client
+    s3_access = request.app.state.s3_access
+    auth_token = request.app.state.earthdata_token
+    get_s3_credentials = request.app.state.get_s3_credentials
 
-    with CMRBackend(
-        tms=WEB_MERCATOR_TMS,
-        reader=XarrayReader,
-        reader_options={},
-        auth=auth,
-        get_s3_credentials=request.app.state.get_s3_credentials,
-    ) as src_dst:
-        assets = src_dst.assets_for_tile(
-            0,
-            0,
-            0,
+    granule = next(
+        get_granules(
+            search_params=GranuleSearch(collection_concept_id=concept_id),
+            client=client,
+            page_size=1,
             limit=1,
-            concept_id=concept_id,
-            access=s3_auth_config.access,
-        )
+        ),
+        None,
+    )
 
-        if not assets:
-            raise ValueError("No assets found for XarrayReader")
+    if granule is None:
+        raise ValueError("No assets found for XarrayReader")
 
-        asset = assets[0]
+    assets = granule.get_assets()
+    asset = assets["0"]
+    href = asset.direct_href if s3_access else asset.external_href
 
-        s3_credentials = (
-            src_dst.get_s3_credentials(endpoint)
-            if src_dst.get_s3_credentials
-            and (endpoint := asset.get("s3_credentials_url", None))
-            else None
-        )
+    credential_provider = None
+    if s3_access and get_s3_credentials is not None:
+        try:
+            credential_provider = get_s3_credentials(granule.s3_credentials_endpoint)
+        except S3CredentialsEndpointMissing:
+            logger.warning(
+                "No S3 credentials endpoint found for granule %s; "
+                "falling back to token auth",
+                granule.id,
+            )
 
-        with xarray_open_dataset(
-            asset["url"],
-            auth=auth,
-            s3_credentials={
-                "key": s3_credentials["accessKeyId"],
-                "secret": s3_credentials["secretAccessKey"],
-                "token": s3_credentials["sessionToken"],
-            }
-            if s3_credentials
-            else None,
-        ) as ds:
-            result = extract_xarray_metadata(ds)
-            result["example_assets"] = asset["url"]
-            return result
+    ds = open_dataset(
+        href,
+        credential_provider=credential_provider,
+        auth_token=auth_token,
+    )
+    result = extract_xarray_metadata(ds)
+    result["example_assets"] = href
+    return result
 
 
 def evaluate_rasterio_compatibility(
-    concept_id: ConceptID,
+    concept_id: str,
     request: Request,
-    s3_auth_config: AuthSettings,
 ) -> Dict[str, Any]:
-    """Test MultiFilesBandsReader compatibility with a concept.
+    """Test MultiBaseGranuleReader compatibility with a concept.
 
     Args:
         concept_id: CMR concept ID to test
         request: FastAPI request object
-        s3_auth_config: S3 authentication configuration
 
     Returns:
         Dictionary with rasterio compatibility information
@@ -249,78 +246,100 @@ def evaluate_rasterio_compatibility(
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
-    logger.info("Testing MultiFilesBandsReader")
+    logger.info("Testing MultiBaseGranuleReader")
 
-    with CMRBackend(
-        tms=WEB_MERCATOR_TMS,
-        reader=Reader,
-        reader_options={"bands": [1]},
-        auth=request.app.state.auth,
-        get_s3_credentials=request.app.state.get_s3_credentials,
-    ) as src_dst:
-        assets = src_dst.assets_for_tile(
-            0,
-            0,
-            0,
+    client = request.app.state.client
+    s3_access = request.app.state.s3_access
+    auth_token = request.app.state.earthdata_token
+    get_s3_credentials = request.app.state.get_s3_credentials
+
+    granule = next(
+        get_granules(
+            search_params=GranuleSearch(collection_concept_id=concept_id),
+            client=client,
+            page_size=1,
             limit=1,
-            concept_id=concept_id,
-            access=s3_auth_config.access,
-            bands_regex=".*",
-        )
+        ),
+        None,
+    )
 
-        if not assets:
-            raise ValueError("No assets found for MultiFilesBandsReader")
+    if granule is None:
+        raise ValueError("No assets found for MultiBaseGranuleReader")
 
-        s3_credentials = (
-            src_dst.get_s3_credentials(endpoint)
-            if src_dst.get_s3_credentials
-            and (endpoint := assets[0].get("s3_credentials_url", None))
-            else None
-        )
+    with MultiBaseGranuleReader(
+        granule=granule,
+        s3_access=s3_access,
+        auth_token=auth_token,
+        get_s3_credentials=get_s3_credentials,
+    ) as reader:
+        asset_name = reader.assets[0]
+        info_result = reader.info(assets=[asset_name])
+        info = info_result[asset_name]
 
-        example_assets: Dict[str, str] = assets[0]["url"]
+        asset_info = granule.get_assets()[asset_name]
+        href = asset_info.direct_href if s3_access else asset_info.external_href
+        example_assets = {asset_name: href}
 
-        session = (
-            AWSSession(
-                aws_access_key_id=s3_credentials["accessKeyId"],
-                aws_secret_access_key=s3_credentials["secretAccessKey"],
-                aws_session_token=s3_credentials["sessionToken"],
-            )
-            if s3_credentials
-            else None
-        )
-        with (
-            rasterio.Env(
-                session,
-            ),
-            src_dst.reader(
-                input=list(example_assets.values())[0],
-                tms=src_dst.tms,
-            ) as _src_dst,
-        ):
-            info = _src_dst.info()
+    return {
+        "example_assets": example_assets,
+        "sample_asset_raster_info": info,
+        "backend": "rasterio",
+    }
 
-        return {
-            "example_assets": example_assets,
-            "sample_asset_raster_info": info,
-            "backend": "rasterio",
-        }
+
+def _build_links(
+    base_url: str,
+    concept_id: str,
+    backend: str,
+    first_var: Optional[str] = None,
+) -> List[TemplateLink]:
+    """Build template links for the compatibility response."""
+    if backend == "xarray" and first_var:
+        prefix = "/xarray"
+        extra_params = f"&variable={first_var}"
+    else:
+        prefix = "/rasterio"
+        extra_params = ""
+
+    id_param = f"?collection_concept_id={concept_id}"
+    temporal = "&temporal={temporal}"
+    base = f"{base_url}{prefix}"
+    qs = f"{id_param}{extra_params}{temporal}"
+
+    return [
+        TemplateLink(
+            rel="tilejson",
+            href=f"{base}/WebMercatorQuad/tilejson.json{qs}",
+            title="TileJSON",
+            type="application/json",
+        ),
+        TemplateLink(
+            rel="map",
+            href=f"{base}/WebMercatorQuad/map.html{qs}",
+            title="Map viewer",
+            type="text/html",
+        ),
+        TemplateLink(
+            rel="tile",
+            href=f"{base}/tiles/WebMercatorQuad/{{z}}/{{x}}/{{y}}{qs}",
+            title="Map tile",
+            type="image/png",
+        ),
+    ]
 
 
 def evaluate_concept_compatibility(
-    concept_id: ConceptID,
+    concept_id: str,
     request: Request,
-    s3_auth_config: AuthSettings,
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
-    Tries XarrayReader first, falls back to MultiFilesBandsReader.
+    Tries XarrayReader first, falls back to MultiBaseGranuleReader.
     Also fetches and includes CMR metadata in the response.
 
     Args:
         concept_id: CMR concept ID to test
         request: FastAPI request object
-        s3_auth_config: S3 authentication configuration
 
     Returns:
         CompatibilityResponse with backend info, temporal extent, and metadata
@@ -328,16 +347,23 @@ def evaluate_concept_compatibility(
     Raises:
         HTTPException: If neither reader is compatible or metadata cannot be fetched
     """
+    if not concept_id:
+        raise HTTPException(400, "concept_id is required")
 
-    metadata = get_concept_id_umm(concept_id)
-    temporal_extent = metadata["umm"]["TemporalExtents"]
+    collection = get_collection(concept_id, request.app.state.client)
+    temporal_extent = collection.temporal_extents
+    base_url = str(request.base_url).rstrip("/")
 
     # Try xarray first
+    xarray_error: Exception | None = None
     try:
-        result = evaluate_xarray_compatibility(concept_id, request, s3_auth_config)
+        result = evaluate_xarray_compatibility(concept_id, request)
+        first_var = next(iter(result.get("variables") or {}), None)
+        links = _build_links(base_url, concept_id, "xarray", first_var)
         return CompatibilityResponse(
             concept_id=concept_id,
             datetime=temporal_extent,
+            links=links,
             **result,
         )
     except (ValueError, HTTPException, OSError, KeyError) as e:
@@ -345,16 +371,19 @@ def evaluate_concept_compatibility(
         logger.warning(f"XarrayReader failed: {e}")
 
     # Fall back to rasterio
+    rasterio_error: Exception | None = None
     try:
-        result = evaluate_rasterio_compatibility(concept_id, request, s3_auth_config)
+        result = evaluate_rasterio_compatibility(concept_id, request)
+        links = _build_links(base_url, concept_id, "rasterio")
         return CompatibilityResponse(
             concept_id=concept_id,
             datetime=temporal_extent,
+            links=links,
             **result,
         )
     except (ValueError, HTTPException, OSError, KeyError) as e:
         rasterio_error = e
-        logger.warning(f"MultiFilesBandsReader failed: {e}")
+        logger.warning(f"MultiBaseGranuleReader failed: {e}")
 
     # Both failed
     raise HTTPException(
@@ -363,3 +392,15 @@ def evaluate_concept_compatibility(
         "with either the rasterio or xarray backends.\n\n "
         f"xarray error: {xarray_error} \n\n rasterio_error: {rasterio_error}",
     )
+
+
+router = APIRouter()
+
+
+@router.get("/compatibility", response_model=CompatibilityResponse)
+def compatibility_check(
+    collection_concept_id: str,
+    request: Request,
+) -> CompatibilityResponse:
+    """Check which backend is compatible with a CMR collection concept."""
+    return evaluate_concept_compatibility(collection_concept_id, request)

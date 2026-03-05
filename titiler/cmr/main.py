@@ -19,6 +19,7 @@ from titiler.xarray.dependencies import (
 from titiler.xarray.dependencies import XarrayParams
 
 from titiler.cmr import __version__ as titiler_cmr_version
+from titiler.cmr.compatibility import router as compatibility_router
 from titiler.cmr.credentials import EarthdataS3CredentialProvider
 from titiler.cmr.dependencies import CMRAssetsParams
 from titiler.cmr.factory import CMRTilerFactory
@@ -206,3 +207,4 @@ rasterio = CMRTilerFactory(
     add_ogc_maps=False,
 )
 app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")
+app.include_router(compatibility_router, tags=["Compatibility"])
