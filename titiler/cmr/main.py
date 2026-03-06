@@ -3,15 +3,21 @@
 import threading
 from collections.abc import Callable
 from contextlib import asynccontextmanager
+from typing import Annotated, Literal
 
 import cachetools
-from fastapi import FastAPI
+import jinja2
+from fastapi import FastAPI, Query, Request
 from httpx import Client
 from starlette.middleware.cors import CORSMiddleware
+from starlette.templating import Jinja2Templates
 from titiler.core.dependencies import AssetsExprParams
 from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
+from titiler.core.models.OGC import Conformance, Landing
+from titiler.core.resources.enums import MediaType
+from titiler.core.utils import accept_media_type, create_html_response
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 from titiler.xarray.dependencies import (
     DatasetParams as XarrayDatasetParams,
@@ -30,6 +36,16 @@ from titiler.cmr.settings import ApiSettings, EarthdataSettings
 from titiler.cmr.timeseries import TimeseriesExtension, timeseries_router
 
 configure_logging()
+
+jinja2_env = jinja2.Environment(
+    loader=jinja2.ChoiceLoader(
+        [
+            jinja2.PackageLoader("titiler.cmr"),
+            jinja2.PackageLoader("titiler.core"),
+        ]
+    ),
+)
+templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 earthdata_settings = EarthdataSettings()
@@ -136,20 +152,66 @@ description = """A TiTiler-based dynamic tiling application for the Common Metad
 This API allows you to interact with data in CMR using many of the familiar TiTiler functions.
 Users can specify a CMR query for a specific concept id (e.g. C123456-LPDAAC_ECS) and datetime
 and get a TileJSON, XYZ tile image, statistics report (for a GeoJSON) and more.
+
+## Timeseries
+The Timeseries Extension provides endpoints for requesting results for all points or intervals
+along a timeseries. The [/timeseries family of endpoints](#/Timeseries) works by converting
+the provided timeseries parameters (`datetime`, `step`, and `temporal_mode`) into a set of
+`datetime` query parameters for the corresponding lower-level endpoint, running asynchronous
+requests to the lower-level endpoint, then collecting the results and formatting them in a
+coherent format for the user.
+
+The timeseries structure is defined by the `datetime`, `step`, and `temporal_mode` parameters.
+
+The `temporal_mode` mode parameter controls whether or not CMR is queried for a particular
+point-in-time (`temporal_mode=point`) or over an entire interval (`temporal_mode=interval`).
+In general, it is best to use `temporal_mode=point` for datasets where granules overlap completely
+in space (e.g. daily sea surface temperature predictions) because the /timeseries endpoints will
+create a mosaic of all assets returned by the query and the first asset to cover a pixel will
+be used. For datasets where it requires granules from multiple timestamps to fully cover an AOI,
+`temporal_mode=interval` is appropriate. For example, you can get weekly composites of satellite
+imagery for visualization purposes with `step=P1W & temporal_mode=interval`.
+
+To get a timeseries for all granules between two datetimes, you can simply specify
+`datetime={start}/{end}` and a query will be sent to CMR to identify all of the granule timestamps
+between the provided `start` and `end` datetimes.
+
+To get a weekly sample of granules you can specify `datetime={start}/{end}`, `step=P1W`, and
+`temporal_mode=point`.
 """
 
 
 tags_metadata = [
     {
-        "name": "Xarray Backend",
+        "name": "Raster Tiles",
     },
     {
-        "name": "Rasterio Backend",
+        "name": "TileJSON",
+    },
+    {
+        "name": "Map",
+    },
+    {
+        "name": "Statistics",
+    },
+    {
+        "name": "Images",
     },
     {
         "name": "Timeseries",
+        "description": "A family of endpoints for timeseries analysis and visualization.",
+    },
+    {
+        "name": "Tiling Schemes",
+    },
+    {
+        "name": "Landing Page",
+    },
+    {
+        "name": "Conformance",
     },
 ]
+
 
 app = FastAPI(
     title=settings.name,
@@ -180,6 +242,162 @@ if settings.cors_origins:
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 app.add_middleware(LoggerMiddleware)
 
+
+@app.get(
+    "/",
+    response_model=Landing,
+    response_model_exclude_none=True,
+    responses={
+        200: {
+            "content": {
+                "text/html": {},
+                "application/json": {},
+            }
+        },
+    },
+    tags=["OGC Common"],
+)
+def landing(
+    request: Request,
+    f: Annotated[
+        Literal["html", "json"] | None,
+        Query(
+            description="Response MediaType. Defaults to endpoint's default or value defined in `accept` header."
+        ),
+    ] = None,
+):
+    """TiTiler landing page."""
+    data = {
+        "title": "titiler-cmr",
+        "links": [
+            {
+                "title": "Landing Page",
+                "href": str(request.url_for("landing")),
+                "type": MediaType.html,
+                "rel": "self",
+            },
+            {
+                "title": "the API definition (JSON)",
+                "href": str(request.url_for("openapi")),
+                "type": MediaType.openapi30_json,
+                "rel": "service-desc",
+            },
+            {
+                "title": "the API documentation",
+                "href": str(request.url_for("swagger_ui_html")),
+                "type": MediaType.html,
+                "rel": "service-doc",
+            },
+            {
+                "title": "Conformance",
+                "href": str(request.url_for("conformance")),
+                "type": MediaType.json,
+                "rel": "conformance",
+            },
+            {
+                "title": "TiTiler-CMR Documentation (external link)",
+                "href": "https://developmentseed.org/titiler-cmr/",
+                "type": MediaType.html,
+                "rel": "doc",
+            },
+            {
+                "title": "TiTiler-CMR source code (external link)",
+                "href": "https://github.com/developmentseed/titiler-cmr",
+                "type": MediaType.html,
+                "rel": "doc",
+            },
+        ],
+    }
+
+    if f:
+        output_type = MediaType[f]
+    else:
+        accepted_media = [MediaType.html, MediaType.json]
+        output_type = (
+            accept_media_type(request.headers.get("accept", ""), accepted_media)
+            or MediaType.json
+        )
+
+    if output_type == MediaType.html:
+        return create_html_response(
+            request,
+            data,
+            title="TiTiler",
+            template_name="landing",
+            templates=templates,
+        )
+
+    return data
+
+
+@app.get(
+    "/conformance",
+    response_model=Conformance,
+    response_model_exclude_none=True,
+    responses={
+        200: {
+            "content": {
+                "text/html": {},
+                "application/json": {},
+            }
+        },
+    },
+    tags=["OGC Common"],
+)
+def conformance(
+    request: Request,
+    f: Annotated[
+        Literal["html", "json"] | None,
+        Query(
+            description="Response MediaType. Defaults to endpoint's default or value defined in `accept` header."
+        ),
+    ] = None,
+):
+    """Conformance classes.
+
+    Called with `GET /conformance`.
+
+    Returns:
+        Conformance classes which the server conforms to.
+
+    """
+    data = {
+        "conformsTo": sorted(
+            [
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list",
+            ]
+        )
+    }
+
+    if f:
+        output_type = MediaType[f]
+    else:
+        accepted_media = [MediaType.html, MediaType.json]
+        output_type = (
+            accept_media_type(request.headers.get("accept", ""), accepted_media)
+            or MediaType.json
+        )
+
+    if output_type == MediaType.html:
+        return create_html_response(
+            request,
+            data,
+            title="Conformance",
+            template_name="conformance",
+            templates=templates,
+        )
+
+    return data
+
+
 if settings.telemetry_enabled:
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
@@ -198,6 +416,7 @@ xarray = CMRTilerFactory(
     add_viewer=True,
     add_part=True,
     add_ogc_maps=False,
+    templates=templates,
 )
 app.include_router(xarray.router, tags=["Xarray Backend"], prefix="/xarray")
 
@@ -212,6 +431,7 @@ rasterio = CMRTilerFactory(
     add_viewer=True,
     add_part=True,
     add_ogc_maps=False,
+    templates=templates,
 )
 app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")
 app.include_router(compatibility_router, tags=["Compatibility"])
