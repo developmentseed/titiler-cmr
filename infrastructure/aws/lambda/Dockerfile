@@ -17,7 +17,7 @@ EOF
 FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-RUN dnf install -y gcc-c++ && dnf clean all
+RUN dnf install -y gcc-c++ git && dnf clean all
 
 WORKDIR /build
 
@@ -25,7 +25,7 @@ COPY README.md uv.lock .python-version pyproject.toml ./
 COPY titiler/ ./titiler/
 
 RUN <<EOF
-uv export --quiet --locked --no-editable --no-dev --extra lambda --format requirements.txt -o requirements.txt
+uv export --quiet --locked --no-editable --no-dev --extra lambda --extra telemetry --format requirements.txt -o requirements.txt
 uv pip install \
   --compile-bytecode \
   --no-binary pydantic \
