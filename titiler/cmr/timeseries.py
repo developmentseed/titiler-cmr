@@ -38,7 +38,7 @@ from PIL import Image
 from pydantic import BaseModel
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
-from titiler.core.factory import FactoryExtension
+from titiler.core.factory import BaseFactory, FactoryExtension
 from titiler.core.models.mapbox import TileJSON
 from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
@@ -126,7 +126,7 @@ class TimeseriesParams(DefaultDependency):
     """Timeseries parameters"""
 
     temporal: Annotated[
-        str,
+        Optional[str],
         Query(
             description="Either a date-time, an interval, or a comma-separated list of date-times or intervals."
             "Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format."
@@ -145,7 +145,11 @@ class TimeseriesParams(DefaultDependency):
                 },
             },
         ),
-    ]
+    ] = None
+    datetime_param: Annotated[
+        Optional[str],
+        Query(alias="datetime", include_in_schema=False),
+    ] = None
     step: Annotated[
         Optional[str],
         Query(
@@ -160,8 +164,19 @@ class TimeseriesParams(DefaultDependency):
         ),
     ] = TemporalMode.interval
 
+    def __post_init__(self):
+        """Apply legacy parameter aliases."""
+        if self.datetime_param and not self.temporal:
+            self.temporal = self.datetime_param
+        if not self.temporal:
+            raise HTTPException(400, "'temporal' is required")
 
-timeseries_field_names = [field.name for field in fields(TimeseriesParams)]
+
+# Include the `datetime` HTTP alias so old-style ?datetime=... is also stripped
+# from sub-request URLs when building timeseries requests.
+timeseries_field_names = {field.name for field in fields(TimeseriesParams)} | {
+    "datetime"
+}
 
 
 def generate_datetime_ranges(
@@ -264,7 +279,7 @@ async def timestep_request(
 TimeseriesCMRQueryParameters = List[GranuleSearch]
 
 
-def timeseries_cmr_query(
+def timeseries_cmr_query(  # noqa: C901
     request: Request,
     granule_search: GranuleSearch = Depends(GranuleSearchParams),
     timeseries_params: TimeseriesParams = Depends(TimeseriesParams),
@@ -281,6 +296,8 @@ def timeseries_cmr_query(
     if not granule_search.collection_concept_id:
         raise HTTPException(status_code=400, detail="collection_concept_id is required")
 
+    if timeseries_params.temporal is None:
+        raise HTTPException(status_code=400, detail="temporal is required")
     temporal_inputs = timeseries_params.temporal.split(",")
 
     temporal_params = []
@@ -332,13 +349,20 @@ def timeseries_cmr_query(
                 bounding_box=bbox_str,
             )
             for granule in get_granules(cmr_search, client=request.app.state.client):
-                if granule.time_start:
+                rdt = (
+                    granule.temporal_extent.range_date_time
+                    if granule.temporal_extent
+                    else None
+                )
+                if rdt and rdt.beginning_date_time:
                     g_start = datetime.fromisoformat(
-                        granule.time_start.replace("Z", "+00:00")
+                        rdt.beginning_date_time.replace("Z", "+00:00")
                     )
                     g_end = (
-                        datetime.fromisoformat(granule.time_end.replace("Z", "+00:00"))
-                        if granule.time_end
+                        datetime.fromisoformat(
+                            rdt.ending_date_time.replace("Z", "+00:00")
+                        )
+                        if rdt.ending_date_time
                         else g_start
                     )
                     midpoint = g_start + (g_end - g_start) / 2
@@ -418,8 +442,9 @@ def get_timeseries_parameters(
 class TimeseriesExtension(FactoryExtension):
     """Timeseries extension"""
 
-    def register(self, factory: CMRTilerFactory):
+    def register(self, factory: BaseFactory) -> None:
         """Register timeseries endpoints to the MosaicTilerFactory"""
+        assert isinstance(factory, CMRTilerFactory)
         self.register_statistics(factory=factory)
         self.register_tilejson(factory=factory)
         self.register_images(factory=factory)
@@ -537,6 +562,8 @@ class TimeseriesExtension(FactoryExtension):
                 raise HTTPException(
                     status_code=400, detail="Expected a GeoJSON Feature"
                 )
+            if geojson.properties is None:
+                geojson.properties = {}
             geojson.properties["statistics"] = {}
             for r, datetime_str in zip(timestep_requests, datetime_strs):
                 if r.status_code == 200:

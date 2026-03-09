@@ -1,7 +1,7 @@
 """CMR mosaic backend."""
 
 from collections.abc import Callable
-from typing import Any, Type
+from typing import Any, Type, cast
 
 import attr
 from geojson_pydantic.geometries import Geometry, Point, Polygon
@@ -24,7 +24,7 @@ class CMRBackend(BaseBackend):
     """Mosaic backend for CMR granule search."""
 
     # CMR search parameters
-    input: GranuleSearch = attr.ib()
+    input: GranuleSearch = attr.ib()  # type: ignore[assignment]
     client: Client = attr.ib()
     reader: Type[MultiBaseGranuleReader] | Type[XarrayGranuleReader] = attr.ib()
 
@@ -51,13 +51,15 @@ class CMRBackend(BaseBackend):
     maxzoom: int = attr.ib(18)
 
     @property
-    def bounds(self) -> BBox:
+    def bounds(self) -> BBox:  # type: ignore[override]
         """Return the bounding box of the mosaic."""
         if self.input.granule_ur:
             granule = next(get_granules(search_params=self.input, client=self.client))
             return granule.bbox
         elif self.input.bounding_box:
-            return tuple(float(x) for x in self.input.bounding_box.split(","))
+            return cast(
+                BBox, tuple(float(x) for x in self.input.bounding_box.split(","))
+            )
         else:
             return (-180, -90, 180, 90)
 

@@ -34,6 +34,7 @@ from titiler.cmr.compatibility import router as compatibility_router
 from titiler.cmr.credentials import EarthdataS3CredentialProvider
 from titiler.cmr.dependencies import CMRAssetsParams
 from titiler.cmr.factory import CMRTilerFactory
+from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
@@ -476,6 +477,14 @@ app.include_router(
     tags=["ColorMaps"],
 )
 TITILER_CONFORMS_TO.update(cmaps.conforms_to)
+
+###############################################################################
+# Legacy backwards-compatibility redirect routes (must be last so new routes take priority)
+app.include_router(
+    legacy_router,
+    tags=["Legacy (Deprecated)"],
+    include_in_schema=True,
+)
 
 if settings.telemetry_enabled:
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor

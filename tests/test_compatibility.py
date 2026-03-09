@@ -13,7 +13,11 @@ from titiler.cmr.compatibility import (
     evaluate_xarray_compatibility,
     extract_xarray_metadata,
 )
-from titiler.cmr.models import Granule, Link
+from titiler.cmr.models import (
+    Granule,
+    GranuleSpatialExtent,
+    RelatedUrl,
+)
 
 
 def _make_request(s3_access=False, auth_token=None, get_s3_credentials=None):
@@ -32,19 +36,28 @@ def _make_granule(external_href="https://example.com/file.nc") -> Granule:
     return Granule(
         id="G1234-TEST",
         collection_concept_id="C1234-TEST",
-        links=[
-            Link(
-                rel="http://esipfed.org/ns/fedsearch/1.1/data#",
-                hreflang="en-US",
-                href=external_href,
-            ),
-            Link(
-                rel="http://esipfed.org/ns/fedsearch/1.1/s3#",
-                hreflang="en-US",
-                href="s3://bucket/file.nc",
+        related_urls=[
+            RelatedUrl(**{"URL": external_href, "Type": "GET DATA"}),
+            RelatedUrl(
+                **{"URL": "s3://bucket/file.nc", "Type": "GET DATA VIA DIRECT ACCESS"}
             ),
         ],
-        boxes=["0 -180 0 180"],
+        spatial_extent=GranuleSpatialExtent(
+            **{
+                "HorizontalSpatialDomain": {
+                    "Geometry": {
+                        "BoundingRectangles": [
+                            {
+                                "WestBoundingCoordinate": -180,
+                                "EastBoundingCoordinate": 180,
+                                "NorthBoundingCoordinate": 0,
+                                "SouthBoundingCoordinate": 0,
+                            }
+                        ]
+                    }
+                }
+            }
+        ),
     )
 
 

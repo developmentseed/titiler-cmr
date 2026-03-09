@@ -96,7 +96,7 @@ def get_granules(
     count = 0
     while count <= limit:
         response = client.get(
-            "granules.json",
+            "granules.umm_json",
             params=params,
             headers=headers,
         )
@@ -108,9 +108,9 @@ def get_granules(
             raise HTTPException(response.status_code, response.text) from e
 
         result = GranuleSearchResponse(**response.json())
-        logger.debug(f"Found {len(result.feed.entry)} granules")
+        logger.debug(f"Found {len(result.items)} granules")
 
-        for granule in result.feed.entry:
+        for granule in result.items:
             count += 1
             yield granule
             if search_shape is not None and granule.geometry is not None:

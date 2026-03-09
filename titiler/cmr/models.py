@@ -6,7 +6,15 @@ from collections import defaultdict
 from typing import Annotated, Any, List
 
 from fastapi import Query
-from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 from shapely.geometry import shape
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
@@ -91,9 +99,17 @@ SortKey = Annotated[
 class GranuleSearch(BaseModel):
     """CMR granule search parameters."""
 
-    collection_concept_id: ConceptID = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    collection_concept_id: ConceptID = Field(
+        default=None,
+        validation_alias=AliasChoices("collection_concept_id", "concept_id"),
+    )
     granule_ur: GranuleUr = None
-    temporal: Temporal = None
+    temporal: Temporal = Field(
+        default=None,
+        validation_alias=AliasChoices("temporal", "datetime"),
+    )
     cloud_cover: CloudCover = None
     bounding_box: BBox | None = None
     sort_key: List[str] | None = None
@@ -126,67 +142,194 @@ class Asset(BaseModel):
     ext: str
 
 
-class Link(BaseModel):
-    """A link entry from a CMR granule search result."""
+class RelatedUrl(BaseModel):
+    """A UMM RelatedUrl entry from a CMR granule search result."""
 
-    rel: str
-    hreflang: str
-    href: str
-    title: str | None = None
-    inherited: bool | None = None
+    model_config = ConfigDict(populate_by_name=True)
 
-
-def _parse_ring(ring_str: str) -> list[list[float]]:
-    """Parse a CMR ring string into GeoJSON coordinates.
-
-    CMR encodes rings as a flat string of space-separated lat/lon pairs.
-    GeoJSON requires [lon, lat] order, so the values are swapped.
-    """
-    values = [float(v) for v in ring_str.split()]
-    return [[values[i + 1], values[i]] for i in range(0, len(values), 2)]
+    url: str = Field(alias="URL")
+    type: str = Field(alias="Type")
+    description: str | None = Field(None, alias="Description")
 
 
-def _parse_box(box_str: str) -> list[list[float]]:
-    """Parse a CMR bounding box string into a closed GeoJSON polygon ring.
+class GPolygonPoint(BaseModel):
+    """A single point in a UMM GPolygon boundary."""
 
-    CMR encodes boxes as "south west north east" (lat/lon order).
-    Returns a closed ring in GeoJSON [lon, lat] order.
-    """
-    south, west, north, east = [float(v) for v in box_str.split()]
-    return [
-        [west, south],
-        [east, south],
-        [east, north],
-        [west, north],
-        [west, south],
-    ]
+    model_config = ConfigDict(populate_by_name=True)
+
+    longitude: float = Field(alias="Longitude")
+    latitude: float = Field(alias="Latitude")
+
+
+class GPolygonBoundary(BaseModel):
+    """The boundary of a UMM GPolygon."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    points: list[GPolygonPoint] = Field(alias="Points")
+
+
+class GPolygon(BaseModel):
+    """A UMM GPolygon geometry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    boundary: GPolygonBoundary = Field(alias="Boundary")
+
+
+class BoundingRectangle(BaseModel):
+    """A UMM BoundingRectangle geometry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    west: float = Field(alias="WestBoundingCoordinate")
+    east: float = Field(alias="EastBoundingCoordinate")
+    north: float = Field(alias="NorthBoundingCoordinate")
+    south: float = Field(alias="SouthBoundingCoordinate")
+
+
+class UMMGeometry(BaseModel):
+    """UMM Geometry container with polygons and/or bounding rectangles."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    g_polygons: list[GPolygon] | None = Field(None, alias="GPolygons")
+    bounding_rectangles: list[BoundingRectangle] | None = Field(
+        None, alias="BoundingRectangles"
+    )
+
+
+class GranuleHorizontalSpatialDomain(BaseModel):
+    """UMM HorizontalSpatialDomain container for granules."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    geometry: UMMGeometry | None = Field(None, alias="Geometry")
+
+
+class GranuleSpatialExtent(BaseModel):
+    """UMM SpatialExtent container for granules."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    horizontal_spatial_domain: GranuleHorizontalSpatialDomain | None = Field(
+        None, alias="HorizontalSpatialDomain"
+    )
+
+
+class RangeDateTime(BaseModel):
+    """UMM RangeDateTime container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    beginning_date_time: str | None = Field(None, alias="BeginningDateTime")
+    ending_date_time: str | None = Field(None, alias="EndingDateTime")
+
+
+class GranuleTemporalExtent(BaseModel):
+    """UMM TemporalExtent container for granules."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    range_date_time: RangeDateTime | None = Field(None, alias="RangeDateTime")
+
+
+class AdditionalAttribute(BaseModel):
+    """A UMM AdditionalAttribute entry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    name: str = Field(alias="Name")
+    values: list[str] = Field(alias="Values")
+
+
+class ArchiveAndDistributionInfo(BaseModel):
+    """A UMM ArchiveAndDistributionInformation entry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    name: str = Field(alias="Name")
+    size_in_bytes: int | None = Field(None, alias="SizeInBytes")
+
+
+class DataGranule(BaseModel):
+    """UMM DataGranule container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    archive_and_distribution_information: list[ArchiveAndDistributionInfo] = Field(
+        alias="ArchiveAndDistributionInformation", default_factory=list
+    )
 
 
 class Granule(BaseModel):
-    """A single CMR granule parsed from a search response."""
+    """A single CMR granule parsed from a UMM JSON search response."""
 
     id: str
     collection_concept_id: str
-    links: list[Link]
-    polygons: list[list[str]] | None = None
-    boxes: list[str] | None = None
-    time_start: str | None = None
-    time_end: str | None = None
+    related_urls: list[RelatedUrl] = Field(default_factory=list)
+    spatial_extent: GranuleSpatialExtent | None = None
+    temporal_extent: GranuleTemporalExtent | None = None
+    additional_attributes: list[AdditionalAttribute] = Field(default_factory=list)
+    data_granule: DataGranule | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _extract_from_umm_item(cls, data: Any) -> Any:
+        """Extract flat fields from a raw UMM item dict {"meta": ..., "umm": ...}."""
+        if isinstance(data, dict) and "meta" in data and "umm" in data:
+            meta = data["meta"]
+            umm = data["umm"]
+            return {
+                "id": meta["concept-id"],
+                "collection_concept_id": meta["collection-concept-id"],
+                "related_urls": umm.get("RelatedUrls", []),
+                "spatial_extent": umm.get("SpatialExtent"),
+                "temporal_extent": umm.get("TemporalExtent"),
+                "additional_attributes": umm.get("AdditionalAttributes", []),
+                "data_granule": umm.get("DataGranule"),
+            }
+        return data
+
+    @property
+    def additional_attributes_dict(self) -> dict[str, list[str]]:
+        """Return additional attributes as a name→values dict."""
+        return {attr.name: attr.values for attr in self.additional_attributes}
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def geometry(self) -> dict[str, Any] | None:
-        """GeoJSON geometry derived from the CMR polygons or boxes field."""
-        if self.polygons:
-            rings_per_polygon = [
-                [_parse_ring(ring) for ring in polygon] for polygon in self.polygons
-            ]
-            if len(rings_per_polygon) == 1:
-                return {"type": "Polygon", "coordinates": rings_per_polygon[0]}
-            return {"type": "MultiPolygon", "coordinates": rings_per_polygon}
+        """GeoJSON geometry derived from UMM SpatialExtent."""
+        if not (
+            self.spatial_extent
+            and (hsd := self.spatial_extent.horizontal_spatial_domain)
+            and (geom := hsd.geometry)
+        ):
+            return None
 
-        if self.boxes:
-            rings = [_parse_box(box) for box in self.boxes]
+        if geom.g_polygons:
+            polygons = []
+            for polygon in geom.g_polygons:
+                ring = [[pt.longitude, pt.latitude] for pt in polygon.boundary.points]
+                # Ensure ring is closed
+                if ring and ring[0] != ring[-1]:
+                    ring.append(ring[0])
+                polygons.append([ring])
+            if len(polygons) == 1:
+                return {"type": "Polygon", "coordinates": polygons[0]}
+            return {"type": "MultiPolygon", "coordinates": polygons}
+
+        if geom.bounding_rectangles:
+            rings = []
+            for br in geom.bounding_rectangles:
+                ring = [
+                    [br.west, br.south],
+                    [br.east, br.south],
+                    [br.east, br.north],
+                    [br.west, br.north],
+                    [br.west, br.south],
+                ]
+                rings.append(ring)
             if len(rings) == 1:
                 return {"type": "Polygon", "coordinates": [rings[0]]}
             return {"type": "MultiPolygon", "coordinates": [[ring] for ring in rings]}
@@ -202,9 +345,9 @@ class Granule(BaseModel):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def s3_credentials_endpoint(self) -> str:
-        """S3 credentials endpoint URL from the granule links."""
+        """S3 credentials endpoint URL from the granule related URLs."""
         endpoint = next(
-            (link.href for link in self.links if "/s3credentials" in link.href), None
+            (ru.url for ru in self.related_urls if "/s3credentials" in ru.url), None
         )
         if not endpoint:
             raise S3CredentialsEndpointMissing(
@@ -212,12 +355,31 @@ class Granule(BaseModel):
             )
         return endpoint
 
-    def get_assets(self, regex: str | None = None) -> dict[str, Asset]:
-        """Extract assets from granule links, optionally filtered by regex."""
+    def get_assets(self, regex: str | None = None) -> dict[str, Asset]:  # noqa: C901
+        """Extract assets from granule related URLs, optionally filtered by regex."""
         _assets: dict[str, dict] = defaultdict(dict)
-        for link in self.links:
-            root, extension = os.path.splitext(link.href)
+
+        # Restrict to canonical filenames from DataGranule when available
+        canonical_names: set[str] | None = None
+        if self.data_granule:
+            names = {
+                info.name
+                for info in self.data_granule.archive_and_distribution_information
+                if info.name != "Not provided"
+            }
+            if names:
+                canonical_names = names
+
+        for ru in self.related_urls:
+            if ru.type not in ("GET DATA VIA DIRECT ACCESS", "GET DATA"):
+                continue
+
+            root, extension = os.path.splitext(ru.url)
             file = root.split("/")[-1]
+
+            if canonical_names is not None:
+                if (file + extension) not in canonical_names:
+                    continue
 
             if regex:
                 if match := re.search(regex, file):
@@ -227,12 +389,11 @@ class Granule(BaseModel):
             else:
                 key = file
 
-            if not link.inherited:
-                if link.rel.endswith("/s3#"):
-                    _assets[key]["ext"] = extension
-                    _assets[key]["direct_href"] = link.href
-                elif link.rel.endswith("/data#"):
-                    _assets[key]["external_href"] = link.href
+            if ru.type == "GET DATA VIA DIRECT ACCESS":
+                _assets[key]["ext"] = extension
+                _assets[key]["direct_href"] = ru.url
+            elif ru.type == "GET DATA":
+                _assets[key]["external_href"] = ru.url
 
         return {
             (key if regex else str(i)): Asset(**data)
@@ -240,16 +401,13 @@ class Granule(BaseModel):
         }
 
 
-class GranuleSearchFeed(BaseModel):
-    """The feed wrapper in a CMR granule search response."""
-
-    entry: list[Granule]
-
-
 class GranuleSearchResponse(BaseModel):
-    """Top-level CMR granules.json search response."""
+    """Top-level CMR granules.umm_json search response."""
 
-    feed: GranuleSearchFeed
+    model_config = ConfigDict(extra="ignore")
+
+    hits: int
+    items: list[Granule]
 
 
 # ---------------------------------------------------------------------------

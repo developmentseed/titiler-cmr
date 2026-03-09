@@ -37,6 +37,7 @@ class EarthdataS3CredentialProvider:
         with self._lock:
             if not self._is_valid():
                 self._cached = self._fetch()
+            assert self._cached is not None
             return self._cached
 
     def _is_valid(self) -> bool:

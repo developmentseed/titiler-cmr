@@ -67,15 +67,15 @@ def mock_cmr_get_assets(monkeypatch):
 
         result = []
         for granule in granules:
-            new_links = []
-            for link in granule.links:
-                new_href = link.href
+            new_related_urls = []
+            for ru in granule.related_urls:
+                new_url = ru.url
                 for prefix in prefixes:
-                    if link.href.startswith(prefix):
-                        new_href = link.href.replace(prefix, f"file://{data_dir}/")
+                    if ru.url.startswith(prefix):
+                        new_url = ru.url.replace(prefix, f"file://{data_dir}/")
                         break
-                new_links.append(link.model_copy(update={"href": new_href}))
-            result.append(granule.model_copy(update={"links": new_links}))
+                new_related_urls.append(ru.model_copy(update={"url": new_url}))
+            result.append(granule.model_copy(update={"related_urls": new_related_urls}))
 
         return result
 

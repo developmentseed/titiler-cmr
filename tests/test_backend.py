@@ -11,7 +11,12 @@ from mypy_boto3_s3.service_resource import Object
 from rio_tiler.models import ImageData
 
 from titiler.cmr.backend import CMRBackend
-from titiler.cmr.models import Granule, GranuleSearch, Link
+from titiler.cmr.models import (
+    Granule,
+    GranuleSearch,
+    GranuleSpatialExtent,
+    RelatedUrl,
+)
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.reader import MultiBaseGranuleReader
 
@@ -42,27 +47,40 @@ def stub_get_granules() -> list[Granule]:
         Granule(
             id="test-granule-id",
             collection_concept_id="TEST_COLLECTION",
-            links=[
-                Link(
-                    rel="http://esipfed.org/ns/fedsearch/1.1/s3#",
-                    hreflang="en-US",
-                    href="s3://test-bucket/test-file.tif",
-                    inherited=False,
+            related_urls=[
+                RelatedUrl(
+                    **{
+                        "URL": "s3://test-bucket/test-file.tif",
+                        "Type": "GET DATA VIA DIRECT ACCESS",
+                    }
                 ),
-                Link(
-                    rel="http://esipfed.org/ns/fedsearch/1.1/data#",
-                    hreflang="en-US",
-                    href="https://foo.bar/test-file.tif",
-                    inherited=False,
+                RelatedUrl(
+                    **{"URL": "https://foo.bar/test-file.tif", "Type": "GET DATA"}
                 ),
-                Link(
-                    rel="http://esipfed.org/ns/fedsearch/1.1/s3credentials#",
-                    hreflang="en-US",
-                    href="https://foo.bar/s3credentials",
-                    inherited=False,
+                RelatedUrl(
+                    **{
+                        "URL": "https://foo.bar/s3credentials",
+                        "Type": "VIEW RELATED INFORMATION",
+                        "Description": "api endpoint to retrieve temporary credentials",
+                    }
                 ),
             ],
-            boxes=["0 -10 1 10"],
+            spatial_extent=GranuleSpatialExtent(
+                **{
+                    "HorizontalSpatialDomain": {
+                        "Geometry": {
+                            "BoundingRectangles": [
+                                {
+                                    "WestBoundingCoordinate": -10,
+                                    "EastBoundingCoordinate": 10,
+                                    "NorthBoundingCoordinate": 1,
+                                    "SouthBoundingCoordinate": 0,
+                                }
+                            ]
+                        }
+                    }
+                }
+            ),
         )
     ]
 

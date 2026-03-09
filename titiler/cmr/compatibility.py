@@ -3,7 +3,7 @@
 from typing import Any, Dict, List, Literal, Optional
 
 import numpy as np
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from rio_tiler.models import Info
 from starlette.requests import Request
@@ -394,13 +394,23 @@ def evaluate_concept_compatibility(
     )
 
 
+def _concept_id_param(
+    collection_concept_id: Optional[str] = None,
+    concept_id: Optional[str] = Query(default=None, include_in_schema=False),
+) -> Optional[str]:
+    """Accept both collection_concept_id and legacy concept_id."""
+    return collection_concept_id or concept_id
+
+
 router = APIRouter()
 
 
 @router.get("/compatibility", response_model=CompatibilityResponse)
 def compatibility_check(
-    collection_concept_id: str,
     request: Request,
+    concept_id: Optional[str] = Depends(_concept_id_param),
 ) -> CompatibilityResponse:
     """Check which backend is compatible with a CMR collection concept."""
-    return evaluate_concept_compatibility(collection_concept_id, request)
+    if concept_id is None:
+        raise HTTPException(status_code=400, detail="concept_id is required")
+    return evaluate_concept_compatibility(concept_id, request)

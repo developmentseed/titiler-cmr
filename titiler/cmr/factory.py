@@ -40,7 +40,7 @@ class CMRTilerFactory(BaseFactory):
 
     reader_dependency: (
         type[DefaultDependency] | type[CMRAssetsParams] | type[XarrayParams] | Callable
-    ) = field(default=DefaultDependency)
+    ) = field(default=DefaultDependency)  # type: ignore[assignment]
 
     # Rasterio Dataset Options (nodata, unscale, resampling, reproject)
     dataset_dependency: type[RasterioDatasetParams] | type[XarrayDatasetParams]

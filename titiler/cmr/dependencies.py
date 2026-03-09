@@ -24,17 +24,26 @@ from titiler.cmr.utils import parse_datetime
 
 def GranuleSearchParams(
     collection_concept_id: ConceptID | None = None,
+    concept_id: ConceptID | None = Query(default=None, include_in_schema=False),
     granule_ur: GranuleUr | None = None,
     temporal: Temporal | None = None,
+    datetime_param: Temporal | None = Query(
+        alias="datetime", default=None, include_in_schema=False
+    ),
     cloud_cover: CloudCover | None = None,
     bounding_box: BBox | None = None,
     sort_key: SortKey = None,
 ) -> GranuleSearch:
-    """Build GranuleSearch parameters from query string inputs."""
+    """Build GranuleSearch parameters from query string inputs.
+
+    Accepts both current and legacy parameter names:
+    - concept_id (legacy) → collection_concept_id
+    - datetime (legacy)   → temporal
+    """
     return GranuleSearch(
-        collection_concept_id=collection_concept_id,
+        collection_concept_id=collection_concept_id or concept_id,
         granule_ur=granule_ur,
-        temporal=temporal,
+        temporal=temporal or datetime_param,
         cloud_cover=cloud_cover,
         bounding_box=bounding_box,
         sort_key=sort_key,
@@ -89,6 +98,17 @@ class CMRAssetsParams(DefaultDependency):
     assets_regex: Annotated[
         str | None, Query(description="regex to extract asset keys from filenames")
     ] = None
+    bands_regex: Annotated[
+        str | None,
+        Query(alias="bands_regex", include_in_schema=False),
+    ] = None
+
+    def __post_init__(self):
+        """Apply legacy parameter aliases."""
+        if self.bands_regex and not self.assets_regex:
+            self.assets_regex = self.bands_regex
+        # Clear so as_dict() does not leak the deprecated param name
+        self.bands_regex = None
 
 
 @dataclass

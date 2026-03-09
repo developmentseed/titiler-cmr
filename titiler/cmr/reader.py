@@ -28,7 +28,7 @@ from rio_tiler.errors import InvalidAssetName, MissingAssets
 from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
 from rio_tiler.io.xarray import Options, XarrayReader
-from rio_tiler.types import AssetInfo
+from rio_tiler.types import AssetInfo, AssetWithOptions
 from titiler.xarray.io import _parse_dsl
 from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
@@ -215,7 +215,7 @@ def open_dataset(
         logger.info(f"opening {src_path}")
         t0 = time.perf_counter()
         ds = xarray_open_dataset(
-            reader,
+            reader,  # type: ignore[arg-type]
             group=group,
             decode_times=decode_times,
             decode_coords=decode_coords,
@@ -332,8 +332,9 @@ class MultiBaseGranuleReader(MultiBaseReader):
             )
         )
 
-    def _get_asset_info(self, asset: str) -> AssetInfo:
+    def _get_asset_info(self, asset: str | AssetWithOptions) -> AssetInfo:
         """Validate asset names and return asset's info."""
+        assert isinstance(asset, str)
         if asset not in self.assets:
             raise InvalidAssetName(
                 f"'{asset}' is not valid, should be one of {self.assets}"
@@ -385,7 +386,7 @@ class XarrayGranuleReader(XarrayReader):
     src_path: Granule = attr.ib()
     variable: str = attr.ib()
 
-    options: Options = attr.ib(factory=dict)
+    options: Options = attr.ib(factory=Options)
 
     # xarray.Dataset options
     opener: Callable[..., Dataset] = attr.ib(default=open_dataset)
