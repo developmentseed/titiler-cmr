@@ -8,7 +8,11 @@ from typing_extensions import Annotated
 class EarthdataSettings(BaseSettings):
     """Earthdata Settings"""
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_prefix="TITILER_CMR_",
+        env_file=".env",
+        extra="ignore",
+    )
 
     earthdata_username: str | None = None
     earthdata_password: str | None = None

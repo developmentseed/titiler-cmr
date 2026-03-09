@@ -100,8 +100,8 @@ class LambdaStack(Stack):
         if app_settings.s3_auth_strategy == "environment":
             lambda_env.update(
                 {
-                    "EARTHDATA_USERNAME": app_settings.earthdata_username,
-                    "EARTHDATA_PASSWORD": app_settings.earthdata_password,
+                    "TITILER_CMR_EARTHDATA_USERNAME": app_settings.earthdata_username,
+                    "TITILER_CMR_EARTHDATA_PASSWORD": app_settings.earthdata_password,
                 }
             )
 
