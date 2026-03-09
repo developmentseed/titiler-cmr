@@ -46,6 +46,7 @@ class CMRBackend(BaseBackend):
 
     crs: CRS = attr.ib(default=WGS84_CRS)
 
+    # TODO: do this correctly
     minzoom: int = attr.ib(0)
     maxzoom: int = attr.ib(18)
 
@@ -112,6 +113,9 @@ class CMRBackend(BaseBackend):
         **kwargs,
     ) -> list[Granule]:
         """Retrieve assets for bbox."""
+        if not coord_crs:
+            coord_crs = WGS84_CRS
+
         if coord_crs != WGS84_CRS:
             xmin, ymin, xmax, ymax = transform_bounds(
                 coord_crs,

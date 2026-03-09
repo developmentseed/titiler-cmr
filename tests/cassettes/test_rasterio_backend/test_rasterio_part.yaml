@@ -1,0 +1,106 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - cmr.earthdata.nasa.gov
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.json?page_size=10&collection_concept_id=C2021957657-LPCLOUD&temporal=2024-10-09T00%3A00%3A01Z%2F2024-10-09T23%3A59%3A59Z&bounding_box=-91.705%2C48.179%2C-91.459%2C48.3
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      CMR-Hits:
+      - '2'
+      CMR-Request-Id:
+      - f7ee99d0-1d53-473a-8f46-0010ff2dbe0d
+      CMR-Search-After:
+      - '["lpcloud",1728492695011,3263857658]'
+      CMR-Took:
+      - '695'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-MD5:
+      - 31d11ba0fa852a828f8692412e1a1243
+      Content-SHA1:
+      - 3ce71094cea23667af1371e7e6a388d66ac7388d
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 06 Mar 2026 02:52:33 GMT
+      Server:
+      - ServerTokens ProductOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Via:
+      - 1.1 7e35f09412049c9a6642645fafc6cabe.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - OazWwxOq5cjwLxt08so3v4vkgMhJJI4xglHkZeF2NKifzVkGfW0Wng==
+      X-Amz-Cf-Pop:
+      - MSP50-P2
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - OazWwxOq5cjwLxt08so3v4vkgMhJJI4xglHkZeF2NKifzVkGfW0Wng==
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -602,7 +602,7 @@ class TimeseriesExtension(FactoryExtension):
             urls = build_request_urls(
                 base_url=str(
                     factory.url_for(
-                        request, "tilejson_endpoint", tileMatrixSetId=tileMatrixSetId
+                        request, "tilejson", tileMatrixSetId=tileMatrixSetId
                     )
                 ),
                 request=request,

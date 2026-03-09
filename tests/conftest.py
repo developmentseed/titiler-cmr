@@ -9,18 +9,13 @@ import moto
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, FeatureCollection, Polygon
+from httpx import Client
 from moto.server import ThreadedMotoServer
 from mypy_boto3_s3.service_resource import Bucket, Object, S3ServiceResource
 from vcr.request import Request
 
 from titiler.cmr.backend import CMRBackend
-from titiler.cmr.settings import AuthSettings
-
-# Create a custom AuthSettings instance
-custom_auth_settings = AuthSettings(
-    strategy="iam",
-    access="external",
-)
+from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 
 
 def before_record_cb(request: Request):
@@ -41,21 +36,18 @@ def vcr_config():
     }
 
 
-@pytest.fixture(scope="session", autouse=True)
-def override_auth_settings(session_mocker):
-    """Override AuthSettings for all tests."""
-    session_mocker.patch(
-        "titiler.cmr.settings.AuthSettings", return_value=custom_auth_settings
-    )
-    session_mocker.patch("titiler.cmr.backend.s3_auth_config", custom_auth_settings)
-
-
 @pytest.fixture(scope="session")
 def app():
     """Create a TestClient instance for the app."""
     from titiler.cmr.main import app
 
     # Do NOT use a context manager so that we do NOT invoke lifespan during testing.
+    # Set app state manually since lifespan is skipped.
+    app.state.client = Client(base_url=CMR_GRANULE_SEARCH_API)
+    app.state.s3_access = False
+    app.state.earthdata_token = None
+    app.state.get_s3_credentials = None
+
     return TestClient(app)
 
 
@@ -65,29 +57,27 @@ def mock_cmr_get_assets(monkeypatch):
     original_get_assets = CMRBackend.get_assets
 
     def mocked_get_assets(*args, **kwargs):
-        assets = original_get_assets(*args, **kwargs)
+        granules = original_get_assets(*args, **kwargs)
 
         prefixes = (
             "https://data.lpdaac.earthdatacloud.nasa.gov/",
             "https://archive.podaac.earthdata.nasa.gov/",
         )
         data_dir = os.path.join(os.path.dirname(__file__), "data")
-        for asset in assets:
-            if isinstance(asset["url"], dict):
-                for band, url in asset["url"].items():
-                    for prefix in prefixes:
-                        if url.startswith(prefix):
-                            asset["url"][band] = url.replace(
-                                prefix, f"file://{data_dir}/"
-                            )
-            elif isinstance(asset["url"], str):
-                for prefix in prefixes:
-                    if asset["url"].startswith(prefix):
-                        asset["url"] = asset["url"].replace(
-                            prefix, f"file://{data_dir}/"
-                        )
 
-        return assets
+        result = []
+        for granule in granules:
+            new_links = []
+            for link in granule.links:
+                new_href = link.href
+                for prefix in prefixes:
+                    if link.href.startswith(prefix):
+                        new_href = link.href.replace(prefix, f"file://{data_dir}/")
+                        break
+                new_links.append(link.model_copy(update={"href": new_href}))
+            result.append(granule.model_copy(update={"links": new_links}))
+
+        return result
 
     monkeypatch.setattr(CMRBackend, "get_assets", mocked_get_assets)
 
@@ -145,8 +135,10 @@ def great_lakes_geojson() -> dict[str, Any]:
     """geojson FeatureCollection representation of Lake Michigan and Lake Huron"""
     # Lake Michigan bounds (approximate)
     lake_michigan_bounds = (-87.5, 41.5, -85.0, 46.0)
-    # Lake Huron bounds (approximate)
-    lake_huron_bounds = (-84.0, 43.0, -79.0, 46.0)
+    # Lake Huron bounds (approximate) — same 2.5°×4.5° size as Lake Michigan so that
+    # both features produce the same-shaped arrays (titiler.mosaic reuses the same
+    # pixel_selection instance across FeatureCollection features).
+    lake_huron_bounds = (-84.0, 43.0, -81.5, 47.5)
 
     lake_michigan = Feature(
         type="Feature",
@@ -171,17 +163,16 @@ def xarray_query_params() -> Callable[..., dict[str, str]]:
     """reusable set of query parameters for xarray backend requests"""
 
     def _xarray_query_params(
-        concept_id: str = "C2036881735-POCLOUD",
+        collection_concept_id: str = "C2036881735-POCLOUD",
         variable: str = "sea_ice_fraction",
-        datetime: str = "2024-10-11T00:00:01Z/2024-10-11T23:59:59Z",
+        temporal: str = "2024-10-11T00:00:01Z/2024-10-11T23:59:59Z",
         sel: str | None = None,
         sel_method: str | None = None,
     ):
         return {
-            "backend": "xarray",
-            "concept_id": concept_id,
+            "collection_concept_id": collection_concept_id,
             "variable": variable,
-            "datetime": datetime,
+            "temporal": temporal,
             **({"sel": sel} if sel else {}),
             **({"sel_method": sel_method} if sel_method else {}),
         }
@@ -193,11 +184,10 @@ def xarray_query_params() -> Callable[..., dict[str, str]]:
 def rasterio_query_params() -> dict[str, str]:
     """reusable set of query parameters for rasterio backend requests"""
     return {
-        "concept_id": "C2021957657-LPCLOUD",
-        "datetime": "2024-10-09T00:00:01Z/2024-10-09T23:59:59Z",
-        "backend": "rasterio",
-        "bands_regex": "Fmask",
-        "bands": "Fmask",
+        "collection_concept_id": "C2021957657-LPCLOUD",
+        "temporal": "2024-10-09T00:00:01Z/2024-10-09T23:59:59Z",
+        "assets_regex": "Fmask",
+        "assets": "Fmask",
     }
 
 

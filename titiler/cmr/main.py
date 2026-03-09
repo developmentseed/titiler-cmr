@@ -14,6 +14,11 @@ from starlette.templating import Jinja2Templates
 from titiler.core.dependencies import AssetsExprParams
 from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
+from titiler.core.factory import (
+    AlgorithmFactory,
+    ColorMapFactory,
+    TMSFactory,
+)
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.core.models.OGC import Conformance, Landing
 from titiler.core.resources.enums import MediaType
@@ -49,6 +54,14 @@ templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
 earthdata_settings = EarthdataSettings()
+
+TITILER_CONFORMS_TO = {
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json",
+}
 
 
 def _fetch_earthdata_token(username: str, password: str) -> str:
@@ -398,11 +411,6 @@ def conformance(
     return data
 
 
-if settings.telemetry_enabled:
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-
-    FastAPIInstrumentor.instrument_app(app)
-
 ###############################################################################
 # application endpoints
 
@@ -420,6 +428,8 @@ xarray = CMRTilerFactory(
 )
 app.include_router(xarray.router, tags=["Xarray Backend"], prefix="/xarray")
 
+TITILER_CONFORMS_TO.update(xarray.conforms_to)
+
 rasterio = CMRTilerFactory(
     router_prefix="/rasterio",
     dataset_reader=MultiBaseGranuleReader,
@@ -434,5 +444,40 @@ rasterio = CMRTilerFactory(
     templates=templates,
 )
 app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")
+
+TITILER_CONFORMS_TO.update(rasterio.conforms_to)
+
 app.include_router(compatibility_router, tags=["Compatibility"])
 app.include_router(timeseries_router, tags=["Timeseries"])
+
+###############################################################################
+# TileMatrixSets endpoints
+tms = TMSFactory(templates=templates)
+app.include_router(
+    tms.router,
+    tags=["Tiling Schemes"],
+)
+TITILER_CONFORMS_TO.update(tms.conforms_to)
+
+###############################################################################
+# Algorithms endpoints
+algorithms = AlgorithmFactory(templates=templates)
+app.include_router(
+    algorithms.router,
+    tags=["Algorithms"],
+)
+TITILER_CONFORMS_TO.update(algorithms.conforms_to)
+
+###############################################################################
+# Colormaps endpoints
+cmaps = ColorMapFactory(templates=templates)
+app.include_router(
+    cmaps.router,
+    tags=["ColorMaps"],
+)
+TITILER_CONFORMS_TO.update(cmaps.conforms_to)
+
+if settings.telemetry_enabled:
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+    FastAPIInstrumentor.instrument_app(app)

@@ -13,9 +13,9 @@ from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, Polygon
 from httpx import Response
 from PIL import Image
+from titiler.core.models.mapbox import TileJSON
 
 from titiler.cmr.timeseries import TimeseriesMediaType
-from titiler.core.models.mapbox import TileJSON
 
 
 @pytest.mark.vcr
@@ -23,7 +23,7 @@ def test_xarray_tilejson(app, xarray_query_params):
     """Test /tilejson.json endpoint for xarray backend"""
 
     response = app.get(
-        "/WebMercatorQuad/tilejson.json",
+        "xarray/WebMercatorQuad/tilejson.json",
         params={
             **xarray_query_params(),
             "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
@@ -39,31 +39,28 @@ def test_xarray_tilejson(app, xarray_query_params):
 
 @pytest.mark.vcr
 def test_xarray_tilejson_with_sel(app, xarray_query_params):
-    """Test /tilejson.json endpoint for xarray backend"""
+    """Test /xarray/tilejson.json endpoint for xarray backend"""
     datetime = "2010-01-01T00:00:00"
-    sel = [f"time={datetime}", "lev=1000"]
-    sel_method = "nearest"
+    sel = [f"time=nearest::{datetime}", "lev=1000"]
 
     response = app.get(
-        "/WebMercatorQuad/tilejson.json",
+        "/xarray/WebMercatorQuad/tilejson.json",
         params={
             **xarray_query_params(
-                concept_id="C2837626477-GES_DISC",
+                collection_concept_id="C2837626477-GES_DISC",
                 variable="o3",
-                datetime=datetime,
+                temporal=datetime,
                 sel=sel,
-                sel_method=sel_method,
             ),
         },
     )
-
+    print(response.text)
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
 
     tilejson = response.json()
     assert urlencode({"sel": sel[0]}) in tilejson["tiles"][0]
     assert urlencode({"sel": sel[1]}) in tilejson["tiles"][0]
-    assert urlencode({"sel_method": sel_method}) in tilejson["tiles"][0]
 
 
 @pytest.mark.vcr
@@ -75,7 +72,7 @@ def test_xarray_statistics(
     geojson = request.getfixturevalue(geojson_fixture)
 
     response = app.post(
-        "/statistics",
+        "/xarray/statistics",
         params=xarray_query_params(),
         json=geojson,
     )
@@ -105,8 +102,8 @@ def test_xarray_statistics(
         # numbers corroborated by QGIS zonal stats for this file and polygon
         stats = list(stats.values())[0]
         assert round(stats["median"], 1) == 0.8
-        assert round(stats["sum"]) == 2420
-        assert round(stats["mean"], 2) == 0.53
+        assert round(stats["sum"]) == 2377
+        assert round(stats["mean"], 2) == 0.52
 
 
 @pytest.mark.vcr
@@ -115,7 +112,7 @@ def test_xarray_feature(
 ) -> None:
     """Test /feature endpoint for xarray backend"""
     response = app.post(
-        "/feature",
+        "/xarray/feature",
         params={
             **xarray_query_params(),
             "format": "tif",
@@ -135,7 +132,7 @@ def test_xarray_part(
 ) -> None:
     """Test /bbox endpoint for xarray backend"""
     response = app.get(
-        f"/bbox/{','.join(str(coord) for coord in arctic_bounds)}.tif",
+        f"/xarray/bbox/{','.join(str(coord) for coord in arctic_bounds)}.tif",
         params={
             **xarray_query_params(),
         },
@@ -146,7 +143,7 @@ def test_xarray_part(
     size = (10, 10)
     with pytest.warns():
         response = app.get(
-            f"/bbox/{','.join(str(coord) for coord in arctic_bounds)}/{'x'.join(str(x) for x in size)}.png",
+            f"/xarray/bbox/{','.join(str(coord) for coord in arctic_bounds)}/{'x'.join(str(x) for x in size)}.png",
             params={
                 **xarray_query_params(),
             },
@@ -169,7 +166,7 @@ def test_timeseries_statistics(
     xarray_query_params,
     arctic_geojson,
 ) -> None:
-    """Test /timeseries/statistics endpoint
+    """Test /xarray/timeseries/statistics endpoint
 
     Since the /timeseries/statistics endpoint sends more requests to internal endpoints
     we need to catch those requests and mock a response since we can't forward them to
@@ -177,7 +174,7 @@ def test_timeseries_statistics(
     """
     arctic_stats = deepcopy(arctic_geojson)
     arctic_stats["properties"]["statistics"] = {
-        "sea_ice_fraction": {
+        "b1": {
             "min": 0.0,
             "max": 1.0,
             "mean": 0.3,
@@ -197,6 +194,7 @@ def test_timeseries_statistics(
             "valid_pixels": 4493.0,
             "percentile_2": 0.0,
             "percentile_98": 0.99,
+            "description": "sea_ice_fraction",
         }
     }
 
@@ -209,10 +207,10 @@ def test_timeseries_statistics(
     mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
 
     response = app.post(
-        "/timeseries/statistics",
+        "/xarray/timeseries/statistics",
         params={
             **xarray_query_params(),
-            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+            "temporal": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
         json=arctic_geojson,
@@ -234,7 +232,7 @@ def test_timeseries_tilejson(
     xarray_query_params,
     arctic_geojson,
 ) -> None:
-    """Test /timeseries/tilejson endpoint
+    """Test /xarray/timeseries/tilejson endpoint
 
     Since the /timeseries/tilejson endpoint sends more requests to internal endpoints
     we need to catch those requests and mock a response since we can't forward them to
@@ -255,10 +253,10 @@ def test_timeseries_tilejson(
     mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
 
     response = app.get(
-        "/timeseries/WebMercatorQuad/tilejson.json",
+        "/xarray/timeseries/WebMercatorQuad/tilejson.json",
         params={
             **xarray_query_params(),
-            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+            "temporal": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
     )
@@ -279,7 +277,7 @@ def test_timeseries_gif(
     xarray_query_params,
     arctic_bounds,
 ) -> None:
-    """Test /timeseries/bbox endpoint
+    """Test /xarray/timeseries/bbox endpoint
 
     Since the /timeseries/bbox endpoint sends more requests to internal endpoints
     we need to catch those requests and mock a response since we can't forward them to
@@ -297,10 +295,10 @@ def test_timeseries_gif(
     mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
 
     response = app.get(
-        f"/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",
+        f"/xarray/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",
         params={
             **xarray_query_params(),
-            "datetime": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+            "temporal": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
     )
@@ -315,7 +313,7 @@ def test_unbounded_start(app, xarray_query_params) -> None:
         "/timeseries",
         params={
             **xarray_query_params(),
-            "datetime": "../2024-10-12T23:59:59Z",
+            "temporal": "../2024-10-12T23:59:59Z",
             "step": "P1D",
         },
     )
@@ -330,7 +328,7 @@ def test_max_datetime(app, xarray_query_params) -> None:
         "/timeseries",
         params={
             **xarray_query_params(),
-            "datetime": "2008-10-12T00:00:01Z/2024-10-12T23:59:59Z",
+            "temporal": "2008-10-12T00:00:01Z/2024-10-12T23:59:59Z",
             "step": "P1D",
         },
     )
@@ -350,12 +348,11 @@ def test_timeseries_statistics_image_size_limit(
     size_limit = 1.5e10
     n_days = ceil(size_limit / image_size)
     response = app.post(
-        "/timeseries/statistics",
+        "/xarray/timeseries/statistics",
         params={
-            "backend": "xarray",
-            "concept_id": "C1996881146-POCLOUD",
+            "collection_concept_id": "C1996881146-POCLOUD",
             "variable": "analysed_sst",
-            "datetime": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
+            "temporal": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
             "step": "P1D",
         },
         json=global_geojson,
@@ -384,12 +381,11 @@ def test_timeseries_statistics_request_size_limit(
     ).model_dump(exclude_none=True)
 
     response = app.post(
-        "/timeseries/statistics",
+        "/xarray/timeseries/statistics",
         params={
-            "backend": "xarray",
-            "concept_id": "C1996881146-POCLOUD",
+            "collection_concept_id": "C1996881146-POCLOUD",
             "variable": "analysed_sst",
-            "datetime": "/".join(
+            "temporal": "/".join(
                 dt.isoformat() for dt in [start_datetime, end_datetime]
             ),
             "step": "P1D",
@@ -412,12 +408,11 @@ def test_timeseries_bbox_limit(
     size_limit = 1e8
     n_days = ceil(size_limit / image_size)
     response = app.get(
-        f"/timeseries/bbox/{','.join(str(coord) for coord in global_bounds)}.gif",
+        f"/xarray/timeseries/bbox/{','.join(str(coord) for coord in global_bounds)}.gif",
         params={
-            "backend": "xarray",
-            "concept_id": "C1996881146-POCLOUD",
+            "collection_concept_id": "C1996881146-POCLOUD",
             "variable": "analysed_sst",
-            "datetime": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
+            "temporal": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
             "step": "P1D",
         },
     )

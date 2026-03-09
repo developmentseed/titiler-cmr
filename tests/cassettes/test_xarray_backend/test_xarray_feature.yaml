@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - cmr.earthdata.nasa.gov
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.json?page_size=10&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-20.799%2C75.011%2C14.483%2C83.559
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAA/9VXbW/bNhD+K4SKBBtQSdSLbdlAUDjOSzMkcRA5XzIUAi2dZbayqJGUMy/If+/R
+        Uhq389YESRsUtgWapI7P89zxjry1ZgCZNbi16ipj2jQtn/pdmwY27U6oP+j4g9Bz/KB3bb21uBmf
+        a12pgeumC+kAk3qOLzKnZIo5uVgOwjBwFfanczeXrKwLUM5HJcp3FcshUfwf2PPobiqKAlLNRZmk
+        okyh0gnP9kY+DbpR5PWCjn0xHp2Orw52NSwqIVmxh7hC26O2500o3QmGzcO73vGPNob8AHs7/fXj
+        encq6jLjZZ5Mxd97tk+dXr+/4496HYd6Hja80AmjABtR4HQ6faSouS4AWR6O3o9JS4AsQDPDEseh
+        1HJlDf68tdAkKGxZdtR3ol6H2F6vabT/27/WB2N1gdw1qtUI/EBksP46lFIj8FdeaCb5ExoNAvQC
+        dSKvbyYZJAqMYDjv+P1lHE/IKSyhICE5Hp7F8TDxo08LclyIKSvIkdGAGalJDIzEtZyxFMgEdQXJ
+        dC2BDEtWrBRXZOk5lLT2yW/HB7H/e7tgkiJzkLhi65gNrQxWDwX1fKRB7eH++Mw+DZMGmo2/WZnZ
+        G8js49Pxvr2kvkPt2ZLimmgsFUKiq5B+olYKvY6GR8PLyWF8Mjxfg1glJc/nOpkVLMfBq/P44nB0
+        cnRy2GBBhaH8Vrpv9G0kC/xuGPW61IvsBzJC8hyXL5KZkAtm/HR1dpb8EY/N4m0grMMXR6jTxyjt
+        dIJu2O9TPwhDnDOV4kZBi27GCgWG1JYwN8T+HegGQlnwEhKWpqBUa0jLGu1g/ye1jjoJRbsHcQuC
+        4tUMMkfI3C2Vi81253mO5xqvvdnw0oG4KQvBMvJ8dzlliobnEhBjaXwBpX0Vt10bKcJg4UtwKpEx
+        lm7JFm4zYotK2Wm9qIta2ZUUGjWDzN3E0KK8x+K5L8Pi7u1TJFXBpqCTOe4Y4xmCkJc8A0UyLhE6
+        ye6lblxJlhz3XUC0IHoO91nlfxVUAWL5tcS5T5I/LuacRdb5gXFXTwue/gRd1zSer+2rhN8vphGr
+        OMGiUAleasNfgpYcSyVpTxVyRVIJGZY2jgmbLFnBM4IFgCi2AFtCbqpmq6oKWj1fKARVsLH0UxMR
+        yCVPYZPq+ALOD4YXSPGvGpQmV5enjwIqKhSIVdsQPlQv5W6pWF/Ody/g8jV/Xs5B8vX5pyl7Tyh2
+        AkMUtVyfc948injrmY9V8cB4xDWeFi/GB8Ph6BUg5VzP66mTikWLbl3EMQ5ZBlKRn4wIzd3c3Dj5
+        XCqljcXXUKRZfNNJ21EUUOZ6vj6b0bN960mw2qTxfTTbrzzukktds8JuEoWQq+/tnFek0Ly0NR99
+        fWl7V227jj07BB4N9D/2gqqnKpV8ileRZ0LZyKHPyZLW3Qf83H0G/dJgB0oPAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      CMR-Hits:
+      - '1'
+      CMR-Request-Id:
+      - f53814d7-2328-4b73-85aa-7085886dff1f
+      CMR-Search-After:
+      - '["pocloud",1728604800000,3264876018]'
+      CMR-Took:
+      - '95'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-MD5:
+      - a4a0756774c28564c507785cc7afe048
+      Content-SHA1:
+      - ef7549b8eb66c14d2ad90efec5d055c6f5f3122f
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 06 Mar 2026 02:52:41 GMT
+      Server:
+      - ServerTokens ProductOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Via:
+      - 1.1 ba64d7f8b80e139e3a1517d2805a94e2.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - j4LXYFMr0yzvEzktSfOvxTEq0_VR1eQh2xN1kzHb9cNo4uGdQJl01Q==
+      X-Amz-Cf-Pop:
+      - MSP50-P2
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - j4LXYFMr0yzvEzktSfOvxTEq0_VR1eQh2xN1kzHb9cNo4uGdQJl01Q==
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

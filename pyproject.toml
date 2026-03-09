@@ -102,10 +102,10 @@ Source = "https://github.com/developmentseed/titiler-cmr"
 Changelog = "https://developmentseed.org/titiler-cmr/release-notes/"
 
 [tool.uv.sources]
-rio-tiler = { git = "https://github.com/cogeotiff/rio-tiler", tag = "9.0.0rc1"}
-titiler-core = { git = "https://github.com/developmentseed/titiler", tag = "2.0.0b2", subdirectory="src/titiler/core"}
-titiler-mosaic = { git = "https://github.com/developmentseed/titiler", tag = "2.0.0b2", subdirectory="src/titiler/mosaic"}
-titiler-xarray = { git = "https://github.com/developmentseed/titiler", tag = "2.0.0b2", subdirectory="src/titiler/xarray"}
+rio-tiler = { git = "https://github.com/cogeotiff/rio-tiler", branch = "main"}
+titiler-core = { git = "https://github.com/developmentseed/titiler", branch = "fix/xarray-sel-timestamp", subdirectory="src/titiler/core"}
+titiler-mosaic = { git = "https://github.com/developmentseed/titiler", branch = "fix/xarray-sel-timestamp", subdirectory="src/titiler/mosaic"}
+titiler-xarray = { git = "https://github.com/developmentseed/titiler", branch = "fix/xarray-sel-timestamp", subdirectory="src/titiler/xarray"}
 
 [build-system]
 requires = ["pdm-pep517"]

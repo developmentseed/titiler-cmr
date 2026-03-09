@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: ''
     headers:
       Accept:
       - '*/*'
@@ -8,253 +8,34 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Host:
+      - cmr.earthdata.nasa.gov
       User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
+      - python-httpx/0.28.1
     method: GET
-    uri: https://urs.earthdata.nasa.gov/profile
-  response:
-    body:
-      string: ''
-    headers:
-      Cache-Control:
-      - no-cache
-      Connection:
-      - keep-alive
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Thu, 03 Jul 2025 21:33:20 GMT
-      Location:
-      - https://urs.earthdata.nasa.gov/home
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-      Server:
-      - nginx/1.22.1
-      Set-Cookie:
-      - _urs-gui_session=d5414447d929f5a8152edf742ebc10fd; path=/; expires=Fri, 04
-        Jul 2025 21:33:20 GMT; secure; HttpOnly
-      Strict-Transport-Security:
-      - max-age=31536000
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Permitted-Cross-Domain-Policies:
-      - none
-      X-Request-Id:
-      - c9e42174-4b15-4407-88ee-a28f5c565108
-      X-Runtime:
-      - '0.006833'
-      X-XSS-Protection:
-      - '0'
-    status:
-      code: 302
-      message: Found
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Cookie:
-      - _urs-gui_session=d5414447d929f5a8152edf742ebc10fd
-      User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
-    method: GET
-    uri: https://urs.earthdata.nasa.gov/home
-  response:
-    body:
-      string: "<!DOCTYPE html>\n<!--[if lt IE 7]><html class=\"no-js lt-ie9 lt-ie8
-        lt-ie7\"> <![endif]-->\n<!--[if IE 7]><html class=\"no-js lt-ie9 lt-ie8\">
-        <![endif]-->\n<!--[if IE 8]><html class=\"no-js lt-ie9\"> <![endif]-->\n<!--[if
-        gt IE 8]><!--><html lang=\"en\" class=\"no-js\"><!--<![endif]-->\n  <head>\n
-        \   <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n
-        \   <title>Earthdata Login</title>\n    <meta name=\"description\" content=\"Earthdata
-        Login\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\n
-        \   <!-- Google Tag Manager -->\n    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push(\n\n
-        \     {'gtm.start': new Date().getTime(),event:'gtm.js'}\n\n    );var f=d.getElementsByTagName(s)[0],\n
-        \     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n
-        \     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n
-        \   })(window,document,'script','dataLayer','GTM-WNP7MLF');</script>\n    <!--
-        End Google Tag Manager -->\n\n    <link href=\"https://cdn.earthdata.nasa.gov/eui/1.1.3/stylesheets/application.css\"
-        rel=\"stylesheet\" />\n    <link rel=\"stylesheet\" href=\"/assets/application-d3949803c3c9cc3e5ecf58b356b5a62f1ae2db93221f02856cc6ac392abd2af6.css\"
-        media=\"all\" />\n    <!--[if IE 7]>\n      <link rel=\"stylesheet\" href=\"/assets/font-awesome-ie7.min.css\">\n
-        \   <![endif]-->\n    <link href=\"//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css\"
-        rel=\"stylesheet\">\n    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,700'
-        rel='stylesheet' type='text/css'>\n    <meta name=\"csrf-param\" content=\"authenticity_token\"
-        />\n<meta name=\"csrf-token\" content=\"JyA1PoXYjZV86nTAgOOYCp5F70UXDqyajFCPJ6taMHpYhHnaE_XutIdDGGXpGtlJ17-t3PWfizmq8KoxWH8Pmw\"
-        />\n    \n\n    <!-- Grid background: http://subtlepatterns.com/graphy/ -->\n
-        \ </head>\n  <body class=\"static_pages home\" data-turbolinks-eval=false>\n\n
-        \   <!-- Google Tag Manager (noscript) -->\n    <noscript>\n      <iframe
-        src=\"https://www.googletagmanager.com/ns.html?id=GTM-WNP7MLF\"\n                    height=\"0\"
-        width=\"0\" style=\"display:none;visibility:hidden\"></iframe>\n    </noscript>\n
-        \   <!-- End Google Tag Manager (noscript) -->\n\n      <div id=\"tophat3\"></div>\n
-        \     \n    <!--[if lt IE 7]>\n      <p class=\"chromeframe\">You are using
-        an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade
-        your browser</a> or <a href=\"http://www.google.com/chromeframe/?redirect=true\">activate
-        Google Chrome Frame</a> to improve your experience.</p>\n    <![endif]-->\n\n
-        \   <div class=\"container\">\n          <div class=\"eui-banner--danger\">\n
-        \     You must be logged in to access this page\n    </div>\n\n\n\n\n\n\n\n\n
-        \     <section id=\"callout-login\">\n  <form id=\"login\" action=\"/login\"
-        accept-charset=\"UTF-8\" method=\"post\"><input type=\"hidden\" name=\"authenticity_token\"
-        value=\"weVPZwvI87tjJe6eNv64TOEd215jdcuDULZ799rBox--QQODneWQmpiMgjtfB_kPqOeZx4Hk7CB2Fl7hKeSc_g\"
-        autocomplete=\"off\" />\n  <p>\n    <label for=\"username\">Username</label>\n
-        \   <i class=\"fa fa-question-circle fa-question-circle--blue user-name\"
-        title=\"Login using either your Username or Email Address\"></i>\n    <input
-        type=\"text\" name=\"username\" id=\"username\" autofocus=\"autofocus\" class=\"default\"
-        />\n  </p>\n  <p>\n    <label for=\"password\">Password</label><br />\n    <input
-        type=\"password\" name=\"password\" id=\"password\" autocomplete=\"off\" class=\"password\"
-        />\n    <span class=\"password-showhide hide-password\">\n  </p>\n  <p>\n
-        \   <input type=\"hidden\" name=\"client_id\" id=\"client_id\" autocomplete=\"off\"
-        />\n  </p>\n  <p>\n    <input type=\"hidden\" name=\"redirect_uri\" id=\"redirect_uri\"
-        autocomplete=\"off\" />\n  </p>\n  \n  <br/>\n  <p class=\"button-with-notes\">\n
-        \   <input type=\"submit\" name=\"commit\" value=\"Log in\" class=\"eui-btn--round
-        eui-btn--green\" data-disable-with=\"Log in\" />\n    <!--%= link_to \"Register\",
-        new_user_path(app_user_register_params), class: \"eui-btn--round eui-btn--blue\",
-        id: \"register_new_account_button\" %-->\n  </p>\n  <p class=\"form-instructions\">\n
-        \     <div class=\"row\">\n        <div class=\"col black-text\">\n          <em
-        class=\"icon-question-sign link-color\"></em>\n          Need Help?\n        </div>\n
-        \       <br/>\n        <br/>\n        </div>\n        <div class=\"row user-options\">\n
-        \         <div class=\"col user-options\">\n            &#x2022; <a href=\"/retrieve_info\">Forgot
-        Username</a>\n          </div>\n          <div class=\"col user-options\">\n
-        \           &#x2022; <a href=\"/reset_passwords/new\">Forgot Password</a>\n
-        \         </div>\n        </div>\n    </p>\n</form>\n<aside class=\"govt-msg\">\n
-        \ <p>\n    <strong>Why must I register?</strong>\n  </p>\n  <p>\n    The Earthdata
-        Login provides a single mechanism for user registration and profile management
-        for all EOSDIS system components (DAACs, Tools, Services).\n    Your Earthdata
-        login also helps the EOSDIS program better understand the usage of EOSDIS
-        services to improve user experience through customization of tools and improvement
-        of services.\n    EOSDIS data are openly available to all and free of charge
-        except where governed by international agreements.\n  </p>\n    <br/>\n    <div
-        class=\"idfs-button-alignment\">\n          <a class=\"eui-btn--round eui-btn--blue\"
-        href=\"/users/new\">Register for a Profile</a>\n    <div>\n</aside>\n\n</section>\n<div
-        class=\"home-info-box\">\n  <hr class=\"home-divider\">\n  <br />\n  By clicking
-        the Log In button above, you are acknowledging that all Earthdata Login applications
-        running in <a\n    href=\"https://earthdata.nasa.gov/about/daacs\">DAACs</a>\n
-        \ will have access to my profile information.\n</div>\n    </div>\n    <footer
-        role=\"contentinfo\">\n  <div class=\"govt-warning\">\n  <div class=\"warning-desktop\">\n
-        \   <p>\n        Protection and maintenance of user profile information is
-        described in\n        <a href=\"https://www.nasa.gov/about/highlights/HP_Privacy.html\">NASA's
-        Web Privacy Policy.</a>\n    </p>\n  </div>\n  <div class=\"warning-mobile\">\n
-        \   <p>\n        Protection and maintenance of user profile information is
-        described in\n            <a href=\"https://www.nasa.gov/about/highlights/HP_Privacy.html\">NASA's
-        Web Privacy Policy.</a>\n    </p>\n  </div>\n  <div class=\"warning-mobile-mini\">\n
-        \     US Govt Property. Unauthorized use subject to prosecution. Use subject
-        to monitoring per\n      <a href=\"https://nodis3.gsfc.nasa.gov/displayDir.cfm?t=NPD&c=2810&s=1E\">NPD2810</a>.\n
-        \ </div>\n</div>\n\n    <p>For questions regarding the EOSDIS Earthdata Login,
-        please contact <a href=\"javascript:feedback.showForm();\"\n        title=\"Earthdata
-        Support form\">Earthdata Support</a></p>\n    <br />\n    <ul>\n      <li>\n
-        \       <b>V 4.229.2\n</b>\n      </li>\n      <li>\n        <a href=\"/\">Home</a>\n
-        \     </li>\n      <li><a title=\"NASA Home\" href=\"http://www.nasa.gov\">NASA</a></li>\n
-        \     <li><a title=\"Accessibility\" href=\"https://www.nasa.gov/accessibility/\">Accessibility</a></li>\n
-        \   </ul>\n    <p>NASA Official: Doug Newman</p>\n</footer>\n    <script src=\"/assets/application-a8ae6e27d12d013068b8dd958bb559d7de4df841b40e5e2717257a17ee17ca8c.js\"></script>\n
-        \   <script type=\"text/javascript\">\n    $(window).scroll(function(e){\n
-        \     parallax();\n    });\n    function parallax(){\n      var scrolled =
-        $(window).scrollTop();\n      $('#content').css('background-position', 'right
-        ' + -(scrolled*0.25)+'px ');\n    }\n    </script>\n        \n\n      <!--
-        Set js variables for tophat3 _config.js  -->\n      <script>\n        const
-        th3Script = document.createElement(\"script\");\n      </script>\n\n      <script>\n
-        \       document.addEventListener(\"DOMContentLoaded\", function() {\n  th3Script.setAttribute(\"src\",
-        `https://cdn.earthdata.nasa.gov/tophat3/Tophat3Widget.js`)\n  th3Script.onload
-        = ()=> {\n    const tophat3Config = {\n      appTitle: \"LOGIN\",\n      menuData:
-        [ { title: \"Documentation\", url: \"/documentation\" },\n ],\n      showStatus:
-        true,\n      statusNotificationUrl: `https://status.earthdata.nasa.gov/api/v1/notifications`\n
-        \   }\n    Tophat3(tophat3Config);\n  }\n  document.body.append(th3Script);\n})\n
-        \     </script>\n    \n    <script type=\"text/javascript\" src=\"https://fbm.earthdata.nasa.gov/for/URS4/feedback.js\"></script>\n
-        \   <script type=\"text/javascript\">\n      feedback.init();\n    </script>\n
-        \   <script type=\"text/javascript\">\n        setTimeout(function()\n                {var
-        a=document.createElement(\"script\"); var b=document.getElementsByTagName(\"script\")[0];\n
-        \                   a.src=document.location.protocol+\"//dnn506yrbagrg.cloudfront.net/pages/scripts/0013/2090.js?\"+Math.floor(new
-        Date().getTime()/3600000);\n                    a.async=true;a.type=\"text/javascript\";b.parentNode.insertBefore(a,b)}\n
-        \               , 1);\n    </script>\n\n    <!-- BEGIN: DAP Google Analytics
-        \ -->\n    <script language=\"javascript\" id=\"_fed_an_ua_tag\" src=\"https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NASA&subagency=GSFC&dclink=true\"></script>\n
-        \   <!-- END: DAP Google Analytics  -->\n\n    \n  </body>\n</html>\n<script
-        id=\"f5_cspm\">(function(){var f5_cspm={f5_p:'ALCEIBBFLPOKPIJFKGEPLLKMFBGNIJMDHJKIKLABKHKDMFHMIBNEONLAPDNGDNPMFKBBLEOCAANKLEPLBDBAOGJJAAMPFJCAFCDPCNMNMCBJHIHBPLFNLBDNDIFHFEOB',setCharAt:function(str,index,chr){if(index>str.length-1)return
-        str;return str.substr(0,index)+chr+str.substr(index+1);},get_byte:function(str,i){var
-        s=(i/16)|0;i=(i&15);s=s*32;return((str.charCodeAt(i+16+s)-65)<<4)|(str.charCodeAt(i+s)-65);},set_byte:function(str,i,b){var
-        s=(i/16)|0;i=(i&15);s=s*32;str=f5_cspm.setCharAt(str,(i+16+s),String.fromCharCode((b>>4)+65));str=f5_cspm.setCharAt(str,(i+s),String.fromCharCode((b&15)+65));return
-        str;},set_latency:function(str,latency){latency=latency&0xffff;str=f5_cspm.set_byte(str,40,(latency>>8));str=f5_cspm.set_byte(str,41,(latency&0xff));str=f5_cspm.set_byte(str,35,2);return
-        str;},wait_perf_data:function(){try{var wp=window.performance.timing;if(wp.loadEventEnd>0){var
-        res=wp.loadEventEnd-wp.navigationStart;if(res<60001){var cookie_val=f5_cspm.set_latency(f5_cspm.f5_p,res);window.document.cookie='f5avr1300495240aaaaaaaaaaaaaaaa_cspm_='+encodeURIComponent(cookie_val)+';path=/;'+'';}\nreturn;}}\ncatch(err){return;}\nsetTimeout(f5_cspm.wait_perf_data,100);return;},go:function(){var
-        chunk=window.document.cookie.split(/\\s*;\\s*/);for(var i=0;i<chunk.length;++i){var
-        pair=chunk[i].split(/\\s*=\\s*/);if(pair[0]=='f5_cspm'&&pair[1]=='1234')\n{var
-        d=new Date();d.setTime(d.getTime()-1000);window.document.cookie='f5_cspm=;expires='+d.toUTCString()+';path=/;'+';';setTimeout(f5_cspm.wait_perf_data,100);}}}}\nf5_cspm.go();}());</script>"
-    headers:
-      Cache-Control:
-      - no-store
-      Connection:
-      - keep-alive
-      Content-Type:
-      - text/html; charset=utf-8
-      Date:
-      - Thu, 03 Jul 2025 21:33:20 GMT
-      ETag:
-      - W/"1ad5ced6269ecd5d134f6b29c31eec0c"
-      Expires:
-      - Fri, 01 Jan 1990 00:00:00 GMT
-      Pragma:
-      - no-cache
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-      Server:
-      - nginx/1.22.1
-      Set-Cookie:
-      - _urs-gui_session=d5414447d929f5a8152edf742ebc10fd; path=/; expires=Fri, 04
-        Jul 2025 21:33:20 GMT; secure; HttpOnly
-      - f5_cspm=1234;;
-      Strict-Transport-Security:
-      - max-age=31536000
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Permitted-Cross-Domain-Policies:
-      - none
-      X-Request-Id:
-      - aa3d4203-ae15-4e73-8cb9-43bc22b80c90
-      X-Runtime:
-      - '0.009767'
-      X-XSS-Protection:
-      - '0'
-      link:
-      - </assets/application-d3949803c3c9cc3e5ecf58b356b5a62f1ae2db93221f02856cc6ac392abd2af6.css>;
-        rel=preload; as=style; nopush,</assets/application-a8ae6e27d12d013068b8dd958bb559d7de4df841b40e5e2717257a17ee17ca8c.js>;
-        rel=preload; as=script; nopush
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-20.799,75.011,14.483,83.559&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=0
+    uri: https://cmr.earthdata.nasa.gov/search/granules.json?page_size=10&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-20.799%2C75.011%2C14.483%2C83.559
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAKtWysgsKVayMtRRKsnPz1aysjDSUcosSc0FikXH1gIAGo2WVh8AAAA=
+        H4sIAAAAAAAA/9VXbW/bNhD+K4SKBBtQSdSLX4GgcJyXZkjiIHa+ZCgEWjpLbGVRIylnXpD/3qOl
+        NGrnrQmSNihsCzRJHZ/nueMdeWstABJreGtVZcK0aVo+9bs2DWzanVF/2PGHQdfpdf1r663FzXim
+        damGrhsvpQNM6gxfZE7BFHNSsRqGYeAq7I8zN5WsqHJQzkclinclSyFS/B/Y8+huLPIcYs1FEcWi
+        iKHUEU/2xj4Nuv2+1ws69sVkfDq5OtjVsCyFZPke4gptj9qeN6N0JxjVD+96xz9qDfkB9nYGm8f1
+        7lxURcKLNJqLv/dsnzq9wWDHH/c6DvU8bHihE/YDbPQDp9MZIEXNdQ7I8nD8fkIaAmQJmhmWOA6F
+        lmtr+OethSZBYcuy+wOn3+sQ2+vVjeZ/89f6YKwukbtGtWqBH4gMN1+HUmoE/soL9SR/RvvDwB+G
+        1Ol7AzPJIFFgBMN5x+8vp9MZOYUV5CQkx6Oz6XQU+f1PS3KciznLyZHRgBmpyRQYmVZywWIgM9QV
+        JNOVBDIqWL5WXJGV51DS2Ce/HR9M/d+bBaMYmYPEFRvHtLQyWD0U1PORBrVH+5Mz+zSMamg2/hZF
+        YreQ2cenk317RX2H2osVxTXRWCyERFch/UitFXodDY9Hl7PD6cnofANiHRU8zXS0yFmKg1fn04vD
+        8cnRyWGNBRWG4lvpvtG3lizwu2G/16Ve334gIyRPcfk8Wgi5ZMZPV2dn0R/TiVm8CYRN+OIIdQYY
+        pZ1O0A0HA+oHYYhz5lLcKGjQLViuwJDaEuaG2L8D3UAocl5AxOIYlGoMaVmhHez/pDZRJyFv9iBu
+        QVC8XEDiCJm6hXKx2ew8z/Fc47U3LS8diJsiFywhz3eXU8RoOJOAGAvjCyjsq2nT1UoRBgtfgVOK
+        hLF4S7Zw6xFblMqOq2WVV8oupdCoGSRuG0OD8h6L574Mi7u3T5FUBW1BZxnuGOMZgpBXPAFFEi4R
+        Oknupa5dSVYc911AtCA6g/us8r8KqgCx/Fri3CfJHxdzzjLp/MC4q+Y5j3+Crhsaz9f2VcLvF9OI
+        lZxgUSgFL7ThL0FLjqWSNKcKuSaxhARLG8eETVYs5wnBAkAUW4ItITVVs1FVBY2eLxSCKmgt/dRE
+        BHLFY2hTnVzA+cHoAin+VYHS5Ory9FFARYkCsXIbwofqpdwtFevL+e4FXL7hz4sMJN+cf+qy94Ri
+        JzBEUcvNOefNo4g3nvlY5g+Mx1zjafFicjAajV8BUsp1Vs2dWCwbdJsijnHIEpCK/GREaO7m5sZJ
+        M6mUNhZfQ5F68baTtqPIoUh1tjmb0bN960mwmqTxfTTbrzzuiktdsdyuE4WQ6+/tnFekUL+0NR99
+        fWl7V267jj07BB4N9D/2gqrmKpZ8jleRZ0Jp5dDnZEnr7gN+7j4DJvNc6UoPAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -264,112 +45,23 @@ interactions:
       CMR-Hits:
       - '1'
       CMR-Request-Id:
-      - 51aed4ed-2217-4914-a6f0-b89cc2d4b817
-      CMR-Took:
-      - '83'
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - 76a1e7df06a8259fcf288f7575d647e8
-      Content-SHA1:
-      - 6eaa32dccd9822fd5eaa1d3f10b5a81c6f4bdd4f
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
-      Date:
-      - Thu, 03 Jul 2025 21:33:21 GMT
-      Server:
-      - ServerTokens ProductOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      Via:
-      - 1.1 b47618c03bd47cf085f27b1e215f76cc.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - HWeMp91V-OUKh-H87d5jRSJzdBRGGQ9R8t6SUPkZBhlJIa3UYU_H1A==
-      X-Amz-Cf-Pop:
-      - SEA73-P2
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - HWeMp91V-OUKh-H87d5jRSJzdBRGGQ9R8t6SUPkZBhlJIa3UYU_H1A==
-      X-XSS-Protection:
-      - 1; mode=block
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-20.799,75.011,14.483,83.559&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=100
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAAM1WbW/iOBD+K1a+Hgl5hcC3FLIsUimIhO5pT9XKJAZ8Teyc7bDXrfrfb5ykr8ut
-        Ki33UrUq2OPx88w8M55740CVNMZOz1Cc3xrjkd8zqCIlrP12b5REYWN8b2ScZaRSprqriDE29gKz
-        uiBG72mD5rA889yBHw4HthOaq+XkcrmZgokgRyopZ42N2zMYVvRI2hOu7fqO7TiOa8OPGV0sF+al
-        /2X2cZ0kqQl/O5abs2iRJNEXN7wtzdnl8sI82q5lm7uj7Vh2g6EoSKb0Fa/gTFzbG4ShM/SCF3Aq
-        wY80J6K1eV7fcVFiBUu4qgqaYe2vf2S5xbDEVlYKqy7LX36XnL3klGNFOh6mY5uOm9rh2PPGjmsN
-        Rs5n46FnwDEdwpSUFRe4iP9UhCm9ssZsT6bgIKUl0QsxyynbP6+8cmuPm18L4vQZEFyQPWXsb8yd
-        N+YPAGMBqQS0OKlIRncdQX3rNRGy+Wg41sAagO/N+hK+HZSq5Ljfz3JmESzUQZ9uo7Hnxz7Q6nc6
-        6B8fT17hBshmsTBnmvusNdisz5XrVZc9zbqVaNpKcs4kEQospicz4o592wqdkc7I05lN1aTvHWdu
-        ekZSQcRepu8jF/QbZwoX3daUl5g2IZ0RDpUj7vTnC143aV2DRCHhRQf7E5HqcWvCuYD/DQjTGY6s
-        cBjAhbxWh5MmYWcR49M+nlxccXHaRevh4eZBKwPY4y5RGnAksgMUaMTyKZVK0G2tlTJnbYE0SgH8
-        Cf1GNozqgllcQAj1d2NsW6MwtIOh4w0CLxj4PoCYHEh2K+umCK5xUetIk9wfEDvHZDTKh1mAQz/z
-        t4NgRLbbfOvudKajYg8BVodS3zANtJr0HXN2cdek3oHitgPvSXM/Ly+LZY06TlODiLlu6Ad+EI5C
-        3xsGsRl8D+m8cKwyDxrxTfHdFd0f1IcC77VwmWyrmORtTeR10/9Otw7HfdULICNPDXNNdkQQ6Jlv
-        G4HOQHIA+XR0XiLtuDwidrTLNSng7nwjilber1sIbiVlVTzHODvVTdodk1fSzOqyLmppQqNWgJLk
-        /R9d3j9P3iHERGaCVq3AjSn/ygqOc3Qu913LmcUpmkZp1AitDZL0IEL/N/7pgUpUUHaLuvdSopwK
-        gIPyx8jgLCNSoiPFKPGQ4kgdCHqeDN4QRtfzCE3n63iSomgyiZPkRQh+Tif1Ft7rfyFITTX+s0Lp
-        ruhiF/+axlfTeIoWcRq9VzX/aTTOJpsfUX+/WqSXCZLDew2vs/wOLK4oIiyvOGVKAxHwZFNyJEi1
-        o5q4Qy+OoyMuaI7gFUQSeqIpYADj7JGe9DpizxSu5/EntI4voxRozK8+LNeLKJ0vr04w4RXgwNUp
-        Cs/DreyfGGgfRzB5hqQ+Q98kMUri9fV8EqNoNddvQb3tZv/lChITrdou9jakyxVpNgX5o4YBB2ma
-        esq4efgLmyeYjWkMAAA=
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Access-Control-Expose-Headers:
-      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
-        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
-      - '1'
-      CMR-Request-Id:
-      - d1b1659e-00ea-4050-b84d-a6c57ca96a21
+      - f2cf57f8-2f40-4ced-8d64-991a1d3885d1
       CMR-Search-After:
       - '["pocloud",1728604800000,3264876018]'
       CMR-Took:
-      - '96'
+      - '40'
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-MD5:
-      - e0d56c15bade7b47f4bb7f013bcfcca2
+      - e9bd50a265c3d1e1d25edf5aa7ef78fb
       Content-SHA1:
-      - 2dbd53006ea9f333674b6cae21c4a24fc6fd1458
+      - a857bee054838a8079867e8ab664a1b5f86ce1ae
       Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
+      - application/json;charset=utf-8
       Date:
-      - Thu, 03 Jul 2025 21:33:21 GMT
+      - Fri, 06 Mar 2026 02:52:36 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -379,11 +71,11 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 b47618c03bd47cf085f27b1e215f76cc.cloudfront.net (CloudFront)
+      - 1.1 7f30a4c61fd2c4e27ee212f1195d6f3c.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - JnqAo5px687I3Yji7uj8WAyiOhzFlvCiRqXzgb42nwaJk9bVYygR-A==
+      - s7MNXpThtg55l6VfHFsSAk_mYpcWcwMPAjm0hjRnoJ3VNy1ihhyfRg==
       X-Amz-Cf-Pop:
-      - SEA73-P2
+      - MSP50-P2
       X-Cache:
       - Miss from cloudfront
       X-Content-Type-Options:
@@ -391,7 +83,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - JnqAo5px687I3Yji7uj8WAyiOhzFlvCiRqXzgb42nwaJk9bVYygR-A==
+      - s7MNXpThtg55l6VfHFsSAk_mYpcWcwMPAjm0hjRnoJ3VNy1ihhyfRg==
       X-XSS-Protection:
       - 1; mode=block
     status:

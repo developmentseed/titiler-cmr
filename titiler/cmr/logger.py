@@ -138,6 +138,7 @@ def configure_logging():
     """
     # titiler.cmr inherits INFO from its parent; set the family root here
     logging.getLogger("titiler").setLevel(logging.INFO)
+    logging.getLogger("rio_tiler").setLevel(logging.INFO)
 
     logging.getLogger("botocore").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
