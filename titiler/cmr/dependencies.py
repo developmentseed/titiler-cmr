@@ -115,7 +115,9 @@ class CMRAssetsParams(DefaultDependency):
 class XarrayDsParams(DefaultDependency):
     """Xarray Dataset Options."""
 
-    variables: Annotated[list[str], Query(description="Xarray Variable name.")]
+    variables: Annotated[
+        list[str], Query(alias="variable", description="Xarray Variable name.")
+    ]
 
     sel: Annotated[
         list[SelDimStr] | None,
