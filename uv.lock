@@ -4368,6 +4368,7 @@ telemetry = [
     { name = "opentelemetry-instrumentation-fastapi" },
     { name = "opentelemetry-instrumentation-logging" },
     { name = "opentelemetry-sdk" },
+    { name = "psutil" },
 ]
 uvicorn = [
     { name = "uvicorn" },
@@ -4428,6 +4429,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-fastapi", marker = "extra == 'telemetry'" },
     { name = "opentelemetry-instrumentation-logging", marker = "extra == 'telemetry'" },
     { name = "opentelemetry-sdk", marker = "extra == 'telemetry'" },
+    { name = "psutil", marker = "extra == 'telemetry'", specifier = ">=7.2.2" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
     { name = "rio-tiler", git = "https://github.com/cogeotiff/rio-tiler?tag=9.0.0rc3" },
     { name = "shapely", specifier = ">=2.1.2" },

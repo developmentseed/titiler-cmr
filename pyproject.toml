@@ -49,6 +49,7 @@ telemetry = [
     "opentelemetry-instrumentation-fastapi",
     "opentelemetry-instrumentation-logging",
     "opentelemetry-exporter-otlp",
+    "psutil>=7.2.2",
 ]
 
 lambda = [
