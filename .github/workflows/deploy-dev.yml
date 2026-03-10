@@ -60,3 +60,4 @@ jobs:
           TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
           TITILER_CMR_ROOT_PATH: ''
           TITILER_CMR_S3_AUTH_STRATEGY: ${{ vars.titiler_cmr_s3_auth_strategy }}
+          TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS: TRUE
