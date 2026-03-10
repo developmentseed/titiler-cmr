@@ -50,15 +50,13 @@ rm -rf numpy/doc/ bin/ geos_license Misc/
 # Remove unnecessary locale and documentation files
 find . -name '*.mo' -delete
 find . -name '*.po' -delete
-find . -name 'LICENSE*' -delete
+find . -name 'LICENSE*' -print0 | xargs -0 rm -rf
 find . -name 'README*' -delete
 find . -name '*.md' -delete
 # Strip debug symbols from shared libraries (preserve numpy.libs)
 find . -type f -name '*.so*' -not -path "*/numpy.libs/*" -exec strip --strip-unneeded {} \; 2>/dev/null || true
 # Remove *.dist-info directories
 find /deps -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' -exec rm -rf {} \;
-# Remove unused botocore services (we are using only s3, so that stays)
-find /deps/botocore/data -mindepth 1 -maxdepth 1 -not -path "*/s3" -exec rm -rf {} \;
 EOF
 
 
