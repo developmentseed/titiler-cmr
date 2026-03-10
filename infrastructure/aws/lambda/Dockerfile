@@ -8,7 +8,7 @@ FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS otel-builder
 RUN <<EOF
 dnf install -y unzip wget
 dnf clean all
-wget -q https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.12.1/layer.zip -O /tmp/layer.zip
+wget -q https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.15.0/layer.zip -O /tmp/layer.zip
 mkdir -p /opt-builder
 unzip -q /tmp/layer.zip -d /opt-builder/
 EOF
