@@ -32,6 +32,17 @@ class EarthdataS3CredentialProvider:
         self._lock = threading.Lock()
         self._cached: "S3Credential | None" = None
 
+    def __getstate__(self) -> dict:
+        """Return picklable state, excluding the threading lock."""
+        state = self.__dict__.copy()
+        del state["_lock"]
+        return state
+
+    def __setstate__(self, state: dict) -> None:
+        """Restore state and recreate the threading lock after unpickling."""
+        self.__dict__.update(state)
+        self._lock = threading.Lock()
+
     def __call__(self) -> "S3Credential":
         """Return cached credentials, refreshing if near expiry."""
         with self._lock:

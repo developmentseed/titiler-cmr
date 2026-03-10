@@ -360,7 +360,7 @@ class MultiBaseGranuleReader(MultiBaseReader):
         if self._credential_provider is not None and media_type not in [NETCDF, HDF5]:
             creds = self._credential_provider()
             env = {
-                "aws_session": AWSSession(
+                "session": AWSSession(
                     aws_access_key_id=creds["access_key_id"],
                     aws_secret_access_key=creds["secret_access_key"],
                     aws_session_token=creds["token"],
