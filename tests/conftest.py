@@ -164,14 +164,14 @@ def xarray_query_params() -> Callable[..., dict[str, str]]:
 
     def _xarray_query_params(
         collection_concept_id: str = "C2036881735-POCLOUD",
-        variable: str = "sea_ice_fraction",
+        variables: str = "sea_ice_fraction",
         temporal: str = "2024-10-11T00:00:01Z/2024-10-11T23:59:59Z",
         sel: str | None = None,
         sel_method: str | None = None,
     ):
         return {
             "collection_concept_id": collection_concept_id,
-            "variable": variable,
+            "variables": variables,
             "temporal": temporal,
             **({"sel": sel} if sel else {}),
             **({"sel_method": sel_method} if sel_method else {}),

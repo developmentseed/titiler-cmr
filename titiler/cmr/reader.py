@@ -134,7 +134,10 @@ def get_variables(
         xarray.DataArray: 2D or 3D DataArray.
 
     """
-    da = xr.concat([ds[variable] for variable in variables], dim="band").squeeze()
+    da = xr.concat([ds[variable] for variable in variables], dim="band")
+    squeeze_dims = [d for d in da.dims if d != "band" and da.sizes[d] == 1]
+    if squeeze_dims:
+        da = da.squeeze(squeeze_dims)
 
     for selector in _parse_dsl(sel):
         dimension = selector["dimension"]

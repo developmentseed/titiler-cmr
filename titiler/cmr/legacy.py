@@ -21,6 +21,7 @@ PARAM_RENAMES = {
     "concept_id": "collection_concept_id",
     "datetime": "temporal",
     "bands_regex": "assets_regex",
+    "variable": "variables",
 }
 
 

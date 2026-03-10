@@ -48,7 +48,7 @@ def test_xarray_tilejson_with_sel(app, xarray_query_params):
         params={
             **xarray_query_params(
                 collection_concept_id="C2837626477-GES_DISC",
-                variable="o3",
+                variables="o3",
                 temporal=datetime,
                 sel=sel,
             ),
@@ -351,7 +351,7 @@ def test_timeseries_statistics_image_size_limit(
         "/xarray/timeseries/statistics",
         params={
             "collection_concept_id": "C1996881146-POCLOUD",
-            "variable": "analysed_sst",
+            "variables": "analysed_sst",
             "temporal": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
             "step": "P1D",
         },
@@ -384,7 +384,7 @@ def test_timeseries_statistics_request_size_limit(
         "/xarray/timeseries/statistics",
         params={
             "collection_concept_id": "C1996881146-POCLOUD",
-            "variable": "analysed_sst",
+            "variables": "analysed_sst",
             "temporal": "/".join(
                 dt.isoformat() for dt in [start_datetime, end_datetime]
             ),
@@ -411,7 +411,7 @@ def test_timeseries_bbox_limit(
         f"/xarray/timeseries/bbox/{','.join(str(coord) for coord in global_bounds)}.gif",
         params={
             "collection_concept_id": "C1996881146-POCLOUD",
-            "variable": "analysed_sst",
+            "variables": "analysed_sst",
             "temporal": f"2024-01-01T00:00:00Z/2024-01-{n_days}T23:59:59Z",
             "step": "P1D",
         },

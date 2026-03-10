@@ -115,10 +115,7 @@ class CMRAssetsParams(DefaultDependency):
 class XarrayDsParams(DefaultDependency):
     """Xarray Dataset Options."""
 
-    variables: Annotated[
-        list[str] | None, Query(description="Xarray Variable names.")
-    ] = None
-    variable: Annotated[str | None, Query(include_in_schema=False)] = None
+    variables: Annotated[list[str], Query(description="Xarray Variable names.")]
 
     sel: Annotated[
         list[SelDimStr] | None,
@@ -126,12 +123,6 @@ class XarrayDsParams(DefaultDependency):
             description="Xarray Indexing using dimension names `{dimension}={value}` or `{dimension}={method}::{value}`.",
         ),
     ] = None
-
-    def __post_init__(self):
-        """Apply legacy parameter aliases."""
-        if self.variable and not self.variables:
-            self.variables = [self.variable]
-        self.variable = None
 
 
 @dataclass
@@ -155,8 +146,10 @@ class InterpolatedXarrayParams(XarrayParams):
 
 
 def interpolated_xarray_ds_params(
-    xarray_params: InterpolatedXarrayParams = Depends(InterpolatedXarrayParams),
-    granule_search: GranuleSearch = Depends(GranuleSearchParams),
+    xarray_params: Annotated[
+        InterpolatedXarrayParams, Depends(InterpolatedXarrayParams)
+    ],
+    granule_search: Annotated[GranuleSearch, Depends(GranuleSearchParams)],
 ) -> InterpolatedXarrayParams:
     """
     Xarray parameters with string interpolation support for the sel parameter.
