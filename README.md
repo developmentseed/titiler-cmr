@@ -21,7 +21,9 @@ See also the [API documentation](https://staging.openveda.cloud/api/titiler-cmr/
 ## Features
 
 - Render tiles from assets discovered via queries to [NASA's CMR](https://cmr.earthdata.nasa.gov/search)
-- Uses the [`earthaccess` python package](https://github.com/nsidc/earthaccess) to query the CMR
+- Two backends: **xarray** (`/xarray`) for NetCDF/HDF5 datasets and **rasterio** (`/rasterio`) for GeoTIFF/COG assets
+- Timeseries endpoints for generating GIFs, statistics, and tilejsons across a temporal range
+- Queries CMR directly via the [granule search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html)
 - Built on top of [titiler](https://github.com/developmentseed/titiler)
 - Multiple projections support (see [TileMatrixSets](https://www.ogc.org/standards/tms)) via [`morecantile`](https://github.com/developmentseed/morecantile).
 - JPEG / JP2 / PNG / WEBP / GTIFF / NumpyTile output format support
@@ -42,7 +44,7 @@ uv sync --all-extras
 ## Authentication for data read access
 
 `titiler-cmr` can read data either over `HTTP` (external) or directly from `AWS S3` (direct) depending on the app configuration.
-The behavior of the application is controlled by the S3 authentication settings in `settings.py`, which you can set either with environment variables (`TITILER_CMR_S3_AUTH_ACCESS`, `TITILER_CMR_S3_AUTH_STRATEGY`) or in an environment file (`.env`).
+The behavior is controlled by environment variables (or a `.env` file) read by `EarthdataSettings` and `ApiSettings` in `settings.py`.
 
 ### Direct from S3
 
@@ -52,9 +54,9 @@ application to access the data directly from `S3`. You can do this in two ways:
 - **Option 1:** Configure an AWS IAM role for your runtime environment that has
   read access to the NASA buckets so that `rasterio/GDAL` can find the AWS
   credentials when reading data.
-- **Option 2:** Set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD`
-  environment variables so that temporary AWS credentials can be retrieved for
-  reading from the relevant NASA buckets.
+- **Option 2:** Set the `TITILER_CMR_EARTHDATA_USERNAME`, `TITILER_CMR_EARTHDATA_PASSWORD`, and
+  `TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS=true` environment variables so that temporary AWS
+  credentials can be retrieved for reading from the relevant NASA buckets.
 
 > [!IMPORTANT]
 >
@@ -66,7 +68,7 @@ application to access the data directly from `S3`. You can do this in two ways:
 > To avoid placing heavy load on the endpoints that issue temporary AWS (S3)
 > credentials, and to improve Lambda performance, such credentials are fetched
 > only when necessary, and are held in a cache (keyed by the endpoint URL), and
-> are automatically refreshed 10 minutes prior to their expiration (as a
+> are automatically refreshed 5 minutes prior to their expiration (as a
 > freshness leeway).
 >
 > However, this caching occurs on a per-Lambda basis. That is, each Lambda
@@ -138,7 +140,7 @@ The application will be available at this address: [http://localhost:8081/api.ht
 To run the application directly in your local environment, configure the application to access data over `HTTP` then run it using `uvicorn`:
 
 ```bash
-TITILER_CMR_S3_AUTH_ACCESS=external uv run uvicorn titiler.cmr.main:app --reload --log-level info
+uv run uvicorn titiler.cmr.main:app --reload --log-level info
 ```
 
 The application will be available at this address: [http://localhost:8000/api.html](http://localhost:8000/api.html)
@@ -153,7 +155,7 @@ Environment variables for the `veda-deploy` deployment should be configured in t
 
 The application-specific (`AppSettings`) environment variables which should be set in the `veda-deploy` AWS secret are:
 
-- `TITILER_CMR_S3_AUTH_STRATEGY=iam`
+- `TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS=true`
 - `TITILER_CMR_ROOT_PATH=/api/titiler-cmr`
 - `TITILER_CMR_AWS_REQUEST_PAYER=requester`
 
@@ -177,4 +179,8 @@ See [contributors](https://github.com/developmentseed/titiler-cmr/graphs/contrib
 
 ## Changes
 
-See [CHANGES.md](https://github.com/developmentseed/titiler-cmr/blob/main/CHANGES.md).
+See [CHANGELOG.md](https://github.com/developmentseed/titiler-cmr/blob/main/CHANGELOG.md).
+
+## Links
+
+* NISAR viz: http://localhost:8000/xarray/WebMercatorQuad/map.html?collection_concept_id=C3622214170-ASF&granule_ur=NISAR_L2_PR_GCOV_010_165_D_100_2005_DHDH_M_20260120T155930_20260120T155950_X05010_N_P_J_001&variable=HHHH&colormap_name=rainbow&rescale=0,0.6&group=/science/LSAR/GCOV/grids/frequencyB

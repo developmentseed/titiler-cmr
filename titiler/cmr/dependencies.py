@@ -11,6 +11,7 @@ from titiler.core.dependencies import DefaultDependency, ExpressionParams
 from titiler.xarray.dependencies import SelDimStr, XarrayIOParams
 
 from titiler.cmr.models import (
+    AdditionalAttributeFilter,
     BBox,
     CloudCover,
     ConceptID,
@@ -35,6 +36,7 @@ def GranuleSearchParams(
     bounding_box: BBox | None = None,
     sort_key: SortKey = None,
     orbit_number: OrbitNumber = None,
+    attribute: AdditionalAttributeFilter = None,
 ) -> GranuleSearch:
     """Build GranuleSearch parameters from query string inputs.
 
@@ -50,6 +52,7 @@ def GranuleSearchParams(
         bounding_box=bounding_box,
         sort_key=sort_key,
         orbit_number=orbit_number,
+        attribute=attribute,
     )
 
 

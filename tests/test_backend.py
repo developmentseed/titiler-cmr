@@ -46,6 +46,7 @@ def stub_get_granules() -> list[Granule]:
     return [
         Granule(
             id="test-granule-id",
+            granule_ur="test-granule-ur",
             collection_concept_id="TEST_COLLECTION",
             related_urls=[
                 RelatedUrl(

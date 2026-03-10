@@ -103,6 +103,34 @@ OrbitNumber = Annotated[
     ),
 ]
 
+AdditionalAttributeFilter = Annotated[
+    List[str] | None,
+    Query(
+        description=(
+            "Filter granules by additional attributes. "
+            "Format: `[type,]name[,min[,max]]`. "
+            "Type is one of: string, float, int, datetime, time, date. "
+            "Omit type to match by name only. "
+            "Omit min or max to create an open-ended range. "
+            "Repeat the parameter to filter on multiple attributes."
+        ),
+        openapi_examples={
+            "user-provided": {"value": None},
+            "name-only": {"value": ["PERCENTAGE"]},
+            "exact-value": {"value": ["float,PERCENTAGE,25.5"]},
+            "range": {"value": ["float,PERCENTAGE,25.5,30"]},
+            "min-only": {"value": ["float,PERCENTAGE,25.5,"]},
+            "max-only": {"value": ["float,PERCENTAGE,,30"]},
+            "multiple": {
+                "value": [
+                    "float,PERCENTAGE,25.5",
+                    "string,MISSION_NAME,Big Island\\, HI",
+                ]
+            },
+        },
+    ),
+]
+
 # ---------------------------------------------------------------------------
 # Granule search
 # ---------------------------------------------------------------------------
@@ -126,6 +154,7 @@ class GranuleSearch(BaseModel):
     bounding_box: BBox | None = None
     sort_key: List[str] | None = None
     orbit_number: OrbitNumber | None = None
+    attribute: List[str] | None = None
 
     @field_validator("temporal")
     @classmethod
@@ -279,6 +308,7 @@ class Granule(BaseModel):
     """A single CMR granule parsed from a UMM JSON search response."""
 
     id: str
+    granule_ur: str
     collection_concept_id: str
     related_urls: list[RelatedUrl] = Field(default_factory=list)
     spatial_extent: GranuleSpatialExtent | None = None
@@ -295,6 +325,7 @@ class Granule(BaseModel):
             umm = data["umm"]
             return {
                 "id": meta["concept-id"],
+                "granule_ur": meta["native-id"],
                 "collection_concept_id": meta["collection-concept-id"],
                 "related_urls": umm.get("RelatedUrls", []),
                 "spatial_extent": umm.get("SpatialExtent"),
@@ -303,6 +334,10 @@ class Granule(BaseModel):
                 "data_granule": umm.get("DataGranule"),
             }
         return data
+
+    def __str__(self) -> str:
+        """Use the granule_ur (native-id) as the string representation of a granule"""
+        return self.granule_ur
 
     @property
     def additional_attributes_dict(self) -> dict[str, list[str]]:

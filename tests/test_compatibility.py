@@ -35,6 +35,7 @@ def _make_granule(external_href="https://example.com/file.nc") -> Granule:
     """Create a minimal Granule with one asset."""
     return Granule(
         id="G1234-TEST",
+        granule_ur="MOD09A1.A2020001.h12v04.hdf",
         collection_concept_id="C1234-TEST",
         related_urls=[
             RelatedUrl(**{"URL": external_href, "Type": "GET DATA"}),

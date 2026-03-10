@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Restructure API into two separate backends with distinct route prefixes:
+  `/xarray` for NetCDF/HDF5 datasets (via xarray) and `/rasterio` for
+  multi-band raster files (via rio-tiler/GDAL)
+- `orbit_number` query parameter for filtering granules by orbit number
+- Multi-variable visualization support in xarray backend
+- Legacy route redirects (`titiler/cmr/legacy.py`) for backwards compatibility
+  with old API paths and parameter names
+- Architecture documentation (`docs/architecture.md`)
 - Add Earthdata Login based S3 access, except for the rasterio backend, to be
   addressed separately.
   ([#112](https://github.com/developmentseed/titiler-cmr/pull/112))
@@ -34,6 +42,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- `concept_id` query parameter renamed to `collection_concept_id` to align
+  with CMR naming; old name still accepted via redirect
+- `datetime` query parameter renamed to `temporal` to align with CMR standard;
+  old name still accepted via redirect
+- `bands_regex` query parameter renamed to `assets_regex`; old name still
+  accepted via redirect
+- CMR granule search now uses `granules.umm_json` format instead of
+  `granules.json`
+- Timeseries logic extracted from `factory.py` into `titiler/cmr/timeseries.py`
 - Simplify function `get_geojson_bounds` and add illustrative examples to its
   docstring ([#115](https://github.com/developmentseed/titiler-cmr/issues/115))
 

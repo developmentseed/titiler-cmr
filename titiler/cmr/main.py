@@ -162,66 +162,87 @@ description = """A TiTiler-based dynamic tiling application for the Common Metad
 
 ---
 
-This API allows you to interact with data in CMR using many of the familiar TiTiler functions.
-Users can specify a CMR query for a specific concept id (e.g. C123456-LPDAAC_ECS) and datetime
-and get a TileJSON, XYZ tile image, statistics report (for a GeoJSON) and more.
+This API renders dynamic tile-based visualizations of geospatial assets discovered through
+[NASA's Common Metadata Repository (CMR)](https://cmr.earthdata.nasa.gov). Users specify a
+CMR collection (`collection_concept_id`) along with optional CMR search filters — such as
+`temporal`, `bounding_box`, or `cloud_cover` — and the API will query CMR for matching
+granules, fetch their assets, and render tiles, statistics, or images on demand. Query
+parameters accepted by this API are forwarded directly to the
+[CMR Granule Search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html).
+
+Two backends are available:
+
+- **Xarray** (`/xarray`): For multi-dimensional array datasets (e.g. NetCDF, HDF5). Supports
+  selecting specific variables and dimensions.
+- **Rasterio** (`/rasterio`): For raster file formats readable by GDAL/rasterio
+  (e.g. GeoTIFF, COG).
 
 ## Timeseries
 The Timeseries Extension provides endpoints for requesting results for all points or intervals
 along a timeseries. The [/timeseries family of endpoints](#/Timeseries) works by converting
-the provided timeseries parameters (`datetime`, `step`, and `temporal_mode`) into a set of
-`datetime` query parameters for the corresponding lower-level endpoint, running asynchronous
+the provided timeseries parameters (`temporal`, `step`, and `temporal_mode`) into a set of
+`temporal` query parameters for the corresponding lower-level endpoint, running asynchronous
 requests to the lower-level endpoint, then collecting the results and formatting them in a
 coherent format for the user.
 
-The timeseries structure is defined by the `datetime`, `step`, and `temporal_mode` parameters.
+The timeseries structure is defined by the `temporal`, `step`, and `temporal_mode` parameters.
 
-The `temporal_mode` mode parameter controls whether or not CMR is queried for a particular
-point-in-time (`temporal_mode=point`) or over an entire interval (`temporal_mode=interval`).
-In general, it is best to use `temporal_mode=point` for datasets where granules overlap completely
-in space (e.g. daily sea surface temperature predictions) because the /timeseries endpoints will
-create a mosaic of all assets returned by the query and the first asset to cover a pixel will
-be used. For datasets where it requires granules from multiple timestamps to fully cover an AOI,
-`temporal_mode=interval` is appropriate. For example, you can get weekly composites of satellite
-imagery for visualization purposes with `step=P1W & temporal_mode=interval`.
+The `temporal_mode` parameter controls whether CMR is queried for a particular point-in-time
+(`temporal_mode=point`) or over an entire interval (`temporal_mode=interval`). In general,
+use `temporal_mode=point` for datasets where granules overlap completely in space (e.g. daily
+sea surface temperature predictions). For datasets requiring granules from multiple timestamps
+to fully cover an AOI, `temporal_mode=interval` is appropriate — for example, weekly composites
+of satellite imagery with `step=P1W&temporal_mode=interval`.
 
-To get a timeseries for all granules between two datetimes, you can simply specify
-`datetime={start}/{end}` and a query will be sent to CMR to identify all of the granule timestamps
-between the provided `start` and `end` datetimes.
+To get a timeseries for all granules between two datetimes, specify
+`temporal={start}/{end}` and a query will be sent to CMR to identify all of the granule
+timestamps between the provided `start` and `end` datetimes.
 
-To get a weekly sample of granules you can specify `datetime={start}/{end}`, `step=P1W`, and
+To get a weekly sample of granules you can specify `temporal={start}/{end}`, `step=P1W`, and
 `temporal_mode=point`.
 """
 
 
 tags_metadata = [
     {
-        "name": "Raster Tiles",
+        "name": "OGC Common",
+        "description": "OGC API Common endpoints for the landing page and conformance declaration.",
     },
     {
-        "name": "TileJSON",
+        "name": "Compatibility",
+        "description": "Endpoint for evaluating a collection_concept_ids compatibility with TiTiler-CMR.",
     },
     {
-        "name": "Map",
+        "name": "Xarray Backend",
+        "description": "Tile, statistics, and image endpoints backed by the Xarray reader. "
+        "Suitable for multi-dimensional array datasets such as NetCDF and HDF5.",
     },
     {
-        "name": "Statistics",
-    },
-    {
-        "name": "Images",
+        "name": "Rasterio Backend",
+        "description": "Tile, statistics, and image endpoints backed by the GDAL/rasterio reader. "
+        "Suitable for raster file formats such as GeoTIFF and Cloud-Optimized GeoTIFF (COG).",
     },
     {
         "name": "Timeseries",
-        "description": "A family of endpoints for timeseries analysis and visualization.",
+        "description": "Endpoints for timeseries analysis and visualization. These endpoints "
+        "expand a `temporal` range into individual CMR queries and aggregate the results.",
     },
     {
         "name": "Tiling Schemes",
+        "description": "Available OGC Tile Matrix Sets (tiling schemes).",
     },
     {
-        "name": "Landing Page",
+        "name": "Algorithms",
+        "description": "Available post-processing algorithms that can be applied to tile data.",
     },
     {
-        "name": "Conformance",
+        "name": "ColorMaps",
+        "description": "Available colormaps for single-band data visualization.",
+    },
+    {
+        "name": "Legacy (Deprecated)",
+        "description": "Deprecated redirect routes maintained for backwards compatibility. "
+        "These routes will be removed in a future version.",
     },
 ]
 

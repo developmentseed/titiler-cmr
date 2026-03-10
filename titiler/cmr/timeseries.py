@@ -4,8 +4,8 @@ The /timeseries endpoints provide an API for retrieving data for a timeseries th
 would otherwise need to be sent as a set of independent requests.
 
 The /timeseries endpoints follow this basic pattern to assemble results for a timeseries:
-- The 'datetime' parameter (required) is combined with the optional 'step'
-  and 'temporal_mode' parameters to produce a list of specific datetime parameters
+- The 'temporal' parameter (required) is combined with the optional 'step'
+  and 'temporal_mode' parameters to produce a list of specific temporal parameters
   that can be passed to the lower-level endpoints.
 - The /timeseries endoint will construct a list of GET or POST requests to the
   lower-level endpoint and execute them asynchronously over HTTP

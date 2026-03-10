@@ -42,11 +42,11 @@ titiler.core.factory.BaseFactory
 | Factory field | Concrete class (xarray) | Concrete class (rasterio) | Where it flows |
 |---|---|---|---|
 | `path_dependency` | `GranuleSearchParams` | `GranuleSearchParams` | `CMRBackend.input` (a `GranuleSearch`) |
-| `backend_dependency` | `BackendParams` | `BackendParams` | `CMRBackend` kwargs (`client`, `auth_token`, `s3_access`) |
+| `backend_dependency` | `BackendParams` | `BackendParams` | `CMRBackend` kwargs (`client`, `auth_token`, `s3_access`, `get_s3_credentials`) |
 | `reader_dependency` | `XarrayParams` | `CMRAssetsParams` | `CMRBackend.reader_options` (merged, then splatted into reader constructor) |
 | `assets_accessor_dependency` | `GranuleSearchBackendParams` | `GranuleSearchBackendParams` | `BaseBackend.tile(search_options=…)` — controls granule search behaviour |
 | `dataset_dependency` | `XarrayDatasetParams` | `RasterioDatasetParams` | reader method call kwargs (`.tile()`, `.part()`, etc.) |
-| `layer_dependency` | `DefaultDependency` | `AssetsExprParams` | reader method call kwargs (band indexes / expressions / assets) |
+| `layer_dependency` | `ExpressionParams` | `AssetsExprParams` | reader method call kwargs (band indexes / expressions / assets) |
 
 ---
 
@@ -68,12 +68,12 @@ GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&variable
    CMRBackend(
      input=GranuleSearch,
      reader=XarrayGranuleReader,
-     reader_options={"variable": "sst", ...},   ← from XarrayParams
-     client=..., auth_token=..., s3_access=...  ← from BackendParams
+     reader_options={"variable": "sst", ...},                          ← from XarrayParams
+     client=..., auth_token=..., s3_access=..., get_s3_credentials=... ← from BackendParams
    )
 
-3. CMRBackend.__attrs_post_init__ merges auth_token + s3_access into reader_options:
-   reader_options = {"variable": "sst", "auth_token": "...", "s3_access": False}
+3. CMRBackend.__attrs_post_init__ merges auth_token, s3_access, and get_s3_credentials into reader_options:
+   reader_options = {"variable": "sst", "auth_token": "...", "s3_access": False, "get_s3_credentials": ...}
 
 4. BaseBackend.tile(x, y, z, search_options={...}) runs:
    a. CMRBackend.assets_for_tile(x, y, z, exitwhenfull=True)
@@ -114,3 +114,65 @@ Used when a single CMR granule may contain *multiple* assets — for example, on
 Used when a CMR granule is a single NetCDF/HDF5 file containing one or more variables. This class extends the *low-level* `rio_tiler.io.xarray.XarrayReader`, which expects a pre-built `xarray.DataArray` as its `input` attribute, rather than `titiler.xarray.io.Reader`, which owns `src_path: str` and handles opening internally with a fixed opener signature.
 
 The reason for choosing the lower-level base: `XarrayGranuleReader` must accept a `Granule` object (not a plain path), extract the correct href (`direct_href` vs `external_href` depending on `s3_access`), and invoke the CMR-specific `open_dataset` with authentication. By controlling the full opening pipeline in `__attrs_post_init__` and then setting `self.input` before calling `super().__attrs_post_init__()`, `XarrayGranuleReader` fits naturally into the rio_tiler reader contract without fighting the assumptions baked into `titiler.xarray.io.Reader`.
+
+---
+
+## S3 Credential Handling
+
+NASA DAAC data in S3 requires temporary credentials obtained from a per-DAAC endpoint, not
+long-lived IAM keys. Earthdata Login provides a bearer token that can be exchanged for
+short-lived `(access_key_id, secret_access_key, session_token)` credentials scoped to that DAAC's
+bucket. The credential machinery in `titiler-cmr` is split across three layers: startup,
+app-state caching, and per-granule provider caching.
+
+### Startup
+
+`startup()` in `main.py` runs once at application boot (or Lambda warm start):
+
+1. If `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` are set, a bearer token is obtained from
+   `https://urs.earthdata.nasa.gov/api/users/find_or_create_token` and stored at
+   `app.state.earthdata_token`.
+2. If `EARTHDATA_S3_DIRECT_ACCESS=true`, `make_get_s3_credentials(auth_token)` is called and
+   the resulting factory callable is stored at `app.state.get_s3_credentials`.
+
+`make_get_s3_credentials` returns a function decorated with a `TTLCache(maxsize=100, ttl=50m)`.
+Calling it with an endpoint URL either constructs a new `EarthdataS3CredentialProvider` or
+returns the cached instance for that endpoint. The 50-minute TTL covers the expected lifetime of
+a Lambda execution environment and prevents redundant provider construction across requests.
+
+### Per-request propagation
+
+`BackendParams` is a FastAPI dependency that runs on every request. It reads
+`app.state.{earthdata_token, s3_access, get_s3_credentials}` and passes them into
+`CMRBackend`. `CMRBackend.__attrs_post_init__` merges them into `reader_options`, so every
+reader instance receives them as constructor arguments.
+
+### Per-granule credential provider (`EarthdataS3CredentialProvider`)
+
+Each reader calls `granule.s3_credentials_endpoint` during `__attrs_post_init__`. This property
+scans the granule's `related_urls` for a URL containing `/s3credentials` and raises
+`S3CredentialsEndpointMissing` if none is found (different DAACs expose different URLs). The
+reader then calls `get_s3_credentials(endpoint)` to retrieve the cached
+`EarthdataS3CredentialProvider` instance for that endpoint.
+
+`EarthdataS3CredentialProvider` is a callable that returns `S3Credential`. When called it
+checks whether the cached credentials expire within 5 minutes (`CREDENTIAL_REFRESH_BUFFER`).
+If so (or on the first call), it fetches new credentials from the endpoint using the bearer
+token and caches the result. A `threading.Lock` makes it safe to share a single provider
+instance across concurrent reads within the same process.
+
+The credentials are used differently by each backend:
+
+- **Rasterio** (`MultiBaseGranuleReader`): `_get_asset_info` calls the provider on each asset,
+  constructs an `AWSSession` from the returned keys, and injects it into the rasterio `Env`
+  via `AssetInfo.env`.
+- **Xarray** (`XarrayGranuleReader`): the provider callable itself is passed as
+  `credential_provider` to `obstore`, which calls it whenever it needs to refresh credentials
+  during streaming reads.
+
+### Fallback behaviour
+
+If `s3_access` is `False`, or if the granule has no `/s3credentials` URL, each reader falls
+back to the HTTPS asset URL (`asset.external_href`) and, if a bearer token is present, attaches
+it as an `Authorization: Bearer <token>` header. In this path no S3 credentials are requested
+or used.

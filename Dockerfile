@@ -2,7 +2,7 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 RUN <<'EOF'
 apt-get update
-apt-get -y --no-install-recommends install libexpat1
+apt-get -y --no-install-recommends install libexpat1 git
 rm -rf /var/lib/apt/lists/*
 EOF
 
@@ -13,8 +13,6 @@ RUN <<EOF
 uv sync --no-dev --frozen --extra uvicorn
 # Remove *.dist-info directories
 find .venv/lib/python3.12/site-packages -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' -exec rm -rf {} \;
-# Remove unused botocore services (we are using only s3, so that stays)
-find .venv/lib/python3.12/site-packages/botocore/data -mindepth 1 -maxdepth 1 -not -path "*/s3" -exec rm -rf {} \;
 EOF
 
 COPY titiler ./titiler
