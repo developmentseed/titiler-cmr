@@ -55,8 +55,10 @@ find . -name 'README*' -delete
 find . -name '*.md' -delete
 # Strip debug symbols from shared libraries (preserve numpy.libs)
 find . -type f -name '*.so*' -not -path "*/numpy.libs/*" -exec strip --strip-unneeded {} \; 2>/dev/null || true
-# Remove *.dist-info directories
-find /deps -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' -exec rm -rf {} \;
+# Strip *.dist-info directories down to just METADATA (required by importlib.metadata at runtime)
+find /deps -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' | while read -r d; do
+  find "$d" -mindepth 1 -not -name 'METADATA' -delete
+done
 EOF
 
 
