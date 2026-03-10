@@ -16,6 +16,7 @@ from titiler.cmr.models import (
     ConceptID,
     GranuleSearch,
     GranuleUr,
+    OrbitNumber,
     SortKey,
     Temporal,
 )
@@ -33,6 +34,7 @@ def GranuleSearchParams(
     cloud_cover: CloudCover | None = None,
     bounding_box: BBox | None = None,
     sort_key: SortKey = None,
+    orbit_number: OrbitNumber = None,
 ) -> GranuleSearch:
     """Build GranuleSearch parameters from query string inputs.
 
@@ -47,6 +49,7 @@ def GranuleSearchParams(
         cloud_cover=cloud_cover,
         bounding_box=bounding_box,
         sort_key=sort_key,
+        orbit_number=orbit_number,
     )
 
 

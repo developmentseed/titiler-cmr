@@ -84,9 +84,21 @@ SortKey = Annotated[
             "browsable, cloud_cover, revision_date."
         ),
         openapi_examples={
+            "user-provided": {"value": None},
             "most-recent-first": {"value": ["-start_date"]},
             "ascending-start-date": {"value": ["start_date"]},
             "multi-key": {"value": ["provider", "-start_date"]},
+        },
+    ),
+]
+
+OrbitNumber = Annotated[
+    int | None,
+    Query(
+        description="Orbit number",
+        openapi_examples={
+            "user-provided": {"value": None},
+            "2512": {"value": 2512},
         },
     ),
 ]
@@ -113,6 +125,7 @@ class GranuleSearch(BaseModel):
     cloud_cover: CloudCover = None
     bounding_box: BBox | None = None
     sort_key: List[str] | None = None
+    orbit_number: OrbitNumber | None = None
 
     @field_validator("temporal")
     @classmethod
