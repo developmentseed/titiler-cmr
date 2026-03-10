@@ -25,7 +25,7 @@ COPY README.md uv.lock .python-version pyproject.toml ./
 COPY titiler/ ./titiler/
 
 RUN <<EOF
-uv export --quiet --locked --no-editable --no-dev --extra lambda  --format requirements.txt -o requirements.txt
+uv export --quiet --locked --no-editable --no-dev --extra lambda --extra telemetry --format requirements.txt -o requirements.txt
 uv pip install \
   --compile-bytecode \
   --no-binary pydantic \
@@ -55,9 +55,11 @@ find . -name 'README*' -delete
 find . -name '*.md' -delete
 # Strip debug symbols from shared libraries (preserve numpy.libs)
 find . -type f -name '*.so*' -not -path "*/numpy.libs/*" -exec strip --strip-unneeded {} \; 2>/dev/null || true
-# Strip *.dist-info directories down to just METADATA (required by importlib.metadata at runtime)
+# Strip *.dist-info to only files needed at runtime:
+# - METADATA: required by importlib.metadata (version/name lookups)
+# - entry_points.txt: required by pkg_resources/importlib.metadata entry_points() discovery
 find /deps -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' | while read -r d; do
-  find "$d" -mindepth 1 -not -name 'METADATA' -delete
+  find "$d" -mindepth 1 -not \( -name 'METADATA' -o -name 'entry_points.txt' \) -delete
 done
 EOF
 
