@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Annotated, List, Optional
 
 from fastapi import Depends, HTTPException, Query, Request
+from pydantic import AliasChoices
 from httpx import Client
 from titiler.core.dependencies import DefaultDependency, ExpressionParams
 from titiler.xarray.dependencies import SelDimStr, XarrayIOParams
@@ -116,7 +117,11 @@ class XarrayDsParams(DefaultDependency):
     """Xarray Dataset Options."""
 
     variables: Annotated[
-        list[str], Query(alias="variable", description="Xarray Variable name.")
+        list[str],
+        Query(
+            validation_alias=AliasChoices("variables", "variable"),
+            description="Xarray Variable name.",
+        ),
     ]
 
     sel: Annotated[
