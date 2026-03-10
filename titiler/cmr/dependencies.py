@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import Annotated, List, Optional
 
 from fastapi import Depends, HTTPException, Query, Request
-from pydantic import AliasChoices
 from httpx import Client
 from titiler.core.dependencies import DefaultDependency, ExpressionParams
 from titiler.xarray.dependencies import SelDimStr, XarrayIOParams
@@ -117,12 +116,9 @@ class XarrayDsParams(DefaultDependency):
     """Xarray Dataset Options."""
 
     variables: Annotated[
-        list[str],
-        Query(
-            validation_alias=AliasChoices("variables", "variable"),
-            description="Xarray Variable name.",
-        ),
-    ]
+        list[str] | None, Query(description="Xarray Variable names.")
+    ] = None
+    variable: Annotated[str | None, Query(include_in_schema=False)] = None
 
     sel: Annotated[
         list[SelDimStr] | None,
@@ -130,6 +126,12 @@ class XarrayDsParams(DefaultDependency):
             description="Xarray Indexing using dimension names `{dimension}={value}` or `{dimension}={method}::{value}`.",
         ),
     ] = None
+
+    def __post_init__(self):
+        """Apply legacy parameter aliases."""
+        if self.variable and not self.variables:
+            self.variables = [self.variable]
+        self.variable = None
 
 
 @dataclass
