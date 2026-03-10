@@ -3988,8 +3988,8 @@ wheels = [
 
 [[package]]
 name = "rio-tiler"
-version = "9.0.0rc2"
-source = { git = "https://github.com/cogeotiff/rio-tiler?branch=main#8138f63887778c56832416ed3c3be30bbb7ee94e" }
+version = "9.0.0rc3"
+source = { git = "https://github.com/cogeotiff/rio-tiler?tag=9.0.0rc3#3dacf504795e78c3ede3f9e1394038a74e5ab73c" }
 dependencies = [
     { name = "attrs" },
     { name = "cachetools" },
@@ -4429,11 +4429,11 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-logging", marker = "extra == 'telemetry'" },
     { name = "opentelemetry-sdk", marker = "extra == 'telemetry'" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
-    { name = "rio-tiler", git = "https://github.com/cogeotiff/rio-tiler?branch=main" },
+    { name = "rio-tiler", git = "https://github.com/cogeotiff/rio-tiler?tag=9.0.0rc3" },
     { name = "shapely", specifier = ">=2.1.2" },
-    { name = "titiler-core", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fcore&branch=main" },
-    { name = "titiler-mosaic", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fmosaic&branch=main" },
-    { name = "titiler-xarray", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fxarray&branch=main" },
+    { name = "titiler-core", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fcore&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" },
+    { name = "titiler-mosaic", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fmosaic&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" },
+    { name = "titiler-xarray", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fxarray&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" },
     { name = "uvicorn", marker = "extra == 'uvicorn'" },
 ]
 provides-extras = ["lambda", "telemetry", "uvicorn"]
@@ -4480,7 +4480,7 @@ dev = [
 [[package]]
 name = "titiler-core"
 version = "2.0.0b2"
-source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fcore&branch=main#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
+source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fcore&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
 dependencies = [
     { name = "fastapi" },
     { name = "geojson-pydantic" },
@@ -4496,7 +4496,7 @@ dependencies = [
 [[package]]
 name = "titiler-mosaic"
 version = "2.0.0b2"
-source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fmosaic&branch=main#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
+source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fmosaic&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
 dependencies = [
     { name = "titiler-core" },
 ]
@@ -4504,7 +4504,7 @@ dependencies = [
 [[package]]
 name = "titiler-xarray"
 version = "2.0.0b2"
-source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fxarray&branch=main#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
+source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fxarray&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
 dependencies = [
     { name = "obstore" },
     { name = "rioxarray" },
