@@ -305,6 +305,42 @@ class TestLegacyPostRedirects:
         assert "/rasterio/feature/256x256.png" in r.headers["location"]
 
 
+class TestLegacyMultiValueParams:
+    """Multi-value query parameters (e.g. sel=x&sel=y) are preserved in redirects."""
+
+    def test_multi_value_sel_preserved(self, app):
+        """Multiple sel params are all forwarded, not collapsed to one."""
+        r = app.get(
+            "/WebMercatorQuad/tilejson.json",
+            params=[
+                ("collection_concept_id", "C123"),
+                ("sel", "time={datetime}"),
+                ("sel", "band=1"),
+            ],
+            follow_redirects=False,
+        )
+        assert r.status_code == 301
+        qs = _qs(r.headers["location"])
+        assert qs["sel"] == ["time={datetime}", "band=1"]
+
+    def test_multi_value_param_with_rename(self, app):
+        """Renamed param with a single value still works alongside multi-value params."""
+        r = app.get(
+            "/WebMercatorQuad/tilejson.json",
+            params=[
+                ("concept_id", "C123"),
+                ("sel", "time={datetime}"),
+                ("sel", "band=1"),
+            ],
+            follow_redirects=False,
+        )
+        assert r.status_code == 301
+        qs = _qs(r.headers["location"])
+        assert qs["collection_concept_id"] == ["C123"]
+        assert "concept_id" not in qs
+        assert qs["sel"] == ["time={datetime}", "band=1"]
+
+
 class TestLegacyNewNameNotOverwritten:
     """If both old and new param names are present, new name takes precedence."""
 

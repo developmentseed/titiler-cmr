@@ -27,19 +27,29 @@ PARAM_RENAMES = {
 def _legacy_redirect(
     request: Request, backend: str, new_path: str, status_code: int
 ) -> RedirectResponse:
-    params = dict(request.query_params)
-    params.pop("backend", None)
-    for old, new in PARAM_RENAMES.items():
-        if old in params:
-            if new not in params:
-                params[new] = params.pop(old)
-            else:
-                # New name already present — drop the redundant old name
-                params.pop(old)
+    # Use multi_items() to preserve repeated params (e.g. sel=x&sel=y)
+    items: list[tuple[str, str]] = [
+        (k, v) for k, v in request.query_params.multi_items() if k != "backend"
+    ]
+    # Apply renames: replace old key with new key, drop if new key already present
+    keys_present = {k for k, _ in items}
+    renamed: list[tuple[str, str]] = []
+    for key, value in items:
+        new_key = PARAM_RENAMES.get(key, key)
+        if new_key != key:
+            # It's a rename candidate
+            if new_key in keys_present:
+                # New name already present — drop the old-name occurrence
+                continue
+            keys_present.add(new_key)
+            keys_present.discard(key)
+            renamed.append((new_key, value))
+        else:
+            renamed.append((key, value))
     base = str(request.base_url).rstrip("/")
     url = f"{base}/{backend}{new_path}"
-    if params:
-        url += f"?{urlencode(params, doseq=True)}"
+    if renamed:
+        url += f"?{urlencode(renamed, doseq=True)}"
     return RedirectResponse(url, status_code=status_code)
 
 
