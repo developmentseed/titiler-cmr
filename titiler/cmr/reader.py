@@ -1,6 +1,5 @@
 """CMR Granule Reader"""
 
-import functools
 import pickle
 import threading
 import time
@@ -17,14 +16,17 @@ from typing import (
 )
 
 import attr
+import numpy as np
 import obstore.store
 import rasterio
+import xarray as xr
 from cachetools import TTLCache
 from morecantile import TileMatrixSet
 from obspec_utils.readers import BlockStoreReader
 from rasterio.session import AWSSession
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidAssetName, MissingAssets
+from rio_tiler.expression import get_expression_blocks
 from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
 from rio_tiler.io.xarray import Options, XarrayReader
@@ -113,10 +115,11 @@ def _arrange_dims(
     return da
 
 
-def get_variable(
+def get_variables(
     ds: Dataset,
-    variable: str,
+    variables: list[str],
     sel: list[str] | None = None,
+    expression: str | None = None,
     x_dim_names: list[str] = X_DIM_NAMES,
     y_dim_names: list[str] = Y_DIM_NAMES,
 ) -> DataArray:
@@ -131,7 +134,7 @@ def get_variable(
         xarray.DataArray: 2D or 3D DataArray.
 
     """
-    da = ds[variable]
+    da = xr.concat([ds[variable] for variable in variables], dim="band")
 
     for selector in _parse_dsl(sel):
         dimension = selector["dimension"]
@@ -149,6 +152,21 @@ def get_variable(
         )
 
     da = _arrange_dims(da, x_dim_names=x_dim_names, y_dim_names=y_dim_names)
+
+    if expression:
+        logger.info(f"applying expression: {expression}")
+        pre_expression_crs = da.rio.crs
+        expression_blocks = get_expression_blocks(expression)
+        band_vars = {
+            f"b{i + 1}": da.isel(band=i, drop=True) for i in range(da.sizes["band"])
+        }
+        namespace = {**band_vars, "np": np, "xr": xr}
+        results = [
+            eval(block, {"__builtins__": {}}, namespace) for block in expression_blocks
+        ]
+        da = results[0] if len(results) == 1 else xr.concat(results, dim="band")
+        if pre_expression_crs is not None:
+            da = da.rio.write_crs(pre_expression_crs)
 
     # Make sure we have a valid CRS
     crs = da.rio.crs or "epsg:4326"
@@ -223,6 +241,7 @@ def open_dataset(
             phony_dims="sort",
             engine="h5netcdf",
             lock=False,
+            chunks={},
             **kwargs,
         )
         read_time = time.perf_counter() - t0
@@ -347,17 +366,9 @@ class MultiBaseGranuleReader(MultiBaseReader):
             raise InvalidMediaType(f"{asset} has an invalid media type")
 
         reader_options = self.reader_options.copy()
-        if media_type in [NETCDF, HDF5]:
-            if self._credential_provider is not None:
-                opener = functools.partial(
-                    open_dataset, credential_provider=self._credential_provider
-                )
-            else:
-                opener = functools.partial(open_dataset, auth_token=self.auth_token)
-            reader_options.update({"opener": opener})
 
         env = {}
-        if self._credential_provider is not None and media_type not in [NETCDF, HDF5]:
+        if self._credential_provider is not None:
             creds = self._credential_provider()
             env = {
                 "session": AWSSession(
@@ -384,7 +395,7 @@ class XarrayGranuleReader(XarrayReader):
     """Custom Xarray Reader that gets the asset href from a Granule"""
 
     src_path: Granule = attr.ib()
-    variable: str = attr.ib()
+    variables: list[str] = attr.ib()
 
     options: Options = attr.ib(factory=Options)
 
@@ -406,6 +417,7 @@ class XarrayGranuleReader(XarrayReader):
     )
 
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
+    expression: str | None = attr.ib(default=None)
 
     ds: Dataset = attr.ib(init=False)
     input: DataArray = attr.ib(init=False)
@@ -442,9 +454,10 @@ class XarrayGranuleReader(XarrayReader):
         # for this reader the assets are keyed with numeric index
         # the real data asset is assumed to be the first one
         self.ds = self.opener(href, **opener_options)
-        self.input = get_variable(
+        self.input = get_variables(
             self.ds,
-            self.variable,
+            self.variables,
             sel=self.sel,
+            expression=self.expression,
         )
         super().__attrs_post_init__()

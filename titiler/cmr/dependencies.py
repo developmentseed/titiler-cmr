@@ -7,8 +7,8 @@ from typing import Annotated, List, Optional
 
 from fastapi import Depends, HTTPException, Query, Request
 from httpx import Client
-from titiler.core.dependencies import DefaultDependency
-from titiler.xarray.dependencies import CompatXarrayParams, SelDimStr
+from titiler.core.dependencies import DefaultDependency, ExpressionParams
+from titiler.xarray.dependencies import SelDimStr, XarrayIOParams
 
 from titiler.cmr.models import (
     BBox,
@@ -112,7 +112,28 @@ class CMRAssetsParams(DefaultDependency):
 
 
 @dataclass
-class InterpolatedXarrayParams(CompatXarrayParams):
+class XarrayDsParams(DefaultDependency):
+    """Xarray Dataset Options."""
+
+    variables: Annotated[list[str], Query(description="Xarray Variable name.")]
+
+    sel: Annotated[
+        list[SelDimStr] | None,
+        Query(
+            description="Xarray Indexing using dimension names `{dimension}={value}` or `{dimension}={method}::{value}`.",
+        ),
+    ] = None
+
+
+@dataclass
+class XarrayParams(ExpressionParams, XarrayIOParams, XarrayDsParams):
+    """Xarray Reader dependency."""
+
+    pass
+
+
+@dataclass
+class InterpolatedXarrayParams(XarrayParams):
     """Modified version of CompatXarrayParams that describes {datetime} interpolation."""
 
     sel: Annotated[
@@ -155,7 +176,7 @@ def interpolated_xarray_ds_params(
             interpolated_sel.append(sel_item)
 
     return InterpolatedXarrayParams(
-        variable=xarray_params.variable,
+        variables=xarray_params.variables,
         group=xarray_params.group,
         sel=interpolated_sel,
         decode_times=xarray_params.decode_times,

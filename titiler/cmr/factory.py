@@ -4,11 +4,10 @@ from typing import Callable
 
 from attrs import define, field
 from titiler.core.dependencies import (
-    AssetsExprParams,
-    DefaultDependency,
+    DatasetParams as RasterioDatasetParams,
 )
 from titiler.core.dependencies import (
-    DatasetParams as RasterioDatasetParams,
+    DefaultDependency,
 )
 from titiler.mosaic.factory import MosaicTilerFactory as BaseFactory
 from titiler.xarray.dependencies import (
@@ -46,9 +45,7 @@ class CMRTilerFactory(BaseFactory):
     dataset_dependency: type[RasterioDatasetParams] | type[XarrayDatasetParams]
 
     # Indexes/Expression Dependencies
-    layer_dependency: type[DefaultDependency] | type[AssetsExprParams] = field(
-        default=DefaultDependency
-    )
+    layer_dependency: type[DefaultDependency] = field(default=DefaultDependency)
 
     backend: type[CMRBackend] = CMRBackend
     backend_dependency: type[DefaultDependency] = BackendParams

@@ -22,6 +22,7 @@ classifiers = [
 ]
 dependencies = [
     "cachetools>=7.0.1",
+    "dask>=2026.1.2",
     "fastapi==0.124.4",
     "geojson-pydantic>=2.1.0",
     "h5netcdf>=1.8.1",

@@ -11,7 +11,7 @@ from fastapi import FastAPI, Query, Request
 from httpx import Client
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
-from titiler.core.dependencies import AssetsExprParams
+from titiler.core.dependencies import AssetsExprParams, ExpressionParams
 from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.factory import (
@@ -27,12 +27,11 @@ from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 from titiler.xarray.dependencies import (
     DatasetParams as XarrayDatasetParams,
 )
-from titiler.xarray.dependencies import XarrayParams
 
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.compatibility import router as compatibility_router
 from titiler.cmr.credentials import EarthdataS3CredentialProvider
-from titiler.cmr.dependencies import CMRAssetsParams
+from titiler.cmr.dependencies import CMRAssetsParams, XarrayParams
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
@@ -420,6 +419,7 @@ xarray = CMRTilerFactory(
     dataset_reader=XarrayGranuleReader,
     reader_dependency=XarrayParams,
     dataset_dependency=XarrayDatasetParams,
+    layer_dependency=ExpressionParams,
     extensions=[TimeseriesExtension()],
     add_statistics=True,
     add_viewer=True,
