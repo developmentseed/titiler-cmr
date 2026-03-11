@@ -186,7 +186,8 @@ def evaluate_xarray_compatibility(
 
     client = request.app.state.client
     s3_access = request.app.state.s3_access
-    auth_token = request.app.state.earthdata_token
+    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
+    auth_token = token_provider() if token_provider else None
     get_s3_credentials = request.app.state.get_s3_credentials
 
     granule = next(
@@ -250,7 +251,8 @@ def evaluate_rasterio_compatibility(
 
     client = request.app.state.client
     s3_access = request.app.state.s3_access
-    auth_token = request.app.state.earthdata_token
+    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
+    auth_token = token_provider() if token_provider else None
     get_s3_credentials = request.app.state.get_s3_credentials
 
     granule = next(

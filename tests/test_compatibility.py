@@ -25,7 +25,9 @@ def _make_request(s3_access=False, auth_token=None, get_s3_credentials=None):
     request = MagicMock()
     request.app.state.client = MagicMock()
     request.app.state.s3_access = s3_access
-    request.app.state.earthdata_token = auth_token
+    request.app.state.earthdata_token_provider = (
+        (lambda: auth_token) if auth_token is not None else None
+    )
     request.app.state.get_s3_credentials = get_s3_credentials
     request.base_url = "http://testserver/"
     return request

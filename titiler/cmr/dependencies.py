@@ -68,7 +68,8 @@ class BackendParams(DefaultDependency):
     def __init__(self, request: Request):
         """Initialize BackendParams"""
         self.client = request.app.state.client
-        self.auth_token = getattr(request.app.state, "earthdata_token", None)
+        token_provider = getattr(request.app.state, "earthdata_token_provider", None)
+        self.auth_token = token_provider() if token_provider else None
         self.s3_access = getattr(request.app.state, "s3_access", False)
         self.get_s3_credentials = getattr(request.app.state, "get_s3_credentials", None)
 

@@ -45,7 +45,7 @@ def app():
     # Set app state manually since lifespan is skipped.
     app.state.client = Client(base_url=CMR_GRANULE_SEARCH_API)
     app.state.s3_access = False
-    app.state.earthdata_token = None
+    app.state.earthdata_token_provider = None
     app.state.get_s3_credentials = None
 
     return TestClient(app)

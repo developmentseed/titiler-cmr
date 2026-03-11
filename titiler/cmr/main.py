@@ -1,11 +1,8 @@
 """TiTiler+CMR FastAPI application."""
 
-import threading
-from collections.abc import Callable
 from contextlib import asynccontextmanager
 from typing import Annotated, Literal
 
-import cachetools
 import jinja2
 from fastapi import FastAPI, Query, Request
 from httpx import Client
@@ -30,7 +27,7 @@ from titiler.xarray.dependencies import (
 
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.compatibility import router as compatibility_router
-from titiler.cmr.credentials import EarthdataS3CredentialProvider
+from titiler.cmr.credentials import EarthdataTokenProvider, GetS3Credentials
 from titiler.cmr.dependencies import CMRAssetsParams, interpolated_xarray_ds_params
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.legacy import legacy_router
@@ -64,46 +61,6 @@ TITILER_CONFORMS_TO = {
 }
 
 
-def _fetch_earthdata_token(username: str, password: str) -> str:
-    """Fetch an Earthdata Login bearer token via find-or-create."""
-    with Client() as client:
-        response = client.post(
-            "https://urs.earthdata.nasa.gov/api/users/find_or_create_token",
-            auth=(username, password),
-            headers={"Accept": "application/json"},
-            timeout=10,
-        )
-        response.raise_for_status()
-        return response.json()["access_token"]
-
-
-def make_get_s3_credentials(
-    auth_token: str,
-) -> Callable[[str], EarthdataS3CredentialProvider]:
-    """Create a factory that returns an S3 credential provider for an endpoint.
-
-    Wraps provider creation with a TTL-based cache so the same provider instance
-    (with its own internal credential cache) is reused across requests for the
-    same endpoint.
-
-    Args:
-        auth_token: Earthdata Login bearer token used to authenticate requests.
-
-    Returns:
-        A callable that accepts an S3 credentials endpoint URL and returns
-        an EarthdataS3CredentialProvider instance.
-    """
-
-    @cachetools.cached(
-        cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
-        condition=threading.Condition(),  # Prevent race conditions
-    )
-    def get_s3_credentials(endpoint: str) -> EarthdataS3CredentialProvider:
-        return EarthdataS3CredentialProvider(endpoint, auth_token)
-
-    return get_s3_credentials
-
-
 def startup(app: FastAPI) -> None:
     """Perform application startup.
 
@@ -117,21 +74,20 @@ def startup(app: FastAPI) -> None:
     app.state.s3_access = earthdata_settings.earthdata_s3_direct_access
     logger.info("S3 direct access: %s", app.state.s3_access)
 
-    app.state.earthdata_token = None
+    app.state.earthdata_token_provider = None
     app.state.get_s3_credentials = None
 
     if earthdata_settings.earthdata_username and earthdata_settings.earthdata_password:
-        logger.info("Fetching earthdata token")
-        app.state.earthdata_token = _fetch_earthdata_token(
+        token_provider = EarthdataTokenProvider(
             earthdata_settings.earthdata_username,
             earthdata_settings.earthdata_password,
         )
-        logger.info("Earthdata bearer token acquired")
+        app.state.earthdata_token_provider = token_provider
 
         if app.state.s3_access:
-            app.state.get_s3_credentials = make_get_s3_credentials(
-                app.state.earthdata_token
-            )
+            get_s3_credentials = GetS3Credentials(token_provider)
+            app.state.get_s3_credentials = get_s3_credentials
+            token_provider.register_refresh_callback(get_s3_credentials.clear)
     else:
         logger.warning(
             "EARTHDATA_USERNAME/EARTHDATA_PASSWORD not set; authenticated access unavailable"
@@ -257,8 +213,6 @@ app = FastAPI(
     lifespan=lifespan,
     openapi_tags=tags_metadata,
 )
-
-app.state.get_s3_credentials = None
 
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 add_exception_handlers(app, MOSAIC_STATUS_CODES)
