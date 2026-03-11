@@ -31,7 +31,7 @@ from titiler.xarray.dependencies import (
 from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.compatibility import router as compatibility_router
 from titiler.cmr.credentials import EarthdataS3CredentialProvider
-from titiler.cmr.dependencies import CMRAssetsParams, XarrayParams
+from titiler.cmr.dependencies import CMRAssetsParams, interpolated_xarray_ds_params
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
@@ -438,7 +438,7 @@ def conformance(
 xarray = CMRTilerFactory(
     router_prefix="/xarray",
     dataset_reader=XarrayGranuleReader,
-    reader_dependency=XarrayParams,
+    reader_dependency=interpolated_xarray_ds_params,
     dataset_dependency=XarrayDatasetParams,
     layer_dependency=ExpressionParams,
     extensions=[TimeseriesExtension()],
