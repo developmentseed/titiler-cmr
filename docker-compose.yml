@@ -22,8 +22,8 @@ secrets:
     file: ./secrets/earthdata-password.txt
 
 services:
-  tiler:
-    container_name: tiler-cmr
+  titiler-cmr:
+    container_name: titiler-cmr
     platform: linux/amd64
     build:
       context: .
