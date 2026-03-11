@@ -53,6 +53,7 @@ lambda = [
 [dependency-groups]
 dev = [
     "boto3-stubs[s3]>=1.42.24",
+    "earthaccess>=0.16.0",
     "folium>=0.17.0",
     "freezegun>=1.5.1",
     "ipython==8.28.0",
@@ -97,7 +98,6 @@ Source = "https://github.com/developmentseed/titiler-cmr"
 Changelog = "https://developmentseed.org/titiler-cmr/release-notes/"
 
 [tool.uv.sources]
-rio-tiler = { git = "https://github.com/cogeotiff/rio-tiler", tag = "9.0.0rc3"}
 titiler-core = { git = "https://github.com/developmentseed/titiler", rev = "75c178c99d77e29a9a1ddb2b40172625a9a7ffe5", subdirectory="src/titiler/core"}
 titiler-mosaic = { git = "https://github.com/developmentseed/titiler", rev = "75c178c99d77e29a9a1ddb2b40172625a9a7ffe5", subdirectory="src/titiler/mosaic"}
 titiler-xarray = { git = "https://github.com/developmentseed/titiler", rev = "75c178c99d77e29a9a1ddb2b40172625a9a7ffe5", subdirectory="src/titiler/xarray"}
