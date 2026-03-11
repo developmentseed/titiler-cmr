@@ -506,8 +506,3 @@ app.include_router(
     tags=["Legacy (Deprecated)"],
     include_in_schema=True,
 )
-
-if settings.telemetry_enabled:
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-
-    FastAPIInstrumentor.instrument_app(app)
