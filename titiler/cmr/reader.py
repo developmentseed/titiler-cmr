@@ -16,7 +16,6 @@ from typing import (
 )
 
 import attr
-import numpy as np
 import obstore.store
 import rasterio
 import xarray as xr
@@ -26,7 +25,6 @@ from obspec_utils.readers import BlockStoreReader
 from rasterio.session import AWSSession
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
 from rio_tiler.errors import InvalidAssetName, MissingAssets
-from rio_tiler.expression import get_expression_blocks
 from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
 from rio_tiler.io.xarray import Options, XarrayReader
@@ -37,6 +35,7 @@ from xarray import open_dataset as xarray_open_dataset
 
 from titiler.cmr.credentials import EarthdataS3CredentialProvider
 from titiler.cmr.errors import InvalidMediaType, S3CredentialsEndpointMissing
+from titiler.cmr.expression import apply_expression
 from titiler.cmr.logger import logger
 from titiler.cmr.models import Granule
 from titiler.cmr.settings import CacheSettings
@@ -157,19 +156,7 @@ def get_variables(
     da = _arrange_dims(da, x_dim_names=x_dim_names, y_dim_names=y_dim_names)
 
     if expression:
-        logger.info(f"applying expression: {expression}")
-        pre_expression_crs = da.rio.crs
-        expression_blocks = get_expression_blocks(expression)
-        band_vars = {
-            f"b{i + 1}": da.isel(band=i, drop=True) for i in range(da.sizes["band"])
-        }
-        namespace = {**band_vars, "np": np, "xr": xr}
-        results = [
-            eval(block, {"__builtins__": {}}, namespace) for block in expression_blocks
-        ]
-        da = results[0] if len(results) == 1 else xr.concat(results, dim="band")
-        if pre_expression_crs is not None:
-            da = da.rio.write_crs(pre_expression_crs)
+        da = apply_expression(da, expression)
 
     # Make sure we have a valid CRS
     crs = da.rio.crs or "epsg:4326"
