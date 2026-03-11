@@ -10,6 +10,8 @@ from httpx import Client
 from mypy_boto3_s3.service_resource import Object
 from rio_tiler.models import ImageData
 
+from rio_tiler.errors import NoAssetFoundError
+
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.models import (
     Granule,
@@ -19,6 +21,18 @@ from titiler.cmr.models import (
 )
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.reader import MultiBaseGranuleReader
+
+
+def test_bounds_granule_ur_not_found() -> None:
+    """Test that NoAssetFoundError is raised when granule_ur search returns no results."""
+    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])):
+        backend = CMRBackend(
+            input=GranuleSearch(granule_ur="nonexistent-granule-ur"),
+            client=Client(base_url=CMR_GRANULE_SEARCH_API),
+            reader=MultiBaseGranuleReader,
+        )
+        with pytest.raises(NoAssetFoundError):
+            _ = backend.bounds
 
 
 @pytest.mark.vcr

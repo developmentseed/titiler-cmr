@@ -10,6 +10,7 @@ from morecantile import Tile, TileMatrixSet
 from rasterio.crs import CRS
 from rasterio.warp import transform, transform_bounds
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
+from rio_tiler.errors import NoAssetFoundError
 from rio_tiler.mosaic.backend import BaseBackend
 from rio_tiler.types import BBox
 
@@ -51,17 +52,25 @@ class CMRBackend(BaseBackend):
     maxzoom: int = attr.ib(18)
 
     @property
-    def bounds(self) -> BBox:  # type: ignore[override]
+    def bounds(self) -> BBox:
         """Return the bounding box of the mosaic."""
         if self.input.granule_ur:
-            granule = next(get_granules(search_params=self.input, client=self.client))
-            return granule.bbox
-        elif self.input.bounding_box:
-            return cast(
-                BBox, tuple(float(x) for x in self.input.bounding_box.split(","))
+            granule = next(
+                get_granules(search_params=self.input, client=self.client),
+                None,
             )
-        else:
-            return (-180, -90, 180, 90)
+            if granule is None:
+                raise NoAssetFoundError(
+                    f"No assets found for search with these parameters {self.input}"
+                )
+            return granule.bbox
+
+        return cast(
+            BBox,
+            tuple(float(x) for x in self.input.bounding_box.split(","))
+            if self.input.bounding_box
+            else (-180, -90, 180, 90),
+        )
 
     def get_assets(
         self, geometry: Geometry, exitwhenfull: bool = True
@@ -76,7 +85,7 @@ class CMRBackend(BaseBackend):
                 exitwhenfull=exitwhenfull,
             )
         )
-        logger.info(f"found {len(assets)} assets")
+        logger.info(f"found {len(assets)} granules")
 
         return assets
 
