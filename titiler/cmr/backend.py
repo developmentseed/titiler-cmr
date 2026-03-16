@@ -77,6 +77,8 @@ class CMRBackend(BaseBackend):
         geometry: Geometry,
         exitwhenfull: bool = True,
         coverage_tolerance: float = 0.0,
+        items_limit: int | None = None,
+        **kwargs: Any,
     ) -> list[Granule]:
         """Return granules intersecting the given geometry.
 
@@ -86,17 +88,19 @@ class CMRBackend(BaseBackend):
             coverage_tolerance: Buffer (in degrees) applied to granule polygons
                 when checking full coverage. A small positive value (e.g. 1e-4)
                 reduces slivers caused by imprecise CMR polygon edges.
+            items_limit: Maximum number of granules to return.
         """
         logger.info("starting granule search")
-        assets = list(
-            get_granules(
-                geometry=geometry,
-                search_params=self.input,
-                client=self.client,
-                exitwhenfull=exitwhenfull,
-                coverage_tolerance=coverage_tolerance,
-            )
-        )
+        get_granules_kwargs: dict[str, Any] = {
+            "geometry": geometry,
+            "search_params": self.input,
+            "client": self.client,
+            "exitwhenfull": exitwhenfull,
+            "coverage_tolerance": coverage_tolerance,
+        }
+        if items_limit is not None:
+            get_granules_kwargs["limit"] = items_limit
+        assets = list(get_granules(**get_granules_kwargs))
         logger.info(f"found {len(assets)} granules")
 
         return assets

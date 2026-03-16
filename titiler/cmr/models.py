@@ -403,6 +403,15 @@ class Granule(BaseModel):
             )
         return endpoint
 
+    def to_feature(self) -> "GranuleFeature":
+        """Convert this granule to a GeoJSON Feature."""
+        return GranuleFeature(
+            type="Feature",
+            geometry=self.geometry,
+            bbox=list(self.bbox) if self.geometry else None,
+            properties=self.model_dump(exclude={"geometry"}),
+        )
+
     def get_assets(self, regex: str | None = None) -> dict[str, Asset]:  # noqa: C901
         """Extract assets from granule related URLs, optionally filtered by regex."""
         _assets: dict[str, dict] = defaultdict(dict)
@@ -458,16 +467,7 @@ class GranuleSearchResponse(BaseModel):
     items: list[Granule]
 
 
-class GranuleProperties(BaseModel):
-    """Non-spatial metadata for a GranuleFeature."""
-
-    id: str
-    granule_ur: str
-    collection_concept_id: str
-    related_urls: list[RelatedUrl] = Field(default_factory=list)
-
-
-GranuleFeature: TypeAlias = Feature[Geometry, GranuleProperties]
+GranuleFeature: TypeAlias = Feature[Geometry, dict[str, Any]]
 GranuleFeatureCollection: TypeAlias = FeatureCollection[GranuleFeature]
 
 
@@ -475,21 +475,10 @@ def granules_to_feature_collection(
     granules: list[Granule],
 ) -> GranuleFeatureCollection:
     """Convert a list of Granule objects to a GeoJSON FeatureCollection."""
-    features = [
-        GranuleFeature(
-            type="Feature",
-            geometry=granule.geometry,
-            bbox=list(granule.bbox) if granule.geometry else None,
-            properties=GranuleProperties(
-                id=granule.id,
-                granule_ur=granule.granule_ur,
-                collection_concept_id=granule.collection_concept_id,
-                related_urls=granule.related_urls,
-            ),
-        )
-        for granule in granules
-    ]
-    return GranuleFeatureCollection(type="FeatureCollection", features=features)
+    return GranuleFeatureCollection(
+        type="FeatureCollection",
+        features=[granule.to_feature() for granule in granules],
+    )
 
 
 # ---------------------------------------------------------------------------

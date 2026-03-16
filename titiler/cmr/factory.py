@@ -3,9 +3,9 @@
 import logging
 from typing import Annotated, Callable, Literal
 
-import rasterio
+import morecantile
 from attrs import define, field
-from fastapi import Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
 from rio_tiler.constants import WGS84_CRS
 from titiler.core.dependencies import (
     DatasetParams as RasterioDatasetParams,
@@ -64,167 +64,157 @@ class CMRTilerFactory(BaseFactory):
 
     assets_accessor_dependency: type[DefaultDependency] = GranuleSearchBackendParams
 
-    def assets(self) -> None:
-        """Register /assets endpoints.
+    def register_routes(self) -> None:
+        """Register routes, excluding /assets (defined separately in assets_router)."""
+        self.info()
+        self.tilesets()
+        self.tile()
+        if self.add_viewer:
+            self.map_viewer()
+        self.tilejson()
+        self.point()
 
-        The response format is controlled by the ``f`` query parameter:
+        if self.add_part:
+            self.part()
 
-        - ``f=json`` (default) — plain JSON list of granules
-        - ``f=geojson`` — GeoJSON FeatureCollection
-        """
+        if self.add_statistics:
+            self.statistics()
 
-        @self.router.get(
-            "/bbox/{minx},{miny},{maxx},{maxy}/assets",
-            response_model=list[Granule] | GranuleFeatureCollection,
-            response_model_exclude_none=True,
-            responses={200: {"description": "Return granules in bounding box"}},
-            operation_id=f"{self.operation_prefix}getAssetsForBoundingBox",
+        if self.add_ogc_maps:
+            self.ogc_maps()
+
+
+###############################################################################
+# Standalone assets router — backend-independent CMR granule metadata queries
+
+assets_router = APIRouter()
+
+
+@assets_router.get(
+    "/bbox/{minx},{miny},{maxx},{maxy}/assets",
+    response_model=list[Granule] | GranuleFeatureCollection,
+    response_model_exclude_none=True,
+    responses={200: {"description": "Return granules in bounding box"}},
+)
+def assets_for_bbox(
+    minx: Annotated[float, Path(description="Bounding box min X")],
+    miny: Annotated[float, Path(description="Bounding box min Y")],
+    maxx: Annotated[float, Path(description="Bounding box max X")],
+    maxy: Annotated[float, Path(description="Bounding box max Y")],
+    src_path: GranuleSearch = Depends(GranuleSearchParams),
+    backend_params=Depends(BackendParams),
+    assets_accessor_params=Depends(GranuleSearchBackendParams),
+    coord_crs=Depends(CoordCRSParams),
+    f: Annotated[
+        Literal["json", "geojson"],
+        Query(description="Response format"),
+    ] = "json",
+) -> list[Granule] | GranuleFeatureCollection:
+    """Return granules overlapping a bounding box."""
+    logger.info("assets_for_bbox: querying CMR for granules in bbox")
+    with CMRBackend(
+        src_path,
+        reader=MultiBaseGranuleReader,
+        **backend_params.as_dict(),
+    ) as src_dst:
+        granules = src_dst.assets_for_bbox(
+            minx,
+            miny,
+            maxx,
+            maxy,
+            coord_crs=coord_crs or WGS84_CRS,
+            **assets_accessor_params.as_dict(),
         )
-        def assets_for_bbox(
-            minx: Annotated[float, Path(description="Bounding box min X")],
-            miny: Annotated[float, Path(description="Bounding box min Y")],
-            maxx: Annotated[float, Path(description="Bounding box max X")],
-            maxy: Annotated[float, Path(description="Bounding box max Y")],
-            src_path=Depends(self.path_dependency),
-            backend_params=Depends(self.backend_dependency),
-            reader_params=Depends(self.reader_dependency),
-            assets_accessor_params=Depends(self.assets_accessor_dependency),
-            coord_crs=Depends(CoordCRSParams),
-            env=Depends(self.environment_dependency),
-            f: Annotated[
-                Literal["json", "geojson"],
-                Query(description="Response format"),
-            ] = "json",
-        ) -> list[Granule] | GranuleFeatureCollection:
-            """Return granules overlapping a bounding box."""
-            with rasterio.Env(**env):
-                logger.info(
-                    f"opening data with backend: {self.backend} and reader {self.dataset_reader}"
-                )
-                with self.backend(
-                    src_path,
-                    reader=self.dataset_reader,
-                    reader_options=reader_params.as_dict(),
-                    **backend_params.as_dict(),
-                ) as src_dst:
-                    granules = src_dst.assets_for_bbox(
-                        minx,
-                        miny,
-                        maxx,
-                        maxy,
-                        coord_crs=coord_crs or WGS84_CRS,
-                        **assets_accessor_params.as_dict(),
-                    )
 
-            return (
-                granules_to_feature_collection(granules) if f == "geojson" else granules
-            )
+    return granules_to_feature_collection(granules) if f == "geojson" else granules
 
-        @self.router.get(
-            "/point/{lon},{lat}/assets",
-            response_model=list[Granule] | GranuleFeatureCollection,
-            response_model_exclude_none=True,
-            responses={200: {"description": "Return granules at a point"}},
-            operation_id=f"{self.operation_prefix}getAssetsForPoint",
+
+@assets_router.get(
+    "/point/{lon},{lat}/assets",
+    response_model=list[Granule] | GranuleFeatureCollection,
+    response_model_exclude_none=True,
+    responses={200: {"description": "Return granules at a point"}},
+)
+def assets_for_point(
+    lon: Annotated[float, Path(description="Longitude")],
+    lat: Annotated[float, Path(description="Latitude")],
+    src_path: GranuleSearch = Depends(GranuleSearchParams),
+    backend_params=Depends(BackendParams),
+    assets_accessor_params=Depends(GranuleSearchBackendParams),
+    coord_crs=Depends(CoordCRSParams),
+    f: Annotated[
+        Literal["json", "geojson"],
+        Query(description="Response format"),
+    ] = "json",
+) -> list[Granule] | GranuleFeatureCollection:
+    """Return granules overlapping a point."""
+    logger.info("assets_for_point: querying CMR for granules at point")
+    with CMRBackend(
+        src_path,
+        reader=MultiBaseGranuleReader,
+        **backend_params.as_dict(),
+    ) as src_dst:
+        granules = src_dst.assets_for_point(
+            lon,
+            lat,
+            coord_crs=coord_crs or WGS84_CRS,
+            **assets_accessor_params.as_dict(),
         )
-        def assets_for_lon_lat(
-            lon: Annotated[float, Path(description="Longitude")],
-            lat: Annotated[float, Path(description="Latitude")],
-            src_path=Depends(self.path_dependency),
-            coord_crs=Depends(CoordCRSParams),
-            backend_params=Depends(self.backend_dependency),
-            reader_params=Depends(self.reader_dependency),
-            assets_accessor_params=Depends(self.assets_accessor_dependency),
-            env=Depends(self.environment_dependency),
-            f: Annotated[
-                Literal["json", "geojson"],
-                Query(description="Response format"),
-            ] = "json",
-        ) -> list[Granule] | GranuleFeatureCollection:
-            """Return granules overlapping a point."""
-            with rasterio.Env(**env):
-                logger.info(
-                    f"opening data with backend: {self.backend} and reader {self.dataset_reader}"
-                )
-                with self.backend(
-                    src_path,
-                    reader=self.dataset_reader,
-                    reader_options=reader_params.as_dict(),
-                    **backend_params.as_dict(),
-                ) as src_dst:
-                    granules = src_dst.assets_for_point(
-                        lon,
-                        lat,
-                        coord_crs=coord_crs or WGS84_CRS,
-                        **assets_accessor_params.as_dict(),
-                    )
 
-            return (
-                granules_to_feature_collection(granules) if f == "geojson" else granules
-            )
+    return granules_to_feature_collection(granules) if f == "geojson" else granules
 
-        @self.router.get(
-            "/tiles/{tileMatrixSetId}/{z}/{x}/{y}/assets",
-            response_model=list[Granule] | GranuleFeatureCollection,
-            response_model_exclude_none=True,
-            responses={200: {"description": "Return granules for a tile"}},
-            operation_id=f"{self.operation_prefix}getAssetsForTile",
+
+@assets_router.get(
+    "/tiles/{tileMatrixSetId}/{z}/{x}/{y}/assets",
+    response_model=list[Granule] | GranuleFeatureCollection,
+    response_model_exclude_none=True,
+    responses={200: {"description": "Return granules for a tile"}},
+)
+def assets_for_tile(
+    tileMatrixSetId: Annotated[  # type: ignore[valid-type]
+        Literal[tuple(morecantile.tms.list())],
+        Path(description="Identifier selecting one of the TileMatrixSetId supported."),
+    ],
+    z: Annotated[
+        int,
+        Path(
+            description="Identifier (Z) selecting one of the scales defined in the TileMatrixSet and representing the scaleDenominator the tile.",
+        ),
+    ],
+    x: Annotated[
+        int,
+        Path(
+            description="Column (X) index of the tile on the selected TileMatrix. It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
+        ),
+    ],
+    y: Annotated[
+        int,
+        Path(
+            description="Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
+        ),
+    ],
+    src_path: GranuleSearch = Depends(GranuleSearchParams),
+    backend_params=Depends(BackendParams),
+    assets_accessor_params=Depends(GranuleSearchBackendParams),
+    f: Annotated[
+        Literal["json", "geojson"],
+        Query(description="Response format"),
+    ] = "json",
+) -> list[Granule] | GranuleFeatureCollection:
+    """Return granules overlapping a tile."""
+    logger.info("assets_for_tile: querying CMR for granules in tile")
+    tms = morecantile.tms.get(tileMatrixSetId)
+    with CMRBackend(
+        src_path,
+        tms=tms,
+        reader=MultiBaseGranuleReader,
+        **backend_params.as_dict(),
+    ) as src_dst:
+        granules = src_dst.assets_for_tile(
+            x,
+            y,
+            z,
+            **assets_accessor_params.as_dict(),
         )
-        def assets_for_tile(
-            tileMatrixSetId: Annotated[  # type: ignore[valid-type]
-                Literal[tuple(self.supported_tms.list())],
-                Path(
-                    description="Identifier selecting one of the TileMatrixSetId supported."
-                ),
-            ],
-            z: Annotated[
-                int,
-                Path(
-                    description="Identifier (Z) selecting one of the scales defined in the TileMatrixSet and representing the scaleDenominator the tile.",
-                ),
-            ],
-            x: Annotated[
-                int,
-                Path(
-                    description="Column (X) index of the tile on the selected TileMatrix. It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
-                ),
-            ],
-            y: Annotated[
-                int,
-                Path(
-                    description="Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
-                ),
-            ],
-            src_path=Depends(self.path_dependency),
-            backend_params=Depends(self.backend_dependency),
-            reader_params=Depends(self.reader_dependency),
-            assets_accessor_params=Depends(self.assets_accessor_dependency),
-            env=Depends(self.environment_dependency),
-            f: Annotated[
-                Literal["json", "geojson"],
-                Query(description="Response format"),
-            ] = "json",
-        ) -> list[Granule] | GranuleFeatureCollection:
-            """Return granules overlapping a tile."""
-            tms = self.supported_tms.get(tileMatrixSetId)
-            with rasterio.Env(**env):
-                logger.info(
-                    f"opening data with backend: {self.backend} and reader {self.dataset_reader}"
-                )
-                with self.backend(
-                    src_path,
-                    tms=tms,
-                    reader=self.dataset_reader,
-                    reader_options=reader_params.as_dict(),
-                    **backend_params.as_dict(),
-                ) as src_dst:
-                    granules = src_dst.assets_for_tile(
-                        x,
-                        y,
-                        z,
-                        **assets_accessor_params.as_dict(),
-                    )
 
-            return (
-                granules_to_feature_collection(granules) if f == "geojson" else granules
-            )
+    return granules_to_feature_collection(granules) if f == "geojson" else granules

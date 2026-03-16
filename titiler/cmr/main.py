@@ -34,7 +34,7 @@ from titiler.cmr.dependencies import (
     RasterioGranuleSearchBackendParams,
     interpolated_xarray_ds_params,
 )
-from titiler.cmr.factory import CMRTilerFactory
+from titiler.cmr.factory import CMRTilerFactory, assets_router
 from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
@@ -182,6 +182,11 @@ tags_metadata = [
         "name": "Rasterio Backend",
         "description": "Tile, statistics, and image endpoints backed by the GDAL/rasterio reader. "
         "Suitable for raster file formats such as GeoTIFF and Cloud-Optimized GeoTIFF (COG).",
+    },
+    {
+        "name": "Assets",
+        "description": "Backend-independent endpoints for querying CMR granule metadata. "
+        "These endpoints return matching granule assets without reading any raster data.",
     },
     {
         "name": "Timeseries",
@@ -429,6 +434,7 @@ app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio
 
 TITILER_CONFORMS_TO.update(rasterio.conforms_to)
 
+app.include_router(assets_router, tags=["Assets"])
 app.include_router(compatibility_router, tags=["Compatibility"])
 app.include_router(timeseries_router, tags=["Timeseries"])
 

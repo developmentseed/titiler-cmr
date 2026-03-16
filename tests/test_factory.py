@@ -65,18 +65,11 @@ def _assert_granule_feature_collection(body: dict) -> None:
         assert props["collection_concept_id"] == granule.collection_concept_id
 
 
-@pytest.mark.parametrize(
-    "prefix,extra_params",
-    [
-        ("/rasterio", {}),
-        ("/xarray", {"variables": "sea_ice_fraction"}),
-    ],
-)
-def test_bbox_assets_returns_granule_list(app, mock_get_granules, prefix, extra_params):
+def test_bbox_assets_returns_granule_list(app, mock_get_granules):
     """Test that /bbox/.../assets returns a JSON list of granules by default."""
     response = app.get(
-        f"{prefix}/bbox/-100,40,-90,50/assets",
-        params={"collection_concept_id": "C123-PROV", **extra_params},
+        "/bbox/-100,40,-90,50/assets",
+        params={"collection_concept_id": "C123-PROV"},
     )
     assert response.status_code == 200
     body = response.json()
@@ -86,40 +79,22 @@ def test_bbox_assets_returns_granule_list(app, mock_get_granules, prefix, extra_
         assert item["id"] == STUB_GRANULES[i].id
 
 
-@pytest.mark.parametrize(
-    "prefix,extra_params",
-    [
-        ("/rasterio", {}),
-        ("/xarray", {"variables": "sea_ice_fraction"}),
-    ],
-)
-def test_bbox_assets_returns_feature_collection(
-    app, mock_get_granules, prefix, extra_params
-):
+def test_bbox_assets_returns_feature_collection(app, mock_get_granules):
     """Test that /bbox/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
-        f"{prefix}/bbox/-100,40,-90,50/assets",
-        params={"collection_concept_id": "C123-PROV", "f": "geojson", **extra_params},
+        "/bbox/-100,40,-90,50/assets",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson"},
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
     _assert_granule_feature_collection(response.json())
 
 
-@pytest.mark.parametrize(
-    "prefix,extra_params",
-    [
-        ("/rasterio", {}),
-        ("/xarray", {"variables": "sea_ice_fraction"}),
-    ],
-)
-def test_point_assets_returns_granule_list(
-    app, mock_get_granules, prefix, extra_params
-):
+def test_point_assets_returns_granule_list(app, mock_get_granules):
     """Test that /point/.../assets returns a JSON list of granules by default."""
     response = app.get(
-        f"{prefix}/point/-95,45/assets",
-        params={"collection_concept_id": "C123-PROV", **extra_params},
+        "/point/-95,45/assets",
+        params={"collection_concept_id": "C123-PROV"},
     )
     assert response.status_code == 200
     body = response.json()
@@ -127,38 +102,22 @@ def test_point_assets_returns_granule_list(
     assert len(body) == len(STUB_GRANULES)
 
 
-@pytest.mark.parametrize(
-    "prefix,extra_params",
-    [
-        ("/rasterio", {}),
-        ("/xarray", {"variables": "sea_ice_fraction"}),
-    ],
-)
-def test_point_assets_returns_feature_collection(
-    app, mock_get_granules, prefix, extra_params
-):
+def test_point_assets_returns_feature_collection(app, mock_get_granules):
     """Test that /point/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
-        f"{prefix}/point/-95,45/assets",
-        params={"collection_concept_id": "C123-PROV", "f": "geojson", **extra_params},
+        "/point/-95,45/assets",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson"},
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
     _assert_granule_feature_collection(response.json())
 
 
-@pytest.mark.parametrize(
-    "prefix,extra_params",
-    [
-        ("/rasterio", {}),
-        ("/xarray", {"variables": "sea_ice_fraction"}),
-    ],
-)
-def test_tile_assets_returns_granule_list(app, mock_get_granules, prefix, extra_params):
+def test_tile_assets_returns_granule_list(app, mock_get_granules):
     """Test that /tiles/.../assets returns a JSON list of granules by default."""
     response = app.get(
-        f"{prefix}/tiles/WebMercatorQuad/0/0/0/assets",
-        params={"collection_concept_id": "C123-PROV", **extra_params},
+        "/tiles/WebMercatorQuad/0/0/0/assets",
+        params={"collection_concept_id": "C123-PROV"},
     )
     assert response.status_code == 200
     body = response.json()
@@ -166,20 +125,11 @@ def test_tile_assets_returns_granule_list(app, mock_get_granules, prefix, extra_
     assert len(body) == len(STUB_GRANULES)
 
 
-@pytest.mark.parametrize(
-    "prefix,extra_params",
-    [
-        ("/rasterio", {}),
-        ("/xarray", {"variables": "sea_ice_fraction"}),
-    ],
-)
-def test_tile_assets_returns_feature_collection(
-    app, mock_get_granules, prefix, extra_params
-):
+def test_tile_assets_returns_feature_collection(app, mock_get_granules):
     """Test that /tiles/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
-        f"{prefix}/tiles/WebMercatorQuad/0/0/0/assets",
-        params={"collection_concept_id": "C123-PROV", "f": "geojson", **extra_params},
+        "/tiles/WebMercatorQuad/0/0/0/assets",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson"},
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
@@ -193,8 +143,20 @@ def test_bbox_assets_empty_result(app, mock_get_granules):
         side_effect=lambda *args, **kwargs: iter([]),
     ):
         response = app.get(
-            "/rasterio/bbox/-100,40,-90,50/assets",
+            "/bbox/-100,40,-90,50/assets",
             params={"collection_concept_id": "C123-PROV"},
         )
     assert response.status_code == 200
     assert response.json() == []
+
+
+def test_prefixed_assets_routes_do_not_exist(app):
+    """Verify that /xarray/.../assets and /rasterio/.../assets no longer exist."""
+    for prefix in ("/xarray", "/rasterio"):
+        r = app.get(
+            f"{prefix}/bbox/-100,40,-90,50/assets",
+            params={"collection_concept_id": "C123-PROV"},
+        )
+        assert r.status_code == 404, (
+            f"Expected 404 for {prefix}/bbox/.../assets, got {r.status_code}"
+        )
