@@ -3,9 +3,11 @@
 import os
 import re
 from collections import defaultdict
-from typing import Annotated, Any, List
+from typing import Annotated, Any, List, TypeAlias
 
 from fastapi import Query
+from geojson_pydantic import Feature, FeatureCollection
+from geojson_pydantic.geometries import Geometry
 from pydantic import (
     AliasChoices,
     BaseModel,
@@ -456,6 +458,40 @@ class GranuleSearchResponse(BaseModel):
 
     hits: int
     items: list[Granule]
+
+
+class GranuleProperties(BaseModel):
+    """Non-spatial metadata for a GranuleFeature."""
+
+    id: str
+    granule_ur: str
+    collection_concept_id: str
+    related_urls: list[RelatedUrl] = Field(default_factory=list)
+
+
+GranuleFeature: TypeAlias = Feature[Geometry, GranuleProperties]
+GranuleFeatureCollection: TypeAlias = FeatureCollection[GranuleFeature]
+
+
+def granules_to_feature_collection(
+    granules: list[Granule],
+) -> GranuleFeatureCollection:
+    """Convert a list of Granule objects to a GeoJSON FeatureCollection."""
+    features = [
+        GranuleFeature(
+            type="Feature",
+            geometry=granule.geometry,
+            bbox=list(granule.bbox) if granule.geometry else None,
+            properties=GranuleProperties(
+                id=granule.id,
+                granule_ur=granule.granule_ur,
+                collection_concept_id=granule.collection_concept_id,
+                related_urls=granule.related_urls,
+            ),
+        )
+        for granule in granules
+    ]
+    return GranuleFeatureCollection(type="FeatureCollection", features=features)
 
 
 # ---------------------------------------------------------------------------
