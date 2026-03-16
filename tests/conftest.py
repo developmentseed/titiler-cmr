@@ -282,4 +282,5 @@ def rasterio_env_kwargs(moto_server_netloc: str) -> Mapping[str, Any]:
         "AWS_HTTPS": False,
         "AWS_VIRTUAL_HOSTING": False,
         "AWS_S3_ENDPOINT": moto_server_netloc,
+        "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
     }
