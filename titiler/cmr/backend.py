@@ -73,9 +73,20 @@ class CMRBackend(BaseBackend):
         )
 
     def get_assets(
-        self, geometry: Geometry, exitwhenfull: bool = True
+        self,
+        geometry: Geometry,
+        exitwhenfull: bool = True,
+        coverage_tolerance: float = 0.0,
     ) -> list[Granule]:
-        """Return granules intersecting the given geometry."""
+        """Return granules intersecting the given geometry.
+
+        Args:
+            geometry: Spatial filter geometry.
+            exitwhenfull: Stop fetching once the geometry is fully covered.
+            coverage_tolerance: Buffer (in degrees) applied to granule polygons
+                when checking full coverage. A small positive value (e.g. 1e-4)
+                reduces slivers caused by imprecise CMR polygon edges.
+        """
         logger.info("starting granule search")
         assets = list(
             get_granules(
@@ -83,6 +94,7 @@ class CMRBackend(BaseBackend):
                 search_params=self.input,
                 client=self.client,
                 exitwhenfull=exitwhenfull,
+                coverage_tolerance=coverage_tolerance,
             )
         )
         logger.info(f"found {len(assets)} granules")

@@ -84,12 +84,29 @@ def _is_fully_covered(
     granule: Granule,
     search_shape: shapely.Geometry | None,
     covered: shapely.Geometry,
+    coverage_tolerance: float = 0.0,
 ) -> tuple[bool, shapely.Geometry]:
-    """Update covered area with granule geometry and return (done, covered)."""
+    """Update covered area with granule geometry and return (done, covered).
+
+    Args:
+        granule: The granule whose geometry is unioned into covered.
+        search_shape: The search geometry to check coverage against.
+        covered: Accumulated union of granule geometries so far.
+        coverage_tolerance: Buffer (in degrees) applied to search_shape before the
+            covered_by check. Requires granule polygons to extend this far beyond
+            the tile edge before declaring full coverage, compensating for CMR
+            polygon overshoot relative to actual raster data boundaries.
+
+    Returns:
+        Tuple of (fully_covered, updated_covered).
+    """
     if search_shape is None or granule.geometry is None:
         return False, covered
     covered = covered.union(shapely.geometry.shape(granule.geometry))
-    return search_shape.covered_by(covered), covered
+    check = (
+        search_shape.buffer(coverage_tolerance) if coverage_tolerance else search_shape
+    )
+    return check.covered_by(covered), covered
 
 
 def get_granules(
@@ -99,11 +116,23 @@ def get_granules(
     page_size: int = 10,
     limit: int = 100,
     exitwhenfull: bool = False,
+    coverage_tolerance: float = 0.0,
 ) -> Generator[Granule, None, None]:
     """Run a granule search.
 
     If exitwhenfull is True and a geometry is provided, stops early once the
     union of returned granule geometries fully covers the search geometry.
+
+    Args:
+        search_params: CMR granule search parameters.
+        client: HTTP client to use for CMR requests.
+        geometry: Optional spatial filter geometry.
+        page_size: Number of granules to fetch per CMR page.
+        limit: Maximum total number of granules to return.
+        exitwhenfull: Stop early once the search geometry is fully covered.
+        coverage_tolerance: Buffer (in degrees) applied when checking full
+            coverage. A small positive value (e.g. 1e-4) reduces slivers caused
+            by imprecise CMR polygon edges.
     """
     params = _build_granule_params(search_params, geometry, page_size)
     search_shape = (
@@ -130,7 +159,9 @@ def get_granules(
         for granule in result.items:
             count += 1
             yield granule
-            done, covered = _is_fully_covered(granule, search_shape, covered)
+            done, covered = _is_fully_covered(
+                granule, search_shape, covered, coverage_tolerance
+            )
             if done:
                 logger.info("Search geometry fully covered, stopping early")
                 return

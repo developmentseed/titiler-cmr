@@ -101,12 +101,42 @@ class GranuleSearchBackendParams(DefaultDependency):
             description="Return as soon as the geometry is fully covered.",
         ),
     ] = True
+    coverage_tolerance: Annotated[
+        float,
+        Query(
+            description=(
+                "Buffer (in degrees) applied to granule polygons when checking full coverage. "
+                "A small positive value (e.g. 1e-2) reduces slivers caused by imprecise CMR polygons."
+            ),
+        ),
+    ] = 0.0
     skipcovered: Annotated[
         bool | None,
         Query(
             description="Skip any items that would show up completely under the previous items",
         ),
     ] = None
+
+
+@dataclass
+class RasterioGranuleSearchBackendParams(GranuleSearchBackendParams):
+    """GranuleSearchBackendParams with a non-zero default coverage_tolerance.
+
+    Rasterio granule polygons are stored in WGS84 but the underlying data is
+    often UTM-aligned, so polygon edges slightly undershoot the actual data
+    footprint. A small default tolerance compensates for this, preventing
+    coverage slivers along granule boundaries.
+    """
+
+    coverage_tolerance: Annotated[
+        float,
+        Query(
+            description=(
+                "Buffer (in degrees) applied to granule polygons when checking full coverage. "
+                "A small positive value (e.g. 1e-4) reduces slivers caused by imprecise CMR polygons."
+            ),
+        ),
+    ] = 1e-2
 
 
 @dataclass

@@ -31,6 +31,7 @@ from titiler.cmr.credentials import EarthdataTokenProvider, GetS3Credentials
 from titiler.cmr.dependencies import (
     CMRAssetsExprParams,
     CMRAssetsParams,
+    RasterioGranuleSearchBackendParams,
     interpolated_xarray_ds_params,
 )
 from titiler.cmr.factory import CMRTilerFactory
@@ -416,6 +417,7 @@ rasterio = CMRTilerFactory(
     reader_dependency=CMRAssetsParams,
     dataset_dependency=RasterioDatasetParams,
     layer_dependency=CMRAssetsExprParams,
+    assets_accessor_dependency=RasterioGranuleSearchBackendParams,
     extensions=[TimeseriesExtension()],
     add_statistics=True,
     add_viewer=True,
