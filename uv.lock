@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -4734,9 +4734,9 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.13.1" },
     { name = "rio-tiler", specifier = ">=9.0,<10.0" },
     { name = "shapely", specifier = ">=2.1.2" },
-    { name = "titiler-core", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fcore&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" },
-    { name = "titiler-mosaic", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fmosaic&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" },
-    { name = "titiler-xarray", git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fxarray&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" },
+    { name = "titiler-core", specifier = ">=2.0,<3.0" },
+    { name = "titiler-mosaic", specifier = ">=2.0,<3.0" },
+    { name = "titiler-xarray", specifier = ">=2.0,<3.0" },
     { name = "uvicorn", marker = "extra == 'uvicorn'" },
 ]
 provides-extras = ["lambda", "uvicorn"]
@@ -4783,8 +4783,8 @@ dev = [
 
 [[package]]
 name = "titiler-core"
-version = "2.0.0b2"
-source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fcore&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastapi" },
     { name = "geojson-pydantic" },
@@ -4796,25 +4796,37 @@ dependencies = [
     { name = "rio-tiler" },
     { name = "simplejson" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/97/11/71199db3ba3ae393afbdf7ea66b315071583cee87d4fc7febd37d77cc6c1/titiler_core-2.0.0.tar.gz", hash = "sha256:6ff39c302d650363f15481a635efabb77616bfc343bb4be912adaff3975e630e", size = 68620, upload-time = "2026-03-16T10:23:06.346Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/1a/13effb912f0954670fa33c7641df64b7ac2374a5f69e0844089193387d51/titiler_core-2.0.0-py3-none-any.whl", hash = "sha256:94aaa0bf9d6478aa5829d8f9155c9c2d2305e6625b795389f3f0dc8e0789bf22", size = 87055, upload-time = "2026-03-16T10:23:05.153Z" },
+]
 
 [[package]]
 name = "titiler-mosaic"
-version = "2.0.0b2"
-source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fmosaic&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "titiler-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9f/47/3e7873fb5c42678ff6b6f6ddc3ed5460741e4a301e53d7912df3d8fce0cc/titiler_mosaic-2.0.0.tar.gz", hash = "sha256:fd6a7ce7d24af30ee528840bb16345a3c2ea439968c8b94878f214779e9baaec", size = 14749, upload-time = "2026-03-16T10:23:11.094Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/41/acb7dd9b7ed544c1a7d6aca915d47a9925e3df06ce49e1474e888c5a2b82/titiler_mosaic-2.0.0-py3-none-any.whl", hash = "sha256:7b5eb1bfc73343ced84d578babfb8cab7508f0b07859b3040d8f745b1f1579f6", size = 17481, upload-time = "2026-03-16T10:23:10.291Z" },
 ]
 
 [[package]]
 name = "titiler-xarray"
-version = "2.0.0b2"
-source = { git = "https://github.com/developmentseed/titiler?subdirectory=src%2Ftitiler%2Fxarray&rev=75c178c99d77e29a9a1ddb2b40172625a9a7ffe5#75c178c99d77e29a9a1ddb2b40172625a9a7ffe5" }
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "obstore" },
     { name = "rioxarray" },
     { name = "titiler-core" },
     { name = "xarray" },
     { name = "zarr" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/47/68/b90bfbde132436730b9119da87f2c5c34d3910f3ee581e484583ecf2403f/titiler_xarray-2.0.0.tar.gz", hash = "sha256:b1576a9dab8f4edc072f7b1ac8e23c49535e309c5e6ce9a83b9d4ec63623172d", size = 32545, upload-time = "2026-03-16T10:23:09.094Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3b/02/4a1e0d93d43e065d0a2e0b204d788419f185d2b664216d7dbfcfe101c1b8/titiler_xarray-2.0.0-py3-none-any.whl", hash = "sha256:97f2fa498f2cdc5d53789c0bb4937b819e983dbdc9b7a27db6131a432ab698de", size = 34262, upload-time = "2026-03-16T10:23:08.037Z" },
 ]
 
 [[package]]

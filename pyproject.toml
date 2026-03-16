@@ -97,10 +97,6 @@ Issues = "https://github.com/developmentseed/titiler-cmr/issues"
 Source = "https://github.com/developmentseed/titiler-cmr"
 Changelog = "https://developmentseed.org/titiler-cmr/release-notes/"
 
-[tool.uv.sources]
-titiler-core = { git = "https://github.com/developmentseed/titiler", rev = "75c178c99d77e29a9a1ddb2b40172625a9a7ffe5", subdirectory="src/titiler/core"}
-titiler-mosaic = { git = "https://github.com/developmentseed/titiler", rev = "75c178c99d77e29a9a1ddb2b40172625a9a7ffe5", subdirectory="src/titiler/mosaic"}
-titiler-xarray = { git = "https://github.com/developmentseed/titiler", rev = "75c178c99d77e29a9a1ddb2b40172625a9a7ffe5", subdirectory="src/titiler/xarray"}
 
 [build-system]
 requires = ["pdm-pep517"]
