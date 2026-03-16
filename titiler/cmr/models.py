@@ -386,13 +386,11 @@ class Granule(BaseModel):
 
         return None
 
-    @computed_field  # type: ignore[prop-decorator]
     @property
     def bbox(self) -> tuple[float, float, float, float]:
         """Bounding box derived from the granule geometry."""
         return shape(self.geometry).bounds
 
-    @computed_field  # type: ignore[prop-decorator]
     @property
     def s3_credentials_endpoint(self) -> str:
         """S3 credentials endpoint URL from the granule related URLs."""

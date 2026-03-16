@@ -5,7 +5,7 @@ from typing import Annotated, Callable, Literal
 
 import rasterio
 from attrs import define, field
-from fastapi import Depends, Path
+from fastapi import Depends, Path, Query
 from rio_tiler.constants import WGS84_CRS
 from titiler.core.dependencies import (
     DatasetParams as RasterioDatasetParams,
@@ -13,8 +13,8 @@ from titiler.core.dependencies import (
 from titiler.core.dependencies import (
     DefaultDependency,
 )
-from titiler.mosaic.factory import MosaicTilerFactory as BaseFactory
 from titiler.mosaic.factory import CoordCRSParams
+from titiler.mosaic.factory import MosaicTilerFactory as BaseFactory
 from titiler.xarray.dependencies import (
     DatasetParams as XarrayDatasetParams,
 )
@@ -31,6 +31,7 @@ from titiler.cmr.dependencies import (
     GranuleSearchParams,
 )
 from titiler.cmr.models import (
+    Granule,
     GranuleFeatureCollection,
     granules_to_feature_collection,
 )
@@ -64,17 +65,19 @@ class CMRTilerFactory(BaseFactory):
     assets_accessor_dependency: type[DefaultDependency] = GranuleSearchBackendParams
 
     def assets(self) -> None:
-        """Register /assets endpoints returning GeoJSON FeatureCollections."""
+        """Register /assets endpoints.
+
+        The response format is controlled by the ``f`` query parameter:
+
+        - ``f=json`` (default) — plain JSON list of granules
+        - ``f=geojson`` — GeoJSON FeatureCollection
+        """
 
         @self.router.get(
             "/bbox/{minx},{miny},{maxx},{maxy}/assets",
-            response_model=GranuleFeatureCollection,
+            response_model=list[Granule] | GranuleFeatureCollection,
             response_model_exclude_none=True,
-            responses={
-                200: {
-                    "description": "Return granules in bounding box as a GeoJSON FeatureCollection"
-                }
-            },
+            responses={200: {"description": "Return granules in bounding box"}},
             operation_id=f"{self.operation_prefix}getAssetsForBoundingBox",
         )
         def assets_for_bbox(
@@ -88,8 +91,12 @@ class CMRTilerFactory(BaseFactory):
             assets_accessor_params=Depends(self.assets_accessor_dependency),
             coord_crs=Depends(CoordCRSParams),
             env=Depends(self.environment_dependency),
-        ) -> GranuleFeatureCollection:
-            """Return granules overlapping a bounding box as a GeoJSON FeatureCollection."""
+            f: Annotated[
+                Literal["json", "geojson"],
+                Query(description="Response format"),
+            ] = "json",
+        ) -> list[Granule] | GranuleFeatureCollection:
+            """Return granules overlapping a bounding box."""
             with rasterio.Env(**env):
                 logger.info(
                     f"opening data with backend: {self.backend} and reader {self.dataset_reader}"
@@ -108,17 +115,16 @@ class CMRTilerFactory(BaseFactory):
                         coord_crs=coord_crs or WGS84_CRS,
                         **assets_accessor_params.as_dict(),
                     )
-            return granules_to_feature_collection(granules)
+
+            return (
+                granules_to_feature_collection(granules) if f == "geojson" else granules
+            )
 
         @self.router.get(
             "/point/{lon},{lat}/assets",
-            response_model=GranuleFeatureCollection,
+            response_model=list[Granule] | GranuleFeatureCollection,
             response_model_exclude_none=True,
-            responses={
-                200: {
-                    "description": "Return granules at a point as a GeoJSON FeatureCollection"
-                }
-            },
+            responses={200: {"description": "Return granules at a point"}},
             operation_id=f"{self.operation_prefix}getAssetsForPoint",
         )
         def assets_for_lon_lat(
@@ -130,8 +136,12 @@ class CMRTilerFactory(BaseFactory):
             reader_params=Depends(self.reader_dependency),
             assets_accessor_params=Depends(self.assets_accessor_dependency),
             env=Depends(self.environment_dependency),
-        ) -> GranuleFeatureCollection:
-            """Return granules overlapping a point as a GeoJSON FeatureCollection."""
+            f: Annotated[
+                Literal["json", "geojson"],
+                Query(description="Response format"),
+            ] = "json",
+        ) -> list[Granule] | GranuleFeatureCollection:
+            """Return granules overlapping a point."""
             with rasterio.Env(**env):
                 logger.info(
                     f"opening data with backend: {self.backend} and reader {self.dataset_reader}"
@@ -148,17 +158,16 @@ class CMRTilerFactory(BaseFactory):
                         coord_crs=coord_crs or WGS84_CRS,
                         **assets_accessor_params.as_dict(),
                     )
-            return granules_to_feature_collection(granules)
+
+            return (
+                granules_to_feature_collection(granules) if f == "geojson" else granules
+            )
 
         @self.router.get(
             "/tiles/{tileMatrixSetId}/{z}/{x}/{y}/assets",
-            response_model=GranuleFeatureCollection,
+            response_model=list[Granule] | GranuleFeatureCollection,
             response_model_exclude_none=True,
-            responses={
-                200: {
-                    "description": "Return granules for a tile as a GeoJSON FeatureCollection"
-                }
-            },
+            responses={200: {"description": "Return granules for a tile"}},
             operation_id=f"{self.operation_prefix}getAssetsForTile",
         )
         def assets_for_tile(
@@ -191,8 +200,12 @@ class CMRTilerFactory(BaseFactory):
             reader_params=Depends(self.reader_dependency),
             assets_accessor_params=Depends(self.assets_accessor_dependency),
             env=Depends(self.environment_dependency),
-        ) -> GranuleFeatureCollection:
-            """Return granules overlapping a tile as a GeoJSON FeatureCollection."""
+            f: Annotated[
+                Literal["json", "geojson"],
+                Query(description="Response format"),
+            ] = "json",
+        ) -> list[Granule] | GranuleFeatureCollection:
+            """Return granules overlapping a tile."""
             tms = self.supported_tms.get(tileMatrixSetId)
             with rasterio.Env(**env):
                 logger.info(
@@ -211,4 +224,7 @@ class CMRTilerFactory(BaseFactory):
                         z,
                         **assets_accessor_params.as_dict(),
                     )
-            return granules_to_feature_collection(granules)
+
+            return (
+                granules_to_feature_collection(granules) if f == "geojson" else granules
+            )

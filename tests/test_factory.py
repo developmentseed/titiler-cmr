@@ -1,4 +1,4 @@
-"""Test CMRTilerFactory assets endpoints return GeoJSON FeatureCollections."""
+"""Test CMRTilerFactory assets endpoints."""
 
 import unittest.mock as mock
 
@@ -72,17 +72,59 @@ def _assert_granule_feature_collection(body: dict) -> None:
         ("/xarray", {"variables": "sea_ice_fraction"}),
     ],
 )
-def test_bbox_assets_returns_feature_collection(
-    app, mock_get_granules, prefix, extra_params
-):
-    """Test that /bbox/.../assets returns a GeoJSON FeatureCollection."""
+def test_bbox_assets_returns_granule_list(app, mock_get_granules, prefix, extra_params):
+    """Test that /bbox/.../assets returns a JSON list of granules by default."""
     response = app.get(
         f"{prefix}/bbox/-100,40,-90,50/assets",
         params={"collection_concept_id": "C123-PROV", **extra_params},
     )
     assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body, list)
+    assert len(body) == len(STUB_GRANULES)
+    for i, item in enumerate(body):
+        assert item["id"] == STUB_GRANULES[i].id
+
+
+@pytest.mark.parametrize(
+    "prefix,extra_params",
+    [
+        ("/rasterio", {}),
+        ("/xarray", {"variables": "sea_ice_fraction"}),
+    ],
+)
+def test_bbox_assets_returns_feature_collection(
+    app, mock_get_granules, prefix, extra_params
+):
+    """Test that /bbox/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
+    response = app.get(
+        f"{prefix}/bbox/-100,40,-90,50/assets",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson", **extra_params},
+    )
+    assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
     _assert_granule_feature_collection(response.json())
+
+
+@pytest.mark.parametrize(
+    "prefix,extra_params",
+    [
+        ("/rasterio", {}),
+        ("/xarray", {"variables": "sea_ice_fraction"}),
+    ],
+)
+def test_point_assets_returns_granule_list(
+    app, mock_get_granules, prefix, extra_params
+):
+    """Test that /point/.../assets returns a JSON list of granules by default."""
+    response = app.get(
+        f"{prefix}/point/-95,45/assets",
+        params={"collection_concept_id": "C123-PROV", **extra_params},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body, list)
+    assert len(body) == len(STUB_GRANULES)
 
 
 @pytest.mark.parametrize(
@@ -95,10 +137,10 @@ def test_bbox_assets_returns_feature_collection(
 def test_point_assets_returns_feature_collection(
     app, mock_get_granules, prefix, extra_params
 ):
-    """Test that /point/.../assets returns a GeoJSON FeatureCollection."""
+    """Test that /point/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
         f"{prefix}/point/-95,45/assets",
-        params={"collection_concept_id": "C123-PROV", **extra_params},
+        params={"collection_concept_id": "C123-PROV", "f": "geojson", **extra_params},
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
@@ -112,13 +154,32 @@ def test_point_assets_returns_feature_collection(
         ("/xarray", {"variables": "sea_ice_fraction"}),
     ],
 )
-def test_tile_assets_returns_feature_collection(
-    app, mock_get_granules, prefix, extra_params
-):
-    """Test that /tiles/.../assets returns a GeoJSON FeatureCollection."""
+def test_tile_assets_returns_granule_list(app, mock_get_granules, prefix, extra_params):
+    """Test that /tiles/.../assets returns a JSON list of granules by default."""
     response = app.get(
         f"{prefix}/tiles/WebMercatorQuad/0/0/0/assets",
         params={"collection_concept_id": "C123-PROV", **extra_params},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body, list)
+    assert len(body) == len(STUB_GRANULES)
+
+
+@pytest.mark.parametrize(
+    "prefix,extra_params",
+    [
+        ("/rasterio", {}),
+        ("/xarray", {"variables": "sea_ice_fraction"}),
+    ],
+)
+def test_tile_assets_returns_feature_collection(
+    app, mock_get_granules, prefix, extra_params
+):
+    """Test that /tiles/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
+    response = app.get(
+        f"{prefix}/tiles/WebMercatorQuad/0/0/0/assets",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson", **extra_params},
     )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
@@ -126,7 +187,7 @@ def test_tile_assets_returns_feature_collection(
 
 
 def test_bbox_assets_empty_result(app, mock_get_granules):
-    """Test that an empty granule result returns an empty FeatureCollection."""
+    """Test that an empty granule result returns an empty list."""
     with mock.patch(
         "titiler.cmr.backend.get_granules",
         side_effect=lambda *args, **kwargs: iter([]),
@@ -136,6 +197,4 @@ def test_bbox_assets_empty_result(app, mock_get_granules):
             params={"collection_concept_id": "C123-PROV"},
         )
     assert response.status_code == 200
-    body = response.json()
-    assert body["type"] == "FeatureCollection"
-    assert body["features"] == []
+    assert response.json() == []
