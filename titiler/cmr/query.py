@@ -117,11 +117,15 @@ def get_granules(
     limit: int = 100,
     exitwhenfull: bool = False,
     coverage_tolerance: float = 0.0,
+    skipcovered: bool = False,
 ) -> Generator[Granule, None, None]:
     """Run a granule search.
 
     If exitwhenfull is True and a geometry is provided, stops early once the
     union of returned granule geometries fully covers the search geometry.
+
+    If skipcovered is True, granules whose geometry is identical to a previously
+    yielded granule geometry are skipped (deduplicates repeat-pass coverage).
 
     Args:
         search_params: CMR granule search parameters.
@@ -133,6 +137,8 @@ def get_granules(
         coverage_tolerance: Buffer (in degrees) applied when checking full
             coverage. A small positive value (e.g. 1e-4) reduces slivers caused
             by imprecise CMR polygon edges.
+        skipcovered: Skip any granule whose geometry equals a geometry already
+            yielded in this search.
     """
     params = _build_granule_params(search_params, geometry, page_size)
     search_shape = (
@@ -141,6 +147,7 @@ def get_granules(
         else None
     )
     covered: shapely.Geometry = shapely.GeometryCollection()
+    seen_geometries: list[shapely.Geometry] = []
 
     headers: dict[str, str] = {}
     count = 0
@@ -157,6 +164,13 @@ def get_granules(
         logger.debug("Found %d granules", len(result.items))
 
         for granule in result.items:
+            if skipcovered and granule.geometry is not None:
+                granule_shape = shapely.geometry.shape(granule.geometry)
+                if any(granule_shape.equals(seen) for seen in seen_geometries):
+                    logger.debug("Skipping granule with duplicate geometry")
+                    continue
+                seen_geometries.append(granule_shape)
+
             count += 1
             yield granule
             done, covered = _is_fully_covered(

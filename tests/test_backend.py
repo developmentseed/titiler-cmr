@@ -6,6 +6,7 @@ from collections.abc import Callable, Mapping
 
 import pytest
 import rasterio
+from geojson_pydantic import Polygon
 from httpx import Client
 from mypy_boto3_s3.service_resource import Object
 from rio_tiler.models import ImageData
@@ -155,3 +156,39 @@ def test_s3_credentials_used_for_session_creation(
     assert called_get_s3_credentials
     assert image_data.data.ndim == 3  # bands, height, width
     assert image_data.data.shape[0] == 3  # Number of bands in tif
+
+
+def _make_backend() -> CMRBackend:
+    """Return a CMRBackend with no-op CMR client for unit testing."""
+    return CMRBackend(
+        input=GranuleSearch(),
+        client=Client(base_url=CMR_GRANULE_SEARCH_API),
+        reader=MultiBaseGranuleReader,
+    )
+
+
+def test_get_assets_forwards_skipcovered_true() -> None:
+    """get_assets passes skipcovered=True through to get_granules."""
+    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])) as mg:
+        _make_backend().get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=True)
+
+    _, kwargs = mg.call_args
+    assert kwargs.get("skipcovered") is True
+
+
+def test_get_assets_forwards_skipcovered_false() -> None:
+    """get_assets passes skipcovered=False through to get_granules."""
+    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])) as mg:
+        _make_backend().get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=False)
+
+    _, kwargs = mg.call_args
+    assert kwargs.get("skipcovered") is False
+
+
+def test_get_assets_skipcovered_none_not_forwarded() -> None:
+    """When skipcovered=None, get_granules is not given a skipcovered kwarg."""
+    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])) as mg:
+        _make_backend().get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=None)
+
+    _, kwargs = mg.call_args
+    assert "skipcovered" not in kwargs
