@@ -151,7 +151,7 @@ def get_granules(
 
     headers: dict[str, str] = {}
     count = 0
-    while count <= limit:
+    while count < limit:
         response = client.get("granules.umm_json", params=params, headers=headers)
         logger.info("Querying CMR: %s with headers %s", response.url, headers)
 
@@ -173,6 +173,10 @@ def get_granules(
 
             count += 1
             yield granule
+
+            if count >= limit:
+                return
+
             done, covered = _is_fully_covered(
                 granule, search_shape, covered, coverage_tolerance
             )
