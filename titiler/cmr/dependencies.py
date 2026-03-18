@@ -77,7 +77,12 @@ class BackendParams(DefaultDependency):
     get_s3_credentials: Callable | None = field(init=False)
 
     def __init__(self, request: Request):
-        """Initialize BackendParams"""
+        """Read auth state from app.state and resolve the current bearer token.
+
+        Reads ``earthdata_token_provider``, ``s3_access``, and
+        ``get_s3_credentials`` from the FastAPI application state.  If a token
+        provider is present, calls it to obtain the current bearer token string.
+        """
         self.client = request.app.state.client
         token_provider = getattr(request.app.state, "earthdata_token_provider", None)
         self.auth_token = token_provider() if token_provider else None

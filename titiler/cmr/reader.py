@@ -122,15 +122,18 @@ def get_variables(
     x_dim_names: list[str] = X_DIM_NAMES,
     y_dim_names: list[str] = Y_DIM_NAMES,
 ) -> DataArray:
-    """Get Xarray variable as DataArray.
+    """Get one or more Xarray variables concatenated into a single DataArray.
 
     Args:
         ds (xarray.Dataset): Xarray Dataset.
-        variable (str): Variable to extract from the Dataset.
-        sel (list of str, optional): List of Xarray Indexes.
+        variables (list[str]): Variable names to extract and concatenate along a "band" dimension.
+        sel (list of str, optional): DSL selector strings for dimension subsetting.
+        expression (str, optional): Band math expression to apply to the resulting DataArray.
+        x_dim_names (list[str]): Candidate names for the X spatial dimension.
+        y_dim_names (list[str]): Candidate names for the Y spatial dimension.
 
     Returns:
-        xarray.DataArray: 2D or 3D DataArray.
+        xarray.DataArray: 2D or 3D DataArray with dimensions (band, y, x) or (y, x).
 
     """
     da = xr.concat([ds[variable] for variable in variables], dim="band")
@@ -248,7 +251,20 @@ def _get_assets(
     include_asset_types: Set[str] | None = None,
     exclude_asset_types: Set[str] | None = None,
 ) -> Iterator:
-    """Get valid asset list."""
+    """Yield asset keys from a granule, applying optional extension filters.
+
+    Args:
+        granule: Granule whose assets are iterated.
+        regex: If provided, only assets whose filename matches this pattern are
+            included; the asset key is the matched substring.
+        include_asset_types: If provided, only assets whose file extension is
+            in this set are yielded.
+        exclude_asset_types: If provided, assets whose file extension is in
+            this set are skipped.
+
+    Yields:
+        Asset key strings for all assets that pass all configured filters.
+    """
     for asset, asset_info in granule.get_assets(regex=regex).items():
         _ext = asset_info.ext
 
@@ -305,8 +321,17 @@ class MultiBaseGranuleReader(MultiBaseReader):
     )
 
     def __attrs_post_init__(self):
-        """Load asset list and set attributes"""
+        """Set bounds, populate the asset list, and set up S3 credentials.
 
+        Sets ``self.bounds`` and ``self.crs`` from the granule bbox, populates
+        ``self.assets`` via ``get_asset_list()``, and—when S3 direct access is
+        configured—retrieves the ``EarthdataS3CredentialProvider`` for the
+        granule's credentials endpoint.
+
+        Raises:
+            MissingAssets: If no valid assets remain after applying media-type
+                filters.
+        """
         self.bounds = tuple(self.granule.bbox)
         self.crs = WGS84_CRS
 
@@ -331,7 +356,11 @@ class MultiBaseGranuleReader(MultiBaseReader):
                 )
 
     def get_asset_list(self) -> list[str]:
-        """Get valid asset list"""
+        """Return asset keys from the granule that pass all configured filters.
+
+        Delegates to ``_get_assets`` using this reader's ``assets_regex``,
+        ``include_asset_types``, and ``exclude_asset_types`` settings.
+        """
         return list(
             _get_assets(
                 self.granule,
@@ -342,7 +371,24 @@ class MultiBaseGranuleReader(MultiBaseReader):
         )
 
     def _get_asset_info(self, asset: str | AssetWithOptions) -> AssetInfo:
-        """Validate asset names and return asset's info."""
+        """Build an AssetInfo for a named asset, injecting S3 credentials if available.
+
+        Looks up the asset in the granule, resolves the appropriate URL (S3
+        direct or HTTPS), determines the GDAL media type from the file
+        extension, and wraps live S3 credentials in an ``AWSSession`` if a
+        credential provider is configured.
+
+        Args:
+            asset: Asset key string; must be present in ``self.assets``.
+
+        Returns:
+            AssetInfo with url, media_type, reader_options, and optional env.
+
+        Raises:
+            InvalidAssetName: If ``asset`` is not in ``self.assets``.
+            InvalidMediaType: If the asset's file extension is not in
+                ``MEDIA_TYPES``.
+        """
         assert isinstance(asset, str)
         if asset not in self.assets:
             raise InvalidAssetName(
@@ -415,7 +461,12 @@ class XarrayGranuleReader(XarrayReader):
     _dims: list = attr.ib(init=False, factory=list)
 
     def __attrs_post_init__(self):
-        """Set bounds and CRS."""
+        """Open the granule dataset, extract variables as a DataArray, then set bounds and CRS.
+
+        Resolves S3 credentials or a bearer token for authentication, opens the dataset
+        via ``self.opener``, calls ``get_variables`` to build ``self.input``, and
+        delegates to ``super().__attrs_post_init__()`` to complete reader initialisation.
+        """
         opener_options = {
             "group": self.group,
             "decode_times": self.decode_times,

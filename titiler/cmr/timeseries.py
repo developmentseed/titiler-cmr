@@ -187,7 +187,25 @@ def generate_datetime_ranges(
         TemporalMode.interval, TemporalMode.point
     ] = TemporalMode.interval,
 ) -> List[Union[Tuple[datetime], Tuple[datetime, datetime]]]:
-    """Generate datetime ranges"""
+    """Split a datetime range into step-sized sub-ranges.
+
+    In ``point`` mode each element is a 1-tuple ``(datetime,)`` for the start
+    of each step.  In ``interval`` mode each element is a 2-tuple
+    ``(start, end)`` where the end is nudged back by 1 second (or 1
+    millisecond for sub-second steps) to avoid overlap with the next interval.
+
+    If the computed list would be empty (e.g. ``start_datetime == end_datetime``),
+    returns ``[(start_datetime, end_datetime)]``.
+
+    Args:
+        start_datetime: Beginning of the overall date range.
+        end_datetime: End of the overall date range.
+        step: ISO 8601 duration string (e.g. ``"P1D"``, ``"PT1H"``).
+        temporal_mode: Whether to produce point instants or closed intervals.
+
+    Returns:
+        List of 1-tuples (point mode) or 2-tuples (interval mode).
+    """
     step_delta = parse_duration(step)
 
     ranges: List[Union[Tuple[datetime], Tuple[datetime, datetime]]] = []
@@ -259,7 +277,20 @@ def build_request_urls(
 async def timestep_request(
     url: str, method: Literal["POST", "GET"], **kwargs
 ) -> httpx.Response:
-    """Asyncronously send a GET or POST request to a URL with additional parameters"""
+    """Asynchronously send a GET or POST request to a URL.
+
+    Args:
+        url: Full URL to request.
+        method: HTTP method — either ``"GET"`` or ``"POST"``.
+        **kwargs: Additional arguments forwarded to the underlying httpx method
+            (e.g. ``json``, ``timeout``).
+
+    Returns:
+        The httpx Response object.
+
+    Raises:
+        ValueError: If ``method`` is not ``"GET"`` or ``"POST"``.
+    """
     async with httpx.AsyncClient() as client:
         _method: Any
         if method == "POST":

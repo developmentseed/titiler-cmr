@@ -38,7 +38,7 @@ class CMRBackend(BaseBackend):
     get_s3_credentials: Callable | None = attr.ib(default=None)
 
     def __attrs_post_init__(self):
-        """Initialize reader options from auth_token and s3_access."""
+        """Initialize reader options from auth_token, s3_access, and get_s3_credentials."""
         if self.auth_token:
             self.reader_options["auth_token"] = self.auth_token
         self.reader_options["s3_access"] = self.s3_access
@@ -144,7 +144,16 @@ class CMRBackend(BaseBackend):
         coord_crs: CRS | None = None,
         **kwargs,
     ) -> list[Granule]:
-        """Retrieve assets for bbox."""
+        """Return granules intersecting a bounding box.
+
+        Args:
+            xmin: West bound.
+            ymin: South bound.
+            xmax: East bound.
+            ymax: North bound.
+            coord_crs: CRS of the input coordinates. Defaults to WGS84.
+            **kwargs: Additional arguments forwarded to ``get_assets``.
+        """
         if not coord_crs:
             coord_crs = WGS84_CRS
 
