@@ -8,8 +8,8 @@ from fastapi import FastAPI, Query, Request
 from httpx import Client
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
-from titiler.core.dependencies import ExpressionParams
 from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
+from titiler.core.dependencies import ExpressionParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.factory import (
     AlgorithmFactory,
@@ -184,9 +184,9 @@ tags_metadata = [
         "Suitable for raster file formats such as GeoTIFF and Cloud-Optimized GeoTIFF (COG).",
     },
     {
-        "name": "Assets",
+        "name": "Granules",
         "description": "Backend-independent endpoints for querying CMR granule metadata. "
-        "These endpoints return matching granule assets without reading any raster data.",
+        "These endpoints return matching granules without reading any data.",
     },
     {
         "name": "Timeseries",
