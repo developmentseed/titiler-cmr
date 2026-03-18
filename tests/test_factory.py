@@ -66,9 +66,9 @@ def _assert_granule_feature_collection(body: dict) -> None:
 
 
 def test_bbox_assets_returns_granule_list(app, mock_get_granules):
-    """Test that /bbox/.../assets returns a JSON list of granules by default."""
+    """Test that /bbox/.../granules returns a JSON list of granules by default."""
     response = app.get(
-        "/bbox/-100,40,-90,50/assets",
+        "/bbox/-100,40,-90,50/granules",
         params={"collection_concept_id": "C123-PROV"},
     )
     assert response.status_code == 200
@@ -80,9 +80,9 @@ def test_bbox_assets_returns_granule_list(app, mock_get_granules):
 
 
 def test_bbox_assets_returns_feature_collection(app, mock_get_granules):
-    """Test that /bbox/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
+    """Test that /bbox/.../granules?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
-        "/bbox/-100,40,-90,50/assets",
+        "/bbox/-100,40,-90,50/granules",
         params={"collection_concept_id": "C123-PROV", "f": "geojson"},
     )
     assert response.status_code == 200
@@ -91,9 +91,9 @@ def test_bbox_assets_returns_feature_collection(app, mock_get_granules):
 
 
 def test_point_assets_returns_granule_list(app, mock_get_granules):
-    """Test that /point/.../assets returns a JSON list of granules by default."""
+    """Test that /point/.../granules returns a JSON list of granules by default."""
     response = app.get(
-        "/point/-95,45/assets",
+        "/point/-95,45/granules",
         params={"collection_concept_id": "C123-PROV"},
     )
     assert response.status_code == 200
@@ -103,9 +103,9 @@ def test_point_assets_returns_granule_list(app, mock_get_granules):
 
 
 def test_point_assets_returns_feature_collection(app, mock_get_granules):
-    """Test that /point/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
+    """Test that /point/.../granules?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
-        "/point/-95,45/assets",
+        "/point/-95,45/granules",
         params={"collection_concept_id": "C123-PROV", "f": "geojson"},
     )
     assert response.status_code == 200
@@ -114,9 +114,9 @@ def test_point_assets_returns_feature_collection(app, mock_get_granules):
 
 
 def test_tile_assets_returns_granule_list(app, mock_get_granules):
-    """Test that /tiles/.../assets returns a JSON list of granules by default."""
+    """Test that /tiles/.../granules returns a JSON list of granules by default."""
     response = app.get(
-        "/tiles/WebMercatorQuad/0/0/0/assets",
+        "/tiles/WebMercatorQuad/0/0/0/granules",
         params={"collection_concept_id": "C123-PROV"},
     )
     assert response.status_code == 200
@@ -126,9 +126,9 @@ def test_tile_assets_returns_granule_list(app, mock_get_granules):
 
 
 def test_tile_assets_returns_feature_collection(app, mock_get_granules):
-    """Test that /tiles/.../assets?f=geojson returns a GeoJSON FeatureCollection."""
+    """Test that /tiles/.../granules?f=geojson returns a GeoJSON FeatureCollection."""
     response = app.get(
-        "/tiles/WebMercatorQuad/0/0/0/assets",
+        "/tiles/WebMercatorQuad/0/0/0/granules",
         params={"collection_concept_id": "C123-PROV", "f": "geojson"},
     )
     assert response.status_code == 200
@@ -143,7 +143,7 @@ def test_bbox_assets_empty_result(app, mock_get_granules):
         side_effect=lambda *args, **kwargs: iter([]),
     ):
         response = app.get(
-            "/bbox/-100,40,-90,50/assets",
+            "/bbox/-100,40,-90,50/granules",
             params={"collection_concept_id": "C123-PROV"},
         )
     assert response.status_code == 200
@@ -151,12 +151,12 @@ def test_bbox_assets_empty_result(app, mock_get_granules):
 
 
 def test_prefixed_assets_routes_do_not_exist(app):
-    """Verify that /xarray/.../assets and /rasterio/.../assets no longer exist."""
+    """Verify that /xarray/.../granules and /rasterio/.../granules no longer exist."""
     for prefix in ("/xarray", "/rasterio"):
         r = app.get(
-            f"{prefix}/bbox/-100,40,-90,50/assets",
+            f"{prefix}/bbox/-100,40,-90,50/granules",
             params={"collection_concept_id": "C123-PROV"},
         )
         assert r.status_code == 404, (
-            f"Expected 404 for {prefix}/bbox/.../assets, got {r.status_code}"
+            f"Expected 404 for {prefix}/bbox/.../granules, got {r.status_code}"
         )

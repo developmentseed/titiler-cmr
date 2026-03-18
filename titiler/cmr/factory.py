@@ -65,7 +65,7 @@ class CMRTilerFactory(BaseFactory):
     assets_accessor_dependency: type[DefaultDependency] = GranuleSearchBackendParams
 
     def register_routes(self) -> None:
-        """Register routes, excluding /assets (defined separately in assets_router)."""
+        """Register routes, excluding /granules (defined separately in granules_router)."""
         self.info()
         self.tilesets()
         self.tile()
@@ -85,13 +85,13 @@ class CMRTilerFactory(BaseFactory):
 
 
 ###############################################################################
-# Standalone assets router — backend-independent CMR granule metadata queries
+# Standalone granules router — backend-independent CMR granule metadata queries
 
-assets_router = APIRouter()
+granules_router = APIRouter()
 
 
-@assets_router.get(
-    "/bbox/{minx},{miny},{maxx},{maxy}/assets",
+@granules_router.get(
+    "/bbox/{minx},{miny},{maxx},{maxy}/granules",
     response_model=list[Granule] | GranuleFeatureCollection,
     response_model_exclude_none=True,
     responses={200: {"description": "Return granules in bounding box"}},
@@ -129,8 +129,8 @@ def assets_for_bbox(
     return granules_to_feature_collection(granules) if f == "geojson" else granules
 
 
-@assets_router.get(
-    "/point/{lon},{lat}/assets",
+@granules_router.get(
+    "/point/{lon},{lat}/granules",
     response_model=list[Granule] | GranuleFeatureCollection,
     response_model_exclude_none=True,
     responses={200: {"description": "Return granules at a point"}},
@@ -164,8 +164,8 @@ def assets_for_point(
     return granules_to_feature_collection(granules) if f == "geojson" else granules
 
 
-@assets_router.get(
-    "/tiles/{tileMatrixSetId}/{z}/{x}/{y}/assets",
+@granules_router.get(
+    "/tiles/{tileMatrixSetId}/{z}/{x}/{y}/granules",
     response_model=list[Granule] | GranuleFeatureCollection,
     response_model_exclude_none=True,
     responses={200: {"description": "Return granules for a tile"}},
