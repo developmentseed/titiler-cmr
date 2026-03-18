@@ -1129,8 +1129,8 @@
    parameter.</li>
 </ol>
 <blockquote>
-<p>The <code>/timeseries</code>, <code>/bbox/{bbox}/assets</code>, <code>/point/{lon},{lat}/assets</code>, and
-<code>/tiles/{tms}/{z}/{x}/{y}/assets</code> endpoints are backend-agnostic and keep the same
+<p>The <code>/timeseries</code>, <code>/bbox/{bbox}/granules</code>, <code>/point/{lon},{lat}/granules</code>, and
+<code>/tiles/{tms}/{z}/{x}/{y}/granules</code> endpoints are backend-agnostic and keep the same
 path — no prefix needed.</p>
 </blockquote>
 <ol>
@@ -1178,7 +1178,7 @@ paths.</p>
 <li><strong><code>skipcovered</code></strong> — Skip granules whose spatial footprint is already fully covered by
   previously selected granules. Reduces redundant data fetching for full-coverage queries.</li>
 <li><strong><code>coverage_tolerance</code></strong> — Tolerance for <code>skipcovered</code> coverage evaluation (float 0–1).</li>
-<li><strong><code>f</code></strong> — On <code>/assets</code> endpoints, controls response format: <code>json</code> returns a plain list
+<li><strong><code>f</code></strong> — On <code>/granules</code> endpoints, controls response format: <code>json</code> returns a plain list
   of asset URLs, <code>geojson</code> returns a GeoJSON FeatureCollection with granule footprints.</li>
 </ul>
 

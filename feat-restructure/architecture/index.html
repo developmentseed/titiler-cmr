@@ -1268,21 +1268,27 @@
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p><code>titiler-cmr</code> sits on top of <code>titiler.mosaic</code>, which provides a <code>MosaicTilerFactory</code> pattern. In this pattern a <em>backend</em> orchestrates multi-source search and tiling while a <em>reader</em> handles per-source data access. <code>CMRTilerFactory</code> extends <code>MosaicTilerFactory</code> with two backend variants that correspond to different data-access paths:</p>
 <ul>
-<li><strong>Rasterio</strong> — for granules that expose georeferenced raster assets (GeoTIFF, COG, etc.), accessed via <code>rasterio</code>.</li>
-<li><strong>Xarray</strong> — for granules that expose NetCDF/HDF5 files, opened via <code>xarray</code> and <code>open_dataset</code>.</li>
+<li><strong>rasterio</strong> — for granules that expose georeferenced raster assets (GeoTIFF, COG, etc.), accessed via <code>rasterio</code>.</li>
+<li><strong>xarray</strong> — for granules that expose NetCDF/HDF5 files, opened via <code>xarray</code> and <code>open_dataset</code>.</li>
 </ul>
 <p>Each variant is registered as a separate router (e.g. <code>/rasterio/tiles/…</code> and <code>/xarray/tiles/…</code>) but shares the same <code>CMRBackend</code> for granule search. The reader class and its dependency are swapped to handle the format-specific opening logic.</p>
 <hr />
 <h2 id="class-hierarchy">Class Hierarchy<a class="headerlink" href="#class-hierarchy" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>rio_tiler.io.base.BaseReader          rio_tiler.io.base.SpatialMixin
-   │                                          │
-   ├── rio_tiler.io.xarray.XarrayReader        ├── rio_tiler.io.base.MultiBaseReader
-   │       │                                   │         │
-   │       └── XarrayGranuleReader             │         └── MultiBaseGranuleReader
-   │                                           │
-   └── rio_tiler.mosaic.backend.BaseBackend
+<div class="highlight"><pre><span></span><code>rio_tiler.io.base.SpatialMixin
+   │
+   ├── rio_tiler.io.base.BaseReader
+   │       │
+   │       ├── rio_tiler.io.xarray.XarrayReader
+   │       │       │
+   │       │       └── XarrayGranuleReader
+   │       │
+   │       └── rio_tiler.mosaic.backend.BaseBackend
+   │               │
+   │               └── CMRBackend
+   │
+   └── rio_tiler.io.base.MultiBaseReader
            │
-           └── CMRBackend
+           └── MultiBaseGranuleReader
 
 titiler.core.factory.BaseFactory
    │
@@ -1318,14 +1324,14 @@ titiler.core.factory.BaseFactory
 </tr>
 <tr>
 <td><code>reader_dependency</code></td>
-<td><code>XarrayParams</code></td>
+<td><code>interpolated_xarray_ds_params</code></td>
 <td><code>CMRAssetsParams</code></td>
 <td><code>CMRBackend.reader_options</code> (merged, then splatted into reader constructor)</td>
 </tr>
 <tr>
 <td><code>assets_accessor_dependency</code></td>
 <td><code>GranuleSearchBackendParams</code></td>
-<td><code>GranuleSearchBackendParams</code></td>
+<td><code>RasterioGranuleSearchBackendParams</code></td>
 <td><code>BaseBackend.tile(search_options=…)</code> — controls granule search behaviour</td>
 </tr>
 <tr>
@@ -1337,7 +1343,7 @@ titiler.core.factory.BaseFactory
 <tr>
 <td><code>layer_dependency</code></td>
 <td><code>ExpressionParams</code></td>
-<td><code>AssetsExprParams</code></td>
+<td><code>CMRAssetsExprParams</code></td>
 <td>reader method call kwargs (band indexes / expressions / assets)</td>
 </tr>
 </tbody>
@@ -1345,25 +1351,25 @@ titiler.core.factory.BaseFactory
 <hr />
 <h2 id="request-flow-for-a-tile-endpoint">Request Flow for a Tile Endpoint<a class="headerlink" href="#request-flow-for-a-tile-endpoint" title="Permanent link">&para;</a></h2>
 <p>The following trace follows a request through the xarray backend. The rasterio equivalent is described below.</p>
-<div class="highlight"><pre><span></span><code>GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&amp;variable=sst
+<div class="highlight"><pre><span></span><code>GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&amp;variables=sst
 
 1. FastAPI resolves dependencies:
-   - GranuleSearchParams        → GranuleSearch(collection_concept_id=...)
-   - BackendParams              → {client, auth_token, s3_access}  (from app.state)
-   - XarrayParams               → {variable=&quot;sst&quot;, group=None, ...}
-   - GranuleSearchBackendParams → {items_limit, exitwhenfull, skipcovered}
-   - XarrayDatasetParams        → {nodata, reproject_method}
+   - GranuleSearchParams            → GranuleSearch(collection_concept_id=...)
+   - BackendParams                  → {client, auth_token, s3_access}  (from app.state)
+   - interpolated_xarray_ds_params  → {variables=[&quot;sst&quot;], group=None, ...}
+   - GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}
+   - XarrayDatasetParams            → {nodata, reproject_method}
 
 2. MosaicTilerFactory.tile() opens the backend:
    CMRBackend(
      input=GranuleSearch,
      reader=XarrayGranuleReader,
-     reader_options={&quot;variable&quot;: &quot;sst&quot;, ...},                          ← from XarrayParams
+     reader_options={&quot;variables&quot;: [&quot;sst&quot;], ...},                       ← from interpolated_xarray_ds_params
      client=..., auth_token=..., s3_access=..., get_s3_credentials=... ← from BackendParams
    )
 
 3. CMRBackend.__attrs_post_init__ merges auth_token, s3_access, and get_s3_credentials into reader_options:
-   reader_options = {&quot;variable&quot;: &quot;sst&quot;, &quot;auth_token&quot;: &quot;...&quot;, &quot;s3_access&quot;: False, &quot;get_s3_credentials&quot;: ...}
+   reader_options = {&quot;variables&quot;: [&quot;sst&quot;], &quot;auth_token&quot;: &quot;...&quot;, &quot;s3_access&quot;: False, &quot;get_s3_credentials&quot;: ...}
 
 4. BaseBackend.tile(x, y, z, search_options={...}) runs:
    a. CMRBackend.assets_for_tile(x, y, z, exitwhenfull=True)
@@ -1376,7 +1382,7 @@ titiler.core.factory.BaseFactory
    a. Calls granule.get_assets() → asset dict keyed &quot;0&quot;, &quot;1&quot;, ...
    b. Selects asset[&quot;0&quot;], resolves href (direct_href vs external_href)
    c. Calls open_dataset(href, group=..., decode_times=..., auth_token=...)
-   d. Calls get_variable(ds, variable=&quot;sst&quot;, sel=...) → xarray.DataArray
+   d. Calls get_variables(ds, variables=[&quot;sst&quot;], sel=...) → xarray.DataArray
    e. Sets self.input = DataArray
    f. Calls super().__attrs_post_init__() → rio_tiler.XarrayReader sets bounds, CRS, etc.
 
@@ -1405,21 +1411,25 @@ app-state caching, and per-granule provider caching.</p>
 <h3 id="startup">Startup<a class="headerlink" href="#startup" title="Permanent link">&para;</a></h3>
 <p><code>startup()</code> in <code>main.py</code> runs once at application boot (or Lambda warm start):</p>
 <ol>
-<li>If <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> are set, a bearer token is obtained from
-   <code>https://urs.earthdata.nasa.gov/api/users/find_or_create_token</code> and stored at
-   <code>app.state.earthdata_token</code>.</li>
-<li>If <code>EARTHDATA_S3_DIRECT_ACCESS=true</code>, <code>make_get_s3_credentials(auth_token)</code> is called and
-   the resulting factory callable is stored at <code>app.state.get_s3_credentials</code>.</li>
+<li>If <code>EARTHDATA_USERNAME</code> and <code>EARTHDATA_PASSWORD</code> are set, an <code>EarthdataTokenProvider</code> instance
+   is created and stored at <code>app.state.earthdata_token_provider</code>. The provider lazily fetches and
+   refreshes the bearer token from <code>https://urs.earthdata.nasa.gov/api/users/find_or_create_token</code>
+   on demand rather than eagerly at startup.</li>
+<li>If <code>EARTHDATA_S3_DIRECT_ACCESS=true</code>, a <code>GetS3Credentials(token_provider)</code> instance is
+   constructed (taking the provider so it can call <code>token_provider()</code> and pick up refreshed tokens)
+   and stored at <code>app.state.get_s3_credentials</code>.</li>
 </ol>
-<p><code>make_get_s3_credentials</code> returns a function decorated with a <code>TTLCache(maxsize=100, ttl=50m)</code>.
-Calling it with an endpoint URL either constructs a new <code>EarthdataS3CredentialProvider</code> or
-returns the cached instance for that endpoint. The 50-minute TTL covers the expected lifetime of
-a Lambda execution environment and prevents redundant provider construction across requests.</p>
+<p><code>GetS3Credentials</code> maintains a <code>TTLCache(maxsize=100, ttl=50m)</code> internally. Calling it with
+an endpoint URL either constructs a new <code>EarthdataS3CredentialProvider</code> or returns the cached
+instance for that endpoint. The 50-minute TTL covers the expected lifetime of a Lambda execution
+environment and prevents redundant provider construction across requests.</p>
 <h3 id="per-request-propagation">Per-request propagation<a class="headerlink" href="#per-request-propagation" title="Permanent link">&para;</a></h3>
 <p><code>BackendParams</code> is a FastAPI dependency that runs on every request. It reads
-<code>app.state.{earthdata_token, s3_access, get_s3_credentials}</code> and passes them into
-<code>CMRBackend</code>. <code>CMRBackend.__attrs_post_init__</code> merges them into <code>reader_options</code>, so every
-reader instance receives them as constructor arguments.</p>
+<code>app.state.{earthdata_token_provider, s3_access, get_s3_credentials}</code> and passes them into
+<code>CMRBackend</code>. <code>BackendParams.__init__</code> calls <code>token_provider()</code> to obtain the current bearer
+token string. <code>CMRBackend.__attrs_post_init__</code> then merges the token, s3_access flag, and
+get_s3_credentials callable into <code>reader_options</code>, so every reader instance receives them as
+constructor arguments.</p>
 <h3 id="per-granule-credential-provider-earthdatas3credentialprovider">Per-granule credential provider (<code>EarthdataS3CredentialProvider</code>)<a class="headerlink" href="#per-granule-credential-provider-earthdatas3credentialprovider" title="Permanent link">&para;</a></h3>
 <p>Each reader calls <code>granule.s3_credentials_endpoint</code> during <code>__attrs_post_init__</code>. This property
 scans the granule's <code>related_urls</code> for a URL containing <code>/s3credentials</code> and raises

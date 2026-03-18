@@ -2219,15 +2219,11 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>concept_id</code></td>
+<td><code>collection_concept_id</code></td>
 <td><code>"C2021957657-LPCLOUD"</code></td>
 </tr>
 <tr>
-<td><code>backend</code></td>
-<td><code>"rasterio"</code></td>
-</tr>
-<tr>
-<td><code>bands_regex</code></td>
+<td><code>assets_regex</code></td>
 <td><code>"B[0-9][0-9]"</code></td>
 </tr>
 <tr>
@@ -2249,7 +2245,7 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>bands</code></td>
+<td><code>assets</code></td>
 <td><code>["B04", "B03", "B02"]</code></td>
 </tr>
 <tr>
@@ -2267,7 +2263,7 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>bands</code></td>
+<td><code>assets</code></td>
 <td><code>["B05", "B03", "B02"]</code></td>
 </tr>
 <tr>
@@ -2285,7 +2281,7 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>bands</code></td>
+<td><code>assets</code></td>
 <td><code>["B05", "B04"]</code></td>
 </tr>
 <tr>
@@ -2311,15 +2307,11 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>concept_id</code></td>
+<td><code>collection_concept_id</code></td>
 <td><code>"C2021957295-LPCLOUD"</code></td>
 </tr>
 <tr>
-<td><code>backend</code></td>
-<td><code>"rasterio"</code></td>
-</tr>
-<tr>
-<td><code>bands_regex</code></td>
+<td><code>assets_regex</code></td>
 <td><code>"B[0-9][0-9A-Za-z]"</code></td>
 </tr>
 <tr>
@@ -2341,7 +2333,7 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>bands</code></td>
+<td><code>assets</code></td>
 <td><code>["B04", "B03", "B02"]</code></td>
 </tr>
 <tr>
@@ -2359,7 +2351,7 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>bands</code></td>
+<td><code>assets</code></td>
 <td><code>["B8A", "B03", "B02"]</code></td>
 </tr>
 <tr>
@@ -2377,7 +2369,7 @@ Based on this analysis we recommend these configuration limits:</p>
 </thead>
 <tbody>
 <tr>
-<td><code>bands</code></td>
+<td><code>assets</code></td>
 <td><code>["B8A", "B04"]</code></td>
 </tr>
 <tr>
@@ -2430,13 +2422,19 @@ Based on this analysis we recommend these configuration limits:</p>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">folium</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayerControl</span><span class="p">,</span> <span class="n">Map</span><span class="p">,</span> <span class="n">TileLayer</span>
 
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>
+<span class="c1"># titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"</span>
+<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"</span>  <span class="c1"># dev endpoint</span>
+<span class="p">)</span>
 <span class="n">minzoom</span> <span class="o">=</span> <span class="mi">7</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import httpx
 from folium import LayerControl, Map, TileLayer
 
-titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"
+# titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"
+titiler_endpoint = (
+    "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"  # dev endpoint
+)
 minzoom = 7</div>
 </div>
 </div>
@@ -2474,18 +2472,15 @@ minzoom = 7</div>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mf">46.7653</span><span class="p">,</span> <span class="o">-</span><span class="mf">91.0321</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">minzoom</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
 <span class="n">base_parameters</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><span class="s2">"concept_id"</span><span class="p">,</span> <span class="s2">"C2021957657-LPCLOUD"</span><span class="p">),</span>
-    <span class="c1"># Datetime in form of `start_date/end_date`</span>
-    <span class="c1"># ("datetime", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off</span>
+    <span class="p">(</span><span class="s2">"collection_concept_id"</span><span class="p">,</span> <span class="s2">"C2021957657-LPCLOUD"</span><span class="p">),</span>
+    <span class="c1"># temporal range in form of `start_date/end_date`</span>
+    <span class="c1"># ("temporal", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off</span>
     <span class="p">(</span><span class="s2">"datetime"</span><span class="p">,</span> <span class="s2">"2024-08-06T00:00:00Z/2024-08-06T23:59:59Z"</span><span class="p">),</span>  <span class="c1"># leaf-on</span>
     <span class="c1"># We know that the HLS collection dataset is stored as File per Band</span>
     <span class="c1"># so we need to pass a `band_regex` option to assign `bands` to each URL</span>
-    <span class="p">(</span><span class="s2">"bands_regex"</span><span class="p">,</span> <span class="s2">"B[0-9][0-9]"</span><span class="p">),</span>
-    <span class="c1"># titiler-cmr can work with both Zarr and COG dataset</span>
-    <span class="c1"># but we need to tell the endpoints in advance which backend</span>
-    <span class="c1"># to use</span>
-    <span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="s2">"rasterio"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"assets_regex"</span><span class="p">,</span> <span class="s2">"B[0-9][0-9]"</span><span class="p">),</span>
     <span class="c1"># We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)</span>
     <span class="c1"># which will results in useless large scale query</span>
     <span class="p">(</span><span class="s2">"minzoom"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
@@ -2493,13 +2488,13 @@ minzoom = 7</div>
 <span class="p">)</span>
 
 <span class="n">landsat_true_color_tilejson</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/rasterio/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="o">*</span><span class="n">base_parameters</span><span class="p">,</span>
         <span class="c1"># True Color Image B04,B03,B02</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
         <span class="c1"># The data is in type of Uint16 so we need to apply some</span>
         <span class="c1"># rescaling/color_formula in order to create PNGs</span>
         <span class="p">(</span><span class="s2">"color_formula"</span><span class="p">,</span> <span class="s2">"Gamma RGB 3.5 Saturation 1.2 Sigmoidal RGB 15 0.35"</span><span class="p">),</span>
@@ -2521,13 +2516,13 @@ minzoom = 7</div>
 <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 
 <span class="n">landsat_false_color_tilejson</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/rasterio/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="o">*</span><span class="n">base_parameters</span><span class="p">,</span>
         <span class="c1"># False Color Image B05,B03,B02</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B05"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B05"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
         <span class="c1"># The data is in type of Uint16 so we need to apply some</span>
         <span class="c1"># rescaling/color_formula in order to create PNGs</span>
         <span class="p">(</span><span class="s2">"color_formula"</span><span class="p">,</span> <span class="s2">"Gamma RGB 2.5 Saturation 1.2 Sigmoidal RGB 10 0.35"</span><span class="p">),</span>
@@ -2548,12 +2543,12 @@ minzoom = 7</div>
 <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 
 <span class="n">landsat_ndvi_tilejson</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/rasterio/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="o">*</span><span class="n">base_parameters</span><span class="p">,</span>
         <span class="c1"># NDVI: B05 (NIR), B04 (Red)</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B05"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B05"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
         <span class="c1"># Calculate NDVI from the NIR and Red bands</span>
         <span class="p">(</span><span class="s2">"expression"</span><span class="p">,</span> <span class="s2">"(B05-B04)/(B05+B04)"</span><span class="p">),</span>
         <span class="c1"># Rescale to NDVI scale</span>
@@ -2581,18 +2576,15 @@ minzoom = 7</div>
 <span class="n">m</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">m = Map(location=(46.7653, -91.0321), zoom_start=minzoom + 1)
+
 base_parameters = (
-    ("concept_id", "C2021957657-LPCLOUD"),
-    # Datetime in form of `start_date/end_date`
-    # ("datetime", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off
+    ("collection_concept_id", "C2021957657-LPCLOUD"),
+    # temporal range in form of `start_date/end_date`
+    # ("temporal", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off
     ("datetime", "2024-08-06T00:00:00Z/2024-08-06T23:59:59Z"),  # leaf-on
     # We know that the HLS collection dataset is stored as File per Band
     # so we need to pass a `band_regex` option to assign `bands` to each URL
-    ("bands_regex", "B[0-9][0-9]"),
-    # titiler-cmr can work with both Zarr and COG dataset
-    # but we need to tell the endpoints in advance which backend
-    # to use
-    ("backend", "rasterio"),
+    ("assets_regex", "B[0-9][0-9]"),
     # We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)
     # which will results in useless large scale query
     ("minzoom", 7),
@@ -2600,13 +2592,13 @@ base_parameters = (
 )
 
 landsat_true_color_tilejson = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
+    f"{titiler_endpoint}/rasterio/WebMercatorQuad/tilejson.json",
     params=(
         *base_parameters,
         # True Color Image B04,B03,B02
-        ("bands", "B04"),
-        ("bands", "B03"),
-        ("bands", "B02"),
+        ("assets", "B04"),
+        ("assets", "B03"),
+        ("assets", "B02"),
         # The data is in type of Uint16 so we need to apply some
         # rescaling/color_formula in order to create PNGs
         ("color_formula", "Gamma RGB 3.5 Saturation 1.2 Sigmoidal RGB 15 0.35"),
@@ -2628,13 +2620,13 @@ TileLayer(
 ).add_to(m)
 
 landsat_false_color_tilejson = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
+    f"{titiler_endpoint}/rasterio/WebMercatorQuad/tilejson.json",
     params=(
         *base_parameters,
         # False Color Image B05,B03,B02
-        ("bands", "B05"),
-        ("bands", "B03"),
-        ("bands", "B02"),
+        ("assets", "B05"),
+        ("assets", "B03"),
+        ("assets", "B02"),
         # The data is in type of Uint16 so we need to apply some
         # rescaling/color_formula in order to create PNGs
         ("color_formula", "Gamma RGB 2.5 Saturation 1.2 Sigmoidal RGB 10 0.35"),
@@ -2655,12 +2647,12 @@ TileLayer(
 ).add_to(m)
 
 landsat_ndvi_tilejson = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
+    f"{titiler_endpoint}/rasterio/WebMercatorQuad/tilejson.json",
     params=(
         *base_parameters,
         # NDVI: B05 (NIR), B04 (Red)
-        ("bands", "B05"),
-        ("bands", "B04"),
+        ("assets", "B05"),
+        ("assets", "B04"),
         # Calculate NDVI from the NIR and Red bands
         ("expression", "(B05-B04)/(B05+B04)"),
         # Rescale to NDVI scale
@@ -2716,7 +2708,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_b4cdf90eaaf25cbb1c58f4ca0595c75d {
+                #map_a9d8bee7266f4a41cc8cbf63964ba99e {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2753,14 +2745,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_b4cdf90eaaf25cbb1c58f4ca0595c75d" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_a9d8bee7266f4a41cc8cbf63964ba99e" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_b4cdf90eaaf25cbb1c58f4ca0595c75d = L.map(
-                "map_b4cdf90eaaf25cbb1c58f4ca0595c75d",
+            var map_a9d8bee7266f4a41cc8cbf63964ba99e = L.map(
+                "map_a9d8bee7266f4a41cc8cbf63964ba99e",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2777,7 +2769,7 @@ m</div>
 
         
     
-            var tile_layer_49d63500a39da09a2d52a04d78d34a35 = L.tileLayer(
+            var tile_layer_01cd661e45b1b89a36747cf5a0b41894 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2794,11 +2786,11 @@ m</div>
             );
         
     
-            tile_layer_49d63500a39da09a2d52a04d78d34a35.addTo(map_b4cdf90eaaf25cbb1c58f4ca0595c75d);
+            tile_layer_01cd661e45b1b89a36747cf5a0b41894.addTo(map_a9d8bee7266f4a41cc8cbf63964ba99e);
         
     
-            var tile_layer_8989c830858525a42fd6a8c30041b90c = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
+            var tile_layer_5b764d0585de638895d731a05db9aed2 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2814,11 +2806,11 @@ m</div>
             );
         
     
-            tile_layer_8989c830858525a42fd6a8c30041b90c.addTo(map_b4cdf90eaaf25cbb1c58f4ca0595c75d);
+            tile_layer_5b764d0585de638895d731a05db9aed2.addTo(map_a9d8bee7266f4a41cc8cbf63964ba99e);
         
     
-            var tile_layer_74f787e89cff45d8859dc0cfbfc878ec = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
+            var tile_layer_0fc455914f9ec510a8202b8e2f494df6 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2834,8 +2826,8 @@ m</div>
             );
         
     
-            var tile_layer_74dc278aa837865ca3c413534ba6421a = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B05\u0026bands=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
+            var tile_layer_98e5f137adf7cadf5a7d4c20265f41b6 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2851,25 +2843,25 @@ m</div>
             );
         
     
-            var layer_control_0f3785cd49e8f0610b86c6c4b7fdce98_layers = {
+            var layer_control_7b9dedf4dd019f172e62b765b728f62c_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_49d63500a39da09a2d52a04d78d34a35,
+                    "openstreetmap" : tile_layer_01cd661e45b1b89a36747cf5a0b41894,
                 },
                 overlays :  {
-                    "HLSL30 true color" : tile_layer_8989c830858525a42fd6a8c30041b90c,
-                    "HLSL30 false color" : tile_layer_74f787e89cff45d8859dc0cfbfc878ec,
-                    "HLSL30 NDVI" : tile_layer_74dc278aa837865ca3c413534ba6421a,
+                    "HLSL30 true color" : tile_layer_5b764d0585de638895d731a05db9aed2,
+                    "HLSL30 false color" : tile_layer_0fc455914f9ec510a8202b8e2f494df6,
+                    "HLSL30 NDVI" : tile_layer_98e5f137adf7cadf5a7d4c20265f41b6,
                 },
             };
-            let layer_control_0f3785cd49e8f0610b86c6c4b7fdce98 = L.control.layers(
-                layer_control_0f3785cd49e8f0610b86c6c4b7fdce98_layers.base_layers,
-                layer_control_0f3785cd49e8f0610b86c6c4b7fdce98_layers.overlays,
+            let layer_control_7b9dedf4dd019f172e62b765b728f62c = L.control.layers(
+                layer_control_7b9dedf4dd019f172e62b765b728f62c_layers.base_layers,
+                layer_control_7b9dedf4dd019f172e62b765b728f62c_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_b4cdf90eaaf25cbb1c58f4ca0595c75d);
+            ).addTo(map_a9d8bee7266f4a41cc8cbf63964ba99e);
 
         
 &lt;/script&gt;
@@ -2912,17 +2904,13 @@ m</div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mf">46.7653</span><span class="p">,</span> <span class="o">-</span><span class="mf">91.0321</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">minzoom</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">base_parameters</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><span class="s2">"concept_id"</span><span class="p">,</span> <span class="s2">"C2021957295-LPCLOUD"</span><span class="p">),</span>
-    <span class="c1"># Datetime in form of `start_date/end_date`</span>
-    <span class="p">(</span><span class="s2">"datetime"</span><span class="p">,</span> <span class="s2">"2024-08-13T00:00:00Z/2024-08-13T23:59:59Z"</span><span class="p">),</span>  <span class="c1"># leaf-on</span>
-    <span class="c1"># ("datetime", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off</span>
+    <span class="p">(</span><span class="s2">"collection_concept_id"</span><span class="p">,</span> <span class="s2">"C2021957295-LPCLOUD"</span><span class="p">),</span>
+    <span class="c1"># Temporal range in form of `start_date/end_date`</span>
+    <span class="p">(</span><span class="s2">"temporal"</span><span class="p">,</span> <span class="s2">"2024-08-13T00:00:00Z/2024-08-13T23:59:59Z"</span><span class="p">),</span>  <span class="c1"># leaf-on</span>
+    <span class="c1"># ("temporal", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off</span>
     <span class="c1"># We know that the HLS collection dataset is stored as File per Band</span>
     <span class="c1"># so we need to pass a `band_regex` option to assign `bands` to each URL</span>
-    <span class="p">(</span><span class="s2">"bands_regex"</span><span class="p">,</span> <span class="s2">"B[0-9][0-9A-Za-z]"</span><span class="p">),</span>
-    <span class="c1"># titiler-cmr can work with both Zarr and COG dataset</span>
-    <span class="c1"># but we need to tell the endpoints in advance which backend</span>
-    <span class="c1"># to use</span>
-    <span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="s2">"rasterio"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"assets_regex"</span><span class="p">,</span> <span class="s2">"B[0-9][0-9A-Za-z]"</span><span class="p">),</span>
     <span class="c1"># We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)</span>
     <span class="c1"># which will results in useless large scale query</span>
     <span class="p">(</span><span class="s2">"minzoom"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
@@ -2930,13 +2918,13 @@ m</div>
 <span class="p">)</span>
 
 <span class="n">sentinel_true_color_tilejson</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/rasterio/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="o">*</span><span class="n">base_parameters</span><span class="p">,</span>
         <span class="c1"># True Color Image B04,B03,B02</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
         <span class="c1"># The data is in type of Uint16 so we need to apply some</span>
         <span class="c1"># rescaling/color_formula in order to create PNGs</span>
         <span class="p">(</span><span class="s2">"color_formula"</span><span class="p">,</span> <span class="s2">"Gamma RGB 3.5 Saturation 1.2 Sigmoidal RGB 15 0.35"</span><span class="p">),</span>
@@ -2958,13 +2946,13 @@ m</div>
 <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 
 <span class="n">sentinel_false_color_tilejson</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/rasterio/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="o">*</span><span class="n">base_parameters</span><span class="p">,</span>
         <span class="c1"># False Color Image B8A, B03, B02</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B8A"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B8A"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B03"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B02"</span><span class="p">),</span>
         <span class="c1"># The data is in type of Uint16 so we need to apply some</span>
         <span class="c1"># rescaling/color_formula in order to create PNGs</span>
         <span class="p">(</span><span class="s2">"color_formula"</span><span class="p">,</span> <span class="s2">"Gamma RGB 2.5 Saturation 1.2 Sigmoidal RGB 10 0.35"</span><span class="p">),</span>
@@ -2985,12 +2973,12 @@ m</div>
 <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 
 <span class="n">sentinel_ndvi_tilejson</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/rasterio/WebMercatorQuad/tilejson.json"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">(</span>
         <span class="o">*</span><span class="n">base_parameters</span><span class="p">,</span>
         <span class="c1"># NDVI: B8A (NIR), B04 (Red)</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B8A"</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"bands"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B8A"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="s2">"B04"</span><span class="p">),</span>
         <span class="c1"># Calculate NDVI from the NIR and Red bands</span>
         <span class="p">(</span><span class="s2">"expression"</span><span class="p">,</span> <span class="s2">"(B8A-B04)/(B8A+B04)"</span><span class="p">),</span>
         <span class="c1"># Rescale to -1,1</span>
@@ -3020,17 +3008,13 @@ m</div>
 <div class="clipboard-copy-txt" id="cell-3">m = Map(location=(46.7653, -91.0321), zoom_start=minzoom + 1)
 
 base_parameters = (
-    ("concept_id", "C2021957295-LPCLOUD"),
-    # Datetime in form of `start_date/end_date`
-    ("datetime", "2024-08-13T00:00:00Z/2024-08-13T23:59:59Z"),  # leaf-on
-    # ("datetime", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off
+    ("collection_concept_id", "C2021957295-LPCLOUD"),
+    # Temporal range in form of `start_date/end_date`
+    ("temporal", "2024-08-13T00:00:00Z/2024-08-13T23:59:59Z"),  # leaf-on
+    # ("temporal", "2025-03-16T00:00:00Z/2025-03-16T23:59:59Z"),  # leaf-off
     # We know that the HLS collection dataset is stored as File per Band
     # so we need to pass a `band_regex` option to assign `bands` to each URL
-    ("bands_regex", "B[0-9][0-9A-Za-z]"),
-    # titiler-cmr can work with both Zarr and COG dataset
-    # but we need to tell the endpoints in advance which backend
-    # to use
-    ("backend", "rasterio"),
+    ("assets_regex", "B[0-9][0-9A-Za-z]"),
     # We need to set min/max zoom because we don't want to use lowerzoom level (e.g 0)
     # which will results in useless large scale query
     ("minzoom", 7),
@@ -3038,13 +3022,13 @@ base_parameters = (
 )
 
 sentinel_true_color_tilejson = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
+    f"{titiler_endpoint}/rasterio/WebMercatorQuad/tilejson.json",
     params=(
         *base_parameters,
         # True Color Image B04,B03,B02
-        ("bands", "B04"),
-        ("bands", "B03"),
-        ("bands", "B02"),
+        ("assets", "B04"),
+        ("assets", "B03"),
+        ("assets", "B02"),
         # The data is in type of Uint16 so we need to apply some
         # rescaling/color_formula in order to create PNGs
         ("color_formula", "Gamma RGB 3.5 Saturation 1.2 Sigmoidal RGB 15 0.35"),
@@ -3066,13 +3050,13 @@ TileLayer(
 ).add_to(m)
 
 sentinel_false_color_tilejson = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
+    f"{titiler_endpoint}/rasterio/WebMercatorQuad/tilejson.json",
     params=(
         *base_parameters,
         # False Color Image B8A, B03, B02
-        ("bands", "B8A"),
-        ("bands", "B03"),
-        ("bands", "B02"),
+        ("assets", "B8A"),
+        ("assets", "B03"),
+        ("assets", "B02"),
         # The data is in type of Uint16 so we need to apply some
         # rescaling/color_formula in order to create PNGs
         ("color_formula", "Gamma RGB 2.5 Saturation 1.2 Sigmoidal RGB 10 0.35"),
@@ -3093,12 +3077,12 @@ TileLayer(
 ).add_to(m)
 
 sentinel_ndvi_tilejson = httpx.get(
-    f"{titiler_endpoint}/WebMercatorQuad/tilejson.json",
+    f"{titiler_endpoint}/rasterio/WebMercatorQuad/tilejson.json",
     params=(
         *base_parameters,
         # NDVI: B8A (NIR), B04 (Red)
-        ("bands", "B8A"),
-        ("bands", "B04"),
+        ("assets", "B8A"),
+        ("assets", "B04"),
         # Calculate NDVI from the NIR and Red bands
         ("expression", "(B8A-B04)/(B8A+B04)"),
         # Rescale to -1,1
@@ -3154,7 +3138,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_e5825f89ade299b9ea7fd9144b32728a {
+                #map_cf3cd13e9ef8e54ecbf31b25db80c6b1 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3191,14 +3175,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_e5825f89ade299b9ea7fd9144b32728a" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_cf3cd13e9ef8e54ecbf31b25db80c6b1" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_e5825f89ade299b9ea7fd9144b32728a = L.map(
-                "map_e5825f89ade299b9ea7fd9144b32728a",
+            var map_cf3cd13e9ef8e54ecbf31b25db80c6b1 = L.map(
+                "map_cf3cd13e9ef8e54ecbf31b25db80c6b1",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -3215,7 +3199,7 @@ m</div>
 
         
     
-            var tile_layer_50ba33802043938bc49984103afa2119 = L.tileLayer(
+            var tile_layer_24783c378e8f9d9b479e5d05a35cac25 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3232,11 +3216,11 @@ m</div>
             );
         
     
-            tile_layer_50ba33802043938bc49984103afa2119.addTo(map_e5825f89ade299b9ea7fd9144b32728a);
+            tile_layer_24783c378e8f9d9b479e5d05a35cac25.addTo(map_cf3cd13e9ef8e54ecbf31b25db80c6b1);
         
     
-            var tile_layer_94b5a70272715259143953a776b745f2 = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35",
+            var tile_layer_30ca9d625459dbce32d48a7fce781fc7 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -3252,11 +3236,11 @@ m</div>
             );
         
     
-            tile_layer_94b5a70272715259143953a776b745f2.addTo(map_e5825f89ade299b9ea7fd9144b32728a);
+            tile_layer_30ca9d625459dbce32d48a7fce781fc7.addTo(map_cf3cd13e9ef8e54ecbf31b25db80c6b1);
         
     
-            var tile_layer_1ea9f51414a0da584c21e1822b7a8449 = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35",
+            var tile_layer_d6ce832723d324fa3b72339fd6b4bb67 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -3272,8 +3256,8 @@ m</div>
             );
         
     
-            var tile_layer_f188649073e4b99cebfe514b9298c718 = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026backend=rasterio\u0026bands=B8A\u0026bands=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r",
+            var tile_layer_38279f442432ea2d802e0ac17adbe662 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -3289,29 +3273,56 @@ m</div>
             );
         
     
-            var layer_control_f886b372dac33c84ce7f73dd2b947db3_layers = {
+            var layer_control_959be43655cc7e9a95be2e2821b9df09_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_50ba33802043938bc49984103afa2119,
+                    "openstreetmap" : tile_layer_24783c378e8f9d9b479e5d05a35cac25,
                 },
                 overlays :  {
-                    "HLSS30 true color" : tile_layer_94b5a70272715259143953a776b745f2,
-                    "HLSS30 false color" : tile_layer_1ea9f51414a0da584c21e1822b7a8449,
-                    "HLSS30 NDVI" : tile_layer_f188649073e4b99cebfe514b9298c718,
+                    "HLSS30 true color" : tile_layer_30ca9d625459dbce32d48a7fce781fc7,
+                    "HLSS30 false color" : tile_layer_d6ce832723d324fa3b72339fd6b4bb67,
+                    "HLSS30 NDVI" : tile_layer_38279f442432ea2d802e0ac17adbe662,
                 },
             };
-            let layer_control_f886b372dac33c84ce7f73dd2b947db3 = L.control.layers(
-                layer_control_f886b372dac33c84ce7f73dd2b947db3_layers.base_layers,
-                layer_control_f886b372dac33c84ce7f73dd2b947db3_layers.overlays,
+            let layer_control_959be43655cc7e9a95be2e2821b9df09 = L.control.layers(
+                layer_control_959be43655cc7e9a95be2e2821b9df09_layers.base_layers,
+                layer_control_959be43655cc7e9a95be2e2821b9df09_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_e5825f89ade299b9ea7fd9144b32728a);
+            ).addTo(map_cf3cd13e9ef8e54ecbf31b25db80c6b1);
 
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-4"></div>
 </div>
 </div>
 </div>
