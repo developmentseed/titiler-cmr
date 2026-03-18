@@ -4,8 +4,8 @@
 
 `titiler-cmr` sits on top of `titiler.mosaic`, which provides a `MosaicTilerFactory` pattern. In this pattern a *backend* orchestrates multi-source search and tiling while a *reader* handles per-source data access. `CMRTilerFactory` extends `MosaicTilerFactory` with two backend variants that correspond to different data-access paths:
 
-- **Rasterio** — for granules that expose georeferenced raster assets (GeoTIFF, COG, etc.), accessed via `rasterio`.
-- **Xarray** — for granules that expose NetCDF/HDF5 files, opened via `xarray` and `open_dataset`.
+- **rasterio** — for granules that expose georeferenced raster assets (GeoTIFF, COG, etc.), accessed via `rasterio`.
+- **xarray** — for granules that expose NetCDF/HDF5 files, opened via `xarray` and `open_dataset`.
 
 Each variant is registered as a separate router (e.g. `/rasterio/tiles/…` and `/xarray/tiles/…`) but shares the same `CMRBackend` for granule search. The reader class and its dependency are swapped to handle the format-specific opening logic.
 
@@ -14,15 +14,21 @@ Each variant is registered as a separate router (e.g. `/rasterio/tiles/…` and 
 ## Class Hierarchy
 
 ```
-rio_tiler.io.base.BaseReader          rio_tiler.io.base.SpatialMixin
-   │                                          │
-   ├── rio_tiler.io.xarray.XarrayReader        ├── rio_tiler.io.base.MultiBaseReader
-   │       │                                   │         │
-   │       └── XarrayGranuleReader             │         └── MultiBaseGranuleReader
-   │                                           │
-   └── rio_tiler.mosaic.backend.BaseBackend
+rio_tiler.io.base.SpatialMixin
+   │
+   ├── rio_tiler.io.base.BaseReader
+   │       │
+   │       ├── rio_tiler.io.xarray.XarrayReader
+   │       │       │
+   │       │       └── XarrayGranuleReader
+   │       │
+   │       └── rio_tiler.mosaic.backend.BaseBackend
+   │               │
+   │               └── CMRBackend
+   │
+   └── rio_tiler.io.base.MultiBaseReader
            │
-           └── CMRBackend
+           └── MultiBaseGranuleReader
 
 titiler.core.factory.BaseFactory
    │
@@ -43,10 +49,10 @@ titiler.core.factory.BaseFactory
 |---|---|---|---|
 | `path_dependency` | `GranuleSearchParams` | `GranuleSearchParams` | `CMRBackend.input` (a `GranuleSearch`) |
 | `backend_dependency` | `BackendParams` | `BackendParams` | `CMRBackend` kwargs (`client`, `auth_token`, `s3_access`, `get_s3_credentials`) |
-| `reader_dependency` | `XarrayParams` | `CMRAssetsParams` | `CMRBackend.reader_options` (merged, then splatted into reader constructor) |
-| `assets_accessor_dependency` | `GranuleSearchBackendParams` | `GranuleSearchBackendParams` | `BaseBackend.tile(search_options=…)` — controls granule search behaviour |
+| `reader_dependency` | `interpolated_xarray_ds_params` | `CMRAssetsParams` | `CMRBackend.reader_options` (merged, then splatted into reader constructor) |
+| `assets_accessor_dependency` | `GranuleSearchBackendParams` | `RasterioGranuleSearchBackendParams` | `BaseBackend.tile(search_options=…)` — controls granule search behaviour |
 | `dataset_dependency` | `XarrayDatasetParams` | `RasterioDatasetParams` | reader method call kwargs (`.tile()`, `.part()`, etc.) |
-| `layer_dependency` | `ExpressionParams` | `AssetsExprParams` | reader method call kwargs (band indexes / expressions / assets) |
+| `layer_dependency` | `ExpressionParams` | `CMRAssetsExprParams` | reader method call kwargs (band indexes / expressions / assets) |
 
 ---
 
@@ -55,25 +61,25 @@ titiler.core.factory.BaseFactory
 The following trace follows a request through the xarray backend. The rasterio equivalent is described below.
 
 ```
-GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&variable=sst
+GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&variables=sst
 
 1. FastAPI resolves dependencies:
-   - GranuleSearchParams        → GranuleSearch(collection_concept_id=...)
-   - BackendParams              → {client, auth_token, s3_access}  (from app.state)
-   - XarrayParams               → {variable="sst", group=None, ...}
-   - GranuleSearchBackendParams → {items_limit, exitwhenfull, skipcovered}
-   - XarrayDatasetParams        → {nodata, reproject_method}
+   - GranuleSearchParams            → GranuleSearch(collection_concept_id=...)
+   - BackendParams                  → {client, auth_token, s3_access}  (from app.state)
+   - interpolated_xarray_ds_params  → {variables=["sst"], group=None, ...}
+   - GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}
+   - XarrayDatasetParams            → {nodata, reproject_method}
 
 2. MosaicTilerFactory.tile() opens the backend:
    CMRBackend(
      input=GranuleSearch,
      reader=XarrayGranuleReader,
-     reader_options={"variable": "sst", ...},                          ← from XarrayParams
+     reader_options={"variables": ["sst"], ...},                       ← from interpolated_xarray_ds_params
      client=..., auth_token=..., s3_access=..., get_s3_credentials=... ← from BackendParams
    )
 
 3. CMRBackend.__attrs_post_init__ merges auth_token, s3_access, and get_s3_credentials into reader_options:
-   reader_options = {"variable": "sst", "auth_token": "...", "s3_access": False, "get_s3_credentials": ...}
+   reader_options = {"variables": ["sst"], "auth_token": "...", "s3_access": False, "get_s3_credentials": ...}
 
 4. BaseBackend.tile(x, y, z, search_options={...}) runs:
    a. CMRBackend.assets_for_tile(x, y, z, exitwhenfull=True)
@@ -86,7 +92,7 @@ GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&variable
    a. Calls granule.get_assets() → asset dict keyed "0", "1", ...
    b. Selects asset["0"], resolves href (direct_href vs external_href)
    c. Calls open_dataset(href, group=..., decode_times=..., auth_token=...)
-   d. Calls get_variable(ds, variable="sst", sel=...) → xarray.DataArray
+   d. Calls get_variables(ds, variables=["sst"], sel=...) → xarray.DataArray
    e. Sets self.input = DataArray
    f. Calls super().__attrs_post_init__() → rio_tiler.XarrayReader sets bounds, CRS, etc.
 
@@ -129,23 +135,27 @@ app-state caching, and per-granule provider caching.
 
 `startup()` in `main.py` runs once at application boot (or Lambda warm start):
 
-1. If `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` are set, a bearer token is obtained from
-   `https://urs.earthdata.nasa.gov/api/users/find_or_create_token` and stored at
-   `app.state.earthdata_token`.
-2. If `EARTHDATA_S3_DIRECT_ACCESS=true`, `make_get_s3_credentials(auth_token)` is called and
-   the resulting factory callable is stored at `app.state.get_s3_credentials`.
+1. If `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` are set, an `EarthdataTokenProvider` instance
+   is created and stored at `app.state.earthdata_token_provider`. The provider lazily fetches and
+   refreshes the bearer token from `https://urs.earthdata.nasa.gov/api/users/find_or_create_token`
+   on demand rather than eagerly at startup.
+2. If `EARTHDATA_S3_DIRECT_ACCESS=true`, a `GetS3Credentials(token_provider)` instance is
+   constructed (taking the provider so it can call `token_provider()` and pick up refreshed tokens)
+   and stored at `app.state.get_s3_credentials`.
 
-`make_get_s3_credentials` returns a function decorated with a `TTLCache(maxsize=100, ttl=50m)`.
-Calling it with an endpoint URL either constructs a new `EarthdataS3CredentialProvider` or
-returns the cached instance for that endpoint. The 50-minute TTL covers the expected lifetime of
-a Lambda execution environment and prevents redundant provider construction across requests.
+`GetS3Credentials` maintains a `TTLCache(maxsize=100, ttl=50m)` internally. Calling it with
+an endpoint URL either constructs a new `EarthdataS3CredentialProvider` or returns the cached
+instance for that endpoint. The 50-minute TTL covers the expected lifetime of a Lambda execution
+environment and prevents redundant provider construction across requests.
 
 ### Per-request propagation
 
 `BackendParams` is a FastAPI dependency that runs on every request. It reads
-`app.state.{earthdata_token, s3_access, get_s3_credentials}` and passes them into
-`CMRBackend`. `CMRBackend.__attrs_post_init__` merges them into `reader_options`, so every
-reader instance receives them as constructor arguments.
+`app.state.{earthdata_token_provider, s3_access, get_s3_credentials}` and passes them into
+`CMRBackend`. `BackendParams.__init__` calls `token_provider()` to obtain the current bearer
+token string. `CMRBackend.__attrs_post_init__` then merges the token, s3_access flag, and
+get_s3_credentials callable into `reader_options`, so every reader instance receives them as
+constructor arguments.
 
 ### Per-granule credential provider (`EarthdataS3CredentialProvider`)
 

@@ -7,8 +7,8 @@
    access method your collection uses. This was previously handled with the `backend` query
    parameter.
 
-   > The `/timeseries`, `/bbox/{bbox}/assets`, `/point/{lon},{lat}/assets`, and
-   > `/tiles/{tms}/{z}/{x}/{y}/assets` endpoints are backend-agnostic and keep the same
+   > The `/timeseries`, `/bbox/{bbox}/granules`, `/point/{lon},{lat}/granules`, and
+   > `/tiles/{tms}/{z}/{x}/{y}/granules` endpoints are backend-agnostic and keep the same
    > path — no prefix needed.
 
 2. **`concept_id` renamed to `collection_concept_id`.** The query parameter identifying a
@@ -62,5 +62,5 @@ paths.
 - **`skipcovered`** — Skip granules whose spatial footprint is already fully covered by
   previously selected granules. Reduces redundant data fetching for full-coverage queries.
 - **`coverage_tolerance`** — Tolerance for `skipcovered` coverage evaluation (float 0–1).
-- **`f`** — On `/assets` endpoints, controls response format: `json` returns a plain list
+- **`f`** — On `/granules` endpoints, controls response format: `json` returns a plain list
   of asset URLs, `geojson` returns a GeoJSON FeatureCollection with granule footprints.
