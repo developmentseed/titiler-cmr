@@ -2,11 +2,14 @@
 
 import unittest.mock as mock
 
+import pytest
 import shapely
 import shapely.geometry
+from httpx import ReadTimeout
 
+from titiler.cmr.errors import CMRQueryTimeout
 from titiler.cmr.models import Granule, GranuleSearch, GranuleSpatialExtent
-from titiler.cmr.query import _is_fully_covered, get_granules
+from titiler.cmr.query import _is_fully_covered, get_collection, get_granules
 
 
 def _make_granule(minx: float, miny: float, maxx: float, maxy: float) -> Granule:
@@ -239,3 +242,23 @@ class TestGetGranulesSkipcovered:
 
         assert len(results) == 1
         assert results[0].id == "G1"
+
+
+class TestCMRQueryTimeout:
+    """Tests that ReadTimeout from httpx is re-raised as CMRQueryTimeout."""
+
+    def test_get_granules_raises_on_timeout(self):
+        """get_granules raises CMRQueryTimeout when the CMR request times out."""
+        client = mock.MagicMock()
+        client.get.side_effect = ReadTimeout("timed out")
+
+        with pytest.raises(CMRQueryTimeout):
+            list(get_granules(GranuleSearch(), client))
+
+    def test_get_collection_raises_on_timeout(self):
+        """get_collection raises CMRQueryTimeout when the CMR request times out."""
+        client = mock.MagicMock()
+        client.get.side_effect = ReadTimeout("timed out")
+
+        with pytest.raises(CMRQueryTimeout):
+            get_collection("C1234-PROVIDER", client)

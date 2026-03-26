@@ -5,9 +5,10 @@ from typing import Any, Generator
 import shapely
 from fastapi import HTTPException
 from geojson_pydantic.geometries import Geometry, Point
-from httpx import Client, HTTPStatusError
+from httpx import Client, HTTPStatusError, ReadTimeout
 from shapely.geometry import shape
 
+from titiler.cmr.errors import CMRQueryTimeout
 from titiler.cmr.logger import logger
 from titiler.cmr.models import (
     Collection,
@@ -152,7 +153,10 @@ def get_granules(
     headers: dict[str, str] = {}
     count = 0
     while count < limit:
-        response = client.get("granules.umm_json", params=params, headers=headers)
+        try:
+            response = client.get("granules.umm_json", params=params, headers=headers)
+        except ReadTimeout as e:
+            raise CMRQueryTimeout("CMR granule search timed out") from e
         logger.info("Querying CMR: %s with headers %s", response.url, headers)
 
         try:
@@ -197,10 +201,13 @@ def get_collection(concept_id: str, client: Client) -> Collection:
         HTTPException: 404 if the collection is not found; otherwise the CMR
             HTTP status code.
     """
-    response = client.get(
-        "collections.umm_json",
-        params={"concept_id": concept_id},
-    )
+    try:
+        response = client.get(
+            "collections.umm_json",
+            params={"concept_id": concept_id},
+        )
+    except ReadTimeout as e:
+        raise CMRQueryTimeout("CMR collection search timed out") from e
 
     try:
         response.raise_for_status()

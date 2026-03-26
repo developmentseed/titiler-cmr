@@ -26,6 +26,7 @@ from titiler.xarray.dependencies import (
 )
 
 from titiler.cmr import __version__ as titiler_cmr_version
+from titiler.cmr.errors import CMRQueryTimeout
 from titiler.cmr.compatibility import router as compatibility_router
 from titiler.cmr.credentials import EarthdataTokenProvider, GetS3Credentials
 from titiler.cmr.dependencies import (
@@ -226,6 +227,7 @@ app = FastAPI(
 
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 add_exception_handlers(app, MOSAIC_STATUS_CODES)
+add_exception_handlers(app, {CMRQueryTimeout: 504})
 
 # Set all CORS enabled origins
 if settings.cors_origins:

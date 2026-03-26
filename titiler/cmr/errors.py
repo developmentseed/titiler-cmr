@@ -19,3 +19,7 @@ class InvalidBBox(Exception):
 
 class InvalidDatetime(Exception):
     """Invalid datetime."""
+
+
+class CMRQueryTimeout(Exception):
+    """CMR granule search request timed out."""
