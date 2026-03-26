@@ -1488,12 +1488,12 @@ print("Abstract: ", ds["umm"]["Abstract"])</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Concept-Id:  C2021957295-LPCLOUD
-Abstract:  The Harmonized Landsat Sentinel-2 (HLS) project provides consistent surface reflectance data from the Operational Land Imager (OLI) aboard the joint NASA/USGS Landsat 8 satellite and the Multi-Spectral Instrument (MSI) aboard Europe’s Copernicus Sentinel-2A, Sentinel-2B, and Sentinel-2C satellites. The combined measurement enables global observations of the land every 2–3 days at 30-meter (m) spatial resolution. The HLS project uses a set of algorithms to obtain seamless products from OLI and MSI that include atmospheric correction, cloud and cloud-shadow masking, spatial co-registration and common gridding, illumination and view angle normalization, and spectral bandpass adjustment. 
+<pre>Concept-Id:  C2021957657-LPCLOUD
+Abstract:  The Harmonized Landsat Sentinel-2 (HLS) project provides consistent surface reflectance (SR) and top of atmosphere (TOA) brightness data from a virtual constellation of satellite sensors. The Operational Land Imager (OLI) is housed aboard the joint NASA/USGS Landsat 8 and Landsat 9 satellites, while the Multi-Spectral Instrument (MSI) is mounted aboard Europe’s Copernicus Sentinel-2A, Sentinel-2B, and Sentinel-2C satellites. The combined measurement enables global observations of the land every 1.6 days at 30-meter (m) spatial resolution. The HLS project uses a set of algorithms to obtain seamless products from OLI and MSI that include atmospheric correction, cloud and cloud-shadow masking, spatial co-registration and common gridding, illumination and view angle normalization, and spectral bandpass adjustment.
 
-The HLSS30 product provides 30-m Nadir Bidirectional Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) and is derived from Sentinel-2A, Sentinel-2B, and Sentinel-2C MSI data products. The HLSS30 and [HLSL30](https://doi.org/10.5067/HLS/HLSL30.002) products are gridded to the same resolution and Military Grid Reference System ([MGRS](https://hls.gsfc.nasa.gov/products-description/tiling-system/)) tiling system and thus are “stackable” for time series analysis.
+The HLSL30 product provides 30-m Nadir Bidirectional Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) and is derived from Landsat 8/9 OLI data products. The [HLSS30](https://doi.org/10.5067/HLS/HLSS30.002) and HLSL30 products are gridded to the same resolution and Military Grid Reference System ([MGRS](https://hls.gsfc.nasa.gov/products-description/tiling-system/)) tiling system and thus are “stackable” for time series analysis.
 
-The HLSS30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each band is distributed as a separate COG. There are 13 bands included in the HLSS30 product along with four angle bands and a quality assessment (QA) band. See the User Guide for a more detailed description of the individual bands provided in the HLSS30 product.
+The HLSL30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each band is distributed as a separate file. There are 11 bands included in the HLSL30 product along with one quality assessment (QA) band and four angle bands. See the User Guide for a more detailed description of the individual bands provided in the HLSL30 product.
 
 The HLS project is funded by NASA’s Satellite Needs Working Group (SNWG) which provides data products developed to meet the needs of stakeholders from US government agencies.
 
@@ -1509,7 +1509,7 @@ Known Issues
 
 * Unrealistically high snow surface reflectance in the visible bands: By design, the Land Surface Reflectance Code (LaSRC) atmospheric correction does not attempt aerosol retrieval over snow; instead, a default aerosol optical thickness (AOT) is used to drive the snow surface reflectance. If the snow detection fails, the full LaSRC is used in both AOT retrieval and surface reflectance derivation over snow, which produces surface reflectance values as high as 1.6 in the visible bands. This is a common problem for spring images at high latitudes.
 
-* Unrealistically low surface reflectance surrounding snow/ice: Related to the above, the AOT retrieval over snow/ice is generally too high. When this artificially high AOT is used to derive the surface reflectance of the neighboring non-snow pixels, very low surface reflectance will result. These pixels will appear very dark in the visible bands. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. In Figure 1, the pixels in front of the glaciers have surface reflectance values that are too low.  
+* Unrealistically low surface reflectance surrounding snow/ice: Related to the above, the AOT retrieval over snow/ice is generally too high. When this artificially high AOT is used to derive the surface reflectance of the neighboring non-snow pixels, very low surface reflectance will result. These pixels will appear very dark in the visible bands. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used.
 
 * Unrealistically low reflectance surrounding clouds: Like for snow, the HLS atmospheric correction does not attempt aerosol retrieval over clouds and a default AOT is used instead. But if the cloud detection fails, an artificially high AOT will be retrieved over clouds. If the high AOT is used to derive the surface reflectance of the neighboring cloud-free pixels, very low surface reflectance values will result. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. 
 
@@ -1531,16 +1531,16 @@ Known Issues
 
 * L30 from Landsat L1GT scenes: Landsat L1GT scenes were not intended for HLS due to their poor geolocation. However, some scenes made it through screening for a short period of HLS production. L1GT L30 scenes mainly consist of extensive cloud or snow that can be eliminated using the Fmask quality bits layer. Users can also identify an L1GT-originated L30 granule by examining the HLS cmr.xml metadata file.
 
-* The UTC dates in the L30/S30 filenames may not be the local dates: UTC dates are used by ESA and the U.S. Geological Survey (USGS) in naming their Level 1 images, and HLS processing retains this information to name the L30 and S30 products. Landsat and Sentinel-2 overpass eastern Australia and New Zealand around 10AM local solar time, but this area is in either UTC+10:00 or +11:00 zone; therefore, the UTC time for some orbits is in fact near the end of the preceding UTC day. For example, HLS.S30.T59HQS.2016117T221552.v2.0 was acquired in the 22nd hour of day 117 of year 2016 in UTC, but the time was 10:15:52 of day 118 locally. Approximately 100 minutes later HLS.S30.T56JML.2016117T235252.v2.0 was acquired in the next orbit in eastern Australia.  
+* The UTC dates in the L30/S30 filenames may not be the local dates: UTC dates are used by ESA and the U.S. Geological Survey (USGS) in naming their Level 1 images, and HLS processing retains this information to name the L30 and S30 products. Landsat and Sentinel-2 overpass eastern Australia and New Zealand around 10AM local solar time, but this area is in either UTC+10:00 or +11:00 zone; therefore, the UTC time for some orbits is in fact near the end of the preceding UTC day. For example, HLS.S30.T59HQS.2016117T221552.v2.0 was acquired in the 22nd hour of day 117 of year 2016 in UTC, but the time was 10:15:52 of day 118 locally. Approximately 100 minutes later HLS.S30.T56JML.2016117T235252.v2.0 was acquired in the next orbit in eastern Australia. 
 
      This issue also occurs for Landsat. For example, HLS.L30.T59HQS.2016117T221209.v2.0 was acquired on the same day as the first S30 example given above, but both on day 118 of 2016 locally. Adding to the confusion for L30, in the same region, Landsat 8 and 9 can each overpass once in one of the two adjacent WRS-2 Paths (91/92/93) over a two-day period on a local calendar, but based on UTC time, the two overpasses can appear to be on the same day. For example, in the following seemingly same-day pair, the second L30 is actually for day 168 locally:  
      HLS.L30.T55GCN.2023167T000407.v2.0  
      HLS.L30.T55GCN.2023167T235747.v2.0  
-     Bear in mind, the date peculiarity for the data occurs when the overpass time is during the late hours of a UTC day.  
+     Bear in mind, the date peculiarity for the data occurs when the overpass time is during the late hours of a UTC day. 
 
 * The atmospheric ancillary data from the wrong date was used for LaSRC: Related to the above, for eastern Australia and New Zealand, L30 and S30 surface reflectance on certain days was created using the atmospheric ancillary data from a date that was one day too early. The exact geographic extent of the affected HLS products and the impact on the surface reflectance quality are under investigation. Practice caution when using data with overpass times during the late hours of a UTC day.
 
-* Duplicates in L30: The Landsat 9 acquisitions from October 2021 to March 2023 in Landsat Collection 2 were reprocessed by USGS in March 2023. This reprocessing updated the overpass time by a fraction of a second for some scenes. Since HLS uses overpass time as part of the L30 filename, the older L30 granules were not automatically overwritten due to the different filenames. For example, the first L30 granule in the following pair originated from an older version of L1TP of Landsat 9 with the second granule originating from the reprocessed version.  
+* Duplicates in L30: The Landsat 9 acquisitions from October 2021 to March 2023 in Landsat Collection 2 were reprocessed by USGS in March 2023. This reprocessing updated the overpass time by a fraction of a second for some scenes. Since HLS uses overpass time as part of the L30 filename, the older L30 granules were not automatically overwritten due to the different filenames. For example, the first L30 granule in the following pair originated from an older version of L1TP of Landsat 9 with the second granule originating from the reprocessed version.    
 HLS.L30.T11SLC.2022166T182646.v2.0  
 HLS.L30.T11SLC.2022166T182645.v2.0  
 There are other causes of duplicate L30 granules, but the overall number of duplicates is very small.
@@ -1609,13 +1609,13 @@ print(json.dumps(compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "concept_id": "C2021957295-LPCLOUD",
+  "concept_id": "C2021957657-LPCLOUD",
   "backend": "rasterio",
   "datetime": [
     {
       "RangeDateTimes": [
         {
-          "BeginningDateTime": "2015-11-28T00:00:00.000Z"
+          "BeginningDateTime": "2013-04-11T00:00:00.000Z"
         }
       ],
       "EndsAtPresentFlag": true,
@@ -1627,33 +1627,30 @@ print(json.dumps(compatibility_response, indent=2))</div>
     }
   ],
   "example_assets": {
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.Fmask.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B11.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VZA.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B02.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SAA.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B03.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B06.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.VAA.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.SZA.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B07.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B8A.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B01.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B10.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B04.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B12.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B09.tif",
-    "HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B05.tif"
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B09.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B09.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.Fmask.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.Fmask.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B06.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B06.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B01.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B01.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B07.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B07.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.VZA.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.VZA.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B10.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B10.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B04.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B04.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.SAA.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.SAA.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.VAA.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.VAA.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B05.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B05.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.SZA.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.SZA.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B02.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B02.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B03.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B03.tif",
+    "HLS.L30.T59WPT.2013101T001445.v2.0.B11.tif": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B11.tif"
   },
   "sample_asset_raster_info": {
     "bounds": [
-      699960.0,
-      -2909760.0,
-      809760.0,
-      -2799960.0
+      600000.0,
+      7690200.0,
+      709800.0,
+      7800000.0
     ],
-    "crs": "http://www.opengis.net/def/crs/EPSG/0/32655",
+    "crs": "PROJCS[\"UTM Zone 59, Northern Hemisphere\",GEOGCS[\"Unknown datum based upon the WGS 84 ellipsoid\",DATUM[\"Not specified (based on WGS 84 spheroid)\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",171],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
     "band_metadata": [
       [
         "b1",
@@ -1663,7 +1660,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
     "band_descriptions": [
       [
         "b1",
-        "NIR_Broad"
+        "Cirrus"
       ]
     ],
     "dtype": "int16",
@@ -1861,7 +1858,7 @@ print(r)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
+<pre>{'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD&amp;datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;backend=rasterio&amp;bands=B04&amp;bands=B03&amp;bands=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
 </pre>
 </div>
 </div>
@@ -1944,7 +1941,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_b414713241af24650d6b197240ed2782 {
+                #map_8d6209f8c1ba52909dae5fe57f9059ff {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -1958,14 +1955,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_b414713241af24650d6b197240ed2782" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_8d6209f8c1ba52909dae5fe57f9059ff" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_b414713241af24650d6b197240ed2782 = L.map(
-                "map_b414713241af24650d6b197240ed2782",
+            var map_8d6209f8c1ba52909dae5fe57f9059ff = L.map(
+                "map_8d6209f8c1ba52909dae5fe57f9059ff",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -1979,22 +1976,22 @@ m</div>
 
         
     
-            var tile_layer_594b1dd1d75392cca242cc82c947472c = L.tileLayer(
+            var tile_layer_b7b977f414ffcc709ddf06c00c2d4f0a = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_594b1dd1d75392cca242cc82c947472c.addTo(map_b414713241af24650d6b197240ed2782);
+            tile_layer_b7b977f414ffcc709ddf06c00c2d4f0a.addTo(map_8d6209f8c1ba52909dae5fe57f9059ff);
         
     
-            var tile_layer_3b3a8b4f64326d96787bd42d364dc294 = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
+            var tile_layer_bf63522a5088f841ed25dd0ecfd0150f = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-10-01T00%3A00%3A00Z%2F2024-10-10T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026bands=B04\u0026bands=B03\u0026bands=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_3b3a8b4f64326d96787bd42d364dc294.addTo(map_b414713241af24650d6b197240ed2782);
+            tile_layer_bf63522a5088f841ed25dd0ecfd0150f.addTo(map_8d6209f8c1ba52909dae5fe57f9059ff);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2152,7 +2149,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_6048e518899997205ba16d8cbc76c5c4 {
+                #map_3fc9b644dfab7be751e7e9894548c274 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2166,14 +2163,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_6048e518899997205ba16d8cbc76c5c4" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_3fc9b644dfab7be751e7e9894548c274" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_6048e518899997205ba16d8cbc76c5c4 = L.map(
-                "map_6048e518899997205ba16d8cbc76c5c4",
+            var map_3fc9b644dfab7be751e7e9894548c274 = L.map(
+                "map_3fc9b644dfab7be751e7e9894548c274",
                 {
                     center: [47.9221313337365, -91.65432884883238],
                     crs: L.CRS.EPSG3857,
@@ -2187,22 +2184,22 @@ m</div>
 
         
     
-            var tile_layer_9a8a6c4be5b7f4806cef521afc55e0ea = L.tileLayer(
+            var tile_layer_c8b535e3163e21e54710d84eb75fe5d5 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_9a8a6c4be5b7f4806cef521afc55e0ea.addTo(map_6048e518899997205ba16d8cbc76c5c4);
+            tile_layer_c8b535e3163e21e54710d84eb75fe5d5.addTo(map_3fc9b644dfab7be751e7e9894548c274);
         
     
-            var tile_layer_ef28f3dcb318b14290e9291116478550 = L.tileLayer(
-                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957295-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
+            var tile_layer_f865d152675e7c7eeeb110b6574fa4de = L.tileLayer(
+                "https://staging.openveda.cloud/api/titiler-cmr/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?concept_id=C2021957657-LPCLOUD\u0026datetime=2024-06-20T00%3A00%3A00Z%2F2024-06-27T23%3A59%3A59Z\u0026bands_regex=B%5B0-9%5D%5B0-9%5D\u0026backend=rasterio\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026bands=B05\u0026bands=B04\u0026colormap_name=greens\u0026rescale=-1%2C1",
                 {"attribution": "NASA", "detectRetina": false, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_ef28f3dcb318b14290e9291116478550.addTo(map_6048e518899997205ba16d8cbc76c5c4);
+            tile_layer_f865d152675e7c7eeeb110b6574fa4de.addTo(map_3fc9b644dfab7be751e7e9894548c274);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2403,48 +2400,48 @@ print(json.dumps(r, indent=2))</div>
       "properties": {
         "statistics": {
           "(B05-B04)/(B05+B04)": {
-            "min": -111.0,
-            "max": 1.7976931348623157e+308,
-            "mean": null,
+            "min": -75.4,
+            "max": 26.6,
+            "mean": 0.5238783261952482,
             "count": 57304.8046875,
-            "sum": null,
-            "std": null,
-            "median": 0.28023598820059,
-            "majority": 0.3333333333333333,
-            "minority": -111.0,
-            "unique": 42086.0,
+            "sum": 30020.745162633113,
+            "std": 0.6052277569586431,
+            "median": 0.6041512231282431,
+            "majority": 0.75,
+            "minority": -75.4,
+            "unique": 47613.0,
             "histogram": [
               [
-                57796,
+                1,
+                0,
+                2,
+                1,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
+                16,
+                57764,
+                12,
                 2
               ],
               [
-                -111.0,
-                1.7976931348623158e+307,
-                3.5953862697246315e+307,
-                5.393079404586948e+307,
-                7.190772539449263e+307,
-                8.988465674311579e+307,
-                1.0786158809173895e+308,
-                1.258385194403621e+308,
-                1.4381545078898526e+308,
-                1.6179238213760842e+308,
-                1.7976931348623157e+308
+                -75.4,
+                -65.2,
+                -55.00000000000001,
+                -44.80000000000001,
+                -34.60000000000001,
+                -24.400000000000006,
+                -14.20000000000001,
+                -4.000000000000014,
+                6.199999999999989,
+                16.39999999999999,
+                26.6
               ]
             ],
             "valid_percent": 100.0,
             "masked_pixels": 0.0,
             "valid_pixels": 57798.0,
-            "percentile_2": 0.001119263773162542,
-            "percentile_98": 0.5649122807017544
+            "percentile_2": 0.04382638010956595,
+            "percentile_98": 0.8685282140779523
           }
         }
       }
