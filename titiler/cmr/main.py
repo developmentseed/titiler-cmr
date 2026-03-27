@@ -5,6 +5,7 @@ from typing import Annotated, Literal
 
 import jinja2
 from fastapi import FastAPI, Query, Request
+from fastapi.responses import RedirectResponse
 from httpx import Client
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
@@ -241,6 +242,12 @@ if settings.cors_origins:
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
 app.add_middleware(LoggerMiddleware)
+
+
+@app.get("/docs", include_in_schema=False)
+def docs_redirect() -> RedirectResponse:
+    """Redirect /docs to /api.html (Swagger UI)."""
+    return RedirectResponse(url="/api.html")
 
 
 @app.get(
