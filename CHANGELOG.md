@@ -8,12 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Add Earthdata Login based S3 access, except for the rasterio backend, to be
-  addressed separately.
+- Restructure API into two separate backends with distinct route prefixes:
+  `/xarray` for NetCDF/HDF5 datasets (via xarray) and `/rasterio` for
+  multi-band raster files (via rio-tiler/GDAL)
+- `orbit_number` query parameter for filtering granules by orbit number
+- Multi-variable visualization support in xarray backend
+- Legacy route redirects (`titiler/cmr/legacy.py`) for backwards compatibility
+  with old API paths and parameter names
+- Architecture documentation (`docs/architecture.md`)
+- Earthdata Login (EDL) based S3 direct access: bearer token fetched from the
+  EDL token endpoint and auto-refreshed before expiry; temporary per-DAAC S3
+  credentials cached for 50 minutes; falls back to HTTPS with
+  `Authorization: Bearer` when S3 direct access is unavailable
   ([#112](https://github.com/developmentseed/titiler-cmr/pull/112))
 - Update deployment application to add EARTHDATA_USERNAME and EARTHDATA_PASSWORD
   to Lambda environment
   ([#120](https://github.com/developmentseed/titiler-cmr/pull/120))
+- Multiple additional CMR Granule Search parameters:
+  - `skipcovered`: skip granules whose footprint is already fully covered by previously-selected granules
+  - `coverage_tolerance`: spatial buffer (degrees) for coverage checks; defaults differ by backend (xarray: 0.0, rasterio: 0.01)
+  - `exitwhenfull`: stop fetching granules once the requested area is fully covered (default: true)
+  - `f` (on `/granules` endpoints): response format — `json` (default list) or `geojson` (FeatureCollection with footprints)
+  - `cloud_cover`: filter granules by cloud cover percentage range
+  - `attribute`: filter by additional CMR granule attributes
+  - `sort_key`: control CMR result ordering
+- Multi-variable xarray support: `variables` parameter (plural) accepts repeated values (e.g., `variables=sst&variables=precip`)
+- GeoJSON output format for `/granules` endpoints via `f=geojson`, returning granule spatial footprints as a FeatureCollection
+- Automatic expression translation: expressions using named assets or xarray variables (e.g., `B04/B03`, `sst/error`) are automatically rewritten to positional band references (`b1/b2`) required by rio-tiler ≥ 9
+- Xarray backend uses [obstore](https://github.com/developmentseed/obstore) and [obspec-utils](https://github.com/developmentseed/obspec-utils) for cloud-native dataset loading, replacing fsspec
+- Migration guide (`docs/migration.md`) documenting breaking changes and upgrade paths from pre-1.0 API
 
 ### Fixed
 
@@ -34,8 +57,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Backend selection moved from `?backend=` query parameter to URL prefix
+  (`/xarray/` or `/rasterio/`); the old `?backend=` parameter is accepted by
+  legacy redirects for backwards compatibility, defaulting to rasterio when absent
+- `variable` (singular) renamed to `variables` (plural) for xarray backend;
+  old name still accepted via redirect
+- S3 authentication is now exclusively via Earthdata Login bearer tokens and
+  per-DAAC temporary S3 credentials; AWS IAM / role-based access is no longer used
+- Full backwards compatibility with pre-1.0 API: old root-level paths
+  automatically redirect (301/308) to the appropriate backend prefix, with
+  parameter renames (`concept_id`, `datetime`, `bands_regex`, `variable`)
+  applied transparently during redirect
+- `concept_id` query parameter renamed to `collection_concept_id` to align
+  with CMR naming; old name still accepted via redirect
+- `datetime` query parameter renamed to `temporal` to align with CMR standard;
+  old name still accepted via redirect
+- `bands_regex` query parameter renamed to `assets_regex`; old name still
+  accepted via redirect
+- CMR granule search now uses `granules.umm_json` format instead of
+  `granules.json`
+- Timeseries logic extracted from `factory.py` into `titiler/cmr/timeseries.py`
 - Simplify function `get_geojson_bounds` and add illustrative examples to its
   docstring ([#115](https://github.com/developmentseed/titiler-cmr/issues/115))
+- Upgraded to titiler>=2.0,<3 and rio-tiler>=9.0,<10
 
 ## [v0.3.0]
 

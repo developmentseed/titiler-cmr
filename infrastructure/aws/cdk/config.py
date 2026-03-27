@@ -53,9 +53,9 @@ class AppSettings(BaseSettings):
     max_concurrent: int | None = None
     alarm_email: str | None = None
     root_path: str | None = None
-    s3_auth_strategy: str | None = "environment"
     earthdata_username: str | None = Field(None, validation_alias="EARTHDATA_USERNAME")
     earthdata_password: str | None = Field(None, validation_alias="EARTHDATA_PASSWORD")
+    earthdata_s3_direct_access: bool = False
 
     aws_request_payer: str | None = None
     telemetry_enabled: bool = True
@@ -66,11 +66,9 @@ class AppSettings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_earthdata_creds(self):
-        """Validate earthdata credentials and s3 auth strategy"""
-        if self.s3_auth_strategy == "environment":
-            if not (self.earthdata_username and self.earthdata_password):
-                raise ValueError(
-                    "If TITILER_CMR_S3_AUTH_STRATEGY is set to 'environment' you must provide "
-                    "EARTHDATA_USERNAME and EARTHDATA_PASSWORD"
-                )
+        """Validate that Earthdata credentials are provided."""
+        if not (self.earthdata_username and self.earthdata_password):
+            raise ValueError(
+                "EARTHDATA_USERNAME and EARTHDATA_PASSWORD must be provided"
+            )
         return self

@@ -1,31 +1,49 @@
-"""TiTiler+cmr FastAPI application."""
+"""TiTiler+CMR FastAPI application."""
 
-import threading
-import typing as t
-from collections.abc import Callable
 from contextlib import asynccontextmanager
+from typing import Annotated, Literal
 
-import cachetools
-import earthaccess
 import jinja2
-import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Query, Request
+from fastapi.responses import RedirectResponse
+from httpx import Client
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
+from titiler.core.dependencies import DatasetParams as RasterioDatasetParams
+from titiler.core.dependencies import ExpressionParams
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
+from titiler.core.factory import (
+    AlgorithmFactory,
+    ColorMapFactory,
+    TMSFactory,
+)
 from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
+from titiler.core.models.OGC import Conformance, Landing
+from titiler.core.resources.enums import MediaType
+from titiler.core.utils import accept_media_type, create_html_response
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
+from titiler.xarray.dependencies import (
+    DatasetParams as XarrayDatasetParams,
+)
 
 from titiler.cmr import __version__ as titiler_cmr_version
-from titiler.cmr.backend import AWSCredentials
-from titiler.cmr.errors import DEFAULT_STATUS_CODES as CMR_STATUS_CODES
-from titiler.cmr.factory import Endpoints
+from titiler.cmr.compatibility import router as compatibility_router
+from titiler.cmr.credentials import EarthdataTokenProvider, GetS3Credentials
+from titiler.cmr.dependencies import (
+    CMRAssetsExprParams,
+    CMRAssetsParams,
+    RasterioGranuleSearchBackendParams,
+    interpolated_xarray_ds_params,
+)
+from titiler.cmr.errors import CMRQueryTimeout
+from titiler.cmr.factory import CMRTilerFactory, granules_router
+from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
-from titiler.cmr.settings import ApiSettings, AuthSettings
-from titiler.cmr.timeseries import TimeseriesExtension
-from titiler.cmr.utils import retry
+from titiler.cmr.query import CMR_GRANULE_SEARCH_API
+from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
+from titiler.cmr.settings import ApiSettings, EarthdataSettings
+from titiler.cmr.timeseries import TimeseriesExtension, timeseries_router
 
-# Configure logging at application startup
 configure_logging()
 
 jinja2_env = jinja2.Environment(
@@ -39,75 +57,67 @@ jinja2_env = jinja2.Environment(
 templates = Jinja2Templates(env=jinja2_env)
 
 settings = ApiSettings()
-auth_config = AuthSettings()
+earthdata_settings = EarthdataSettings()
+
+TITILER_CONFORMS_TO = {
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html",
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json",
+}
+
+
+def startup(app: FastAPI) -> None:
+    """Perform application startup.
+
+    Called directly by the Lambda handler (which bypasses the lifespan) and
+    also from within the lifespan context manager for non-Lambda deployments.
+    """
+    cmr_headers = (
+        {"client-id": settings.cmr_client_id} if settings.cmr_client_id else {}
+    )
+    app.state.client = Client(
+        base_url=CMR_GRANULE_SEARCH_API,
+        timeout=settings.cmr_timeout,
+        headers=cmr_headers,
+    )
+
+    app.state.s3_access = earthdata_settings.earthdata_s3_direct_access
+    logger.info("S3 direct access: %s", app.state.s3_access)
+
+    app.state.earthdata_token_provider = None
+    app.state.get_s3_credentials = None
+
+    if earthdata_settings.earthdata_username and earthdata_settings.earthdata_password:
+        token_provider = EarthdataTokenProvider(
+            earthdata_settings.earthdata_username,
+            earthdata_settings.earthdata_password,
+        )
+        app.state.earthdata_token_provider = token_provider
+
+        if app.state.s3_access:
+            get_s3_credentials = GetS3Credentials(token_provider)
+            app.state.get_s3_credentials = get_s3_credentials
+            token_provider.register_refresh_callback(get_s3_credentials.clear)
+    else:
+        logger.warning(
+            "EARTHDATA_USERNAME/EARTHDATA_PASSWORD not set; authenticated access unavailable"
+        )
+
+
+def shutdown(app: FastAPI) -> None:
+    """Perform application shutdown."""
+    app.state.client.close()
+    logger.info("Shutting down")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI Lifespan."""
-
     startup(app)
     yield
     shutdown(app)
-
-
-def startup(app: FastAPI) -> None:
-    """Perform application startup."""
-
-    auth = earthaccess.login(strategy=auth_config.strategy)
-
-    app.state.auth = auth
-    app.state.get_s3_credentials = (
-        make_get_s3_credentials(auth) if auth_config.access == "direct" else None
-    )
-
-
-def shutdown(app: FastAPI) -> None:
-    """Perform application shutdown."""
-    logger.info("Shutting down")
-
-
-def make_get_s3_credentials(auth: earthaccess.Auth) -> Callable[[str], AWSCredentials]:
-    """Create a function that returns temporary S3 credentials for an endpoint.
-
-    Wraps an authenticated earthaccess client with a TTL-based cache to limit
-    calls for temporary S3 credentials while keeping them fresh.
-
-    Args:
-        auth: Authenticated earthaccess client used to request S3 credentials.
-
-    Returns:
-        A callable that accepts an (HTTPS) endpoint and returns temporary S3
-        credentials from the endpoint, via the ``auth`` object.
-    """
-
-    @cachetools.cached(
-        cachetools.TTLCache(maxsize=100, ttl=50 * 60),  # Expire in 50 minutes
-        condition=threading.Condition(),  # Prevent race conditions
-    )
-    @retry(5, requests.RequestException, 1)
-    def get_s3_credentials(endpoint: str) -> AWSCredentials:
-        logger.info("Fetching temporary S3 credentials from %s", endpoint)
-
-        # NOTE: Frustratingly, Auth.get_s3_credentials simply returns an empty
-        # dict if any sort of request fails, rather than raising an error.
-        # Therefore, we are forced to check the result and raise our own error
-        # if the result is empty.
-        if not (creds := auth.get_s3_credentials(endpoint=endpoint)):
-            logger.error("Failed to fetch temporary S3 credentials from %s", endpoint)
-            # We cannot tell what the underlying exception was, since it was
-            # swallowed by earthaccess, so we're just making one up.
-            raise HTTPException(500, "earthaccess failed to retrieve S3 credentials")
-
-        logger.info(
-            "Fetched temporary S3 credentials from %s, expiring at %s.",
-            endpoint,
-            creds.get("expiration", "an unknown time"),
-        )
-
-        return t.cast(AWSCredentials, creds)
-
-    return get_s3_credentials
 
 
 description = """A TiTiler-based dynamic tiling application for the Common Metadata Repository (CMR).
@@ -120,68 +130,95 @@ description = """A TiTiler-based dynamic tiling application for the Common Metad
 
 ---
 
-This API allows you to interact with data in CMR using many of the familiar TiTiler functions.
-Users can specify a CMR query for a specific concept id (e.g. C123456-LPDAAC_ECS) and datetime
-and get a TileJSON, XYZ tile image, statistics report (for a GeoJSON) and more.
+This API renders dynamic tile-based visualizations of geospatial assets discovered through
+[NASA's Common Metadata Repository (CMR)](https://cmr.earthdata.nasa.gov). Users specify a
+CMR collection (`collection_concept_id`) along with optional CMR search filters — such as
+`temporal`, `bounding_box`, or `cloud_cover` — and the API will query CMR for matching
+granules, fetch their assets, and render tiles, statistics, or images on demand. Query
+parameters accepted by this API are forwarded directly to the
+[CMR Granule Search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html).
+
+Two backends are available:
+
+- **Xarray** (`/xarray`): For multi-dimensional array datasets (e.g. NetCDF, HDF5). Supports
+  selecting specific variables and dimensions.
+- **Rasterio** (`/rasterio`): For raster file formats readable by GDAL/rasterio
+  (e.g. GeoTIFF, COG).
 
 ## Timeseries
 The Timeseries Extension provides endpoints for requesting results for all points or intervals
 along a timeseries. The [/timeseries family of endpoints](#/Timeseries) works by converting
-the provided timeseries parameters (`datetime`, `step`, and `temporal_mode`) into a set of
-`datetime` query parameters for the corresponding lower-level endpoint, running asynchronous
+the provided timeseries parameters (`temporal`, `step`, and `temporal_mode`) into a set of
+`temporal` query parameters for the corresponding lower-level endpoint, running asynchronous
 requests to the lower-level endpoint, then collecting the results and formatting them in a
 coherent format for the user.
 
-The timeseries structure is defined by the `datetime`, `step`, and `temporal_mode` parameters.
+The timeseries structure is defined by the `temporal`, `step`, and `temporal_mode` parameters.
 
-The `temporal_mode` mode parameter controls whether or not CMR is queried for a particular
-point-in-time (`temporal_mode=point`) or over an entire interval (`temporal_mode=interval`).
-In general, it is best to use `temporal_mode=point` for datasets where granules overlap completely
-in space (e.g. daily sea surface temperature predictions) because the /timeseries endpoints will
-create a mosaic of all assets returned by the query and the first asset to cover a pixel will
-be used. For datasets where it requires granules from multiple timestamps to fully cover an AOI,
-`temporal_mode=interval` is appropriate. For example, you can get weekly composites of satellite
-imagery for visualization purposes with `step=P1W & temporal_mode=interval`.
+The `temporal_mode` parameter controls whether CMR is queried for a particular point-in-time
+(`temporal_mode=point`) or over an entire interval (`temporal_mode=interval`). In general,
+use `temporal_mode=point` for datasets where granules overlap completely in space (e.g. daily
+sea surface temperature predictions). For datasets requiring granules from multiple timestamps
+to fully cover an AOI, `temporal_mode=interval` is appropriate — for example, weekly composites
+of satellite imagery with `step=P1W&temporal_mode=interval`.
 
-To get a timeseries for all granules between two datetimes, you can simply specify
-`datetime={start}/{end}` and a query will be sent to CMR to identify all of the granule timestamps
-between the provided `start` and `end` datetimes.
+To get a timeseries for all granules between two datetimes, specify
+`temporal={start}/{end}` and a query will be sent to CMR to identify all of the granule
+timestamps between the provided `start` and `end` datetimes.
 
-To get a weekly sample of granules you can specify `datetime={start}/{end}`, `step=P1W`, and
+To get a weekly sample of granules you can specify `temporal={start}/{end}`, `step=P1W`, and
 `temporal_mode=point`.
 """
 
 
 tags_metadata = [
     {
-        "name": "Raster Tiles",
+        "name": "OGC Common",
+        "description": "OGC API Common endpoints for the landing page and conformance declaration.",
     },
     {
-        "name": "TileJSON",
+        "name": "Compatibility",
+        "description": "Endpoint for evaluating a collection_concept_ids compatibility with TiTiler-CMR.",
     },
     {
-        "name": "Map",
+        "name": "Xarray Backend",
+        "description": "Tile, statistics, and image endpoints backed by the Xarray reader. "
+        "Suitable for multi-dimensional array datasets such as NetCDF and HDF5.",
     },
     {
-        "name": "Statistics",
+        "name": "Rasterio Backend",
+        "description": "Tile, statistics, and image endpoints backed by the GDAL/rasterio reader. "
+        "Suitable for raster file formats such as GeoTIFF and Cloud-Optimized GeoTIFF (COG).",
     },
     {
-        "name": "Images",
+        "name": "Granules",
+        "description": "Backend-independent endpoints for querying CMR granule metadata. "
+        "These endpoints return matching granules without reading any data.",
     },
     {
         "name": "Timeseries",
-        "description": "A family of endpoints for timeseries analysis and visualization.",
+        "description": "Endpoints for timeseries analysis and visualization. These endpoints "
+        "expand a `temporal` range into individual CMR queries and aggregate the results.",
     },
     {
         "name": "Tiling Schemes",
+        "description": "Available OGC Tile Matrix Sets (tiling schemes).",
     },
     {
-        "name": "Landing Page",
+        "name": "Algorithms",
+        "description": "Available post-processing algorithms that can be applied to tile data.",
     },
     {
-        "name": "Conformance",
+        "name": "ColorMaps",
+        "description": "Available colormaps for single-band data visualization.",
+    },
+    {
+        "name": "Legacy (Deprecated)",
+        "description": "Deprecated redirect routes maintained for backwards compatibility. "
+        "These routes will be removed in a future version.",
     },
 ]
+
 
 app = FastAPI(
     title=settings.name,
@@ -194,12 +231,9 @@ app = FastAPI(
     openapi_tags=tags_metadata,
 )
 
-app.state.auth = None
-app.state.get_s3_credentials = None
-
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 add_exception_handlers(app, MOSAIC_STATUS_CODES)
-add_exception_handlers(app, CMR_STATUS_CODES)
+add_exception_handlers(app, {CMRQueryTimeout: 504})
 
 # Set all CORS enabled origins
 if settings.cors_origins:
@@ -212,15 +246,243 @@ if settings.cors_origins:
     )
 
 app.add_middleware(CacheControlMiddleware, cachecontrol=settings.cachecontrol)
-
 app.add_middleware(LoggerMiddleware)
+
+
+@app.get("/docs", include_in_schema=False)
+def docs_redirect() -> RedirectResponse:
+    """Redirect /docs to /api.html (Swagger UI)."""
+    return RedirectResponse(url="/api.html")
+
+
+@app.get(
+    "/",
+    response_model=Landing,
+    response_model_exclude_none=True,
+    responses={
+        200: {
+            "content": {
+                "text/html": {},
+                "application/json": {},
+            }
+        },
+    },
+    tags=["OGC Common"],
+)
+def landing(
+    request: Request,
+    f: Annotated[
+        Literal["html", "json"] | None,
+        Query(
+            description="Response MediaType. Defaults to endpoint's default or value defined in `accept` header."
+        ),
+    ] = None,
+):
+    """TiTiler landing page."""
+    data = {
+        "title": "titiler-cmr",
+        "links": [
+            {
+                "title": "Landing Page",
+                "href": str(request.url_for("landing")),
+                "type": MediaType.html,
+                "rel": "self",
+            },
+            {
+                "title": "the API definition (JSON)",
+                "href": str(request.url_for("openapi")),
+                "type": MediaType.openapi30_json,
+                "rel": "service-desc",
+            },
+            {
+                "title": "the API documentation",
+                "href": str(request.url_for("swagger_ui_html")),
+                "type": MediaType.html,
+                "rel": "service-doc",
+            },
+            {
+                "title": "Conformance",
+                "href": str(request.url_for("conformance")),
+                "type": MediaType.json,
+                "rel": "conformance",
+            },
+            {
+                "title": "TiTiler-CMR Documentation (external link)",
+                "href": "https://developmentseed.org/titiler-cmr/",
+                "type": MediaType.html,
+                "rel": "doc",
+            },
+            {
+                "title": "TiTiler-CMR source code (external link)",
+                "href": "https://github.com/developmentseed/titiler-cmr",
+                "type": MediaType.html,
+                "rel": "doc",
+            },
+        ],
+    }
+
+    if f:
+        output_type = MediaType[f]
+    else:
+        accepted_media = [MediaType.html, MediaType.json]
+        output_type = (
+            accept_media_type(request.headers.get("accept", ""), accepted_media)
+            or MediaType.json
+        )
+
+    if output_type == MediaType.html:
+        return create_html_response(
+            request,
+            data,
+            title="TiTiler",
+            template_name="landing",
+            templates=templates,
+        )
+
+    return data
+
+
+@app.get(
+    "/conformance",
+    response_model=Conformance,
+    response_model_exclude_none=True,
+    responses={
+        200: {
+            "content": {
+                "text/html": {},
+                "application/json": {},
+            }
+        },
+    },
+    tags=["OGC Common"],
+)
+def conformance(
+    request: Request,
+    f: Annotated[
+        Literal["html", "json"] | None,
+        Query(
+            description="Response MediaType. Defaults to endpoint's default or value defined in `accept` header."
+        ),
+    ] = None,
+):
+    """Conformance classes.
+
+    Called with `GET /conformance`.
+
+    Returns:
+        Conformance classes which the server conforms to.
+
+    """
+    data = {
+        "conformsTo": sorted(
+            [
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html",
+                "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset",
+                "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list",
+            ]
+        )
+    }
+
+    if f:
+        output_type = MediaType[f]
+    else:
+        accepted_media = [MediaType.html, MediaType.json]
+        output_type = (
+            accept_media_type(request.headers.get("accept", ""), accepted_media)
+            or MediaType.json
+        )
+
+    if output_type == MediaType.html:
+        return create_html_response(
+            request,
+            data,
+            title="Conformance",
+            template_name="conformance",
+            templates=templates,
+        )
+
+    return data
+
 
 ###############################################################################
 # application endpoints
-endpoints = Endpoints(
-    title=settings.name,
-    templates=templates,
+
+xarray = CMRTilerFactory(
+    router_prefix="/xarray",
+    dataset_reader=XarrayGranuleReader,
+    reader_dependency=interpolated_xarray_ds_params,
+    dataset_dependency=XarrayDatasetParams,
+    layer_dependency=ExpressionParams,
     extensions=[TimeseriesExtension()],
-    enable_telemetry=settings.telemetry_enabled,
+    add_statistics=True,
+    add_viewer=True,
+    add_part=True,
+    add_ogc_maps=False,
+    templates=templates,
 )
-app.include_router(endpoints.router)
+app.include_router(xarray.router, tags=["Xarray Backend"], prefix="/xarray")
+
+TITILER_CONFORMS_TO.update(xarray.conforms_to)
+
+rasterio = CMRTilerFactory(
+    router_prefix="/rasterio",
+    dataset_reader=MultiBaseGranuleReader,
+    reader_dependency=CMRAssetsParams,
+    dataset_dependency=RasterioDatasetParams,
+    layer_dependency=CMRAssetsExprParams,
+    assets_accessor_dependency=RasterioGranuleSearchBackendParams,
+    extensions=[TimeseriesExtension()],
+    add_statistics=True,
+    add_viewer=True,
+    add_part=True,
+    add_ogc_maps=False,
+    templates=templates,
+)
+app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")
+
+TITILER_CONFORMS_TO.update(rasterio.conforms_to)
+
+app.include_router(granules_router, tags=["Granules"])
+app.include_router(compatibility_router, tags=["Compatibility"])
+app.include_router(timeseries_router, tags=["Timeseries"])
+
+###############################################################################
+# TileMatrixSets endpoints
+tms = TMSFactory(templates=templates)
+app.include_router(
+    tms.router,
+    tags=["Tiling Schemes"],
+)
+TITILER_CONFORMS_TO.update(tms.conforms_to)
+
+###############################################################################
+# Algorithms endpoints
+algorithms = AlgorithmFactory(templates=templates)
+app.include_router(
+    algorithms.router,
+    tags=["Algorithms"],
+)
+TITILER_CONFORMS_TO.update(algorithms.conforms_to)
+
+###############################################################################
+# Colormaps endpoints
+cmaps = ColorMapFactory(templates=templates)
+app.include_router(
+    cmaps.router,
+    tags=["ColorMaps"],
+)
+TITILER_CONFORMS_TO.update(cmaps.conforms_to)
+
+###############################################################################
+# Legacy backwards-compatibility redirect routes (must be last so new routes take priority)
+app.include_router(
+    legacy_router,
+    tags=["Legacy (Deprecated)"],
+    include_in_schema=True,
+)

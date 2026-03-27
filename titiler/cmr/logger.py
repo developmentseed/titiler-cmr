@@ -12,9 +12,6 @@ class JSONFormatter(logging.Formatter):
     def format(self, record):
         """Format log record as JSON."""
         log_entry = {
-            # The %f format specifier is recognized by datetime.strftime, but
-            # not by time.strftime.  See note (1) below the table of directives:
-            # https://docs.python.org/3/library/time.html#time.strftime
             "timestamp": datetime.fromtimestamp(
                 record.created, tz=timezone.utc
             ).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
@@ -29,7 +26,6 @@ class JSONFormatter(logging.Formatter):
         if record.exc_info:
             log_entry["exception"] = self.formatException(record.exc_info)
 
-        # Add any extra fields passed via the extra parameter
         if hasattr(record, "__dict__"):
             for key, value in record.__dict__.items():
                 if (
@@ -39,9 +35,6 @@ class JSONFormatter(logging.Formatter):
                 ):
                     log_entry[key] = value
 
-        if record.exc_info:
-            log_entry["exception"] = self.formatException(record.exc_info)
-
         return json.dumps(log_entry)
 
 
@@ -50,9 +43,7 @@ def otel_trace_id_to_xray_format(otel_trace_id: str) -> str:
     Convert OpenTelemetry trace ID to X-Ray format.
 
     OTEL format: 32 hex chars (e.g., "68eeb2ec45b07caf760899f308d34ab6")
-    X-Ray format: "1-{first 8 chars}-{remaining 24 chars}" (e.g., "1-68eeb2ec-45b07caf760899f308d34ab6")
-
-    The first 8 hex chars represent the Unix timestamp, which is how X-Ray generates compatible IDs.
+    X-Ray format: "1-{first 8 chars}-{remaining 24 chars}"
     """
     if len(otel_trace_id) == 32:
         return f"1-{otel_trace_id[:8]}-{otel_trace_id[8:]}"
@@ -62,12 +53,6 @@ def otel_trace_id_to_xray_format(otel_trace_id: str) -> str:
 class XRayJsonFormatter(logging.Formatter):
     """
     Custom JSON formatter that includes X-Ray trace ID for log correlation.
-
-    This formatter outputs logs as JSON and includes:
-    - Standard log fields (timestamp, level, message, logger)
-    - X-Ray trace ID (converted from OTEL format)
-    - OTEL trace context fields (if present)
-    - Any extra fields passed via logger.info("msg", extra={...})
     """
 
     RESERVED_ATTRS = {
@@ -147,20 +132,15 @@ def configure_logging():
     """
     Configure logging for the application.
 
-    This should be called once at application startup.
     Automatically detects the environment and configures appropriately:
     - AWS Lambda: Uses XRayJsonFormatter with X-Ray trace correlation
     - Local dev: Uses JSONFormatter for simple JSON logs
-
-    All log levels for application and third-party libraries are configured here.
     """
-
+    # titiler.cmr inherits INFO from its parent; set the family root here
     logging.getLogger("titiler").setLevel(logging.INFO)
-    logging.getLogger("titiler-cmr").setLevel(logging.INFO)
+    logging.getLogger("rio_tiler").setLevel(logging.INFO)
 
     logging.getLogger("botocore").setLevel(logging.WARNING)
-    logging.getLogger("aiobotocore").setLevel(logging.WARNING)
-    logging.getLogger("earthaccess").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("numexpr").setLevel(logging.WARNING)
     logging.getLogger("fsspec").setLevel(logging.WARNING)
@@ -187,4 +167,4 @@ def configure_logging():
         logging.root.addHandler(handler)
 
 
-logger = logging.getLogger("titiler-cmr")
+logger = logging.getLogger("titiler.cmr")

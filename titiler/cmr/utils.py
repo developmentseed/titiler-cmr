@@ -10,14 +10,14 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-import earthaccess
 import rasterio.features
 from geojson_pydantic import Feature, FeatureCollection
+from httpx import Client
 from isodate import parse_datetime as _parse_datetime
 from rasterio.warp import transform_bounds
-from urllib3.response import HTTPException  # type: ignore
 
 from titiler.cmr.errors import InvalidDatetime
+from titiler.cmr.query import get_collection
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,16 @@ def retry(
     exceptions: type[Exception] | Sequence[type[Exception]] = Exception,
     delay: float = 0.0,
 ):
-    """Retry Decorator"""
+    """Decorator that retries a wrapped function on specified exceptions.
+
+    If all retry attempts are exhausted, the function is called one final time
+    without catching exceptions, so any error propagates to the caller.
+
+    Args:
+        tries: Number of guarded retry attempts before the final unguarded call.
+        exceptions: Exception type or sequence of types to catch and retry on.
+        delay: Seconds to wait between retry attempts.
+    """
 
     def _decorator(func: Any):
         def _newfn(*args: Any, **kwargs: Any):
@@ -67,7 +76,25 @@ def _parse_date(date: str) -> datetime:
 def parse_datetime(
     datetime_str: str,
 ) -> tuple[datetime | None, datetime | None, datetime | None]:
-    """Parse datetime string input into datetime objects"""
+    """Parse a datetime string into a ``(datetime_, start, end)`` tuple.
+
+    Accepts a bare RFC 3339 datetime or an interval expressed as
+    ``start/end``.  Open bounds are represented by ``..`` or an empty string.
+
+    Args:
+        datetime_str: RFC 3339 datetime string or ``/``-delimited interval
+            (e.g. ``"2024-01-01T00:00:00Z"`` or
+            ``"2024-01-01T00:00:00Z/2024-12-31T00:00:00Z"``).
+
+    Returns:
+        Tuple of ``(datetime_, start, end)``.  For a bare datetime,
+        ``datetime_`` is set and both interval fields are ``None``.  For an
+        interval, ``start`` and/or ``end`` are set (each may be ``None`` for
+        open bounds) and ``datetime_`` is ``None``.
+
+    Raises:
+        InvalidDatetime: If any component cannot be parsed.
+    """
     datetime_, start, end = None, None, None
     dt = datetime_str.split("/")
     if len(dt) == 1:
@@ -88,43 +115,6 @@ def parse_datetime(
         raise InvalidDatetime("Invalid datetime: {datetime}")
 
     return datetime_, start, end
-
-
-def get_concept_id_umm(concept_id: str) -> dict[str, Any]:
-    """Query CMR for the metadata for a concept_id"""
-    if not (results := earthaccess.collection_query().concept_id(concept_id).get(1)):
-        raise HTTPException(404, f"concept_id {concept_id} not found")
-
-    return results[0]
-
-
-def get_resolution_degrees(concept_id: str) -> tuple[float | None, float | None]:
-    """Query CMR to get the resolution of a dataset using its concept_id. If the units are in meters
-    convert to degrees using the rough conversion factor of 0.00001 degrees per meter"""
-    ds = get_concept_id_umm(concept_id)
-
-    try:
-        resolution_info = ds["umm"]["SpatialExtent"]["HorizontalSpatialDomain"][
-            "ResolutionAndCoordinateSystem"
-        ]["HorizontalDataResolution"]["GenericResolutions"][0]
-    except KeyError:
-        logger.warning(
-            f"could not find HorizontalDataResolution for concept_id {concept_id}"
-        )
-        return (None, None)
-
-    units = resolution_info["Unit"].lower()
-    if units not in ["meters", "decimal degrees"]:
-        raise ValueError(
-            f"cannot convert the coordinate units for concept_id {concept_id}: {units}"
-        )
-
-    conversion_factor = 0.00001 if units == "meters" else 1
-
-    return (
-        resolution_info["XDimension"] * conversion_factor,
-        resolution_info["YDimension"] * conversion_factor,
-    )
 
 
 def get_bbox_degrees(
@@ -188,6 +178,7 @@ def get_bbox_degrees(
 
 def calculate_time_series_request_size(
     concept_id: str,
+    client: Client,
     n_time_steps: int,
     minx: float,
     miny: float,
@@ -195,11 +186,31 @@ def calculate_time_series_request_size(
     maxy: float,
     coord_crs: CRS,
 ) -> float:
-    """Calculate the approximate magnitude of a time series request expressed
-    as a total number of pixels read across the entire time series
+    """Estimate the total pixel count for a time series request.
+
+    Fetches the collection's horizontal data resolution from CMR and multiplies
+    the spatial pixel count of the AOI by the number of time steps.  Returns 0
+    if the resolution cannot be determined from collection metadata.
+
+    Args:
+        concept_id: CMR collection concept ID.
+        client: HTTP client used for CMR requests.
+        n_time_steps: Number of time steps in the series.
+        minx: Minimum X coordinate of the AOI bounding box.
+        miny: Minimum Y coordinate of the AOI bounding box.
+        maxx: Maximum X coordinate of the AOI bounding box.
+        maxy: Maximum Y coordinate of the AOI bounding box.
+        coord_crs: CRS of the AOI bounding box coordinates.
+
+    Returns:
+        Approximate total number of pixels read across all time steps.
     """
-    xres, yres = get_resolution_degrees(concept_id)
+    collection = get_collection(concept_id, client)
+    xres, yres = collection.resolution_degrees
     if not (xres and yres):
+        logger.warning(
+            f"could not find HorizontalDataResolution for concept_id {concept_id}"
+        )
         return 0
 
     minx, miny, maxx, maxy = get_bbox_degrees(minx, miny, maxx, maxy, coord_crs)

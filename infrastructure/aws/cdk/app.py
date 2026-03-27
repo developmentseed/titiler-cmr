@@ -82,7 +82,11 @@ class LambdaStack(Stack):
         lambda_env = {
             **DEFAULT_ENV,
             "TITILER_CMR_ROOT_PATH": app_settings.root_path,
-            "TITILER_CMR_S3_AUTH_STRATEGY": app_settings.s3_auth_strategy,
+            "TITILER_CMR_EARTHDATA_USERNAME": app_settings.earthdata_username,
+            "TITILER_CMR_EARTHDATA_PASSWORD": app_settings.earthdata_password,
+            "TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS": str(
+                app_settings.earthdata_s3_direct_access
+            ).upper(),
         }
 
         if app_settings.telemetry_enabled:
@@ -94,14 +98,6 @@ class LambdaStack(Stack):
                     "OPENTELEMETRY_COLLECTOR_CONFIG_URI": "/opt/collector-config/config.yaml",
                     # AWS_LAMBDA_LOG_FORMAT not set - using custom JSON formatter in handler.py
                     "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",  # Enable OTEL wrapper to avoid circular import
-                }
-            )
-
-        if app_settings.s3_auth_strategy == "environment":
-            lambda_env.update(
-                {
-                    "EARTHDATA_USERNAME": app_settings.earthdata_username,
-                    "EARTHDATA_PASSWORD": app_settings.earthdata_password,
                 }
             )
 

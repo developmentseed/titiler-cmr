@@ -8,7 +8,7 @@ FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS otel-builder
 RUN <<EOF
 dnf install -y unzip wget
 dnf clean all
-wget -q https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.12.1/layer.zip -O /tmp/layer.zip
+wget -q https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.15.0/layer.zip -O /tmp/layer.zip
 mkdir -p /opt-builder
 unzip -q /tmp/layer.zip -d /opt-builder/
 EOF
@@ -17,7 +17,7 @@ EOF
 FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-RUN dnf install -y gcc-c++ && dnf clean all
+RUN dnf install -y gcc-c++ git && dnf clean all
 
 WORKDIR /build
 
@@ -50,15 +50,17 @@ rm -rf numpy/doc/ bin/ geos_license Misc/
 # Remove unnecessary locale and documentation files
 find . -name '*.mo' -delete
 find . -name '*.po' -delete
-find . -name 'LICENSE*' -delete
+find . -name 'LICENSE*' -print0 | xargs -0 rm -rf
 find . -name 'README*' -delete
 find . -name '*.md' -delete
 # Strip debug symbols from shared libraries (preserve numpy.libs)
 find . -type f -name '*.so*' -not -path "*/numpy.libs/*" -exec strip --strip-unneeded {} \; 2>/dev/null || true
-# Remove *.dist-info directories
-find /deps -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' -exec rm -rf {} \;
-# Remove unused botocore services (we are using only s3, so that stays)
-find /deps/botocore/data -mindepth 1 -maxdepth 1 -not -path "*/s3" -exec rm -rf {} \;
+# Strip *.dist-info to only files needed at runtime:
+# - METADATA: required by importlib.metadata (version/name lookups)
+# - entry_points.txt: required by pkg_resources/importlib.metadata entry_points() discovery
+find /deps -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' | while read -r d; do
+  find "$d" -mindepth 1 -not \( -name 'METADATA' -o -name 'entry_points.txt' \) -delete
+done
 EOF
 
 

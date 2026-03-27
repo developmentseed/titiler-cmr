@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to deploy'
+        description: "Branch to deploy"
         required: true
-        default: 'develop'
+        default: "develop"
   pull_request:
     types: [labeled, synchronize]
 
@@ -21,7 +21,7 @@ jobs:
     environment: dev
     if: >
       github.event_name != 'pull_request' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-dev'))    
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-dev'))
 
     steps:
       - name: Determine branch to deploy
@@ -57,6 +57,7 @@ jobs:
           EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
           STAGE: ${{ vars.stage }}
           TITILER_CMR_AWS_REQUEST_PAYER: ${{ vars.titiler_cmr_aws_request_payer }}
+          TITILER_CMR_CLIENT_ID: ${{ vars.titiler_cmr_client_id }}
           TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
-          TITILER_CMR_ROOT_PATH: ''
-          TITILER_CMR_S3_AUTH_STRATEGY: ${{ vars.titiler_cmr_s3_auth_strategy }}
+          TITILER_CMR_ROOT_PATH: ""
+          TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS: TRUE

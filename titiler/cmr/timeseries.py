@@ -4,8 +4,8 @@ The /timeseries endpoints provide an API for retrieving data for a timeseries th
 would otherwise need to be sent as a set of independent requests.
 
 The /timeseries endpoints follow this basic pattern to assemble results for a timeseries:
-- The 'datetime' parameter (required) is combined with the optional 'step'
-  and 'temporal_mode' parameters to produce a list of specific datetime parameters
+- The 'temporal' parameter (required) is combined with the optional 'step'
+  and 'temporal_mode' parameters to produce a list of specific temporal parameters
   that can be passed to the lower-level endpoints.
 - The /timeseries endoint will construct a list of GET or POST requests to the
   lower-level endpoint and execute them asynchronously over HTTP
@@ -25,11 +25,10 @@ from types import DynamicClassAttribute
 from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, Union
 from urllib.parse import urlencode
 
-import earthaccess
 import httpx
 import psutil
 from attrs import define
-from fastapi import Body, Depends, Path, Query, Request, Response
+from fastapi import APIRouter, Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature, FeatureCollection
@@ -37,23 +36,26 @@ from geojson_pydantic.geometries import Geometry
 from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel
+from titiler.core.algorithm import algorithms as available_algorithms
+from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
+from titiler.core.factory import BaseFactory, FactoryExtension
+from titiler.core.models.mapbox import TileJSON
+from titiler.core.models.responses import Statistics
+from titiler.core.resources.enums import ImageType
+from titiler.core.resources.responses import GeoJSONResponse
 
-from titiler.cmr.dependencies import ConceptID
+from titiler.cmr.dependencies import GranuleSearch, GranuleSearchParams
 from titiler.cmr.errors import InvalidDatetime
-from titiler.cmr.factory import Endpoints
+from titiler.cmr.factory import CMRTilerFactory
+from titiler.cmr.logger import logger
+from titiler.cmr.query import get_granules
+from titiler.cmr.reader import XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import (
     calculate_time_series_request_size,
     get_geojson_bounds,
     parse_datetime,
 )
-from titiler.core.algorithm import algorithms as available_algorithms
-from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
-from titiler.core.factory import FactoryExtension
-from titiler.core.models.mapbox import TileJSON
-from titiler.core.models.responses import Statistics
-from titiler.core.resources.enums import ImageType
-from titiler.core.resources.responses import GeoJSONResponse
 
 settings = ApiSettings()
 
@@ -123,8 +125,8 @@ class TemporalMode(str, Enum):
 class TimeseriesParams(DefaultDependency):
     """Timeseries parameters"""
 
-    datetime: Annotated[
-        str,
+    temporal: Annotated[
+        Optional[str],
         Query(
             description="Either a date-time, an interval, or a comma-separated list of date-times or intervals."
             "Date and time expressions adhere to rfc3339 ('2020-06-01T09:00:00Z') format."
@@ -143,7 +145,11 @@ class TimeseriesParams(DefaultDependency):
                 },
             },
         ),
-    ]
+    ] = None
+    datetime_param: Annotated[
+        Optional[str],
+        Query(alias="datetime", include_in_schema=False),
+    ] = None
     step: Annotated[
         Optional[str],
         Query(
@@ -158,8 +164,19 @@ class TimeseriesParams(DefaultDependency):
         ),
     ] = TemporalMode.interval
 
+    def __post_init__(self):
+        """Apply legacy parameter aliases."""
+        if self.datetime_param and not self.temporal:
+            self.temporal = self.datetime_param
+        if not self.temporal:
+            raise HTTPException(400, "'temporal' is required")
 
-timeseries_field_names = [field.name for field in fields(TimeseriesParams)]
+
+# Include the `datetime` HTTP alias so old-style ?datetime=... is also stripped
+# from sub-request URLs when building timeseries requests.
+timeseries_field_names = {field.name for field in fields(TimeseriesParams)} | {
+    "datetime"
+}
 
 
 def generate_datetime_ranges(
@@ -170,7 +187,25 @@ def generate_datetime_ranges(
         TemporalMode.interval, TemporalMode.point
     ] = TemporalMode.interval,
 ) -> List[Union[Tuple[datetime], Tuple[datetime, datetime]]]:
-    """Generate datetime ranges"""
+    """Split a datetime range into step-sized sub-ranges.
+
+    In ``point`` mode each element is a 1-tuple ``(datetime,)`` for the start
+    of each step.  In ``interval`` mode each element is a 2-tuple
+    ``(start, end)`` where the end is nudged back by 1 second (or 1
+    millisecond for sub-second steps) to avoid overlap with the next interval.
+
+    If the computed list would be empty (e.g. ``start_datetime == end_datetime``),
+    returns ``[(start_datetime, end_datetime)]``.
+
+    Args:
+        start_datetime: Beginning of the overall date range.
+        end_datetime: End of the overall date range.
+        step: ISO 8601 duration string (e.g. ``"P1D"``, ``"PT1H"``).
+        temporal_mode: Whether to produce point instants or closed intervals.
+
+    Returns:
+        List of 1-tuples (point mode) or 2-tuples (interval mode).
+    """
     step_delta = parse_duration(step)
 
     ranges: List[Union[Tuple[datetime], Tuple[datetime, datetime]]] = []
@@ -227,7 +262,8 @@ def build_request_urls(
 
     for _params in param_list:
         model_params = [
-            (str(key), str(value)) for key, value in _params.model_dump().items()
+            (str(key), str(value))
+            for key, value in _params.model_dump(exclude_none=True).items()
         ]
 
         url = (
@@ -241,8 +277,22 @@ def build_request_urls(
 async def timestep_request(
     url: str, method: Literal["POST", "GET"], **kwargs
 ) -> httpx.Response:
-    """Asyncronously send a GET or POST request to a URL with additional parameters"""
+    """Asynchronously send a GET or POST request to a URL.
+
+    Args:
+        url: Full URL to request.
+        method: HTTP method — either ``"GET"`` or ``"POST"``.
+        **kwargs: Additional arguments forwarded to the underlying httpx method
+            (e.g. ``json``, ``timeout``).
+
+    Returns:
+        The httpx Response object.
+
+    Raises:
+        ValueError: If ``method`` is not ``"GET"`` or ``"POST"``.
+    """
     async with httpx.AsyncClient() as client:
+        _method: Any
         if method == "POST":
             _method = client.post
         elif method == "GET":
@@ -256,18 +306,13 @@ async def timestep_request(
 
 
 # The rest is titiler-cmr specific
-class CMRQueryParameters(BaseModel):
-    """parameters for CMR queries"""
 
-    concept_id: str
-    datetime: str
+TimeseriesCMRQueryParameters = List[GranuleSearch]
 
 
-TimeseriesCMRQueryParameters = List[CMRQueryParameters]
-
-
-def timeseries_cmr_query(
-    concept_id: ConceptID,
+def timeseries_cmr_query(  # noqa: C901
+    request: Request,
+    granule_search: GranuleSearch = Depends(GranuleSearchParams),
     timeseries_params: TimeseriesParams = Depends(TimeseriesParams),
     minx: Optional[float] = None,
     miny: Optional[float] = None,
@@ -279,21 +324,26 @@ def timeseries_cmr_query(
     If no step is provided with timeseries_params, a query will be sent to CMR
     to identify all unique timesteps in granules between the provided start/stop_datetime.
     """
-    datetime_inputs = timeseries_params.datetime.split(",")
+    if not granule_search.collection_concept_id:
+        raise HTTPException(status_code=400, detail="collection_concept_id is required")
 
-    datetime_params = []
+    if timeseries_params.temporal is None:
+        raise HTTPException(status_code=400, detail="temporal is required")
+    temporal_inputs = timeseries_params.temporal.split(",")
 
-    for datetime_input in datetime_inputs:
+    temporal_params = []
+
+    for temporal_input in temporal_inputs:
         try:
-            datetime_, start, end = parse_datetime(datetime_input)
+            datetime_, start, end = parse_datetime(temporal_input)
         except InvalidDatetime as e:
             raise HTTPException(
                 status_code=400,
-                detail=f"{timeseries_params.datetime} is an invalid datetime input",
+                detail=f"{timeseries_params.temporal} is an invalid temporal input",
             ) from e
 
         if datetime_:
-            datetime_params.append(datetime_.isoformat())
+            temporal_params.append(datetime_.isoformat())
 
         elif start and timeseries_params.step:
             datetime_ranges = generate_datetime_ranges(
@@ -303,110 +353,136 @@ def timeseries_cmr_query(
                 temporal_mode=timeseries_params.temporal_mode,
             )
 
-            datetime_params.extend(
+            temporal_params.extend(
                 [
                     "/".join([t.isoformat() for t in datetime_range])
                     for datetime_range in datetime_ranges
                 ]
             )
 
-        # if a start (and possibly end) are provided but no step, query CMR to identify unique
-        # datetimes from a granule search
+        # if a start (and possibly end) are provided but no step, query CMR to identify
+        # unique timestamps from available granules
         elif start and not timeseries_params.step:
-            # query CMR for this concept id and the full date range, return exact datetime intervals
-            # for all granules returned by the search
-            search_params: Dict[str, Any] = {"temporal": (start, end)}
-
-            # add bounding box filter if provided
-            if minx and miny and maxx and maxy:
-                bbox = (minx, miny, maxx, maxy)
-                search_params["bounding_box"] = bbox
-
-            try:
-                granules = earthaccess.search_data(
-                    concept_id=concept_id,
-                    **search_params,
+            search_end = end or datetime.now(tz=timezone.utc)
+            bbox_str = (
+                f"{minx},{miny},{maxx},{maxy}"
+                if (
+                    minx is not None
+                    and miny is not None
+                    and maxx is not None
+                    and maxy is not None
                 )
-            # if there are no results we get an IndexError which we should just treat as an empty list
-            except IndexError:
-                return []
-
-            for granule in granules:
-                temporal_extent = granule["umm"]["TemporalExtent"]["RangeDateTime"]
-                start = datetime.fromisoformat(
-                    temporal_extent["BeginningDateTime"].replace("Z", "+00:00")
+                else granule_search.bounding_box
+            )
+            cmr_search = GranuleSearch(
+                collection_concept_id=granule_search.collection_concept_id,
+                temporal=f"{start.isoformat()}/{search_end.isoformat()}",
+                bounding_box=bbox_str,
+            )
+            for granule in get_granules(cmr_search, client=request.app.state.client):
+                rdt = (
+                    granule.temporal_extent.range_date_time
+                    if granule.temporal_extent
+                    else None
                 )
-                end = datetime.fromisoformat(
-                    temporal_extent["EndingDateTime"].replace("Z", "+00:00")
-                )
-                midpoint = start + (end - start) / 2
-                datetime_params.append(midpoint.isoformat())
+                if rdt and rdt.beginning_date_time:
+                    g_start = datetime.fromisoformat(
+                        rdt.beginning_date_time.replace("Z", "+00:00")
+                    )
+                    g_end = (
+                        datetime.fromisoformat(
+                            rdt.ending_date_time.replace("Z", "+00:00")
+                        )
+                        if rdt.ending_date_time
+                        else g_start
+                    )
+                    midpoint = g_start + (g_end - g_start) / 2
+                    temporal_params.append(midpoint.isoformat())
 
         else:
             raise HTTPException(
                 status_code=400,
-                detail="you must provide a datetime interval with a defined start time or a "
-                "list of comma-separated datetime strings",
+                detail="you must provide a temporal interval with a defined start time or a "
+                "list of comma-separated temporal strings",
             )
 
-    if len(datetime_params) > settings.time_series_max_requests:
+    if len(temporal_params) > settings.time_series_max_requests:
         raise HTTPException(
             status_code=400,
-            detail=f"this request ({len(datetime_params)}) exceeds the maximum number of distinct "
+            detail=f"this request ({len(temporal_params)}) exceeds the maximum number of distinct "
             f"time series points/intervals of {settings.time_series_max_requests}",
         )
 
     return [
-        CMRQueryParameters(
-            concept_id=concept_id,
-            datetime=datetime_,
+        GranuleSearch(
+            collection_concept_id=granule_search.collection_concept_id,
+            granule_ur=granule_search.granule_ur,
+            cloud_cover=granule_search.cloud_cover,
+            bounding_box=granule_search.bounding_box,
+            sort_key=granule_search.sort_key,
+            temporal=temporal_,
         )
-        for datetime_ in datetime_params
+        for temporal_ in temporal_params
     ]
 
 
 def timeseries_cmr_query_no_bbox(
-    concept_id: ConceptID,
-    timeseries_params=Depends(TimeseriesParams),
-) -> List[CMRQueryParameters]:
+    request: Request,
+    granule_search: GranuleSearch = Depends(GranuleSearchParams),
+    timeseries_params: TimeseriesParams = Depends(TimeseriesParams),
+) -> TimeseriesCMRQueryParameters:
     """Timeseries query but without bbox as a parameter.
 
     Needed this because FastAPI would expect bbox in the POST request body for
     the /timeseries/statistics endpoint when using Depends(timeseries_query)
     """
     return timeseries_cmr_query(
-        concept_id, timeseries_params, minx=None, miny=None, maxx=None, maxy=None
+        request=request,
+        granule_search=granule_search,
+        timeseries_params=timeseries_params,
+        minx=None,
+        miny=None,
+        maxx=None,
+        maxy=None,
     )
+
+
+timeseries_router = APIRouter()
+
+
+@timeseries_router.get(
+    "/timeseries",
+    response_model=TimeseriesCMRQueryParameters,
+    response_model_exclude_none=True,
+    responses={
+        200: {
+            "description": "Return the list of concept_id and datetime query parameters "
+            "for a timeseries query"
+        }
+    },
+    tags=["Timeseries"],
+)
+def get_timeseries_parameters(
+    query=Depends(timeseries_cmr_query),
+):
+    """Get timeseries request parameters"""
+    return query
 
 
 @define
 class TimeseriesExtension(FactoryExtension):
     """Timeseries extension"""
 
-    def register(self, factory: Endpoints):
+    def register(self, factory: BaseFactory) -> None:
         """Register timeseries endpoints to the MosaicTilerFactory"""
+        assert isinstance(factory, CMRTilerFactory)
         self.register_statistics(factory=factory)
         self.register_tilejson(factory=factory)
         self.register_images(factory=factory)
 
-        @factory.router.get(
-            "/timeseries",
-            response_model=TimeseriesCMRQueryParameters,
-            responses={
-                200: {
-                    "description": "Return the list of concept_id and datetime query parameters "
-                    "for a timeseries query"
-                }
-            },
-            tags=["Timeseries"],
-        )
-        def get_timeseries_parameters(
-            query=Depends(timeseries_cmr_query),
-        ):
-            return query
-
-    def register_statistics(self, factory: Endpoints):
+    def register_statistics(self, factory: CMRTilerFactory):
         """Register timeseries statistics endpoint"""
+        is_xarray = factory.dataset_reader == XarrayGranuleReader
 
         @factory.router.post(
             "/timeseries/statistics",
@@ -431,10 +507,9 @@ class TimeseriesExtension(FactoryExtension):
             query=Depends(timeseries_cmr_query_no_bbox),
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
-            rasterio_params=Depends(factory.rasterio_dependency),
-            xarray_io_params=Depends(factory.xarray_io_params),
-            xarray_ds_params=Depends(factory.xarray_ds_params),
             reader_params=Depends(factory.reader_dependency),
+            dataset_params=Depends(factory.dataset_dependency),
+            layer_params=Depends(factory.layer_dependency),
             post_process=Depends(factory.process_dependency),
             stats_params=Depends(factory.stats_dependency),
             histogram_params=Depends(factory.histogram_dependency),
@@ -448,7 +523,7 @@ class TimeseriesExtension(FactoryExtension):
             logging.info("Checking size of time series request")
 
             # check for unconstrained image reading operations
-            if reader_params.backend == "xarray" or (
+            if is_xarray or (
                 not image_params.max_size
                 or not (image_params.height and image_params.width)
             ):
@@ -456,7 +531,8 @@ class TimeseriesExtension(FactoryExtension):
                 minx, miny, maxx, maxy = get_geojson_bounds(geojson)
 
                 request_size = calculate_time_series_request_size(
-                    concept_id=request.query_params["concept_id"],
+                    concept_id=query[0].collection_concept_id if query else "",
+                    client=request.app.state.client,
                     n_time_steps=len(query),
                     minx=minx,
                     miny=miny,
@@ -512,7 +588,13 @@ class TimeseriesExtension(FactoryExtension):
                 f"Starting stats reduction with {len(timestep_requests)} items"
             )
             combine_start = time()
-            datetime_strs = [d.datetime for d in query]
+            datetime_strs = [d.temporal for d in query]
+            if not isinstance(geojson, Feature):
+                raise HTTPException(
+                    status_code=400, detail="Expected a GeoJSON Feature"
+                )
+            if geojson.properties is None:
+                geojson.properties = {}
             geojson.properties["statistics"] = {}
             for r, datetime_str in zip(timestep_requests, datetime_strs):
                 if r.status_code == 200:
@@ -527,7 +609,7 @@ class TimeseriesExtension(FactoryExtension):
             )
             return geojson
 
-    def register_tilejson(self, factory: Endpoints):
+    def register_tilejson(self, factory: CMRTilerFactory):
         """Register tilejson timeseries endpoint"""
 
         @factory.router.get(
@@ -567,10 +649,9 @@ class TimeseriesExtension(FactoryExtension):
                 Optional[int],
                 Query(description="Overwrite default maxzoom."),
             ] = None,
-            xarray_io_params=Depends(factory.xarray_io_params),
-            xarray_ds_params=Depends(factory.xarray_ds_params),
-            rasterio_params=Depends(factory.rasterio_dependency),
             reader_params=Depends(factory.reader_dependency),
+            dataset_params=Depends(factory.dataset_dependency),
+            layer_params=Depends(factory.layer_dependency),
             post_process=Depends(available_algorithms.dependency),
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
@@ -579,7 +660,7 @@ class TimeseriesExtension(FactoryExtension):
             urls = build_request_urls(
                 base_url=str(
                     factory.url_for(
-                        request, "tilejson_endpoint", tileMatrixSetId=tileMatrixSetId
+                        request, "tilejson", tileMatrixSetId=tileMatrixSetId
                     )
                 ),
                 request=request,
@@ -592,24 +673,31 @@ class TimeseriesExtension(FactoryExtension):
 
             results = [request.json() for request in timestep_requests]
 
-            datetime_strs = [d.datetime for d in query]
+            datetime_strs = [d.temporal for d in query]
 
             return dict(zip(datetime_strs, results))
 
-    def register_images(self, factory: Endpoints):
+    def register_images(self, factory: CMRTilerFactory):
         """Register image preview methods"""
+        is_xarray = factory.dataset_reader == XarrayGranuleReader
+
+        prefix = factory.router_prefix.strip("/")
 
         @factory.router.get(
             "/timeseries/bbox/{minx},{miny},{maxx},{maxy}.{format}",
             tags=["Timeseries", "Images"],
-            operation_id="timeseries_gif_default_size",
+            operation_id=f"{prefix}_timeseries_gif_default_size"
+            if prefix
+            else "timeseries_gif_default_size",
             summary="Create an animation from a timeseries of PNGs (default size)",
             **timeseries_img_endpoint_params,
         )
         @factory.router.get(
             "/timeseries/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}",
             tags=["Timeseries", "Images"],
-            operation_id="timeseries_gif_custom_size",
+            operation_id=f"{prefix}_timeseries_gif_custom_size"
+            if prefix
+            else "timeseries_gif_custom_size",
             summary="Create an animation from a timeseries of PNGs (custom size)",
             **timeseries_img_endpoint_params,
         )
@@ -630,10 +718,9 @@ class TimeseriesExtension(FactoryExtension):
             ] = 10,
             coord_crs=Depends(CoordCRSParams),
             dst_crs=Depends(DstCRSParams),
-            rasterio_params=Depends(factory.rasterio_dependency),
-            xarray_io_params=Depends(factory.xarray_io_params),
-            xarray_ds_params=Depends(factory.xarray_ds_params),
             reader_params=Depends(factory.reader_dependency),
+            dataset_params=Depends(factory.dataset_dependency),
+            layer_params=Depends(factory.layer_dependency),
             post_process=Depends(factory.process_dependency),
             image_params=Depends(factory.img_part_dependency),
             colormap=Depends(factory.colormap_dependency),
@@ -647,12 +734,13 @@ class TimeseriesExtension(FactoryExtension):
             process = psutil.Process(os.getpid())
 
             # check for unconstrained image reading operations
-            if reader_params.backend == "xarray" or (
+            if is_xarray or (
                 not image_params.max_size
                 or not (image_params.height and image_params.width)
             ):
                 request_size = calculate_time_series_request_size(
-                    concept_id=request.query_params["concept_id"],
+                    concept_id=query[0].collection_concept_id if query else "",
+                    client=request.app.state.client,
                     n_time_steps=len(query),
                     minx=minx,
                     miny=miny,
@@ -687,11 +775,7 @@ class TimeseriesExtension(FactoryExtension):
                 "maxy": maxy,
             }
 
-            if (
-                reader_params.backend == "rasterio"
-                and image_params.height
-                and image_params.width
-            ):
+            if not is_xarray and image_params.height and image_params.width:
                 path_params["height"] = image_params.height
                 path_params["width"] = image_params.width
 
@@ -706,6 +790,10 @@ class TimeseriesExtension(FactoryExtension):
                 ),
                 request=request,
                 param_list=query,
+            )
+
+            logger.info(
+                f"generated {len(urls)} request urls", extra={"param_list": query}
             )
 
             timestep_requests = await asyncio.gather(

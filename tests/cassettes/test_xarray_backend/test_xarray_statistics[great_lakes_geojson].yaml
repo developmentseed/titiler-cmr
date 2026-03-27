@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: ''
     headers:
       Accept:
       - '*/*'
@@ -8,86 +8,16 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Host:
+      - cmr.earthdata.nasa.gov
       User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
+      - python-httpx/0.28.1
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-87.5,41.5,-85.0,46.0&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=0
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-87.5%2C41.5%2C-85.0%2C46.0
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAKtWysgsKVayMtRRKsnPzwYyDCx1lDJLUnOBgtGxtQBuadArIAAAAA==
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Access-Control-Expose-Headers:
-      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
-        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
-      - '1'
-      CMR-Request-Id:
-      - 2f754687-4672-419d-85e2-2ee89e015ad8
-      CMR-Took:
-      - '110'
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - 79d0a66cd1a065cdaa82349ce585e17d
-      Content-SHA1:
-      - 3ff5850448cec83238884960c8eeb0155121692f
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
-      Date:
-      - Thu, 03 Jul 2025 21:33:21 GMT
-      Server:
-      - ServerTokens ProductOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      Via:
-      - 1.1 637ef0a7bc474e9a314fa064b65e8082.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - p4rxBF54UV32wE_T9CuZq7-Nwk_RYi-R0H86i0FxetvYl1kByIXkYg==
-      X-Amz-Cf-Pop:
-      - SEA73-P2
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - p4rxBF54UV32wE_T9CuZq7-Nwk_RYi-R0H86i0FxetvYl1kByIXkYg==
-      X-XSS-Protection:
-      - 1; mode=block
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-87.5,41.5,-85.0,46.0&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=100
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAAM1WbW/iOBD+K1a+XhPyQiDwLUCWRSpQkdA97alamcSAr4mdsx32ulX/+42TtNAu
+        H4sIAAAAAAAA/81WbW/iOBD+K1a+XhPyQiDwLUCWRSpQkdA97alamcSAr4mdsx32ulX/+42TtNAu
         t6q03EvVqmCPx88z88x4Ho09VdIYOleG4vzeGPbcK4MqUsDab49GQRQ2ho9GyllKSmWqh5IYQ2Mn
         MKtyYly9bNAMlqee2+sG/Z7tBObNcny9XE/ARJADlZSz2ga8M6zogTQnXNvtOrbjOK4NP2Y4Ws7N
         6+6X6cdVHCcm/G1ZZk7DeRyHX9zgvjCn18uRebBdyza3B9ux7BpDnpNU6StewRm7ttcLAqfv+Sdw
@@ -116,11 +46,11 @@ interactions:
       CMR-Hits:
       - '1'
       CMR-Request-Id:
-      - 1b870991-265d-4aa2-a7f5-2e20804d8408
+      - b1e1eea2-6170-4aca-91c6-083c2066fa9a
       CMR-Search-After:
       - '["pocloud",1728604800000,3264876018]'
       CMR-Took:
-      - '63'
+      - '62'
       Connection:
       - keep-alive
       Content-Encoding:
@@ -132,7 +62,7 @@ interactions:
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Thu, 03 Jul 2025 21:33:22 GMT
+      - Fri, 27 Mar 2026 13:42:03 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -142,11 +72,11 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 637ef0a7bc474e9a314fa064b65e8082.cloudfront.net (CloudFront)
+      - 1.1 7cc224be3664680df186a12039cdc424.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - FrbXymlb7eTr5JHK6vAfcb9u1FrkuPDzr-pvadK-bk1lbuuRSEOhgg==
+      - H_Ri20WVO6_G7hfpMxW4QEnlbkG2rIsDtgc-knNeyqofgyZqM7YxMg==
       X-Amz-Cf-Pop:
-      - SEA73-P2
+      - MSP50-P2
       X-Cache:
       - Miss from cloudfront
       X-Content-Type-Options:
@@ -154,14 +84,14 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - FrbXymlb7eTr5JHK6vAfcb9u1FrkuPDzr-pvadK-bk1lbuuRSEOhgg==
+      - H_Ri20WVO6_G7hfpMxW4QEnlbkG2rIsDtgc-knNeyqofgyZqM7YxMg==
       X-XSS-Protection:
       - 1; mode=block
     status:
       code: 200
       message: OK
 - request:
-    body: null
+    body: ''
     headers:
       Accept:
       - '*/*'
@@ -169,87 +99,17 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Host:
+      - cmr.earthdata.nasa.gov
       User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
+      - python-httpx/0.28.1
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-84.0,43.0,-79.0,46.0&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=0
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-84.0%2C43.0%2C-81.5%2C47.5
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAKtWysgsKVayMtRRKsnPz1ayMrXUUcosSc0FikXH1gIA4kKlBh8AAAA=
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Access-Control-Expose-Headers:
-      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
-        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
-      - '1'
-      CMR-Request-Id:
-      - c7d9f43b-f6c1-4206-8015-5c69a6d5637e
-      CMR-Took:
-      - '60'
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - 78674c521b7056f84aa2a7e60739520a
-      Content-SHA1:
-      - ff2ce942393c0e0304d73faadd0fbea56f0d7c79
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
-      Date:
-      - Thu, 03 Jul 2025 21:33:22 GMT
-      Server:
-      - ServerTokens ProductOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      Via:
-      - 1.1 27fe6f224e0cfa3f3a446471ee256e56.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - QomWPXtDOPJWlTGJkxoZ0EOIetQScdzI4ETpqyUuiWEOXUkdQQhhGA==
-      X-Amz-Cf-Pop:
-      - SEA73-P2
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - QomWPXtDOPJWlTGJkxoZ0EOIetQScdzI4ETpqyUuiWEOXUkdQQhhGA==
-      X-XSS-Protection:
-      - 1; mode=block
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - earthaccess v0.15.1
-      authorization:
-      - DUMMY
-    method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?bounding_box=-84.0,43.0,-79.0,46.0&concept_id%5B%5D=C2036881735-POCLOUD&temporal%5B%5D=2024-10-11T00:00:01Z,2024-10-11T23:59:59Z&page_size=100
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAAM1WbW/iOBD+K1a+Hgl5hcC3FLIsUimIhO5pT9XKJAZ8Teyc7bDXrfrfb5ykr8ut
-        Ki33UrUq2OPx88w8M55740CVNMZOz1Cc3xpjf9QzqCIlrP12b5REYWN8b2ScZaRSprqriDE29gKz
+        H4sIAAAAAAAA/81WbW/iOBD+K1a+Hgl5hcC3FLIsUimIhO5pT9XKJAZ8Teyc7bDXrfrfb5ykr8ut
+        Ki33UrUq2OPx88w8M55740CVNMZOz1Cc3xpjf9AzqCIlrP12b5REYWN8b2ScZaRSprqriDE29gKz
         uiBG72mD5rA889yBHw4HthOaq+XkcrmZgokgRyopZ42N2zMYVvRI2hOu7fqO7TiOa8OPGV0sF+al
         /2X2cZ0kqQl/O5abs2iRJNEXN7wtzdnl8sI82q5lm7uj7Vh2g6EoSKb0Fa/gTFzbG4ShM/SCF3Aq
         wY80J6K1eV7fcVFiBUu4qgqaYe2vf2S5xbDEVlYKqy7LX36XnL3klGNFOh6mY5uOm9rh2PPGjmsN
@@ -267,7 +127,7 @@ interactions:
         ruhiF/+axlfTeIoWcRq9VzX/aTTOJpsfUX+/WqSXCZLDew2vs/wOLK4oIiyvOGVKAxHwZFNyJEi1
         o5q4Qy+OoyMuaI7gFUQSeqIpYADj7JGe9DpizxSu5/EntI4voxRozK8+LNeLKJ0vr04w4RXgwNUp
         Cs/DreyfGGgfRzB5hqQ+Q98kMUri9fV8EqNoNddvQb3tZv/lChITrdou9jakyxVpNgX5o4YBB2ma
-        esq4efgL8GlsTWkMAAA=
+        esq4efgLEvktN2kMAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -277,23 +137,23 @@ interactions:
       CMR-Hits:
       - '1'
       CMR-Request-Id:
-      - b6c4fd01-119d-4f21-b521-4dfe7cf11a72
+      - e5cac53d-1239-4336-96c5-94d1c1bc035d
       CMR-Search-After:
       - '["pocloud",1728604800000,3264876018]'
       CMR-Took:
-      - '51'
+      - '47'
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-MD5:
-      - 49c3fdf6deea232037fee156445637e7
+      - 5245d0de13ee9bed4d538e8859b3f59f
       Content-SHA1:
-      - 7d8d0aec8bfcf4439ed3def669ef336b8ce21336
+      - 8993e4df67e6068889845fefcc065eb9a09ae96a
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Thu, 03 Jul 2025 21:33:22 GMT
+      - Fri, 27 Mar 2026 13:42:04 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -303,11 +163,11 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 27fe6f224e0cfa3f3a446471ee256e56.cloudfront.net (CloudFront)
+      - 1.1 f1f259972a1922859cce8cd3da009a44.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - DmRNCoX7qJJRAKS8o98enln3HktFksd5gwwnwHTCqknZ1y51IUQM9g==
+      - apnyrs5eTyiVdF76C6yOVhMjhIn1xXgf--KGThOvn_9G3Yo1XDcISg==
       X-Amz-Cf-Pop:
-      - SEA73-P2
+      - MSP50-P2
       X-Cache:
       - Miss from cloudfront
       X-Content-Type-Options:
@@ -315,7 +175,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - DmRNCoX7qJJRAKS8o98enln3HktFksd5gwwnwHTCqknZ1y51IUQM9g==
+      - apnyrs5eTyiVdF76C6yOVhMjhIn1xXgf--KGThOvn_9G3Yo1XDcISg==
       X-XSS-Protection:
       - 1; mode=block
     status:

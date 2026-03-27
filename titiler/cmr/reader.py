@@ -1,272 +1,504 @@
-"""ZarrReader.
+"""CMR Granule Reader"""
 
-Originaly from titiler-xarray
-"""
-
-import os
 import pickle
-from collections.abc import Callable
-from functools import wraps
-from typing import Any, Dict, Optional, cast
-from urllib.parse import urlparse
+import threading
+import time
+import urllib.parse
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Iterator,
+    Literal,
+    Sequence,
+    Set,
+    Type,
+)
 
 import attr
-import earthaccess
-import fsspec
+import obstore.store
 import rasterio
-import rasterio.env
-import s3fs
-import xarray
+import xarray as xr
 from cachetools import TTLCache
-from morecantile.models import TileMatrixSet
+from morecantile import TileMatrixSet
+from obspec_utils.readers import BlockStoreReader
+from rasterio.session import AWSSession
 from rio_tiler.constants import WEB_MERCATOR_TMS, WGS84_CRS
-from rio_tiler.errors import InvalidBandName
-from rio_tiler.io.base import BaseReader, MultiBandReader
+from rio_tiler.errors import InvalidAssetName, MissingAssets
+from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
+from rio_tiler.io.xarray import Options, XarrayReader
+from rio_tiler.types import AssetInfo, AssetWithOptions
+from titiler.xarray.io import _parse_dsl
+from xarray import DataArray, Dataset
+from xarray import open_dataset as xarray_open_dataset
 
+from titiler.cmr.credentials import EarthdataS3CredentialProvider
+from titiler.cmr.errors import InvalidMediaType, S3CredentialsEndpointMissing
+from titiler.cmr.expression import apply_expression
 from titiler.cmr.logger import logger
+from titiler.cmr.models import Granule
 from titiler.cmr.settings import CacheSettings
 
-# Use simple in-memory cache for now (we can switch to redis later)
+if TYPE_CHECKING:
+    from obstore.store import ClientConfig
+
+NETCDF = "application/netcdf"
+HDF5 = "application/x-hdf5"
+
+MEDIA_TYPES = {
+    ".tif": "image/tiff; application=geotiff; profile=cloud-optimized",
+    ".nc": NETCDF,
+    ".h5": HDF5,
+}
+
+DEFAULT_VALID_TYPES = set(MEDIA_TYPES.keys())
+
+X_DIM_NAMES = [
+    "lon",
+    "longitude",
+    "LON",
+    "LONGITUDE",
+    "Lon",
+    "Longitude",
+    "xCoordinates",  # for NISAR :|
+]
+Y_DIM_NAMES = [
+    "lat",
+    "latitude",
+    "LAT",
+    "LATITUDE",
+    "Lat",
+    "Latitude",
+    "yCoordinates",  # for NISAR :|
+]
+
 cache_config = CacheSettings()
 cache_client: Any = TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl)
+_dataset_cache_lock = threading.Lock()
 
 
-def get_filesystem(
-    src_path: str,
-    protocol: str,
-    xr_engine: str,
-    auth: earthaccess.Auth,
-    anon: bool = True,
-    s3_credentials: Optional[Dict] = None,
-):
-    """Get the filesystem for the given source path."""
+def _arrange_dims(
+    da: DataArray, x_dim_names: list[str], y_dim_names: list[str]
+) -> DataArray:
+    """Arrange coordinates and time dimensions.
 
-    if protocol == "s3":
-        s3_filesystem = s3fs.S3FileSystem(
-            requester_pays=os.environ.get("AWS_REQUEST_PAYER") == "requester",
-            **(s3_credentials or {}),
-        )
+    An rioxarray.exceptions.InvalidDimensionOrder error is raised if the coordinates are not in the correct order time, y, and x.
+    See: https://github.com/corteva/rioxarray/discussions/674
 
-        logger.info(
-            "Using fsspec to open %s %s temporary S3 credentials.",
-            src_path,
-            "with" if s3_credentials else "without",
-        )
+    We conform to using x and y as the spatial dimension names..
 
-        return (
-            s3_filesystem.open(src_path)
-            if xr_engine == "h5netcdf"
-            else s3fs.S3Map(root=src_path, s3=s3_filesystem)
-        )
-
-    if protocol == "reference":
-        reference_args = {"fo": src_path, "remote_options": {"anon": anon}}
-        return fsspec.filesystem("reference", **reference_args).get_mapper("")
-
-    if protocol in {"https", "http", "file"}:
-        if protocol in {"https", "http"}:
-            filesystem = get_fsspec_filesystem(auth)
-        else:
-            filesystem = fsspec.filesystem(protocol)  # type: ignore
-
-        return (
-            filesystem.open(src_path)
-            if xr_engine == "h5netcdf"
-            else filesystem.get_mapper(src_path)
-        )
-
-    raise ValueError(f"Unsupported protocol: {protocol}")
-
-
-def get_fsspec_filesystem(auth: earthaccess.Auth) -> fsspec.AbstractFileSystem:
-    """Get fsspec HTTPS filesystem with EDL Authorization header."""
-
-    # Since earthaccess does not override the terrible fsspec defaults in its
-    # get_fsspec_https_session function, we don't use it.  Further, even if we
-    # were to use it, it would not use the Store object associated with the Auth
-    # instance we created, but rather it would implicitly create separate Auth
-    # and Store instances.
-    return fsspec.filesystem(
-        "https",
-        cache_type="background",
-        block_size=8 * 1024 * 1024,
-        client_kwargs={
-            "headers": {
-                # We are assuming that the access token was populated during
-                # call to earthaccess.login.
-                "Authorization": f"Bearer {auth.token['access_token']}",  # type: ignore
-            },
-        },
-    )
-
-
-def xarray_open_dataset(
-    src_path: str,
-    auth: earthaccess.Auth,
-    group: Optional[Any] = None,
-    decode_times: Optional[bool] = True,
-    s3_credentials: Optional[Dict] = None,
-) -> xarray.Dataset:
-    # TODO: can we import the internals of titiler.xarray.io.xarray_open_dataset?
-    """Modified version of titiler.xarray.io.xarray_open_dataset with
-    custom handler for earthaccess authentication over https
     """
+    if "x" not in da.dims and "y" not in da.dims:
+        try:
+            y_dim = next(name for name in y_dim_names if name in da.dims)
+            x_dim = next(name for name in x_dim_names if name in da.dims)
+        except StopIteration as e:
+            raise ValueError(
+                f"Couldn't find X and Y spatial coordinates in {da.dims}"
+            ) from e
+
+        da = da.rename({y_dim: "y", x_dim: "x"})
+
+    if extra_dims := [d for d in da.dims if d not in ["x", "y"]]:
+        da = da.transpose(*extra_dims, "y", "x")
+    else:
+        da = da.transpose("y", "x")
+
+    # If min/max values are stored in `valid_range` we add them in `valid_min/valid_max`
+    vmin, vmax = da.attrs.get("valid_min"), da.attrs.get("valid_max")
+    if "valid_range" in da.attrs and not (vmin is not None and vmax is not None):
+        valid_range = da.attrs.get("valid_range")
+        da.attrs.update({"valid_min": valid_range[0], "valid_max": valid_range[1]})  # type: ignore
+
+    return da
+
+
+def get_variables(
+    ds: Dataset,
+    variables: list[str],
+    sel: list[str] | None = None,
+    expression: str | None = None,
+    x_dim_names: list[str] = X_DIM_NAMES,
+    y_dim_names: list[str] = Y_DIM_NAMES,
+) -> DataArray:
+    """Get one or more Xarray variables concatenated into a single DataArray.
+
+    Args:
+        ds (xarray.Dataset): Xarray Dataset.
+        variables (list[str]): Variable names to extract and concatenate along a "band" dimension.
+        sel (list of str, optional): DSL selector strings for dimension subsetting.
+        expression (str, optional): Band math expression to apply to the resulting DataArray.
+        x_dim_names (list[str]): Candidate names for the X spatial dimension.
+        y_dim_names (list[str]): Candidate names for the Y spatial dimension.
+
+    Returns:
+        xarray.DataArray: 2D or 3D DataArray with dimensions (band, y, x) or (y, x).
+
+    """
+    da = xr.concat([ds[variable] for variable in variables], dim="band")
+    squeeze_dims = [d for d in da.dims if d != "band" and da.sizes[d] == 1]
+    if squeeze_dims:
+        da = da.squeeze(squeeze_dims)
+
+    for selector in _parse_dsl(sel):
+        dimension = selector["dimension"]
+        values = selector["values"]
+        method = selector["method"]
+
+        # TODO: add more casting
+        # cast string to dtype of the dimension
+        if da[dimension].dtype != "O":
+            values = [da[dimension].dtype.type(v) for v in values]
+
+        da = da.sel(
+            {dimension: values[0] if len(values) < 2 else values},
+            method=method,
+        )
+
+    da = _arrange_dims(da, x_dim_names=x_dim_names, y_dim_names=y_dim_names)
+
+    if expression:
+        da = apply_expression(da, expression)
+
+    # Make sure we have a valid CRS
+    crs = da.rio.crs or "epsg:4326"
+    da = da.rio.write_crs(crs)
+
+    if crs == "epsg:4326" and (da.x > 180).any():
+        # Adjust the longitude coordinates to the -180 to 180 range
+        da = da.assign_coords(x=(da.x + 180) % 360 - 180)
+
+        # Sort the dataset by the updated longitude coordinates
+        da = da.sortby(da.x)
+
+    assert len(da.dims) in [2, 3], "titiler.xarray can only work with 2D or 3D dataset"
+
+    return da
+
+
+def open_dataset(
+    src_path: str,
+    group: str | None = None,
+    decode_times: bool = True,
+    decode_coords: Literal["all", "coordinates"] = "all",
+    auth_token: str | None = None,
+    credential_provider: EarthdataS3CredentialProvider | None = None,
+    **kwargs,
+) -> Dataset:
+    """Open a remote NetCDF/HDF5 dataset, using a cache to avoid redundant fetches."""
+
     # Generate cache key and attempt to fetch the dataset from cache
     cache_key = f"{src_path}_{group}" if group is not None else src_path
+
+    # Fast path: no lock needed for a cache hit
     data_bytes = cache_client.get(cache_key, None)
     if data_bytes:
+        logger.info(f"loading {cache_key} from cache")
         return pickle.loads(data_bytes)
 
-    parsed = urlparse(src_path)
-    protocol = parsed.scheme or "file"
+    # Slow path: serialize concurrent openers to prevent cache stampede
+    with _dataset_cache_lock:
+        # Re-check: another thread may have populated the cache while we waited
+        data_bytes = cache_client.get(cache_key, None)
+        if data_bytes:
+            logger.info(f"loading {cache_key} from cache")
+            return pickle.loads(data_bytes)
 
-    if any(src_path.lower().endswith(ext) for ext in [".nc", ".nc4"]):
-        xr_engine = "h5netcdf"
-    else:
-        xr_engine = "zarr"
+        parsed = urllib.parse.urlparse(src_path)
+        store_root = f"{parsed.scheme}://{parsed.netloc}"
 
-    file_handler = get_filesystem(
-        src_path,
-        protocol,
-        xr_engine,
-        anon=(s3_credentials is None),
-        auth=auth,
-        s3_credentials=s3_credentials,
-    )
-
-    # Arguments for xarray.open_dataset
-    # Default args
-    xr_open_args: Dict[str, Any] = {
-        "decode_coords": "all",
-        "decode_times": decode_times,
-    }
-
-    # Argument if we're opening a datatree
-    if group is not None:
-        xr_open_args["group"] = group
-
-    # NetCDF arguments
-    if xr_engine == "h5netcdf":
-        xr_open_args.update(
-            {
-                "engine": "h5netcdf",
-                "lock": False,
+        logger.info("getting object store")
+        if credential_provider is not None:
+            store = obstore.store.from_url(
+                store_root, credential_provider=credential_provider
+            )
+        elif auth_token:
+            client_options: ClientConfig = {
+                "default_headers": {"Authorization": f"Bearer {auth_token}"}
             }
+            store = obstore.store.from_url(store_root, client_options=client_options)
+        else:
+            store = obstore.store.from_url(store_root)
+
+        reader = BlockStoreReader(store, parsed.path, block_size=8 * 1024**2)
+
+        logger.info(f"opening {src_path}")
+        t0 = time.perf_counter()
+        ds = xarray_open_dataset(
+            reader,  # type: ignore[arg-type]
+            group=group,
+            decode_times=decode_times,
+            decode_coords=decode_coords,
+            decode_timedelta=decode_times,
+            phony_dims="sort",
+            engine="h5netcdf",
+            lock=False,
+            chunks={},
+            **kwargs,
         )
+        read_time = time.perf_counter() - t0
+        logger.info(f"reading {src_path} took {read_time:.2f}s")
 
-        ds = xarray.open_dataset(file_handler, **xr_open_args)
+        cache_client[cache_key] = pickle.dumps(ds)
 
-    # Fallback to Zarr
-    else:
-        ds = xarray.open_zarr(file_handler, **xr_open_args)
+        return ds
 
-    # Serialize the dataset to bytes using pickle
-    cache_client[cache_key] = pickle.dumps(ds)
 
-    return ds
+def _get_assets(
+    granule: Granule,
+    regex: str | None = None,
+    include_asset_types: Set[str] | None = None,
+    exclude_asset_types: Set[str] | None = None,
+) -> Iterator:
+    """Yield asset keys from a granule, applying optional extension filters.
+
+    Args:
+        granule: Granule whose assets are iterated.
+        regex: If provided, only assets whose filename matches this pattern are
+            included; the asset key is the matched substring.
+        include_asset_types: If provided, only assets whose file extension is
+            in this set are yielded.
+        exclude_asset_types: If provided, assets whose file extension is in
+            this set are skipped.
+
+    Yields:
+        Asset key strings for all assets that pass all configured filters.
+    """
+    for asset, asset_info in granule.get_assets(regex=regex).items():
+        _ext = asset_info.ext
+
+        if _ext and (exclude_asset_types and _ext in exclude_asset_types):
+            continue
+
+        if _ext and (include_asset_types and _ext not in include_asset_types):
+            continue
+
+        yield asset
+
+
+def _to_granule(granule: Granule | dict) -> Granule:
+    if isinstance(granule, dict):
+        return Granule(**granule)
+
+    return granule
 
 
 @attr.s
-class MultiFilesBandsReader(MultiBandReader):
-    """Multiple Files as Bands."""
+class MultiBaseGranuleReader(MultiBaseReader):
+    """CMR Granule Reader."""
 
-    input: dict[str, str] = attr.ib()
+    granule: Granule = attr.ib(converter=_to_granule)
+    input: str | None = attr.ib(default=None)
+
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
+    minzoom: int = attr.ib(default=None)
+    maxzoom: int = attr.ib(default=None)
 
+    assets_regex: str | None = attr.ib(default=None)
+    s3_access: bool = attr.ib(default=False)
+    auth_token: str | None = attr.ib(default=None)
+    get_s3_credentials: Callable | None = attr.ib(default=None)
+
+    include_assets: Set[str] | None = attr.ib(default=None)
+    exclude_assets: Set[str] | None = attr.ib(default=None)
+
+    include_asset_types: Set[str] = attr.ib(default=DEFAULT_VALID_TYPES)
+    exclude_asset_types: Set[str] | None = attr.ib(default=None)
+
+    assets: Sequence[str] = attr.ib(init=False)
+    default_assets: Sequence[str] | None = attr.ib(default=["0"])
+
+    reader: Type[Reader] | Type[XarrayReader] = attr.ib(default=Reader)
     reader_options: dict[str, Any] = attr.ib(factory=dict)
-    reader: type[BaseReader] = attr.ib(default=Reader)
 
-    minzoom: int = attr.ib()
-    maxzoom: int = attr.ib()
+    fetch_options: dict[str, Any] = attr.ib(factory=dict)
 
-    @minzoom.default
-    def _minzoom(self):
-        return self.tms.minzoom
+    ctx: rasterio.Env = attr.ib(default=rasterio.Env)
 
-    @maxzoom.default
-    def _maxzoom(self):
-        return self.tms.maxzoom
-
-    def __attrs_post_init__(self):
-        """Fetch Reference band to get the bounds."""
-        self.bands = list(self.input)
-        self.bounds = (-180.0, -90, 180.0, 90)
-        self.crs = WGS84_CRS
-
-        self.reader = make_env_inheriting_reader(self.reader)
-
-    def _get_band_url(self, band: str) -> str:
-        """Validate band's name and return band's url."""
-        if band not in self.bands:
-            raise InvalidBandName(f"{band} is not valid")
-
-        return self.input[band]
-
-
-def make_env_inheriting_reader[R: BaseReader](reader_type: type[R]) -> type[R]:
-    """Decorate a BaseReader type to inherit the current rasterio environment.
-
-    Decorates the specified type's initialization method (`__init__`) such that
-    it executes within a rasterio environment that is configured identically to
-    the rasterio environment that is active at the time this function is
-    invoked.
-
-    This allows initialization to occur in another thread, but within the
-    context of a rasterio environment configured the same as the current
-    environment (which may be in a different thread).
-
-    Parameters
-    ----------
-    reader_type
-        The base reader class to decorate.
-
-    Returns
-    -------
-    type[R]
-        A new reader class that inherits the current (at the time of invoking
-        this function) rasterio environment during initialization of instances
-        of the class.
-    """
-    EnvInheritingReader = type(
-        "EnvInheritingReader",
-        (reader_type,),
-        {"__init__": inherit_rasterio_env(reader_type.__init__)},
+    _credential_provider: EarthdataS3CredentialProvider | None = attr.ib(
+        init=False, default=None
     )
 
-    return cast(type[R], EnvInheritingReader)
+    def __attrs_post_init__(self):
+        """Set bounds, populate the asset list, and set up S3 credentials.
+
+        Sets ``self.bounds`` and ``self.crs`` from the granule bbox, populates
+        ``self.assets`` via ``get_asset_list()``, and—when S3 direct access is
+        configured—retrieves the ``EarthdataS3CredentialProvider`` for the
+        granule's credentials endpoint.
+
+        Raises:
+            MissingAssets: If no valid assets remain after applying media-type
+                filters.
+        """
+        self.bounds = tuple(self.granule.bbox)
+        self.crs = WGS84_CRS
+
+        self.minzoom = self.minzoom if self.minzoom is not None else self._minzoom
+        self.maxzoom = self.maxzoom if self.maxzoom is not None else self._maxzoom
+
+        self.assets = self.get_asset_list()
+        if not self.assets:
+            raise MissingAssets(
+                "No valid asset found. Asset's media types not supported"
+            )
+
+        if self.s3_access and self.get_s3_credentials is not None:
+            try:
+                endpoint = self.granule.s3_credentials_endpoint
+                self._credential_provider = self.get_s3_credentials(endpoint)
+            except S3CredentialsEndpointMissing:
+                logger.warning(
+                    "No S3 credentials endpoint found for granule %s; "
+                    "falling back to unauthenticated S3 access",
+                    self.granule.id,
+                )
+
+    def get_asset_list(self) -> list[str]:
+        """Return asset keys from the granule that pass all configured filters.
+
+        Delegates to ``_get_assets`` using this reader's ``assets_regex``,
+        ``include_asset_types``, and ``exclude_asset_types`` settings.
+        """
+        return list(
+            _get_assets(
+                self.granule,
+                regex=self.assets_regex,
+                include_asset_types=self.include_asset_types,
+                exclude_asset_types=self.exclude_asset_types,
+            )
+        )
+
+    def _get_asset_info(self, asset: str | AssetWithOptions) -> AssetInfo:
+        """Build an AssetInfo for a named asset, injecting S3 credentials if available.
+
+        Looks up the asset in the granule, resolves the appropriate URL (S3
+        direct or HTTPS), determines the GDAL media type from the file
+        extension, and wraps live S3 credentials in an ``AWSSession`` if a
+        credential provider is configured.
+
+        Args:
+            asset: Asset key string; must be present in ``self.assets``.
+
+        Returns:
+            AssetInfo with url, media_type, reader_options, and optional env.
+
+        Raises:
+            InvalidAssetName: If ``asset`` is not in ``self.assets``.
+            InvalidMediaType: If the asset's file extension is not in
+                ``MEDIA_TYPES``.
+        """
+        assert isinstance(asset, str)
+        if asset not in self.assets:
+            raise InvalidAssetName(
+                f"'{asset}' is not valid, should be one of {self.assets}"
+            )
+
+        asset_info = self.granule.get_assets(regex=self.assets_regex)[asset]
+        media_type = MEDIA_TYPES.get(asset_info.ext)
+
+        if not media_type:
+            raise InvalidMediaType(f"{asset} has an invalid media type")
+
+        reader_options = self.reader_options.copy()
+
+        env = {}
+        if self._credential_provider is not None:
+            creds = self._credential_provider()
+            env = {
+                "session": AWSSession(
+                    aws_access_key_id=creds["access_key_id"],
+                    aws_secret_access_key=creds["secret_access_key"],
+                    aws_session_token=creds["token"],
+                )
+            }
+
+        info = AssetInfo(
+            name=asset,
+            url=asset_info.direct_href if self.s3_access else asset_info.external_href,
+            media_type=media_type,
+            reader_options=reader_options,
+            method_options={},
+            env=env,
+        )
+
+        return info
 
 
-def inherit_rasterio_env[**P, R](f: Callable[P, R]) -> Callable[P, R]:
-    """Wrap a function to run in a rasterio environment like the current one.
+@attr.s
+class XarrayGranuleReader(XarrayReader):
+    """Custom Xarray Reader that gets the asset href from a Granule"""
 
-    This function differs from the function
-    `rasterio.env.ensure_env_with_credentials` in that this function copies the
-    rasterio environment active at the time this function is invoked, rather
-    than at the time the returned function is invoked. This enables replicating
-    the environment from one thread (the one active at the time this function is
-    invoked) to another thread (the one active at the time the returned function
-    is invoked).
+    src_path: Granule = attr.ib()
+    variables: list[str] = attr.ib()
 
-    Parameters
-    ----------
-    f
-        The function to wrap.
+    options: Options = attr.ib(factory=Options)
 
-    Returns
-    -------
-    Callable[P, R]
-        A function that executes within a rasterio environment configured
-        identically to the currently active environment, or the original
-        function if no rasterio environment is currently active.
-    """
-    if (env := rasterio.env.getenv() if rasterio.env.hasenv() else None) is None:
-        return f
+    # xarray.Dataset options
+    opener: Callable[..., Dataset] = attr.ib(default=open_dataset)
+    opener_options: dict = attr.ib(factory=dict)
 
-    @wraps(f)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        with rasterio.Env():
-            rasterio.env.setenv(**env)
-            return f(*args, **kwargs)
+    s3_access: bool = attr.ib(default=False)
+    auth_token: str | None = attr.ib(default=None)
+    get_s3_credentials: Callable | None = attr.ib(default=None)
 
-    return wrapper
+    group: str | None = attr.ib(default=None)
+    decode_times: bool = attr.ib(default=True)
+
+    # xarray.DataArray options
+    sel: list[str] | None = attr.ib(default=None)
+    method: Literal["nearest", "pad", "ffill", "backfill", "bfill"] | None = attr.ib(
+        default=None
+    )
+
+    tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
+    expression: str | None = attr.ib(default=None)
+
+    ds: Dataset = attr.ib(init=False)
+    input: DataArray = attr.ib(init=False)
+
+    _dims: list = attr.ib(init=False, factory=list)
+
+    def __attrs_post_init__(self):
+        """Open the granule dataset, extract variables as a DataArray, then set bounds and CRS.
+
+        Resolves S3 credentials or a bearer token for authentication, opens the dataset
+        via ``self.opener``, calls ``get_variables`` to build ``self.input``, and
+        delegates to ``super().__attrs_post_init__()`` to complete reader initialisation.
+        """
+        opener_options = {
+            "group": self.group,
+            "decode_times": self.decode_times,
+            **self.opener_options,
+        }
+        if self.s3_access and self.get_s3_credentials is not None:
+            try:
+                endpoint = self.src_path.s3_credentials_endpoint
+                opener_options["credential_provider"] = self.get_s3_credentials(
+                    endpoint
+                )
+            except S3CredentialsEndpointMissing:
+                logger.warning(
+                    "No S3 credentials endpoint found for granule %s; "
+                    "falling back to unauthenticated S3 access",
+                    self.src_path.id,
+                )
+                opener_options["auth_token"] = self.auth_token
+        else:
+            opener_options["auth_token"] = self.auth_token
+
+        assets = self.src_path.get_assets()
+        asset = assets["0"]
+        href = asset.direct_href if self.s3_access else asset.external_href
+
+        # for this reader the assets are keyed with numeric index
+        # the real data asset is assumed to be the first one
+        self.ds = self.opener(href, **opener_options)
+        self.input = get_variables(
+            self.ds,
+            self.variables,
+            sel=self.sel,
+            expression=self.expression,
+        )
+        super().__attrs_post_init__()

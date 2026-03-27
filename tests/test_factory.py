@@ -1,116 +1,162 @@
-"""Test factory functions"""
+"""Test CMRTilerFactory assets endpoints."""
+
+import unittest.mock as mock
 
 import pytest
-from titiler.cmr.dependencies import (
-    RasterioParams,
-    InterpolatedXarrayParams,
-    ReaderParams,
-)
-from titiler.cmr.factory import parse_reader_options
-from titiler.cmr.reader import MultiFilesBandsReader
-from rio_tiler.io import rasterio
+
+from titiler.cmr.models import Granule, GranuleSpatialExtent
 
 
-class TestParseReaderOptions:
-    """Test parse_reader_options function assertions about bands and indexes"""
+def _make_stub_granule(granule_id: str, granule_ur: str) -> Granule:
+    """Build a Granule with a simple bounding rectangle geometry."""
+    return Granule(
+        id=granule_id,
+        granule_ur=granule_ur,
+        collection_concept_id="C123-PROV",
+        related_urls=[],
+        spatial_extent=GranuleSpatialExtent(
+            **{
+                "HorizontalSpatialDomain": {
+                    "Geometry": {
+                        "BoundingRectangles": [
+                            {
+                                "WestBoundingCoordinate": -100,
+                                "EastBoundingCoordinate": -90,
+                                "NorthBoundingCoordinate": 50,
+                                "SouthBoundingCoordinate": 40,
+                            }
+                        ]
+                    }
+                }
+            }
+        ),
+    )
 
-    def test_bands_regex_without_bands_fails(self):
-        """Test that providing bands_regex without bands raises an assertion error"""
-        rasterio_params = RasterioParams(
-            bands_regex="B0[1-3]", bands=None, indexes=None
+
+STUB_GRANULES = [
+    _make_stub_granule("G1-PROV", "granule-1"),
+    _make_stub_granule("G2-PROV", "granule-2"),
+]
+
+
+@pytest.fixture
+def mock_get_granules():
+    """Patch get_granules in the backend to return stub Granule objects."""
+    with mock.patch(
+        "titiler.cmr.backend.get_granules",
+        side_effect=lambda *args, **kwargs: iter(STUB_GRANULES),
+    ):
+        yield
+
+
+def _assert_granule_feature_collection(body: dict) -> None:
+    """Assert that a response body is a valid GranuleFeatureCollection."""
+    assert body["type"] == "FeatureCollection"
+    assert len(body["features"]) == len(STUB_GRANULES)
+
+    for i, feature in enumerate(body["features"]):
+        granule = STUB_GRANULES[i]
+        assert feature["type"] == "Feature"
+        assert feature["geometry"] is not None
+        assert feature["geometry"]["type"] == "Polygon"
+        props = feature["properties"]
+        assert props["id"] == granule.id
+        assert props["granule_ur"] == granule.granule_ur
+        assert props["collection_concept_id"] == granule.collection_concept_id
+
+
+def test_bbox_assets_returns_granule_list(app, mock_get_granules):
+    """Test that /bbox/.../granules returns a JSON list of granules by default."""
+    response = app.get(
+        "/bbox/-100,40,-90,50/granules",
+        params={"collection_concept_id": "C123-PROV"},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body, list)
+    assert len(body) == len(STUB_GRANULES)
+    for i, item in enumerate(body):
+        assert item["id"] == STUB_GRANULES[i].id
+
+
+def test_bbox_assets_returns_feature_collection(app, mock_get_granules):
+    """Test that /bbox/.../granules?f=geojson returns a GeoJSON FeatureCollection."""
+    response = app.get(
+        "/bbox/-100,40,-90,50/granules",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson"},
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+    _assert_granule_feature_collection(response.json())
+
+
+def test_point_assets_returns_granule_list(app, mock_get_granules):
+    """Test that /point/.../granules returns a JSON list of granules by default."""
+    response = app.get(
+        "/point/-95,45/granules",
+        params={"collection_concept_id": "C123-PROV"},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body, list)
+    assert len(body) == len(STUB_GRANULES)
+
+
+def test_point_assets_returns_feature_collection(app, mock_get_granules):
+    """Test that /point/.../granules?f=geojson returns a GeoJSON FeatureCollection."""
+    response = app.get(
+        "/point/-95,45/granules",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson"},
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+    _assert_granule_feature_collection(response.json())
+
+
+def test_tile_assets_returns_granule_list(app, mock_get_granules):
+    """Test that /tiles/.../granules returns a JSON list of granules by default."""
+    response = app.get(
+        "/tiles/WebMercatorQuad/0/0/0/granules",
+        params={"collection_concept_id": "C123-PROV"},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert isinstance(body, list)
+    assert len(body) == len(STUB_GRANULES)
+
+
+def test_tile_assets_returns_feature_collection(app, mock_get_granules):
+    """Test that /tiles/.../granules?f=geojson returns a GeoJSON FeatureCollection."""
+    response = app.get(
+        "/tiles/WebMercatorQuad/0/0/0/granules",
+        params={"collection_concept_id": "C123-PROV", "f": "geojson"},
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+    _assert_granule_feature_collection(response.json())
+
+
+def test_bbox_assets_empty_result(app, mock_get_granules):
+    """Test that an empty granule result returns an empty list."""
+    with mock.patch(
+        "titiler.cmr.backend.get_granules",
+        side_effect=lambda *args, **kwargs: iter([]),
+    ):
+        response = app.get(
+            "/bbox/-100,40,-90,50/granules",
+            params={"collection_concept_id": "C123-PROV"},
         )
-        xarray_io_params = InterpolatedXarrayParams()
-        xarray_ds_params = InterpolatedXarrayParams()
-        reader_params = ReaderParams(backend="rasterio")
+    assert response.status_code == 200
+    assert response.json() == []
 
-        with pytest.raises(
-            AssertionError,
-            match="`bands=` option must be provided when using multi-band data",
-        ):
-            parse_reader_options(
-                rasterio_params=rasterio_params,
-                xarray_io_params=xarray_io_params,
-                xarray_ds_params=xarray_ds_params,
-                reader_params=reader_params,
-            )
 
-    def test_no_bands_regex_no_bands_no_indexes_fails(self):
-        """Test that providing neither bands_regex, bands, nor indexes raises an assertion error"""
-        rasterio_params = RasterioParams(
-            bands_regex=None,
-            bands=None,
-            indexes=None,  # This should cause the assertion to fail
+def test_prefixed_assets_routes_do_not_exist(app):
+    """Verify that /xarray/.../granules and /rasterio/.../granules no longer exist."""
+    for prefix in ("/xarray", "/rasterio"):
+        r = app.get(
+            f"{prefix}/bbox/-100,40,-90,50/granules",
+            params={"collection_concept_id": "C123-PROV"},
         )
-        xarray_io_params = InterpolatedXarrayParams()
-        xarray_ds_params = InterpolatedXarrayParams()
-        reader_params = ReaderParams(backend="rasterio")
-
-        with pytest.raises(
-            AssertionError,
-            match="`bidx` must be provided if not providing `bands_regex` and `bands`",
-        ):
-            parse_reader_options(
-                rasterio_params=rasterio_params,
-                xarray_io_params=xarray_io_params,
-                xarray_ds_params=xarray_ds_params,
-                reader_params=reader_params,
-            )
-
-    def test_bands_regex_with_bands_succeeds(self):
-        """Test that providing bands_regex with bands succeeds and returns MultiFilesBandsReader"""
-        rasterio_params = RasterioParams(
-            bands_regex="B0[1-3]", bands=["B01", "B02", "B03"], indexes=None
+        assert r.status_code == 404, (
+            f"Expected 404 for {prefix}/bbox/.../granules, got {r.status_code}"
         )
-        xarray_io_params = InterpolatedXarrayParams()
-        xarray_ds_params = InterpolatedXarrayParams()
-        reader_params = ReaderParams(backend="rasterio")
-
-        reader, read_options, reader_options = parse_reader_options(
-            rasterio_params=rasterio_params,
-            xarray_io_params=xarray_io_params,
-            xarray_ds_params=xarray_ds_params,
-            reader_params=reader_params,
-        )
-
-        assert reader == MultiFilesBandsReader
-        assert read_options["bands"] == ["B01", "B02", "B03"]
-        assert read_options["bands_regex"] == "B0[1-3]"
-        assert reader_options == {}
-
-    def test_indexes_without_bands_regex_succeeds(self):
-        """Test that providing indexes without bands_regex succeeds and returns rasterio.Reader"""
-        rasterio_params = RasterioParams(
-            bands_regex=None, bands=None, indexes=[1, 2, 3]
-        )
-        xarray_io_params = InterpolatedXarrayParams()
-        xarray_ds_params = InterpolatedXarrayParams()
-        reader_params = ReaderParams(backend="rasterio")
-
-        reader, read_options, reader_options = parse_reader_options(
-            rasterio_params=rasterio_params,
-            xarray_io_params=xarray_io_params,
-            xarray_ds_params=xarray_ds_params,
-            reader_params=reader_params,
-        )
-
-        assert reader == rasterio.Reader
-        assert read_options["indexes"] == [1, 2, 3]
-        assert reader_options == {}
-
-    def test_xarray_backend_ignores_rasterio_params(self):
-        """Test that xarray backend ignores rasterio_params and doesn't trigger assertions"""
-        rasterio_params = RasterioParams(bands_regex=None, bands=None, indexes=None)
-        xarray_io_params = InterpolatedXarrayParams()
-        xarray_ds_params = InterpolatedXarrayParams()
-        reader_params = ReaderParams(backend="xarray")
-
-        reader, read_options, reader_options = parse_reader_options(
-            rasterio_params=rasterio_params,
-            xarray_io_params=xarray_io_params,
-            xarray_ds_params=xarray_ds_params,
-            reader_params=reader_params,
-        )
-
-        from titiler.xarray.io import Reader as XarrayReader
-
-        assert reader == XarrayReader
