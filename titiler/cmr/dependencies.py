@@ -41,9 +41,9 @@ def GranuleSearchParams(
     ),
     cloud_cover: CloudCover | None = None,
     bounding_box: BBox | None = None,
-    sort_key: SortKey | None = None,
-    orbit_number: OrbitNumber | None = None,
-    attribute: AdditionalAttributeFilter | None = None,
+    sort_key: SortKey = None,
+    orbit_number: OrbitNumber = None,
+    attribute: AdditionalAttributeFilter = None,
 ) -> GranuleSearch:
     """Build GranuleSearch parameters from query string inputs.
 
