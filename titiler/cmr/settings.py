@@ -33,6 +33,7 @@ class ApiSettings(BaseSettings):
     telemetry_enabled: bool = False
     debug: bool = False
     cmr_timeout: float = 10.0
+    cmr_client_id: str | None = None
 
     model_config = {
         "env_prefix": "TITILER_CMR_",

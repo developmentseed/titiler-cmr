@@ -27,7 +27,6 @@ from titiler.xarray.dependencies import (
 )
 
 from titiler.cmr import __version__ as titiler_cmr_version
-from titiler.cmr.errors import CMRQueryTimeout
 from titiler.cmr.compatibility import router as compatibility_router
 from titiler.cmr.credentials import EarthdataTokenProvider, GetS3Credentials
 from titiler.cmr.dependencies import (
@@ -36,6 +35,7 @@ from titiler.cmr.dependencies import (
     RasterioGranuleSearchBackendParams,
     interpolated_xarray_ds_params,
 )
+from titiler.cmr.errors import CMRQueryTimeout
 from titiler.cmr.factory import CMRTilerFactory, granules_router
 from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
@@ -74,8 +74,13 @@ def startup(app: FastAPI) -> None:
     Called directly by the Lambda handler (which bypasses the lifespan) and
     also from within the lifespan context manager for non-Lambda deployments.
     """
+    cmr_headers = (
+        {"client-id": settings.cmr_client_id} if settings.cmr_client_id else {}
+    )
     app.state.client = Client(
-        base_url=CMR_GRANULE_SEARCH_API, timeout=settings.cmr_timeout
+        base_url=CMR_GRANULE_SEARCH_API,
+        timeout=settings.cmr_timeout,
+        headers=cmr_headers,
     )
 
     app.state.s3_access = earthdata_settings.earthdata_s3_direct_access
