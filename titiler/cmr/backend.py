@@ -1,7 +1,7 @@
 """CMR mosaic backend."""
 
 from collections.abc import Callable
-from typing import Any, Type, cast
+from typing import Any, cast
 
 import attr
 from geojson_pydantic.geometries import Geometry, Point, Polygon
@@ -25,9 +25,9 @@ class CMRBackend(BaseBackend):
     """Mosaic backend for CMR granule search."""
 
     # CMR search parameters
-    input: GranuleSearch = attr.ib()  # type: ignore[assignment]
+    input: GranuleSearch = attr.ib()
     client: Client = attr.ib()
-    reader: Type[MultiBaseGranuleReader] | Type[XarrayGranuleReader] = attr.ib()
+    reader: type[MultiBaseGranuleReader] | type[XarrayGranuleReader] = attr.ib()
 
     tms: TileMatrixSet = attr.ib(default=WEB_MERCATOR_TMS)
 

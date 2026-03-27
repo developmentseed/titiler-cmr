@@ -2,7 +2,7 @@
 
 ## Overview
 
-`titiler-cmr` sits on top of `titiler.mosaic`, which provides a `MosaicTilerFactory` pattern. In this pattern a *backend* orchestrates multi-source search and tiling while a *reader* handles per-source data access. `CMRTilerFactory` extends `MosaicTilerFactory` with two backend variants that correspond to different data-access paths:
+`titiler-cmr` sits on top of `titiler.mosaic`, which provides a `MosaicTilerFactory` pattern. TiTiler's object-oriented design includes 2 foundational class types: *backends* and *readers*. In this pattern a *backend* orchestrates multi-source search and tiling while a *reader* handles per-source data access. `CMRTilerFactory` extends `MosaicTilerFactory` with two backend variants that correspond to different data-access paths:
 
 - **rasterio** — for granules that expose georeferenced raster assets (GeoTIFF, COG, etc.), accessed via `rasterio`.
 - **xarray** — for granules that expose NetCDF/HDF5 files, opened via `xarray` and `open_dataset`.

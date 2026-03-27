@@ -9,9 +9,8 @@ import rasterio
 from geojson_pydantic import Polygon
 from httpx import Client
 from mypy_boto3_s3.service_resource import Object
-from rio_tiler.models import ImageData
-
 from rio_tiler.errors import NoAssetFoundError
+from rio_tiler.models import ImageData
 
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.models import (

@@ -34,9 +34,10 @@ class EarthdataTokenProvider:
 
     def __call__(self) -> str:
         """Return the current token, refreshing if near expiry."""
-        with self._lock:
-            if not self._is_valid():
-                self._fetch()
+        if not self._is_valid():
+            with self._lock:
+                if not self._is_valid():
+                    self._fetch()
         assert self._token is not None
         return self._token
 
@@ -97,9 +98,10 @@ class GetS3Credentials:
 
     def __call__(self, endpoint: str) -> NasaEarthdataCredentialProvider:
         """Return a credential provider for the given S3 credentials endpoint."""
-        with self._lock:
-            if endpoint not in self._cache:
-                self._cache[endpoint] = NasaEarthdataCredentialProvider(
-                    endpoint, auth=self._auth
-                )
-            return self._cache[endpoint]
+        if endpoint not in self._cache:
+            with self._lock:
+                if endpoint not in self._cache:
+                    self._cache[endpoint] = NasaEarthdataCredentialProvider(
+                        endpoint, auth=self._auth
+                    )
+        return self._cache[endpoint]
