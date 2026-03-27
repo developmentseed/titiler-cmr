@@ -114,7 +114,7 @@ def get_granules(
     search_params: GranuleSearch,
     client: Client,
     geometry: Geometry | None = None,
-    page_size: int = 10,
+    page_size: int = 20,
     limit: int = 100,
     exitwhenfull: bool = False,
     coverage_tolerance: float = 0.0,
