@@ -85,16 +85,16 @@ def startup(app: FastAPI) -> None:
     app.state.get_s3_credentials = None
 
     if earthdata_settings.earthdata_username and earthdata_settings.earthdata_password:
-        token_provider = EarthdataTokenProvider(
-            earthdata_settings.earthdata_username,
-            earthdata_settings.earthdata_password,
-        )
-        app.state.earthdata_token_provider = token_provider
-
         if app.state.s3_access:
-            get_s3_credentials = GetS3Credentials(token_provider)
-            app.state.get_s3_credentials = get_s3_credentials
-            token_provider.register_refresh_callback(get_s3_credentials.clear)
+            app.state.get_s3_credentials = GetS3Credentials(
+                earthdata_settings.earthdata_username,
+                earthdata_settings.earthdata_password,
+            )
+        else:
+            app.state.earthdata_token_provider = EarthdataTokenProvider(
+                earthdata_settings.earthdata_username,
+                earthdata_settings.earthdata_password,
+            )
     else:
         logger.warning(
             "EARTHDATA_USERNAME/EARTHDATA_PASSWORD not set; authenticated access unavailable"
