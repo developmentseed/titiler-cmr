@@ -126,50 +126,49 @@ The reason for choosing the lower-level base: `XarrayGranuleReader` must accept 
 ## S3 Credential Handling
 
 NASA DAAC data in S3 requires temporary credentials obtained from a per-DAAC endpoint, not
-long-lived IAM keys. Earthdata Login provides a bearer token that can be exchanged for
-short-lived `(access_key_id, secret_access_key, session_token)` credentials scoped to that DAAC's
-bucket. The credential machinery in `titiler-cmr` is split across three layers: startup,
-app-state caching, and per-granule provider caching.
+long-lived IAM keys. The credential machinery in `titiler-cmr` is split across three layers:
+startup, app-state caching, and per-granule provider caching.
 
 ### Startup
 
-`startup()` in `main.py` runs once at application boot (or Lambda warm start):
+`startup()` in `main.py` runs once at application boot (or Lambda warm start). It initialises
+`app.state.s3_access`, `app.state.earthdata_token_provider`, and `app.state.get_s3_credentials`
+(the latter two default to `None`). If both `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` are
+set, exactly one credential object is created depending on `EARTHDATA_S3_DIRECT_ACCESS`:
 
-1. If `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` are set, an `EarthdataTokenProvider` instance
-   is created and stored at `app.state.earthdata_token_provider`. The provider lazily fetches and
-   refreshes the bearer token from `https://urs.earthdata.nasa.gov/api/users/find_or_create_token`
-   on demand rather than eagerly at startup.
-2. If `EARTHDATA_S3_DIRECT_ACCESS=true`, a `GetS3Credentials(token_provider)` instance is
-   constructed (taking the provider so it can call `token_provider()` and pick up refreshed tokens)
-   and stored at `app.state.get_s3_credentials`.
+- **`s3_access=False`** (default): an `EarthdataTokenProvider(username, password)` instance is
+  stored at `app.state.earthdata_token_provider`. It lazily fetches and refreshes a bearer token
+  from `https://urs.earthdata.nasa.gov/api/users/find_or_create_token` on demand, caching the
+  result until within 5 minutes of expiry (`TOKEN_REFRESH_BUFFER`). Thread-safe; a single instance
+  is shared across requests.
+- **`s3_access=True`**: a `GetS3Credentials(username, password)` instance is stored at
+  `app.state.get_s3_credentials`. It caches one `NasaEarthdataCredentialProvider` (from
+  `obstore.auth.earthdata`) per S3-credentials endpoint URL in a plain dict protected by a
+  `threading.Lock`. Credential refresh within each provider is handled internally by obstore.
 
-`GetS3Credentials` maintains a `TTLCache(maxsize=100, ttl=50m)` internally. Calling it with
-an endpoint URL either constructs a new `EarthdataS3CredentialProvider` or returns the cached
-instance for that endpoint. The 50-minute TTL covers the expected lifetime of a Lambda execution
-environment and prevents redundant provider construction across requests.
+The two paths are mutually exclusive: when S3 direct access is enabled no bearer token provider
+is created, and vice versa.
 
 ### Per-request propagation
 
 `BackendParams` is a FastAPI dependency that runs on every request. It reads
 `app.state.{earthdata_token_provider, s3_access, get_s3_credentials}` and passes them into
-`CMRBackend`. `BackendParams.__init__` calls `token_provider()` to obtain the current bearer
-token string. `CMRBackend.__attrs_post_init__` then merges the token, s3_access flag, and
-get_s3_credentials callable into `reader_options`, so every reader instance receives them as
-constructor arguments.
+`CMRBackend`. If a token provider is present, `BackendParams.__init__` calls it immediately to
+resolve the current bearer token string. `CMRBackend.__attrs_post_init__` then merges the token,
+`s3_access` flag, and `get_s3_credentials` callable into `reader_options`, so every reader
+instance receives them as constructor arguments.
 
-### Per-granule credential provider (`EarthdataS3CredentialProvider`)
+### Per-granule credential provider (`NasaEarthdataCredentialProvider`)
 
-Each reader calls `granule.s3_credentials_endpoint` during `__attrs_post_init__`. This property
-scans the granule's `related_urls` for a URL containing `/s3credentials` and raises
-`S3CredentialsEndpointMissing` if none is found (different DAACs expose different URLs). The
-reader then calls `get_s3_credentials(endpoint)` to retrieve the cached
-`EarthdataS3CredentialProvider` instance for that endpoint.
+When `s3_access=True`, each reader calls `granule.s3_credentials_endpoint` during
+`__attrs_post_init__`. This property scans the granule's `related_urls` for a URL containing
+`/s3credentials` and raises `S3CredentialsEndpointMissing` if none is found (different DAACs
+expose different URLs). The reader then calls `get_s3_credentials(endpoint)` to retrieve the
+cached `NasaEarthdataCredentialProvider` instance for that endpoint.
 
-`EarthdataS3CredentialProvider` is a callable that returns `S3Credential`. When called it
-checks whether the cached credentials expire within 5 minutes (`CREDENTIAL_REFRESH_BUFFER`).
-If so (or on the first call), it fetches new credentials from the endpoint using the bearer
-token and caches the result. A `threading.Lock` makes it safe to share a single provider
-instance across concurrent reads within the same process.
+`NasaEarthdataCredentialProvider` is provided by `obstore.auth.earthdata` and is constructed
+with the endpoint URL and `(username, password)` credentials. obstore manages credential
+fetching and refresh internally.
 
 The credentials are used differently by each backend:
 

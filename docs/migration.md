@@ -57,10 +57,15 @@ remove the `?backend=` parameter — it has no effect on the new `/rasterio/` or
 paths.
 
 ## New parameters
-
-- **`orbit_number`** — Filter granule search results to a specific orbital pass number.
-- **`skipcovered`** — Skip granules whose spatial footprint is already fully covered by
+- **`sort_key`**: Sort granules on a field (e.g. `cloud_cover`, `start_date`)
+- **`granule_ur`**: Select a specific granule using its `granule_ur`
+- **`cloud_cover`**: Filter granule search results to a range of cloud cover values
+- **`attribute`**: Filter granule search results using advanced attribute filters
+- **`orbit_number`**: Filter granule search results to a specific orbital pass number.
+- **`skipcovered`**: Skip granules whose spatial footprint is already fully covered by
   previously selected granules. Reduces redundant data fetching for full-coverage queries.
-- **`coverage_tolerance`** — Tolerance for `skipcovered` coverage evaluation (float 0–1).
-- **`f`** — On `/granules` endpoints, controls response format: `json` returns a plain list
+- **`coverage_tolerance`**: Tolerance for `skipcovered` coverage evaluation (float 0–1).
+
+## New routes
+- `/granules` endpoints: returns granule search results. The `f` parameter controls response format: `json` returns a plain list
   of asset URLs, `geojson` returns a GeoJSON FeatureCollection with granule footprints.
