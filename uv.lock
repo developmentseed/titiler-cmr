@@ -4686,6 +4686,7 @@ deployment = [
     { name = "python-dotenv" },
 ]
 dev = [
+    { name = "boto3" },
     { name = "boto3-stubs", extra = ["s3"] },
     { name = "earthaccess" },
     { name = "folium" },
@@ -4750,6 +4751,7 @@ deployment = [
     { name = "python-dotenv", specifier = ">=1.0.1" },
 ]
 dev = [
+    { name = "boto3", specifier = ">=1.42.60" },
     { name = "boto3-stubs", extras = ["s3"], specifier = ">=1.42.24" },
     { name = "earthaccess", specifier = ">=0.16.0" },
     { name = "folium", specifier = ">=0.17.0" },
