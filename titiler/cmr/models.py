@@ -26,7 +26,7 @@ from titiler.cmr.errors import S3CredentialsEndpointMissing
 # ---------------------------------------------------------------------------
 
 ConceptID = Annotated[
-    str | None,
+    str,
     Query(
         description="""A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>
 - concept-type-prefix is a single capital letter prefix indicating the concept type. "C" is used for collections
@@ -37,7 +37,7 @@ ConceptID = Annotated[
 ]
 
 Temporal = Annotated[
-    str | None,
+    str,
     Query(
         description="""Filters items that have a temporal property that intersects this value.\n
 Either a date-time or an interval, open or closed. Date and time expressions adhere to RFC 3339. Open intervals are expressed using double-dots.""",
@@ -51,10 +51,10 @@ Either a date-time or an interval, open or closed. Date and time expressions adh
     ),
 ]
 
-GranuleUr = Annotated[str | None, Query(description="Unique granule record id")]
+GranuleUr = Annotated[str, Query(description="Unique granule record id")]
 
 CloudCover = Annotated[
-    str | None,
+    str,
     Query(
         description="Cloud cover range",
         openapi_examples={
@@ -65,7 +65,7 @@ CloudCover = Annotated[
 ]
 
 BBox = Annotated[
-    str | None,
+    str,
     Query(
         description="bounding box coordinates",
         openapi_examples={
@@ -76,7 +76,7 @@ BBox = Annotated[
 ]
 
 SortKey = Annotated[
-    List[str] | None,
+    List[str],
     Query(
         description=(
             "One or more sort keys for granule results. Prefix with `-` for descending order. "
@@ -95,7 +95,7 @@ SortKey = Annotated[
 ]
 
 OrbitNumber = Annotated[
-    int | None,
+    int,
     Query(
         description="Orbit number",
         openapi_examples={
@@ -106,7 +106,7 @@ OrbitNumber = Annotated[
 ]
 
 AdditionalAttributeFilter = Annotated[
-    List[str] | None,
+    List[str],
     Query(
         description=(
             "Filter granules by additional attributes. "
@@ -143,16 +143,16 @@ class GranuleSearch(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    collection_concept_id: ConceptID = Field(
+    collection_concept_id: ConceptID | None = Field(
         default=None,
         validation_alias=AliasChoices("collection_concept_id", "concept_id"),
     )
-    granule_ur: GranuleUr = None
-    temporal: Temporal = Field(
+    granule_ur: GranuleUr | None = None
+    temporal: Temporal | None = Field(
         default=None,
         validation_alias=AliasChoices("temporal", "datetime"),
     )
-    cloud_cover: CloudCover = None
+    cloud_cover: CloudCover | None = None
     bounding_box: BBox | None = None
     sort_key: List[str] | None = None
     orbit_number: OrbitNumber | None = None
