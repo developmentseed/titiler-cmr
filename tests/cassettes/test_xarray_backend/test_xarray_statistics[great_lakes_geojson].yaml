@@ -13,30 +13,30 @@ interactions:
       User-Agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=10&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-87.5%2C41.5%2C-85.0%2C46.0
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-87.5%2C41.5%2C-85.0%2C46.0
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAA/81WbW/iOBD+K1a+XhPyQiDwLUCWRSqlIqF72lO1MokBXxM7Zzvsdav+9xsnodAu
-        t6q03EvVqmCPx88z88x4nowdVdIYOleG4vzBGPZ8+8qgihSw+NuTURCFjeGTkXKWklKZ6rEkxtDY
-        CsyqnBhXLxs0g+Wp5/a6Qb9nO4F5uxhfL1YTMBFkTyXlrLZxrwyGFd2T5oRru13HdhzHteHHDEeL
-        uXnd/TL9uIzjxIS/DcvMaTiP4/CLGzwU5vR6MTL3tmvZ5mZvO5ZdY8hzkip9xSs4Y9f2ekHg9D3/
-        BE4p+J5mRDQ2x/UNFwVWsITLMqcp1v46e5ZZDEtspYWwqqL45XfJ2SmnDCvS8jAd23TcxA6Gnjd0
-        XKs3cD4bz1cGHNMhTEhRcoHz6E9FmNIrS8y2ZAIOEloQvRCxjLLtceWVW3tY/1oQp8+AYES2lLG/
-        MXfemD8DjDmkEtDiuCQp3bQE9a13RMj6o+FYPasHvlfLa/i2U6qUw04nzZhFsFA7fbqJxpbvO0Cr
-        0+qgsz+cvME1kNV8bk4192ljsFpeKte3bfY060aiSSPJGZNEKLCYnM2IO+zaVuAMdEZezqzKOn3v
-        OHN/ZcQlROw0fR+5oN84Uzhvtya8wLQO6ZRwqBzxqD+PeFWndQkShYTnLexPRKrD1phzAf9rEKbT
-        H1hB34cLeaV2Z02C1iLC5328uLjh4ryLxsPz/bNWBrDHbaI04FCkOyjQkGUTKpWg60orZcaaAqmV
-        Avhj+o2sGNUFMx9BCPV3Y2hbgyCw/b7j9XzP73W7AGK8I+mDrOoiuMN5pSNNsm6P2Bkmg0HWT30c
-        dNPuuucPyHqdrd2NznSYbyHAalfoGya+VpO+Y8ZGj3XqHShu2/deNPfz8rJYWqvjPDWImOsGXb/r
-        B4Og6/X9yPS/h3RZOFaR+bX4Jvjxhm536kOOt1q4TDZVTLKmJrKq7n/nW4fjvuoFkJGXhrkkGyII
-        9My3jUBnIN6BfFo6p0hbLgfEjna5JDncna1E3sj7dQvBjaSskmcYp+e6SbNj8lKaaVVUeSVNaNQK
-        UJKs86PLO5fJO4SYyFTQshG4MeFfWc5xhi7lvm050yhBkzAJa6E1QZIeROj/xj/ZUYlyyh5Q+15K
-        lFEBcFB2iAxOUyIl2lOMYg8pjtSOoONk8IYwupuFaDJbRuMEheNxFMcnIfg5nVRreK//hSDV1fjP
-        CqW9oo1d9GsS3UyiCZpHSfhe1fyn0biYbH5E/f1qkV4qSAbvNbzO8juwuKSIsKzklCkNRMCTTcme
-        INWMauIRnRxHe5zTDMEriCT0RFPAAMbZgZ70WmJHCnez6BNaRtdhAjRmNx8Wy3mYzBY3Z5jwEnDg
-        8hyF43ArO2cG2sMIJi+Q1CP0VRyhOFrezcYRCm9n+i2o1u3sv7iFxIS3TRd7G9LFLak3BfmjggEH
-        aZp6yrh//gu+MDe9agwAAA==
+        H4sIAAAAAAAA/81WbW/iOBD+K1a+XhPyQiDwLUCWRSpQkdA97alamcSAr4mdsx32ulX/+42TtNAu
+        t6q03EvVqmCPx88z88x4Ho09VdIYOleG4vzeGPbcK4MqUsDab49GQRQ2ho9GyllKSmWqh5IYQ2Mn
+        MKtyYly9bNAMlqee2+sG/Z7tBObNcny9XE/ARJADlZSz2ga8M6zogTQnXNvtOrbjOK4NP2Y4Ws7N
+        6+6X6cdVHCcm/G1ZZk7DeRyHX9zgvjCn18uRebBdyza3B9ux7BpDnpNU6StewRm7ttcLAqfv+Sdw
+        SsEPNCOisTmub7kosIIlXJY5TbH21zmwzGJYYisthFUVxS+/S85OOWVYkZaH6dim4yZ2MPS8oeNa
+        vYHz2Xi6MuCYDmFCipILnEd/KsKUXllhtiMTcJDQguiFiGWU7Y4rr9zaw/rXgjh9BgQjsqOM/Y25
+        88b8CWDMIZWAFsclSem2JahvvSVC1h8Nx+pZPfC9Xl3Dt71SpRx2OmnGLIKF2uvTTTR2/NABWp1W
+        B53D88kFroGs53NzqrlPG4P16lK5vmmzp1k3Ek0aSc6YJEKBxeRsRtxh17YCZ6Az8nJmXdbpe8eZ
+        uysjLiFip+n7yAX9xpnCebs14QWmdUinhEPliAf9ecSrOq0rkCgkPG9hfyJSPW+NORfwvwZhOv2B
+        FfR9uJBXan/WJGgtInzex4uLBRfnXTQenu6etDKAPW4TpQGHIt1DgYYsm1CpBN1UWikz1hRIrRTA
+        H9NvZM2oLpj5CEKovxtD2xoEge33Ha/ne36v2wUQ4z1J72VVF8EtzisdaZJ1e8TOMBkMsn7q46Cb
+        djc9f0A2m2zjbnWmw3wHAVb7Qt8w8bWa9B0zNnqoU+9Acdu+96K5n5eXxdJaHeepQcRcN+j6XT8Y
+        BF2v70em/z2ky8KxisyvxTfBDwu626sPOd5p4TLZVDHJmprIqrr/nW8djvuqF0BGXhrmimyJINAz
+        3zYCnYF4D/Jp6Zwibbk8I3a0yxXJ4e5sLfJG3q9bCG4kZZU8wzg9102aHZOX0kyrosoraUKjVoCS
+        ZJ0fXd65TN4hxESmgpaNwI0J/8pyjjN0Kfdty5lGCZqESVgLrQmS9CBC/zf+yZ5KlFN2j9r3UqKM
+        CoCDsufI4DQlUqIDxSj2kOJI7Qk6TgZvCKPbWYgms1U0TlA4HkdxfBKCn9NJtYH3+l8IUl2N/6xQ
+        2iva2EW/JtFiEk3QPErC96rmP43GxWTzI+rvV4v0UkEyeK/hdZbfgcUlRYRlJadMaSACnmxKDgSp
+        ZlQTD+jkODrgnGYIXkEkoSeaAgYwzp7pSa8ldqRwO4s+oVV0HSZAY7b4sFzNw2S2XJxhwkvAgctz
+        FI7DreycGWifRzB5gaQeoa/jCMXR6nY2jlB4M9NvQbVpZ//lDSQmvGm62NuQLm9IvSnIHxUMOEjT
+        1FPG3dNf4Ub5KWkMAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -46,23 +46,23 @@ interactions:
       CMR-Hits:
       - '1'
       CMR-Request-Id:
-      - 9751e552-e3c0-45e0-b45b-f3b8bee982d1
+      - b1e1eea2-6170-4aca-91c6-083c2066fa9a
       CMR-Search-After:
       - '["pocloud",1728604800000,3264876018]'
       CMR-Took:
-      - '650'
+      - '62'
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-MD5:
-      - 8ca4a82d52b99cdfaa069817bf7fda9b
+      - eff2f9277adab99ece9b894b39247ef1
       Content-SHA1:
-      - 8259c6268b9b7badab85bd6ca425dc8e4f46ae14
+      - 8f1cd28321891cdb6f1e8f82e7d77b4d151e88a2
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Mon, 09 Mar 2026 17:19:01 GMT
+      - Fri, 27 Mar 2026 13:42:03 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -72,9 +72,9 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 181794033b99fbc23a8ca5ae650b4d86.cloudfront.net (CloudFront)
+      - 1.1 7cc224be3664680df186a12039cdc424.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - hlWfUcObU_IpkBvuxUka4GZiQcj5dQunhKgvR_lTIvzl8qOBp1JueQ==
+      - H_Ri20WVO6_G7hfpMxW4QEnlbkG2rIsDtgc-knNeyqofgyZqM7YxMg==
       X-Amz-Cf-Pop:
       - MSP50-P2
       X-Cache:
@@ -84,7 +84,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - hlWfUcObU_IpkBvuxUka4GZiQcj5dQunhKgvR_lTIvzl8qOBp1JueQ==
+      - H_Ri20WVO6_G7hfpMxW4QEnlbkG2rIsDtgc-knNeyqofgyZqM7YxMg==
       X-XSS-Protection:
       - 1; mode=block
     status:
@@ -104,30 +104,30 @@ interactions:
       User-Agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=10&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-84.0%2C43.0%2C-81.5%2C47.5
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T00%3A00%3A01Z%2F2024-10-11T23%3A59%3A59Z&bounding_box=-84.0%2C43.0%2C-81.5%2C47.5
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAA/81WbW/iOBD+K1a+XhPyQiDwLUCWRSqlIqF72lO1MokBXxM7Zzvsdav+9xsnodAu
-        t6q03AsCkdjj8fPMPDP2k7GjShpD58pQnD/AQxBcGVSRAgZ/ezIKorAxfDJSzlJSKlM9lsQYGluB
-        WZUT4+plgmYwPPXcXjfo92wnMG8X4+vFagImguyppJzVNu6VwbCie9KscG2369iO47g2fMxwtJib
-        190v04/LOE5M+G1YZk7DeRyHX9zgoTCn14uRubddyzY3e9ux7BpDnpNU6S1ewRm7ttcLAqfv+Sdw
-        SsH3NCOisTmOb7gosIIhXJY5TbH219mzzGJYYisthFUVxS+/S85OOWVYkZaH6dim4yZ2MPS8oeNa
-        vYHz2Xi+MmCZDmFCipILnEd/KsKUHllitiUTcJDQguiBiGWUbY8jr9zaw/prQZw+A4IR2VLG/sbc
-        eWP+DDDmkEpAi+OSpHTTEtS73hEh60fDsXpWD3yvltfwtlOqlMNOJ82YRbBQO726icaW7ztAq9Pq
-        oLM/rLzBNZDVfG5ONfdpY7BaXirXt232NOtGokkjyRmTRCiwmJzNiDvs2lbgDHRGXtasyjp971hz
-        f2XEJUTsNH0fuaDfOFM4b6cmvMC0DumUcKgc8aifR7yq07oEiULC8xb2JyLVYWrMuYD/GoTp9AdW
-        0PdhQ16p3VmToLWI8HkfLy5uuDjvovHwfP+slQHscZsoDTgU6Q4KNGTZhEol6LrSSpmxpkBqpQD+
-        mH4jK0Z1wcxHEEL9bgxtaxAEtt93vJ7v+b1uF0CMdyR9kFVdBHc4r3SkSdbtETvDZDDI+qmPg27a
-        Xff8AVmvs7W70ZkO8y0EWO0KvcPE12rSe8zY6LFOvQPFbfvei+Z+Xl4WS2t1nKcGEXPdoOt3/WAQ
-        dL2+H5n+95AuC8cqMr8W3wQ/3tDtTn3I8VYLl8mmiknW1ERW1f3vfOtw3Fe9ADLy0jCXZEMEgZ75
-        thHoDMQ7kE9L5xRpy+WA2NEulySHvbOVyBt5v24huJGUVfIM4/RcN2lmTF5KM62KKq+kCY1aAUqS
-        dX60eecyeYcQE5kKWjYCNyb8K8s5ztCl3LctZxolaBImYS20JkjSgwj93/gnOypRTtkDas9LiTIq
-        AA7KDpHBaUqkRHuKUewhxZHaEXS8GbwhjO5mIZrMltE4QeF4HMXxSQh+TifVGs7rfyFIdTX+s0Jp
-        t2hjF/2aRDeTaILmURK+VzX/aTQuJpsfUX+/WqSXCpLBeQ2ns/wOLC4pIiwrOWVKAxFwZFOyJ0g1
-        VzXxiE6Woz3OaYbgFEQSeqIp4ALG2YGe9FpiRwp3s+gTWkbXYQI0ZjcfFst5mMwWN2eY8BJw4PIc
-        hePlVnbOXGgPVzB5gaQeoa/iCMXR8m42jlB4O9NnQbVu7/6LW0hMeNt0sbchXdySelKQPyq44CBN
-        U98y7p//AkRSmYVqDAAA
+        H4sIAAAAAAAA/81WbW/iOBD+K1a+Hgl5hcC3FLIsUimIhO5pT9XKJAZ8Teyc7bDXrfrfb5ykr8ut
+        Ki33UrUq2OPx88w8M55740CVNMZOz1Cc3xpjf9AzqCIlrP12b5REYWN8b2ScZaRSprqriDE29gKz
+        uiBG72mD5rA889yBHw4HthOaq+XkcrmZgokgRyopZ42N2zMYVvRI2hOu7fqO7TiOa8OPGV0sF+al
+        /2X2cZ0kqQl/O5abs2iRJNEXN7wtzdnl8sI82q5lm7uj7Vh2g6EoSKb0Fa/gTFzbG4ShM/SCF3Aq
+        wY80J6K1eV7fcVFiBUu4qgqaYe2vf2S5xbDEVlYKqy7LX36XnL3klGNFOh6mY5uOm9rh2PPGjmsN
+        Rs5n46FnwDEdwpSUFRe4iP9UhCm9ssZsT6bgIKUl0QsxyynbP6+8cmuPm18L4vQZEFyQPWXsb8yd
+        N+YPAGMBqQS0OKlIRncdQX3rNRGy+Wg41sAagO/N+hK+HZSq5Ljfz3JmESzUQZ9uo7Hnxz7Q6nc6
+        6B8fT17hBshmsTBnmvusNdisz5XrVZc9zbqVaNpKcs4kEQospicz4o592wqdkc7I05lN1aTvHWdu
+        ekZSQcRepu8jF/QbZwoX3daUl5g2IZ0RDpUj7vTnC143aV2DRCHhRQf7E5HqcWvCuYD/DQjTGY6s
+        cBjAhbxWh5MmYWcR49M+nlxccXHaRevh4eZBKwPY4y5RGnAksgMUaMTyKZVK0G2tlTJnbYE0SgH8
+        Cf1GNozqgllcQAj1d2NsW6MwtIOh4w0CLxj4PoCYHEh2K+umCK5xUetIk9wfEDvHZDTKh1mAQz/z
+        t4NgRLbbfOvudKajYg8BVodS3zANtJr0HXN2cdek3oHitgPvSXM/Ly+LZY06TlODiLlu6Ad+EI5C
+        3xsGsRl8D+m8cKwyDxrxTfHdFd0f1IcC77VwmWyrmORtTeR10/9Otw7HfdULICNPDXNNdkQQ6Jlv
+        G4HOQHIA+XR0XiLtuDwidrTLNSng7nwjilber1sIbiVlVTzHODvVTdodk1fSzOqyLmppQqNWgJLk
+        /R9d3j9P3iHERGaCVq3AjSn/ygqOc3Qu913LmcUpmkZp1AitDZL0IEL/N/7pgUpUUHaLuvdSopwK
+        gIPyx8jgLCNSoiPFKPGQ4kgdCHqeDN4QRtfzCE3n63iSomgyiZPkRQh+Tif1Ft7rfyFITTX+s0Lp
+        ruhiF/+axlfTeIoWcRq9VzX/aTTOJpsfUX+/WqSXCZLDew2vs/wOLK4oIiyvOGVKAxHwZFNyJEi1
+        o5q4Qy+OoyMuaI7gFUQSeqIpYADj7JGe9DpizxSu5/EntI4voxRozK8+LNeLKJ0vr04w4RXgwNUp
+        Cs/DreyfGGgfRzB5hqQ+Q98kMUri9fV8EqNoNddvQb3tZv/lChITrdou9jakyxVpNgX5o4YBB2ma
+        esq4efgLEvktN2kMAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -137,23 +137,23 @@ interactions:
       CMR-Hits:
       - '1'
       CMR-Request-Id:
-      - d171f34b-1a2f-486d-ac33-2ab9af9998fd
+      - e5cac53d-1239-4336-96c5-94d1c1bc035d
       CMR-Search-After:
       - '["pocloud",1728604800000,3264876018]'
       CMR-Took:
-      - '190'
+      - '47'
       Connection:
       - keep-alive
       Content-Encoding:
       - gzip
       Content-MD5:
-      - b201b141b17c28523ab353ec78de0118
+      - 5245d0de13ee9bed4d538e8859b3f59f
       Content-SHA1:
-      - f633e39b5a7b7f6df4d2864805ce0015b6a9265f
+      - 8993e4df67e6068889845fefcc065eb9a09ae96a
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Mon, 09 Mar 2026 17:19:02 GMT
+      - Fri, 27 Mar 2026 13:42:04 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -163,9 +163,9 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 5ca5d8b557da3b9b2acb1e2a7f26969e.cloudfront.net (CloudFront)
+      - 1.1 f1f259972a1922859cce8cd3da009a44.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - INq71OlYJKEXDIYlFwHrpRzmNNFDOc550Uoj34nQmU1qzFN4poHsGQ==
+      - apnyrs5eTyiVdF76C6yOVhMjhIn1xXgf--KGThOvn_9G3Yo1XDcISg==
       X-Amz-Cf-Pop:
       - MSP50-P2
       X-Cache:
@@ -175,7 +175,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - INq71OlYJKEXDIYlFwHrpRzmNNFDOc550Uoj34nQmU1qzFN4poHsGQ==
+      - apnyrs5eTyiVdF76C6yOVhMjhIn1xXgf--KGThOvn_9G3Yo1XDcISg==
       X-XSS-Protection:
       - 1; mode=block
     status:

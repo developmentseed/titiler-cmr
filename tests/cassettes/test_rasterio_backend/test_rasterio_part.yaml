@@ -13,52 +13,52 @@ interactions:
       User-Agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=10&collection_concept_id=C2021957657-LPCLOUD&temporal=2024-10-09T00%3A00%3A01Z%2F2024-10-09T23%3A59%3A59Z&bounding_box=-91.705%2C48.179%2C-91.459%2C48.3
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2021957657-LPCLOUD&temporal=2024-10-09T00%3A00%3A01Z%2F2024-10-09T23%3A59%3A59Z&bounding_box=-91.705%2C48.179%2C-91.459%2C48.3
   response:
     body:
       string: !!binary |
-        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
+        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
-        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
+        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
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -68,7 +68,7 @@ interactions:
       CMR-Hits:
       - '2'
       CMR-Request-Id:
-      - 81345403-8f05-4e6e-9ab5-42df2c2cf143
+      - edef80c6-81ba-4a3c-b92b-dae2fd9bed41
       CMR-Search-After:
       - '["lpcloud",1728492695011,3263857658]'
       CMR-Took:
@@ -78,13 +78,13 @@ interactions:
       Content-Encoding:
       - gzip
       Content-MD5:
-      - bce4b6c7b44baa90bc0f42c7222ce616
+      - 340971d4b8ee551cf12e86753e106888
       Content-SHA1:
-      - c2bd5f17d6294f5b4e5a2d2dc2ebce7716d9ce0e
+      - 574a6d8e093952bddaec1a16b4cbf2b8ff5625d0
       Content-Type:
       - application/vnd.nasa.cmr.umm_results+json;version=1.6.6; charset=utf-8
       Date:
-      - Mon, 09 Mar 2026 17:18:48 GMT
+      - Fri, 27 Mar 2026 13:41:59 GMT
       Server:
       - ServerTokens ProductOnly
       Strict-Transport-Security:
@@ -94,9 +94,9 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 24f41ad6cec46a6e94a3e850d746e294.cloudfront.net (CloudFront)
+      - 1.1 d86b7f3d8eb32b2ddcbea6fb5773d922.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - DVgru_PuitjwgPCqX8xpX7L5jmhCuOgL2I4BrDrf892CT397xmMesA==
+      - rE4HmwpQ9SbuD4RmUzM_cpGVHRa9Nav8Zvw09n0_YsH_yyXVp0oLOw==
       X-Amz-Cf-Pop:
       - MSP50-P2
       X-Cache:
@@ -106,7 +106,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - DVgru_PuitjwgPCqX8xpX7L5jmhCuOgL2I4BrDrf892CT397xmMesA==
+      - rE4HmwpQ9SbuD4RmUzM_cpGVHRa9Nav8Zvw09n0_YsH_yyXVp0oLOw==
       X-XSS-Protection:
       - 1; mode=block
     status:
