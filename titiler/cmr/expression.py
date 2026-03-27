@@ -157,7 +157,7 @@ def apply_expression(
     logger.info(f"applying expression: {expression}")
 
     pre_expression_crs = da.rio.crs
-    expression_blocks = get_expression_blocks(expression)
+    expression_blocks = [b.strip() for b in get_expression_blocks(expression)]
     band_vars = {
         f"b{i + 1}": da.isel(band=i, drop=True) for i in range(da.sizes["band"])
     }
