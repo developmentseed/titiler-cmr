@@ -33,7 +33,7 @@ from titiler.xarray.io import _parse_dsl
 from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
 
-from obstore.auth.earthdata import NasaEarthdataCredentialProvider
+from titiler.cmr.credentials import EarthdataS3CredentialProvider
 from titiler.cmr.errors import InvalidMediaType, S3CredentialsEndpointMissing
 from titiler.cmr.expression import apply_expression
 from titiler.cmr.logger import logger
@@ -183,7 +183,7 @@ def open_dataset(
     decode_times: bool = True,
     decode_coords: Literal["all", "coordinates"] = "all",
     auth_token: str | None = None,
-    credential_provider: NasaEarthdataCredentialProvider | None = None,
+    credential_provider: EarthdataS3CredentialProvider | None = None,
     **kwargs,
 ) -> Dataset:
     """Open a remote NetCDF/HDF5 dataset, using a cache to avoid redundant fetches."""
@@ -316,7 +316,7 @@ class MultiBaseGranuleReader(MultiBaseReader):
 
     ctx: rasterio.Env = attr.ib(default=rasterio.Env)
 
-    _credential_provider: NasaEarthdataCredentialProvider | None = attr.ib(
+    _credential_provider: EarthdataS3CredentialProvider | None = attr.ib(
         init=False, default=None
     )
 
@@ -325,7 +325,7 @@ class MultiBaseGranuleReader(MultiBaseReader):
 
         Sets ``self.bounds`` and ``self.crs`` from the granule bbox, populates
         ``self.assets`` via ``get_asset_list()``, and—when S3 direct access is
-        configured—retrieves the ``NasaEarthdataCredentialProvider`` for the
+        configured—retrieves the ``EarthdataS3CredentialProvider`` for the
         granule's credentials endpoint.
 
         Raises:
