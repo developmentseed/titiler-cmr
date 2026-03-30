@@ -425,6 +425,7 @@ xarray = CMRTilerFactory(
     add_part=True,
     add_ogc_maps=False,
     templates=templates,
+    enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(xarray.router, tags=["Xarray Backend"], prefix="/xarray")
 
@@ -443,6 +444,7 @@ rasterio = CMRTilerFactory(
     add_part=True,
     add_ogc_maps=False,
     templates=templates,
+    enable_telemetry=settings.telemetry_enabled,
 )
 app.include_router(rasterio.router, tags=["Rasterio Backend"], prefix="/rasterio")
 

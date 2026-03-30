@@ -58,6 +58,5 @@ jobs:
           STAGE: ${{ vars.stage }}
           TITILER_CMR_AWS_REQUEST_PAYER: ${{ vars.titiler_cmr_aws_request_payer }}
           TITILER_CMR_CLIENT_ID: ${{ vars.titiler_cmr_client_id }}
-          TITILER_CMR_ROLE_ARN: ${{ secrets.titiler_cmr_role_arn }}
           TITILER_CMR_ROOT_PATH: ""
           TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS: TRUE

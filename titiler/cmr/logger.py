@@ -93,15 +93,19 @@ class XRayJsonFormatter(logging.Formatter):
 
         xray_trace_id = None
 
-        trace_header = os.environ.get("_X_AMZN_TRACE_ID", "")
-        if trace_header:
+        # Prefer the OTEL trace ID when inside an active span — it matches what
+        # is exported to X-Ray via OTLP, so CloudWatch log correlation points at
+        # the right trace.  Fall back to Lambda's _X_AMZN_TRACE_ID for log lines
+        # emitted outside any active span (e.g. cold-start, background tasks).
+        otel_tid = getattr(record, "otelTraceID", None)
+        if otel_tid and otel_tid != "0" * 32:
+            xray_trace_id = otel_trace_id_to_xray_format(otel_tid)
+        else:
+            trace_header = os.environ.get("_X_AMZN_TRACE_ID", "")
             for part in trace_header.split(";"):
                 if part.startswith("Root="):
                     xray_trace_id = part.split("=", 1)[1]
                     break
-
-        if not xray_trace_id and hasattr(record, "otelTraceID"):
-            xray_trace_id = otel_trace_id_to_xray_format(record.otelTraceID)
 
         if xray_trace_id:
             log_object["xray_trace_id"] = xray_trace_id
