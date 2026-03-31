@@ -44,7 +44,7 @@ uv sync --all-extras
 ## Authentication for data read access
 
 `titiler-cmr` can read data either over `HTTP` (external) or directly from `AWS S3` (direct) depending on the app configuration.
-The behavior is controlled by environment variables (or a `.env` file) read by `EarthdataSettings` and `ApiSettings` in `settings.py`.
+The behavior is controlled by environment variables (or a `.env` file) read by `EarthdataSettings` and `ApiSettings` in [`titiler/cmr/settings.py`](titiler/cmr/settings.py).
 
 ### Direct from S3
 
@@ -151,10 +151,12 @@ Deployment to AWS is currently triggered using [veda-deploy](https://github.com/
 
 ### Environment Variables
 
-Environment variables for the `veda-deploy` deployment should be configured in the `veda-deploy` environment-specific AWS Secret. See also [these instructions](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager). The variables in the AWS Secret will be written to an `.env` file and used by the CDK deployment as instantiated by the `AppSettings` and `StackSettings` defined [infrastructure/aws/cdk/config.py](infrastructure/aws/cdk/config.py). `StackSettings` are those specific to the specific stage being deployed, may only be used during deployment, and are more likely to be shared across VEDA services. `AppSettings` are settings specific to titiler-cmr and are used to set the lambda runtime environment variables.
+Environment variables for the `veda-deploy` deployment should be configured in the `veda-deploy` environment-specific AWS Secret. See also [these instructions](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager). The variables in the AWS Secret will be written to an `.env` file and used by the CDK deployment. All settings are defined in [`titiler/cmr/settings.py`](titiler/cmr/settings.py): `StackSettings` controls CDK infrastructure (stack name, memory, timeout, etc.), `EarthdataSettings` and `ApiSettings` are read by both the CDK (to set Lambda environment variables) and the Lambda runtime itself.
 
-The application-specific (`AppSettings`) environment variables which should be set in the `veda-deploy` AWS secret are:
+The environment variables which should be set in the `veda-deploy` AWS secret are:
 
+- `TITILER_CMR_EARTHDATA_USERNAME=<your earthdata username>`
+- `TITILER_CMR_EARTHDATA_PASSWORD=<your earthdata password>`
 - `TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS=true`
 - `TITILER_CMR_ROOT_PATH=/api/titiler-cmr`
 - `TITILER_CMR_AWS_REQUEST_PAYER=requester`

@@ -74,36 +74,27 @@ def startup(app: FastAPI) -> None:
     Called directly by the Lambda handler (which bypasses the lifespan) and
     also from within the lifespan context manager for non-Lambda deployments.
     """
-    cmr_headers = (
-        {"client-id": settings.cmr_client_id} if settings.cmr_client_id else {}
-    )
+    cmr_headers = {"client-id": settings.client_id} if settings.client_id else {}
     app.state.client = Client(
         base_url=CMR_GRANULE_SEARCH_API,
         timeout=settings.cmr_timeout,
         headers=cmr_headers,
     )
 
-    app.state.s3_access = earthdata_settings.earthdata_s3_direct_access
+    app.state.s3_access = earthdata_settings.s3_direct_access
     logger.info("S3 direct access: %s", app.state.s3_access)
 
-    app.state.earthdata_token_provider = None
+    token_provider = EarthdataTokenProvider(
+        earthdata_settings.username,
+        earthdata_settings.password,
+    )
+    app.state.earthdata_token_provider = token_provider
     app.state.get_s3_credentials = None
 
-    if earthdata_settings.earthdata_username and earthdata_settings.earthdata_password:
-        token_provider = EarthdataTokenProvider(
-            earthdata_settings.earthdata_username,
-            earthdata_settings.earthdata_password,
-        )
-        app.state.earthdata_token_provider = token_provider
-
-        if app.state.s3_access:
-            get_s3_credentials = GetS3Credentials(token_provider)
-            app.state.get_s3_credentials = get_s3_credentials
-            token_provider.register_refresh_callback(get_s3_credentials.clear)
-    else:
-        logger.warning(
-            "EARTHDATA_USERNAME/EARTHDATA_PASSWORD not set; authenticated access unavailable"
-        )
+    if app.state.s3_access:
+        get_s3_credentials = GetS3Credentials(token_provider)
+        app.state.get_s3_credentials = get_s3_credentials
+        token_provider.register_refresh_callback(get_s3_credentials.clear)
 
 
 def shutdown(app: FastAPI) -> None:

@@ -9,14 +9,14 @@ class EarthdataSettings(BaseSettings):
     """Earthdata Settings"""
 
     model_config = SettingsConfigDict(
-        env_prefix="TITILER_CMR_",
+        env_prefix="TITILER_CMR_EARTHDATA_",
         env_file=".env",
         extra="ignore",
     )
 
-    earthdata_username: str | None = None
-    earthdata_password: str | None = None
-    earthdata_s3_direct_access: bool = False
+    username: str
+    password: str
+    s3_direct_access: bool = False
 
 
 class ApiSettings(BaseSettings):
@@ -33,7 +33,8 @@ class ApiSettings(BaseSettings):
     telemetry_enabled: bool = False
     debug: bool = False
     cmr_timeout: float = 10.0
-    cmr_client_id: str | None = None
+    client_id: str | None = None
+    aws_request_payer: str | None = None
 
     model_config = {
         "env_prefix": "TITILER_CMR_",
@@ -86,3 +87,35 @@ class RetrySettings(BaseSettings):
         "env_file": ".env",
         "extra": "ignore",
     }
+
+
+class StackSettings(BaseSettings):
+    """CDK stack and application deployment settings."""
+
+    name: str = "titiler-cmr"
+    stage: str = "production"
+
+    owner: str | None = None
+    client: str | None = None
+    project: str | None = None
+
+    timeout: int = 30
+    memory: int = 10240
+
+    # The maximum of concurrent executions to reserve for the function.
+    # Default: - No specific limit - account limit.
+    max_concurrent: int | None = None
+    alarm_email: str | None = None
+    veda_custom_host: str | None = None
+
+    bootstrap_qualifier: str | None = Field(
+        None,
+        description="Custom bootstrap qualifier override if not using a default installation of AWS CDK Toolkit to synthesize app.",
+    )
+
+    permissions_boundary_policy_name: str | None = Field(
+        None,
+        description="Name of IAM policy to define stack permissions boundary",
+    )
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
