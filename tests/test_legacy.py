@@ -123,6 +123,35 @@ class TestLegacyGetRedirects:
         assert "assets_regex" in qs
         assert "bands_regex" not in qs
 
+    def test_bands_renamed_to_assets_in_redirect(self, app):
+        """bands is renamed to assets in the redirect URL."""
+        r = app.get(
+            "/WebMercatorQuad/tilejson.json",
+            params={"collection_concept_id": "C123", "bands": "B04"},
+            follow_redirects=False,
+        )
+        assert r.status_code == 301
+        qs = _qs(r.headers["location"])
+        assert qs["assets"] == ["B04"]
+        assert "bands" not in qs
+
+    def test_multi_value_bands_all_renamed_to_assets(self, app):
+        """All bands values are renamed to assets, not just the first."""
+        r = app.get(
+            "/tiles/WebMercatorQuad/5/10/12",
+            params=[
+                ("collection_concept_id", "C123"),
+                ("bands", "B12"),
+                ("bands", "B8A"),
+                ("bands", "B04"),
+            ],
+            follow_redirects=False,
+        )
+        assert r.status_code == 301
+        qs = _qs(r.headers["location"])
+        assert sorted(qs["assets"]) == ["B04", "B12", "B8A"]
+        assert "bands" not in qs
+
     def test_all_renames_applied_together(self, app):
         """concept_id, datetime, and bands_regex are all renamed in one redirect."""
         r = app.get(
@@ -168,14 +197,28 @@ class TestLegacyGetRedirects:
         assert "/rasterio/tiles/WebMercatorQuad/5/10/12.png" in r.headers["location"]
 
     def test_tile_route_with_scale_and_format_redirects(self, app):
-        """Tile route with scale and format redirects correctly."""
+        """Scale is dropped and format is preserved in the redirect."""
         r = app.get(
             "/tiles/WebMercatorQuad/5/10/12@2x.png",
             params={"collection_concept_id": "C123"},
             follow_redirects=False,
         )
         assert r.status_code == 301
-        assert "/rasterio/tiles/WebMercatorQuad/5/10/12@2x.png" in r.headers["location"]
+        loc = r.headers["location"]
+        assert "/rasterio/tiles/WebMercatorQuad/5/10/12.png" in loc
+        assert "@2x" not in loc
+
+    def test_tile_route_with_scale_only_drops_scale(self, app):
+        """Scale is dropped when there is no format suffix."""
+        r = app.get(
+            "/tiles/WebMercatorQuad/5/10/12@1x",
+            params={"collection_concept_id": "C123"},
+            follow_redirects=False,
+        )
+        assert r.status_code == 301
+        loc = r.headers["location"]
+        assert "/rasterio/tiles/WebMercatorQuad/5/10/12" in loc
+        assert "@1x" not in loc
 
     def test_preview_route_redirects(self, app):
         """Preview route redirects correctly."""
@@ -371,3 +414,19 @@ class TestLegacyNewNameNotOverwritten:
         qs = _qs(r.headers["location"])
         assert qs["temporal"] == ["2024-01-01T00:00:00Z"]
         assert "datetime" not in qs
+
+    def test_assets_takes_precedence_over_bands(self, app):
+        """When both assets and bands are sent, assets wins and bands is dropped."""
+        r = app.get(
+            "/tiles/WebMercatorQuad/5/10/12",
+            params=[
+                ("collection_concept_id", "C123"),
+                ("assets", "B04"),
+                ("bands", "B12"),
+            ],
+            follow_redirects=False,
+        )
+        assert r.status_code == 301
+        qs = _qs(r.headers["location"])
+        assert qs["assets"] == ["B04"]
+        assert "bands" not in qs
