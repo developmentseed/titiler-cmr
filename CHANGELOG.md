@@ -80,6 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Simplify function `get_geojson_bounds` and add illustrative examples to its
   docstring ([#115](https://github.com/developmentseed/titiler-cmr/issues/115))
 - Upgraded to titiler>=2.0,<3 and rio-tiler>=9.0,<10
+- Refactored all settings for the API and deployment into titiler/cmr/settings.py
 
 ## [v0.3.0]
 

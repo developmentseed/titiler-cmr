@@ -18,10 +18,13 @@
    with CMR query conventions. Note: the `{datetime}` interpolation placeholder used inside
    `sel` parameter values is **unchanged** — `sel=time={datetime}` still works as before.
 
-4. **`bands_regex` renamed to `assets_regex`** (rasterio backend). The parameter used to
+4. **`bands` renamed to `assets`.** The query parameter for specifying which asset files
+   to use for rendering the output image is aligned with the rest of the TiTiler ecosystem.
+
+5. **`bands_regex` renamed to `assets_regex`** (rasterio backend). The parameter used to
    filter granule assets by a regular expression has been renamed.
 
-5. **`variable` renamed to `variables`** (xarray backend). The parameter selecting which
+6. **`variable` renamed to `variables`** (xarray backend). The parameter selecting which
    dataset variable to render has been renamed and now accepts multiple values by repeating
    the parameter: `variables=analysed_sst&variables=analysis_error`.
 
@@ -30,15 +33,15 @@
 **Before:**
 
 ```
-GET /tiles/WebMercatorQuad/5/8/12?concept_id=C2021957657-LPCLOUD&datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&backend=rasterio
-GET /tiles/WebMercatorQuad/5/8/12?concept_id=C1996881146-POCLOUD&datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&backend=xarray
+GET /tiles/WebMercatorQuad/5/8/12?concept_id=C2021957657-LPCLOUD&datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&backend=rasterio&bands=B04&bands=B03&bands=B02&bands_regex=B[0-9][0-9]
+GET /tiles/WebMercatorQuad/5/8/12?concept_id=C1996881146-POCLOUD&datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&backend=xarray&variable=analysed_sst
 ```
 
 **After:**
 
 ```
-GET /rasterio/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C2021957657-LPCLOUD&temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z
-GET /xarray/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C1996881146-POCLOUD&temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z
+GET /rasterio/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C2021957657-LPCLOUD&temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&assets=B04&assets=B03&assets=B02&assets_regex=B[0-9][0-9]
+GET /xarray/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C1996881146-POCLOUD&temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&variables=analysed_sst
 ```
 
 ## Legacy redirects
