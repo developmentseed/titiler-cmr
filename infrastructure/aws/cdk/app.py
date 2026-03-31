@@ -69,14 +69,6 @@ class LambdaStack(Stack):
             iam.PermissionsBoundary.of(self).apply(permissions_boundary_policy)
             Aspects.of(self).add(PermissionsBoundaryAspect(permissions_boundary_policy))
 
-        iam_reader_role = None
-        if app_settings.role_arn:
-            iam_reader_role = iam.Role.from_role_arn(
-                self,
-                "veda-reader-dev-role",
-                role_arn=app_settings.role_arn,
-            )
-
         lambda_env = {
             **DEFAULT_ENV,
             "TITILER_CMR_ROOT_PATH": app_settings.root_path,
@@ -113,7 +105,6 @@ class LambdaStack(Stack):
             timeout=Duration.seconds(app_settings.timeout),
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
-            role=iam_reader_role,
             tracing=(
                 aws_lambda.Tracing.ACTIVE
                 if app_settings.telemetry_enabled

@@ -46,8 +46,6 @@ class AppSettings(BaseSettings):
     timeout: int = 30
     memory: int = 10240
 
-    role_arn: str | None = None
-
     # The maximum of concurrent executions you want to reserve for the function.
     # Default: - No specific limit - account limit.
     max_concurrent: int | None = None
