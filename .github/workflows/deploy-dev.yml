@@ -53,10 +53,11 @@ jobs:
           dir: "./infrastructure/aws"
           env_aws_secret_name: ""
         env:
-          EARTHDATA_USERNAME: ${{ vars.earthdata_username }}
-          EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
           STAGE: ${{ vars.stage }}
+          TITILER_CMR_EARTHDATA_USERNAME: ${{ vars.earthdata_username }}
+          TITILER_CMR_EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
+          TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS: TRUE
+          TITILER_CMR_TELEMETRY_ENABLED: TRUE
           TITILER_CMR_AWS_REQUEST_PAYER: ${{ vars.titiler_cmr_aws_request_payer }}
           TITILER_CMR_CLIENT_ID: ${{ vars.titiler_cmr_client_id }}
           TITILER_CMR_ROOT_PATH: ""
-          TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS: TRUE

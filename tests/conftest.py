@@ -39,6 +39,8 @@ def vcr_config():
 @pytest.fixture(scope="session")
 def app():
     """Create a TestClient instance for the app."""
+    os.environ.setdefault("TITILER_CMR_EARTHDATA_USERNAME", "test")
+    os.environ.setdefault("TITILER_CMR_EARTHDATA_PASSWORD", "test")
     from titiler.cmr.main import app
 
     # Do NOT use a context manager so that we do NOT invoke lifespan during testing.

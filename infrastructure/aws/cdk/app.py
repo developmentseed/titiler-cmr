@@ -22,13 +22,13 @@ from aws_cdk import aws_sns_subscriptions as subscriptions
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from constructs import Construct
 
-from .config import AppSettings, StackSettings
+from titiler.cmr.settings import ApiSettings, EarthdataSettings, StackSettings
+
 from .permissions_boundary.construct import PermissionsBoundaryAspect
 
-stack_settings, app_settings = (
-    StackSettings(),
-    AppSettings(),
-)
+stack_settings = StackSettings()
+api_settings = ApiSettings()
+earthdata_settings = EarthdataSettings()
 
 DEFAULT_ENV = {
     "AWS_LAMBDA_LOG_FORMAT": "JSON",
@@ -52,8 +52,9 @@ class LambdaStack(Stack):
         self,
         scope: Construct,
         id: str,
-        app_settings: AppSettings,
         stack_settings: StackSettings,
+        api_settings: ApiSettings,
+        earthdata_settings: EarthdataSettings,
         context_dir: str = "../../",
         **kwargs: Any,
     ) -> None:
@@ -71,24 +72,27 @@ class LambdaStack(Stack):
 
         lambda_env = {
             **DEFAULT_ENV,
-            "TITILER_CMR_ROOT_PATH": app_settings.root_path,
-            "TITILER_CMR_EARTHDATA_USERNAME": app_settings.earthdata_username,
-            "TITILER_CMR_EARTHDATA_PASSWORD": app_settings.earthdata_password,
+            "TITILER_CMR_ROOT_PATH": api_settings.root_path,
+            "TITILER_CMR_EARTHDATA_USERNAME": earthdata_settings.username,
+            "TITILER_CMR_EARTHDATA_PASSWORD": earthdata_settings.password,
             "TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS": str(
-                app_settings.earthdata_s3_direct_access
+                earthdata_settings.s3_direct_access
             ).upper(),
         }
 
-        if app_settings.telemetry_enabled:
+        if api_settings.telemetry_enabled:
             lambda_env.update(
                 {
                     "TITILER_CMR_TELEMETRY_ENABLED": "TRUE",
-                    "OTEL_SERVICE_NAME": app_settings.name,
+                    "OTEL_SERVICE_NAME": api_settings.name,
                 }
             )
 
-        if app_settings.aws_request_payer:
-            lambda_env["AWS_REQUEST_PAYER"] = app_settings.aws_request_payer
+        if api_settings.aws_request_payer:
+            lambda_env["AWS_REQUEST_PAYER"] = api_settings.aws_request_payer
+
+        if api_settings.client_id:
+            lambda_env["TITILER_CMR_CLIENT_ID"] = api_settings.client_id
 
         lambda_function = aws_lambda.Function(
             self,
@@ -100,14 +104,14 @@ class LambdaStack(Stack):
                 file="infrastructure/aws/lambda/Dockerfile",
                 platform="linux/amd64",
             ),
-            memory_size=app_settings.memory,
-            reserved_concurrent_executions=app_settings.max_concurrent,
-            timeout=Duration.seconds(app_settings.timeout),
+            memory_size=stack_settings.memory,
+            reserved_concurrent_executions=stack_settings.max_concurrent,
+            timeout=Duration.seconds(stack_settings.timeout),
             environment=lambda_env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             tracing=(
                 aws_lambda.Tracing.ACTIVE
-                if app_settings.telemetry_enabled
+                if api_settings.telemetry_enabled
                 else aws_lambda.Tracing.DISABLED
             ),
             snap_start=aws_lambda.SnapStartConf.ON_PUBLISHED_VERSIONS,
@@ -128,7 +132,7 @@ class LambdaStack(Stack):
         # PutTelemetryRecords (X-Ray SDK path). PutTraceSegments is included here
         # as well since AWS documentation is inconsistent about which action the
         # OTLP endpoint uses.
-        if app_settings.telemetry_enabled:
+        if api_settings.telemetry_enabled:
             lambda_function.add_to_role_policy(
                 iam.PolicyStatement(
                     actions=[
@@ -140,15 +144,6 @@ class LambdaStack(Stack):
                     resources=["*"],
                 )
             )
-
-        if app_settings.buckets:
-            for bucket in app_settings.buckets:
-                lambda_function.add_to_role_policy(
-                    iam.PolicyStatement(
-                        actions=["s3:GetObject"],
-                        resources=[f"arn:aws:s3:::{bucket}*"],
-                    )
-                )
 
         api = apigw.HttpApi(
             self,
@@ -166,7 +161,7 @@ class LambdaStack(Stack):
         )
 
         # Create an SNS Topic
-        if app_settings.alarm_email:
+        if stack_settings.alarm_email:
             topic = sns.Topic(
                 self,
                 f"{id}-500-Errors",
@@ -175,7 +170,7 @@ class LambdaStack(Stack):
             )
             # Subscribe email to the topic
             topic.add_subscription(
-                subscriptions.EmailSubscription(app_settings.alarm_email),
+                subscriptions.EmailSubscription(stack_settings.alarm_email),
             )
 
             # Create CloudWatch Alarm
@@ -207,16 +202,17 @@ if stack_settings.bootstrap_qualifier:
 
 lambda_stack = LambdaStack(
     app,
-    f"{app_settings.name}-{stack_settings.stage}",
-    app_settings=app_settings,
+    f"{stack_settings.name}-{stack_settings.stage}",
     stack_settings=stack_settings,
+    api_settings=api_settings,
+    earthdata_settings=earthdata_settings,
 )
 # Tag infrastructure
 for key, value in {
-    "Project": app_settings.name,
+    "Project": stack_settings.name,
     "Stack": stack_settings.stage,
-    "Owner": app_settings.owner,
-    "Client": app_settings.client,
+    "Owner": stack_settings.owner,
+    "Client": stack_settings.client,
 }.items():
     if value:
         Tags.of(lambda_stack).add(key, value)
