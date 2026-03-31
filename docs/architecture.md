@@ -185,3 +185,104 @@ If `s3_access` is `False`, or if the granule has no `/s3credentials` URL, each r
 back to the HTTPS asset URL (`asset.external_href`) and, if a bearer token is present, attaches
 it as an `Authorization: Bearer <token>` header. In this path no S3 credentials are requested
 or used.
+
+---
+
+## Lambda Deployment
+
+The Lambda function is built as a zip package using a Docker build environment (not a container
+image Lambda). CDK's `Code.from_docker_build` runs the Dockerfile to produce the deployment
+artifact. GDAL and PROJ data files are bundled inside the package and their paths are set as
+environment variables (`GDAL_DATA`, `PROJ_DATA`) at the top of `handler.py`, before any import
+that triggers GDAL or PROJ context creation.
+
+[Mangum](https://github.com/jordaneremieff/mangum) translates Lambda event/context objects into
+ASGI scope/receive/send, allowing the FastAPI app to run unmodified. Mangum is configured with
+`lifespan="off"` because its lifespan support runs startup/shutdown on every invocation rather
+than only during cold starts. Instead, `startup(app)` is called once at module import time so
+it runs on cold starts and is then frozen into the SnapStart snapshot.
+
+SnapStart is enabled on published versions. CDK publishes a version automatically and creates a
+`live` alias pointing at it; API Gateway integrates with the alias rather than `$LATEST` so the
+snapshot is actually used.
+
+---
+
+## Observability (OTEL + X-Ray)
+
+Telemetry is opt-in via `TITILER_CMR_TELEMETRY_ENABLED`. When disabled, no OTEL packages are
+imported and the Lambda function has `Tracing.DISABLED`. When enabled, the CDK stack sets
+`Tracing.ACTIVE` on the function and grants the execution role the IAM actions required for
+the X-Ray native OTLP ingestion endpoint (`xray:PutSpans`, `xray:PutSpansForIndexing`,
+`xray:PutTraceSegments`, `xray:PutTelemetryRecords`).
+
+### Instrumentation setup
+
+The entire OTEL setup lives inside an `if "AWS_EXECUTION_ENV" in os.environ` guard in
+`handler.py`, so it is skipped in local development and tests.
+
+Three instrumentors are activated:
+
+- `FastAPIInstrumentor` — patches `app.build_middleware_stack` to wrap the ASGI middleware stack
+  with `OpenTelemetryMiddleware`, creating a server span for every HTTP request.
+- `HTTPXClientInstrumentor` — instruments the httpx `Client` created by `startup()`. It is
+  called before `startup()` so the client is captured at construction time.
+- `LoggingInstrumentor(set_logging_format=True)` — replaces the log record factory to inject
+  `otelTraceID` and `otelSpanID` into every log record emitted while a span is active.
+  `set_logging_format=True` is required for injection; despite the name it does not override
+  `XRayJsonFormatter` because `logging.basicConfig()` is a no-op when handlers already exist.
+
+### Trace export
+
+Spans are exported synchronously via `SimpleSpanProcessor` (not `BatchSpanProcessor`).
+`SimpleSpanProcessor` has no background flush thread, which is correct for Lambda: the export
+HTTP call completes before the invocation returns, and there is no thread to lose during a
+SnapStart snapshot or freeze.
+
+The exporter sends OTLP/protobuf to X-Ray's native OTLP endpoint
+(`https://xray.{region}.amazonaws.com/v1/traces`). Requests are signed with AWS SigV4 using
+the function's execution role credentials, resolved at request time via botocore (which is
+available in the Lambda runtime and does not need to be bundled). A response hook logs any
+non-2xx export responses at ERROR level for diagnosing auth or signing failures.
+
+`AwsXRayIdGenerator` is used so that generated trace IDs encode the epoch timestamp in their
+first 8 hex characters — the format X-Ray requires for its time-indexed trace lookup.
+
+### Trace context propagation and sampling
+
+`AwsXRayPropagator` is set as the global text map propagator. It extracts the `X-Amzn-Trace-Id`
+header that API Gateway forwards from Lambda's `_X_AMZN_TRACE_ID` environment variable, making
+the OTEL trace a continuation of the same trace that Lambda's native X-Ray segment belongs to.
+
+The `TracerProvider` uses the default `ParentBased(root=ALWAYS_ON)` sampler. Because OTEL
+inherits the sampling flag from the extracted `X-Amzn-Trace-Id` header, the OTEL sampling
+decision is always consistent with Lambda's X-Ray active tracing decision. Invocations sampled
+by X-Ray (`Sampled=1`) produce OTEL spans in X-Ray; unsampled invocations (`Sampled=0`) do not.
+The X-Ray sampling rate is controlled by X-Ray sampling rules and the `Tracing.ACTIVE` setting
+on the function — not by the OTEL SDK.
+
+### Latency and SnapStart tradeoffs
+
+Because sampling is inherited from the `X-Amzn-Trace-Id` header, only invocations where
+`Sampled=1` produce spans — and therefore only those invocations pay the cost of the
+synchronous OTLP export. Unsampled invocations incur no export overhead.
+
+For sampled invocations, `SimpleSpanProcessor` adds one HTTPS round-trip to
+`xray.{region}.amazonaws.com` before the response is returned. The alternative — a Lambda
+extension running an OTEL collector sidecar — would replace this with a loopback write
+(much cheaper per request) and flush to X-Ray after the handler returns. However, a sidecar
+introduces SnapStart complications: the extension's outbound connection to X-Ray is stale
+after a restore and must reconnect on the first post-restore invocation, and any spans
+buffered in the collector at snapshot time risk being lost or exported twice. Using
+`SimpleSpanProcessor` directly in the handler avoids both problems — there is no external
+process state to reconcile and no spans in-flight when a snapshot is taken.
+
+### Log correlation
+
+`XRayJsonFormatter` (in `titiler/cmr/logger.py`) includes the active OTEL trace ID in every log
+record as `xray_trace_id` in X-Ray format (`1-{epoch8}-{id24}`). When a span is active (i.e.
+during request handling), this field is derived from the `otelTraceID` injected by
+`LoggingInstrumentor`, which matches the trace ID on the exported span. For log lines emitted
+outside an active span (cold start, background tasks), it falls back to `_X_AMZN_TRACE_ID` from
+the environment. The `otelTraceID` and `otelSpanID` fields are also emitted as separate fields
+on every in-span log record.
