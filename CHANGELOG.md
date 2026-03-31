@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- Nothing
+
+## [v1.0.0]
+
 ### Added
 
 - Restructure API into two separate backends with distinct route prefixes:
@@ -81,6 +85,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   docstring ([#115](https://github.com/developmentseed/titiler-cmr/issues/115))
 - Upgraded to titiler>=2.0,<3 and rio-tiler>=9.0,<10
 - Refactored all settings for the API and deployment into titiler/cmr/settings.py
+
+## [v0.3.1]
+
+### Added
+- feat: support custom bootstrap qualifier by @ividito in #99
+- feat: add permission boundary support by @ividito in #100
 
 ## [v0.3.0]
 
@@ -165,7 +175,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Ability to run locally with Earthdata authentication ([#28](https://github.com/developmentseed/titiler-cmr/pull/28))
 
-[Unreleased]: <https://github.com/developmentseed/titiler-cmr/compare/v0.3.0..develop>
+[Unreleased]: <https://github.com/developmentseed/titiler-cmr/compare/v1.0.0..develop>
+[v1.0.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.3.1..v1.0.0>
+[v0.3.1]: <https://github.com/developmentseed/titiler-cmr/compare/v0.3.0..v0.3.1>
 [v0.3.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.2.0..v0.3.0>
 [v0.2.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.5..v0.2.0>
 [v0.1.5]: <https://github.com/developmentseed/titiler-cmr/compare/v0.1.4..v0.1.5>
