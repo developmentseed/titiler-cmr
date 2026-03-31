@@ -1190,7 +1190,7 @@ cd titiler-cmr</p>
 ```</p>
 <h2 id="authentication-for-data-read-access">Authentication for data read access<a class="headerlink" href="#authentication-for-data-read-access" title="Permanent link">&para;</a></h2>
 <p><code>titiler-cmr</code> can read data either over <code>HTTP</code> (external) or directly from <code>AWS S3</code> (direct) depending on the app configuration.
-The behavior is controlled by environment variables (or a <code>.env</code> file) read by <code>EarthdataSettings</code> and <code>ApiSettings</code> in <code>settings.py</code>.</p>
+The behavior is controlled by environment variables (or a <code>.env</code> file) read by <code>EarthdataSettings</code> and <code>ApiSettings</code> in <a href="titiler/cmr/settings.py"><code>titiler/cmr/settings.py</code></a>.</p>
 <h3 id="direct-from-s3">Direct from S3<a class="headerlink" href="#direct-from-s3" title="Permanent link">&para;</a></h3>
 <p>When running in an AWS context (e.g., Lambda), you should configure the
 application to access the data directly from <code>S3</code>. You can do this in two ways:</p>
@@ -1274,9 +1274,11 @@ uv run uvicorn titiler.cmr.main:app --reload --log-level info</code></p>
 <h2 id="deployment-to-aws-via-veda-deploy">Deployment to AWS via <code>veda-deploy</code><a class="headerlink" href="#deployment-to-aws-via-veda-deploy" title="Permanent link">&para;</a></h2>
 <p>Deployment to AWS is currently triggered using <a href="https://github.com/NASA-IMPACT/veda-deploy">veda-deploy</a>. veda-deploy checks out this repo as a submodule and then executes <a href=".github/actions/cdk-deploy/action.yml">.github/actions/cdk-deploy/action.yml</a> (see also: <a href="https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml">veda-deploy/.github/workflows/deploy.yml</a>). For more details, please review the <a href="https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components">veda-deploy README section on adding new components</a>.</p>
 <h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
-<p>Environment variables for the <code>veda-deploy</code> deployment should be configured in the <code>veda-deploy</code> environment-specific AWS Secret. See also <a href="https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager">these instructions</a>. The variables in the AWS Secret will be written to an <code>.env</code> file and used by the CDK deployment as instantiated by the <code>AppSettings</code> and <code>StackSettings</code> defined <a href="infrastructure/aws/cdk/config.py">infrastructure/aws/cdk/config.py</a>. <code>StackSettings</code> are those specific to the specific stage being deployed, may only be used during deployment, and are more likely to be shared across VEDA services. <code>AppSettings</code> are settings specific to titiler-cmr and are used to set the lambda runtime environment variables.</p>
-<p>The application-specific (<code>AppSettings</code>) environment variables which should be set in the <code>veda-deploy</code> AWS secret are:</p>
+<p>Environment variables for the <code>veda-deploy</code> deployment should be configured in the <code>veda-deploy</code> environment-specific AWS Secret. See also <a href="https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager">these instructions</a>. The variables in the AWS Secret will be written to an <code>.env</code> file and used by the CDK deployment. All settings are defined in <a href="titiler/cmr/settings.py"><code>titiler/cmr/settings.py</code></a>: <code>StackSettings</code> controls CDK infrastructure (stack name, memory, timeout, etc.), <code>EarthdataSettings</code> and <code>ApiSettings</code> are read by both the CDK (to set Lambda environment variables) and the Lambda runtime itself.</p>
+<p>The environment variables which should be set in the <code>veda-deploy</code> AWS secret are:</p>
 <ul>
+<li><code>TITILER_CMR_EARTHDATA_USERNAME=&lt;your earthdata username&gt;</code></li>
+<li><code>TITILER_CMR_EARTHDATA_PASSWORD=&lt;your earthdata password&gt;</code></li>
 <li><code>TITILER_CMR_EARTHDATA_S3_DIRECT_ACCESS=true</code></li>
 <li><code>TITILER_CMR_ROOT_PATH=/api/titiler-cmr</code></li>
 <li><code>TITILER_CMR_AWS_REQUEST_PAYER=requester</code></li>

@@ -2708,7 +2708,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_22c90091de341ae2283c8ad5c8770acd {
+                #map_83c15b0e3358e9eecc67ebab69531812 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2745,14 +2745,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_22c90091de341ae2283c8ad5c8770acd" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_83c15b0e3358e9eecc67ebab69531812" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_22c90091de341ae2283c8ad5c8770acd = L.map(
-                "map_22c90091de341ae2283c8ad5c8770acd",
+            var map_83c15b0e3358e9eecc67ebab69531812 = L.map(
+                "map_83c15b0e3358e9eecc67ebab69531812",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2769,7 +2769,7 @@ m</div>
 
         
     
-            var tile_layer_a72601128b04cb6fe5ca5b4c2bd00841 = L.tileLayer(
+            var tile_layer_d635818349261305cce331a12d5c6fe9 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2786,10 +2786,10 @@ m</div>
             );
         
     
-            tile_layer_a72601128b04cb6fe5ca5b4c2bd00841.addTo(map_22c90091de341ae2283c8ad5c8770acd);
+            tile_layer_d635818349261305cce331a12d5c6fe9.addTo(map_83c15b0e3358e9eecc67ebab69531812);
         
     
-            var tile_layer_4936f6d851de27f1a5b5d28c9119f064 = L.tileLayer(
+            var tile_layer_0cfd62ccd3ff3bae09f8555ff5ed94f9 = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2806,10 +2806,10 @@ m</div>
             );
         
     
-            tile_layer_4936f6d851de27f1a5b5d28c9119f064.addTo(map_22c90091de341ae2283c8ad5c8770acd);
+            tile_layer_0cfd62ccd3ff3bae09f8555ff5ed94f9.addTo(map_83c15b0e3358e9eecc67ebab69531812);
         
     
-            var tile_layer_2811f822b8d357945784418c99a75794 = L.tileLayer(
+            var tile_layer_a6b2847d33caaa4d83157306270ecaef = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2826,7 +2826,7 @@ m</div>
             );
         
     
-            var tile_layer_26548ffea4d2c8155202aec55ac90db4 = L.tileLayer(
+            var tile_layer_10766665f6c7cc996b7f93dbbe7c58a1 = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2843,25 +2843,25 @@ m</div>
             );
         
     
-            var layer_control_ad1a935876046fa41949746d269917f3_layers = {
+            var layer_control_ef54916150e58173b5b6b1658c945775_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_a72601128b04cb6fe5ca5b4c2bd00841,
+                    "openstreetmap" : tile_layer_d635818349261305cce331a12d5c6fe9,
                 },
                 overlays :  {
-                    "HLSL30 true color" : tile_layer_4936f6d851de27f1a5b5d28c9119f064,
-                    "HLSL30 false color" : tile_layer_2811f822b8d357945784418c99a75794,
-                    "HLSL30 NDVI" : tile_layer_26548ffea4d2c8155202aec55ac90db4,
+                    "HLSL30 true color" : tile_layer_0cfd62ccd3ff3bae09f8555ff5ed94f9,
+                    "HLSL30 false color" : tile_layer_a6b2847d33caaa4d83157306270ecaef,
+                    "HLSL30 NDVI" : tile_layer_10766665f6c7cc996b7f93dbbe7c58a1,
                 },
             };
-            let layer_control_ad1a935876046fa41949746d269917f3 = L.control.layers(
-                layer_control_ad1a935876046fa41949746d269917f3_layers.base_layers,
-                layer_control_ad1a935876046fa41949746d269917f3_layers.overlays,
+            let layer_control_ef54916150e58173b5b6b1658c945775 = L.control.layers(
+                layer_control_ef54916150e58173b5b6b1658c945775_layers.base_layers,
+                layer_control_ef54916150e58173b5b6b1658c945775_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_22c90091de341ae2283c8ad5c8770acd);
+            ).addTo(map_83c15b0e3358e9eecc67ebab69531812);
 
         
 &lt;/script&gt;
@@ -3138,7 +3138,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_e86019f9692818628979984bef8a96d3 {
+                #map_c7803f18d219fc971128ce491b0c5b29 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3175,14 +3175,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_e86019f9692818628979984bef8a96d3" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_c7803f18d219fc971128ce491b0c5b29" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_e86019f9692818628979984bef8a96d3 = L.map(
-                "map_e86019f9692818628979984bef8a96d3",
+            var map_c7803f18d219fc971128ce491b0c5b29 = L.map(
+                "map_c7803f18d219fc971128ce491b0c5b29",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -3199,7 +3199,7 @@ m</div>
 
         
     
-            var tile_layer_cae380bfe55ee1491fe6594a88023d6f = L.tileLayer(
+            var tile_layer_7129a3eea56779e64ab39d7f9708204e = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3216,10 +3216,10 @@ m</div>
             );
         
     
-            tile_layer_cae380bfe55ee1491fe6594a88023d6f.addTo(map_e86019f9692818628979984bef8a96d3);
+            tile_layer_7129a3eea56779e64ab39d7f9708204e.addTo(map_c7803f18d219fc971128ce491b0c5b29);
         
     
-            var tile_layer_41b9bbca8d88917fbd8c6741b1ec749a = L.tileLayer(
+            var tile_layer_4480eede0e4df0918b815ba9471ea233 = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3236,10 +3236,10 @@ m</div>
             );
         
     
-            tile_layer_41b9bbca8d88917fbd8c6741b1ec749a.addTo(map_e86019f9692818628979984bef8a96d3);
+            tile_layer_4480eede0e4df0918b815ba9471ea233.addTo(map_c7803f18d219fc971128ce491b0c5b29);
         
     
-            var tile_layer_3b1d512493038eb5527c7916ae3060c7 = L.tileLayer(
+            var tile_layer_04912f6ad8b36312d80c9197b6d39193 = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3256,7 +3256,7 @@ m</div>
             );
         
     
-            var tile_layer_2621f1afc67906de5bf5383d0526642e = L.tileLayer(
+            var tile_layer_82ed4b9bc420be6d202d80f6d96b40bf = L.tileLayer(
                 "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3273,25 +3273,25 @@ m</div>
             );
         
     
-            var layer_control_a6a3cc5cc1dd5a74531d794dd816e8e8_layers = {
+            var layer_control_fcebaf23b12275b0580f1a15e3bd46b2_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_cae380bfe55ee1491fe6594a88023d6f,
+                    "openstreetmap" : tile_layer_7129a3eea56779e64ab39d7f9708204e,
                 },
                 overlays :  {
-                    "HLSS30 true color" : tile_layer_41b9bbca8d88917fbd8c6741b1ec749a,
-                    "HLSS30 false color" : tile_layer_3b1d512493038eb5527c7916ae3060c7,
-                    "HLSS30 NDVI" : tile_layer_2621f1afc67906de5bf5383d0526642e,
+                    "HLSS30 true color" : tile_layer_4480eede0e4df0918b815ba9471ea233,
+                    "HLSS30 false color" : tile_layer_04912f6ad8b36312d80c9197b6d39193,
+                    "HLSS30 NDVI" : tile_layer_82ed4b9bc420be6d202d80f6d96b40bf,
                 },
             };
-            let layer_control_a6a3cc5cc1dd5a74531d794dd816e8e8 = L.control.layers(
-                layer_control_a6a3cc5cc1dd5a74531d794dd816e8e8_layers.base_layers,
-                layer_control_a6a3cc5cc1dd5a74531d794dd816e8e8_layers.overlays,
+            let layer_control_fcebaf23b12275b0580f1a15e3bd46b2 = L.control.layers(
+                layer_control_fcebaf23b12275b0580f1a15e3bd46b2_layers.base_layers,
+                layer_control_fcebaf23b12275b0580f1a15e3bd46b2_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_e86019f9692818628979984bef8a96d3);
+            ).addTo(map_c7803f18d219fc971128ce491b0c5b29);
 
         
 &lt;/script&gt;
