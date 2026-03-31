@@ -983,17 +983,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#components" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Components
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1018,50 +1007,48 @@
 <p>Benchmarking utilities for TiTiler-CMR and datacube tiling services.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>From the <strong>titiler-cmr repository root</strong>, install the package in editable mode:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>docs/packages/datacube_benchmark
-</code></pre></div>
+<p><code>bash
+uv pip install -e docs/packages/datacube_benchmark</code></p>
 <p>Or with pip:</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>docs/packages/datacube_benchmark
-</code></pre></div>
+<p><code>bash
+pip install -e docs/packages/datacube_benchmark</code></p>
 <p><strong>Note</strong>: The package must be installed before using it in notebooks. Once installed, it will be available in all notebooks in the project.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datacube_benchmark</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DatasetParams</span><span class="p">,</span>
-    <span class="n">TiTilerCMRBenchmarker</span><span class="p">,</span>
-    <span class="n">benchmark_viewport</span><span class="p">,</span>
-    <span class="n">benchmark_tileset</span><span class="p">,</span>
-    <span class="n">benchmark_statistics</span><span class="p">,</span>
-    <span class="n">check_titiler_cmr_compatibility</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Define dataset parameters</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">DatasetParams</span><span class="p">(</span>
-    <span class="n">concept_id</span><span class="o">=</span><span class="s2">&quot;C2036881735-POCLOUD&quot;</span><span class="p">,</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;xarray&quot;</span><span class="p">,</span>
-    <span class="n">datetime_range</span><span class="o">=</span><span class="s2">&quot;2022-03-01T00:00:01Z/2022-03-01T23:59:59Z&quot;</span><span class="p">,</span>
-    <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;analysed_sst&quot;</span><span class="p">,</span>
-    <span class="n">step</span><span class="o">=</span><span class="s2">&quot;P1D&quot;</span><span class="p">,</span>
-    <span class="n">temporal_mode</span><span class="o">=</span><span class="s2">&quot;point&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Check compatibility</span>
-<span class="n">compat</span> <span class="o">=</span> <span class="k">await</span> <span class="n">check_titiler_cmr_compatibility</span><span class="p">(</span>
-    <span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;https://example.com/api/titiler-cmr&quot;</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Benchmark viewport rendering</span>
-<span class="n">df_viewport</span> <span class="o">=</span> <span class="k">await</span> <span class="n">benchmark_viewport</span><span class="p">(</span>
-    <span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;https://example.com/api/titiler-cmr&quot;</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-    <span class="n">lng</span><span class="o">=-</span><span class="mf">95.0</span><span class="p">,</span>
-    <span class="n">lat</span><span class="o">=</span><span class="mf">29.0</span><span class="p">,</span>
-    <span class="n">viewport_width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">viewport_height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">min_zoom</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">max_zoom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></div>
+<p>```python
+from datacube_benchmark import (
+    DatasetParams,
+    TiTilerCMRBenchmarker,
+    benchmark_viewport,
+    benchmark_tileset,
+    benchmark_statistics,
+    check_titiler_cmr_compatibility,
+)</p>
+<h1 id="define-dataset-parameters">Define dataset parameters<a class="headerlink" href="#define-dataset-parameters" title="Permanent link">&para;</a></h1>
+<p>dataset = DatasetParams(
+    concept_id="C2036881735-POCLOUD",
+    backend="xarray",
+    datetime_range="2022-03-01T00:00:01Z/2022-03-01T23:59:59Z",
+    variable="analysed_sst",
+    step="P1D",
+    temporal_mode="point",
+)</p>
+<h1 id="check-compatibility">Check compatibility<a class="headerlink" href="#check-compatibility" title="Permanent link">&para;</a></h1>
+<p>compat = await check_titiler_cmr_compatibility(
+    endpoint="<a href="https://example.com/api/titiler-cmr">example.com/api/titiler-cmr</a>",
+    dataset=dataset,
+)</p>
+<h1 id="benchmark-viewport-rendering">Benchmark viewport rendering<a class="headerlink" href="#benchmark-viewport-rendering" title="Permanent link">&para;</a></h1>
+<p>df_viewport = await benchmark_viewport(
+    endpoint="<a href="https://example.com/api/titiler-cmr">example.com/api/titiler-cmr</a>",
+    dataset=dataset,
+    lng=-95.0,
+    lat=29.0,
+    viewport_width=3,
+    viewport_height=3,
+    min_zoom=7,
+    max_zoom=10,
+)
+```</p>
 <h2 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>DatasetParams</strong>: Configuration dataclass for TiTiler-CMR datasets</li>

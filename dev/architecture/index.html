@@ -1013,6 +1013,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lambda-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lambda Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-otel-x-ray" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability (OTEL + X-Ray)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Observability (OTEL + X-Ray)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instrumentation-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instrumentation setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-context-propagation-and-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace context propagation and sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latency-and-snapstart-tradeoffs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latency and SnapStart tradeoffs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log-correlation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log correlation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1244,6 +1327,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lambda-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lambda Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-otel-x-ray" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability (OTEL + X-Ray)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Observability (OTEL + X-Ray)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instrumentation-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instrumentation setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-context-propagation-and-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace context propagation and sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latency-and-snapstart-tradeoffs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latency and SnapStart tradeoffs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log-correlation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log correlation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1274,7 +1440,8 @@
 <p>Each variant is registered as a separate router (e.g. <code>/rasterio/tiles/…</code> and <code>/xarray/tiles/…</code>) but shares the same <code>CMRBackend</code> for granule search. The reader class and its dependency are swapped to handle the format-specific opening logic.</p>
 <hr />
 <h2 id="class-hierarchy">Class Hierarchy<a class="headerlink" href="#class-hierarchy" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>rio_tiler.io.base.SpatialMixin
+<p>```
+rio_tiler.io.base.SpatialMixin
    │
    ├── rio_tiler.io.base.BaseReader
    │       │
@@ -1288,14 +1455,13 @@
    │
    └── rio_tiler.io.base.MultiBaseReader
            │
-           └── MultiBaseGranuleReader
-
-titiler.core.factory.BaseFactory
+           └── MultiBaseGranuleReader</p>
+<p>titiler.core.factory.BaseFactory
    │
    └── titiler.mosaic.factory.MosaicTilerFactory
            │
            └── CMRTilerFactory
-</code></pre></div>
+```</p>
 <p><code>CMRBackend</code> is instantiated once per request. It receives the granule search parameters and holds a reference to whichever reader class (<code>XarrayGranuleReader</code> or <code>MultiBaseGranuleReader</code>) was configured at factory registration time.</p>
 <hr />
 <h2 id="dependency-injection-flow">Dependency Injection Flow<a class="headerlink" href="#dependency-injection-flow" title="Permanent link">&para;</a></h2>
@@ -1351,47 +1517,59 @@ titiler.core.factory.BaseFactory
 <hr />
 <h2 id="request-flow-for-a-tile-endpoint">Request Flow for a Tile Endpoint<a class="headerlink" href="#request-flow-for-a-tile-endpoint" title="Permanent link">&para;</a></h2>
 <p>The following trace follows a request through the xarray backend. The rasterio equivalent is described below.</p>
-<div class="highlight"><pre><span></span><code>GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&amp;variables=sst
-
-1. FastAPI resolves dependencies:
-   - GranuleSearchParams            → GranuleSearch(collection_concept_id=...)
-   - BackendParams                  → {client, auth_token, s3_access}  (from app.state)
-   - interpolated_xarray_ds_params  → {variables=[&quot;sst&quot;], group=None, ...}
-   - GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}
-   - XarrayDatasetParams            → {nodata, reproject_method}
-
-2. MosaicTilerFactory.tile() opens the backend:
+<p>```
+GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&amp;variables=sst</p>
+<ol>
+<li>FastAPI resolves dependencies:</li>
+<li>GranuleSearchParams            → GranuleSearch(collection_concept_id=...)</li>
+<li>BackendParams                  → {client, auth_token, s3_access}  (from app.state)</li>
+<li>interpolated_xarray_ds_params  → {variables=["sst"], group=None, ...}</li>
+<li>GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}</li>
+<li>
+<p>XarrayDatasetParams            → {nodata, reproject_method}</p>
+</li>
+<li>
+<p>MosaicTilerFactory.tile() opens the backend:
    CMRBackend(
      input=GranuleSearch,
      reader=XarrayGranuleReader,
-     reader_options={&quot;variables&quot;: [&quot;sst&quot;], ...},                       ← from interpolated_xarray_ds_params
+     reader_options={"variables": ["sst"], ...},                       ← from interpolated_xarray_ds_params
      client=..., auth_token=..., s3_access=..., get_s3_credentials=... ← from BackendParams
-   )
-
-3. CMRBackend.__attrs_post_init__ merges auth_token, s3_access, and get_s3_credentials into reader_options:
-   reader_options = {&quot;variables&quot;: [&quot;sst&quot;], &quot;auth_token&quot;: &quot;...&quot;, &quot;s3_access&quot;: False, &quot;get_s3_credentials&quot;: ...}
-
-4. BaseBackend.tile(x, y, z, search_options={...}) runs:
+   )</p>
+</li>
+<li>
+<p>CMRBackend.<strong>attrs_post_init</strong> merges auth_token, s3_access, and get_s3_credentials into reader_options:
+   reader_options = {"variables": ["sst"], "auth_token": "...", "s3_access": False, "get_s3_credentials": ...}</p>
+</li>
+<li>
+<p>BaseBackend.tile(x, y, z, search_options={...}) runs:
    a. CMRBackend.assets_for_tile(x, y, z, exitwhenfull=True)
-      → queries CMR API → returns [Granule, Granule, ...]
-
-   b. For each Granule:
-      XarrayGranuleReader(granule, tms=tms, **reader_options)
-
-5. XarrayGranuleReader.__attrs_post_init__:
-   a. Calls granule.get_assets() → asset dict keyed &quot;0&quot;, &quot;1&quot;, ...
-   b. Selects asset[&quot;0&quot;], resolves href (direct_href vs external_href)
+      → queries CMR API → returns [Granule, Granule, ...]</p>
+</li>
+</ol>
+<p>b. For each Granule:
+      XarrayGranuleReader(granule, tms=tms, **reader_options)</p>
+<ol>
+<li>
+<p>XarrayGranuleReader.<strong>attrs_post_init</strong>:
+   a. Calls granule.get_assets() → asset dict keyed "0", "1", ...
+   b. Selects asset["0"], resolves href (direct_href vs external_href)
    c. Calls open_dataset(href, group=..., decode_times=..., auth_token=...)
-   d. Calls get_variables(ds, variables=[&quot;sst&quot;], sel=...) → xarray.DataArray
+   d. Calls get_variables(ds, variables=["sst"], sel=...) → xarray.DataArray
    e. Sets self.input = DataArray
-   f. Calls super().__attrs_post_init__() → rio_tiler.XarrayReader sets bounds, CRS, etc.
-
-6. src_dst.tile(x, y, z, **dataset_params) → ImageData
-
-7. mosaic_reader merges N ImageData arrays using the configured pixel_selection method
-
-8. Post-process (algorithm) → render → Response(bytes)
-</code></pre></div>
+   f. Calls super().<strong>attrs_post_init</strong>() → rio_tiler.XarrayReader sets bounds, CRS, etc.</p>
+</li>
+<li>
+<p>src_dst.tile(x, y, z, **dataset_params) → ImageData</p>
+</li>
+<li>
+<p>mosaic_reader merges N ImageData arrays using the configured pixel_selection method</p>
+</li>
+<li>
+<p>Post-process (algorithm) → render → Response(bytes)
+```</p>
+</li>
+</ol>
 <p>For the <strong>rasterio</strong> backend, steps 2–6 are replaced by <code>MultiBaseGranuleReader</code>. It discovers the list of assets from the <code>Granule</code> at instantiation time and, for each asset, dispatches to a rasterio <code>Reader</code> (for COG/GeoTIFF) or <code>XarrayReader</code> (for NetCDF). <code>MultiBaseReader</code> handles iterating assets, merging per-asset results, and exposing them with index/expression filtering.</p>
 <hr />
 <h2 id="why-two-reader-base-classes">Why Two Reader Base Classes?<a class="headerlink" href="#why-two-reader-base-classes" title="Permanent link">&para;</a></h2>
@@ -1454,6 +1632,85 @@ fetching and refresh internally.</p>
 back to the HTTPS asset URL (<code>asset.external_href</code>) and, if a bearer token is present, attaches
 it as an <code>Authorization: Bearer &lt;token&gt;</code> header. In this path no S3 credentials are requested
 or used.</p>
+<hr />
+<h2 id="lambda-deployment">Lambda Deployment<a class="headerlink" href="#lambda-deployment" title="Permanent link">&para;</a></h2>
+<p>The Lambda function is built as a zip package using a Docker build environment (not a container
+image Lambda). CDK's <code>Code.from_docker_build</code> runs the Dockerfile to produce the deployment
+artifact. GDAL and PROJ data files are bundled inside the package and their paths are set as
+environment variables (<code>GDAL_DATA</code>, <code>PROJ_DATA</code>) at the top of <code>handler.py</code>, before any import
+that triggers GDAL or PROJ context creation.</p>
+<p><a href="https://github.com/jordaneremieff/mangum">Mangum</a> translates Lambda event/context objects into
+ASGI scope/receive/send, allowing the FastAPI app to run unmodified. Mangum is configured with
+<code>lifespan="off"</code> because its lifespan support runs startup/shutdown on every invocation rather
+than only during cold starts. Instead, <code>startup(app)</code> is called once at module import time so
+it runs on cold starts and is then frozen into the SnapStart snapshot.</p>
+<p>SnapStart is enabled on published versions. CDK publishes a version automatically and creates a
+<code>live</code> alias pointing at it; API Gateway integrates with the alias rather than <code>$LATEST</code> so the
+snapshot is actually used.</p>
+<hr />
+<h2 id="observability-otel-x-ray">Observability (OTEL + X-Ray)<a class="headerlink" href="#observability-otel-x-ray" title="Permanent link">&para;</a></h2>
+<p>Telemetry is opt-in via <code>TITILER_CMR_TELEMETRY_ENABLED</code>. When disabled, no OTEL packages are
+imported and the Lambda function has <code>Tracing.DISABLED</code>. When enabled, the CDK stack sets
+<code>Tracing.ACTIVE</code> on the function and grants the execution role the IAM actions required for
+the X-Ray native OTLP ingestion endpoint (<code>xray:PutSpans</code>, <code>xray:PutSpansForIndexing</code>,
+<code>xray:PutTraceSegments</code>, <code>xray:PutTelemetryRecords</code>).</p>
+<h3 id="instrumentation-setup">Instrumentation setup<a class="headerlink" href="#instrumentation-setup" title="Permanent link">&para;</a></h3>
+<p>The entire OTEL setup lives inside an <code>if "AWS_EXECUTION_ENV" in os.environ</code> guard in
+<code>handler.py</code>, so it is skipped in local development and tests.</p>
+<p>Three instrumentors are activated:</p>
+<ul>
+<li><code>FastAPIInstrumentor</code> — patches <code>app.build_middleware_stack</code> to wrap the ASGI middleware stack
+  with <code>OpenTelemetryMiddleware</code>, creating a server span for every HTTP request.</li>
+<li><code>HTTPXClientInstrumentor</code> — instruments the httpx <code>Client</code> created by <code>startup()</code>. It is
+  called before <code>startup()</code> so the client is captured at construction time.</li>
+<li><code>LoggingInstrumentor(set_logging_format=True)</code> — replaces the log record factory to inject
+  <code>otelTraceID</code> and <code>otelSpanID</code> into every log record emitted while a span is active.
+  <code>set_logging_format=True</code> is required for injection; despite the name it does not override
+  <code>XRayJsonFormatter</code> because <code>logging.basicConfig()</code> is a no-op when handlers already exist.</li>
+</ul>
+<h3 id="trace-export">Trace export<a class="headerlink" href="#trace-export" title="Permanent link">&para;</a></h3>
+<p>Spans are exported synchronously via <code>SimpleSpanProcessor</code> (not <code>BatchSpanProcessor</code>).
+<code>SimpleSpanProcessor</code> has no background flush thread, which is correct for Lambda: the export
+HTTP call completes before the invocation returns, and there is no thread to lose during a
+SnapStart snapshot or freeze.</p>
+<p>The exporter sends OTLP/protobuf to X-Ray's native OTLP endpoint
+(<code>https://xray.{region}.amazonaws.com/v1/traces</code>). Requests are signed with AWS SigV4 using
+the function's execution role credentials, resolved at request time via botocore (which is
+available in the Lambda runtime and does not need to be bundled). A response hook logs any
+non-2xx export responses at ERROR level for diagnosing auth or signing failures.</p>
+<p><code>AwsXRayIdGenerator</code> is used so that generated trace IDs encode the epoch timestamp in their
+first 8 hex characters — the format X-Ray requires for its time-indexed trace lookup.</p>
+<h3 id="trace-context-propagation-and-sampling">Trace context propagation and sampling<a class="headerlink" href="#trace-context-propagation-and-sampling" title="Permanent link">&para;</a></h3>
+<p><code>AwsXRayPropagator</code> is set as the global text map propagator. It extracts the <code>X-Amzn-Trace-Id</code>
+header that API Gateway forwards from Lambda's <code>_X_AMZN_TRACE_ID</code> environment variable, making
+the OTEL trace a continuation of the same trace that Lambda's native X-Ray segment belongs to.</p>
+<p>The <code>TracerProvider</code> uses the default <code>ParentBased(root=ALWAYS_ON)</code> sampler. Because OTEL
+inherits the sampling flag from the extracted <code>X-Amzn-Trace-Id</code> header, the OTEL sampling
+decision is always consistent with Lambda's X-Ray active tracing decision. Invocations sampled
+by X-Ray (<code>Sampled=1</code>) produce OTEL spans in X-Ray; unsampled invocations (<code>Sampled=0</code>) do not.
+The X-Ray sampling rate is controlled by X-Ray sampling rules and the <code>Tracing.ACTIVE</code> setting
+on the function — not by the OTEL SDK.</p>
+<h3 id="latency-and-snapstart-tradeoffs">Latency and SnapStart tradeoffs<a class="headerlink" href="#latency-and-snapstart-tradeoffs" title="Permanent link">&para;</a></h3>
+<p>Because sampling is inherited from the <code>X-Amzn-Trace-Id</code> header, only invocations where
+<code>Sampled=1</code> produce spans — and therefore only those invocations pay the cost of the
+synchronous OTLP export. Unsampled invocations incur no export overhead.</p>
+<p>For sampled invocations, <code>SimpleSpanProcessor</code> adds one HTTPS round-trip to
+<code>xray.{region}.amazonaws.com</code> before the response is returned. The alternative — a Lambda
+extension running an OTEL collector sidecar — would replace this with a loopback write
+(much cheaper per request) and flush to X-Ray after the handler returns. However, a sidecar
+introduces SnapStart complications: the extension's outbound connection to X-Ray is stale
+after a restore and must reconnect on the first post-restore invocation, and any spans
+buffered in the collector at snapshot time risk being lost or exported twice. Using
+<code>SimpleSpanProcessor</code> directly in the handler avoids both problems — there is no external
+process state to reconcile and no spans in-flight when a snapshot is taken.</p>
+<h3 id="log-correlation">Log correlation<a class="headerlink" href="#log-correlation" title="Permanent link">&para;</a></h3>
+<p><code>XRayJsonFormatter</code> (in <code>titiler/cmr/logger.py</code>) includes the active OTEL trace ID in every log
+record as <code>xray_trace_id</code> in X-Ray format (<code>1-{epoch8}-{id24}</code>). When a span is active (i.e.
+during request handling), this field is derived from the <code>otelTraceID</code> injected by
+<code>LoggingInstrumentor</code>, which matches the trace ID on the exported span. For log lines emitted
+outside an active span (cold start, background tasks), it falls back to <code>_X_AMZN_TRACE_ID</code> from
+the environment. The <code>otelTraceID</code> and <code>otelSpanID</code> fields are also emitted as separate fields
+on every in-span log record.</p>
 
 
 

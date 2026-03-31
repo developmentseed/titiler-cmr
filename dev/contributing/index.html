@@ -901,24 +901,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Development + Contributing
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -935,75 +917,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#linting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linting
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Documentation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#previewing-documentation-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Previewing documentation changes
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -1056,64 +969,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#linting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linting
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Documentation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#previewing-documentation-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Previewing documentation changes
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1137,44 +992,41 @@
 <p><strong>dev install</strong></p>
 <p>This project uses <a href="https://docs.astral.sh/uv/"><code>uv</code></a> to manage the python environment and dependencies.
 To install the package for development you can follow these steps:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># install uv</span>
-
-<span class="c1"># unix</span>
-curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
-
-<span class="c1"># or windows</span>
-<span class="c1"># powershell -c &quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span>
-
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/developmentseed/titiler-cmr.git
-<span class="nb">cd</span><span class="w"> </span>titiler-cmr
-uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
-</code></pre></div>
+<p>```bash</p>
+<h1 id="install-uv">install uv<a class="headerlink" href="#install-uv" title="Permanent link">&para;</a></h1>
+<h1 id="unix">unix<a class="headerlink" href="#unix" title="Permanent link">&para;</a></h1>
+<p>curl -LsSf <a href="https://astral.sh/uv/install.sh">astral.sh/uv/install.sh</a> | sh</p>
+<h1 id="or-windows">or windows<a class="headerlink" href="#or-windows" title="Permanent link">&para;</a></h1>
+<h1 id="powershell-c-irm-astralshuvinstallps1-iex">powershell -c "irm <a href="https://astral.sh/uv/install.ps1">astral.sh/uv/install.ps1</a> | iex"<a class="headerlink" href="#powershell-c-irm-astralshuvinstallps1-iex" title="Permanent link">&para;</a></h1>
+<p>git clone <a class="magiclink magiclink-github magiclink-repository" href="https://github.com/developmentseed/titiler-cmr.git" title="GitHub Repository: developmentseed/titiler-cmr.git">developmentseed/titiler-cmr.git</a>
+cd titiler-cmr
+uv sync --all-extras
+```</p>
 <h2 id="linting">Linting<a class="headerlink" href="#linting" title="Permanent link">&para;</a></h2>
 <p>This repo is set to use <code>pre-commit</code> to run <em>isort</em>, <em>flake8</em>, <em>pydocstring</em>, <em>black</em> ("uncompromising Python code formatter") and mypy when committing new code.</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
-</code></pre></div>
+<p><code>bash
+uv run pre-commit install</code></p>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <p>You can then run the tests with the following command:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest
-</code></pre></div>
+<p><code>bash
+uv run pytest</code></p>
 <p>The tests use <code>vcrpy &lt;https://vcrpy.readthedocs.io/en/latest/&gt;</code>_ to mock API calls
 with "pre-recorded" API responses. When adding new tests that incur actual network traffic,
 use the <code>@pytest.mark.vcr</code> decorator function to indicate <code>vcrpy</code> should be used.
 Record the new responses and commit them to the repository.</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w"> </span>-s<span class="w"> </span>--record-mode<span class="w"> </span>new_episodes
-</code></pre></div>
+<p><code>bash
+uv run pytest -v -s --record-mode new_episodes</code></p>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <p>The documentation is generated using <code>mkdocs</code> and gets built and deployed to Github Pages when new tags are released and on pushes to the <code>develop</code> branch.</p>
 <p>To preview the documentation in your browser you can run:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>-o
-</code></pre></div>
+<p><code>bash
+uv run mkdocs serve -o</code></p>
 <h3 id="previewing-documentation-changes">Previewing documentation changes<a class="headerlink" href="#previewing-documentation-changes" title="Permanent link">&para;</a></h3>
 <p>To preview documentation changes on a specific branch, you can deploy a specific branch to the documentation site using Github Actions workflow dispatch. This will create a new "version" of the documentation which is discoverable in the documentation drop down:</p>
 <p><img alt="Docs Dropdown" src="./docs/assets/docs-dropdown.png" style="width: 350px"/></p>
 <p>This "version" of the documentation is really just a new directory of the documentation in the gh-pages branch of this repository. </p>
 <p>Remember to delete that branch when you are done:</p>
-<div class="highlight"><pre><span></span><code>uv run mike delete feat-reorg-documentation --push
-</code></pre></div>
+<p><code>uv run mike delete feat-reorg-documentation --push</code></p>
 <p>This will:
 1. Delete the feat-reorg-documentation version from the documentation
 2. Push the changes to the gh-pages branch</p>

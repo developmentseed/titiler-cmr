@@ -957,28 +957,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#new-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New parameters
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#new-routes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New routes
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1100,28 +1078,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#new-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New parameters
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#new-routes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New routes
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1177,20 +1133,19 @@ path — no prefix needed.</p>
 </ol>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <p><strong>Before:</strong></p>
-<div class="highlight"><pre><span></span><code>GET /tiles/WebMercatorQuad/5/8/12?concept_id=C2021957657-LPCLOUD&amp;datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&amp;backend=rasterio
-GET /tiles/WebMercatorQuad/5/8/12?concept_id=C1996881146-POCLOUD&amp;datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&amp;backend=xarray
-</code></pre></div>
+<p><code>GET /tiles/WebMercatorQuad/5/8/12?concept_id=C2021957657-LPCLOUD&amp;datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&amp;backend=rasterio
+GET /tiles/WebMercatorQuad/5/8/12?concept_id=C1996881146-POCLOUD&amp;datetime=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z&amp;backend=xarray</code></p>
 <p><strong>After:</strong></p>
-<div class="highlight"><pre><span></span><code>GET /rasterio/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z
-GET /xarray/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C1996881146-POCLOUD&amp;temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z
-</code></pre></div>
+<p><code>GET /rasterio/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z
+GET /xarray/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C1996881146-POCLOUD&amp;temporal=2020-01-01T00:00:00Z/2020-01-02T00:00:00Z</code></p>
 <h2 id="legacy-redirects">Legacy redirects<a class="headerlink" href="#legacy-redirects" title="Permanent link">&para;</a></h2>
 <p>Old-style URLs are automatically redirected (301 for GET, 308 for POST) to the new
 canonical paths, so existing integrations will continue to work during the transition.
 The redirects apply all parameter renames transparently.</p>
-<div class="highlight"><pre><span></span><code>GET /tiles/WebMercatorQuad/5/8/12?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio
-# → 301 /rasterio/tiles/WebMercatorQuad/5/8/12?collection_concept_id=C2021957657-LPCLOUD
-</code></pre></div>
+<p>```
+GET /tiles/WebMercatorQuad/&#8541;/12?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio</p>
+<h1 id="301-rasteriotileswebmercatorquad5812collection_concept_idc2021957657-lpcloud">→ 301 /rasterio/tiles/WebMercatorQuad/&#8541;/12?collection_concept_id=C2021957657-LPCLOUD<a class="headerlink" href="#301-rasteriotileswebmercatorquad5812collection_concept_idc2021957657-lpcloud" title="Permanent link">&para;</a></h1>
+<p>```</p>
 <p>Update to the new paths when possible to avoid the extra round-trip. Once migrated,
 remove the <code>?backend=</code> parameter — it has no effect on the new <code>/rasterio/</code> or <code>/xarray/</code>
 paths.</p>
