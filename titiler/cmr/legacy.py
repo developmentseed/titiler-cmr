@@ -7,6 +7,7 @@ Redirects old root-level routes (pre-restructure) to the new /{backend}/... path
 Parameter renames applied transparently:
 - concept_id         → collection_concept_id
 - datetime           → temporal
+- bands              → assets
 - bands_regex        → assets_regex
 - ?backend=rasterio  → /rasterio/... (default when absent)
 - ?backend=xarray    → /xarray/...
@@ -20,6 +21,7 @@ from fastapi.responses import RedirectResponse
 PARAM_RENAMES = {
     "concept_id": "collection_concept_id",
     "datetime": "temporal",
+    "bands": "assets",
     "bands_regex": "assets_regex",
     "variable": "variables",
 }
@@ -32,21 +34,17 @@ def _legacy_redirect(
     items: list[tuple[str, str]] = [
         (k, v) for k, v in request.query_params.multi_items() if k != "backend"
     ]
-    # Apply renames: replace old key with new key, drop if new key already present
-    keys_present = {k for k, _ in items}
+    # Drop old-name params when the caller already provided the new name
+    # (e.g. both `bands` and `assets` present → keep only `assets`).
+    # Check against the original key set so that multi-value params like
+    # bands=B12&bands=B8A are fully renamed rather than collapsed to one value.
+    original_keys = {k for k, _ in items}
     renamed: list[tuple[str, str]] = []
     for key, value in items:
         new_key = PARAM_RENAMES.get(key, key)
-        if new_key != key:
-            # It's a rename candidate
-            if new_key in keys_present:
-                # New name already present — drop the old-name occurrence
-                continue
-            keys_present.add(new_key)
-            keys_present.discard(key)
-            renamed.append((new_key, value))
-        else:
-            renamed.append((key, value))
+        if new_key != key and new_key in original_keys:
+            continue
+        renamed.append((new_key, value))
     base = str(request.base_url).rstrip("/")
     url = f"{base}/{backend}{new_path}"
     if renamed:
@@ -94,7 +92,7 @@ def legacy_tile_scale_format(
     return _legacy_redirect(
         request,
         backend,
-        f"/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}",
+        f"/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}",
         301,
     )
 
@@ -106,7 +104,7 @@ def legacy_tile_scale(
     """Redirect to new tile endpoint with scale."""
     backend = request.query_params.get("backend", "rasterio")
     return _legacy_redirect(
-        request, backend, f"/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x", 301
+        request, backend, f"/tiles/{tileMatrixSetId}/{z}/{x}/{y}", 301
     )
 
 
