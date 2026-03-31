@@ -18,6 +18,12 @@ from titiler.cmr.backend import CMRBackend
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 
 
+def pytest_configure(config):
+    """Set environmental variables before any imports happen."""
+    os.environ["TITILER_CMR_EARTHDATA_USERNAME"] = "test_user"
+    os.environ["TITILER_CMR_EARTHDATA_PASSWORD"] = "test_password"
+
+
 def before_record_cb(request: Request):
     """Do not cache requests to the test client"""
     # testserver is the default host for TestClient
@@ -39,8 +45,6 @@ def vcr_config():
 @pytest.fixture(scope="session")
 def app():
     """Create a TestClient instance for the app."""
-    os.environ.setdefault("TITILER_CMR_EARTHDATA_USERNAME", "test")
-    os.environ.setdefault("TITILER_CMR_EARTHDATA_PASSWORD", "test")
     from titiler.cmr.main import app
 
     # Do NOT use a context manager so that we do NOT invoke lifespan during testing.
