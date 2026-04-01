@@ -1857,19 +1857,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span><span class="w"> </span><span class="nn">earthaccess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
 
-<span class="c1"># titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint</span>
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">"https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"</span>  <span class="c1"># dev endpoint</span>
-<span class="p">)</span>
+<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># staging endpoint</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import json
 import earthaccess
 import httpx
 
-# titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint
-titiler_endpoint = (
-    "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"  # dev endpoint
-)</div>
+titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint</div>
 </div>
 </div>
 </div>
@@ -2017,7 +2011,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float64",
       "min": 0.0,
       "max": 1.0,
-      "mean": 0.18580172831403435,
+      "mean": 0.19024995307514236,
       "p01": 0.0,
       "p05": 0.0,
       "p95": 0.99,
@@ -2030,13 +2024,13 @@ print(json.dumps(compatibility_response, indent=2))</div>
         1440
       ],
       "dtype": "float64",
-      "min": 270.8,
-      "max": 307.08000000000004,
-      "mean": 286.5203759199202,
+      "min": 271.04,
+      "max": 307.11,
+      "mean": 287.5430918706558,
       "p01": 271.36,
       "p05": 271.36,
-      "p95": 302.17,
-      "p99": 302.97
+      "p95": 302.04,
+      "p99": 302.8921
     },
     "analysis_error": {
       "shape": [
@@ -2045,13 +2039,13 @@ print(json.dumps(compatibility_response, indent=2))</div>
         1440
       ],
       "dtype": "float64",
-      "min": 0.04,
+      "min": 0.05,
       "max": 1.0,
-      "mean": 0.30196450279601267,
-      "p01": 0.14,
+      "mean": 0.3040400842260578,
+      "p01": 0.16,
       "p05": 0.19,
       "p95": 0.61,
-      "p99": 0.8
+      "p99": 0.8300000000000001
     },
     "mask": {
       "shape": [
@@ -2062,7 +2056,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float32",
       "min": 1.0,
       "max": 8.0,
-      "mean": 2.221118450164795,
+      "mean": 2.120864152908325,
       "p01": 1.0,
       "p05": 1.0,
       "p95": 8.0,
@@ -2105,19 +2099,19 @@ print(json.dumps(compatibility_response, indent=2))</div>
   "links": [
     {
       "rel": "tilejson",
-      "href": "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C2036881735-POCLOUD&amp;variable=sea_ice_fraction&amp;temporal={temporal}",
+      "href": "https://staging.openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C2036881735-POCLOUD&amp;variable=sea_ice_fraction&amp;temporal={temporal}",
       "title": "TileJSON",
       "type": "application/json"
     },
     {
       "rel": "map",
-      "href": "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/xarray/WebMercatorQuad/map.html?collection_concept_id=C2036881735-POCLOUD&amp;variable=sea_ice_fraction&amp;temporal={temporal}",
+      "href": "https://staging.openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/map.html?collection_concept_id=C2036881735-POCLOUD&amp;variable=sea_ice_fraction&amp;temporal={temporal}",
       "title": "Map viewer",
       "type": "text/html"
     },
     {
       "rel": "tile",
-      "href": "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD&amp;variable=sea_ice_fraction&amp;temporal={temporal}",
+      "href": "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD&amp;variable=sea_ice_fraction&amp;temporal={temporal}",
       "title": "Map tile",
       "type": "image/png"
     }

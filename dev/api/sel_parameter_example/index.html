@@ -1815,20 +1815,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
 
-<span class="c1"># titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint</span>
-<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">"https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"</span>  <span class="c1"># dev endpoint</span>
-<span class="p">)</span>
+<span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>  <span class="c1"># staging endpoint</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">import json
 from datetime import datetime, timezone
 
 import httpx
 
-# titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint
-titiler_endpoint = (
-    "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com"  # dev endpoint
-)</div>
+titiler_endpoint = "https://staging.openveda.cloud/api/titiler-cmr"  # staging endpoint</div>
 </div>
 </div>
 </div>
