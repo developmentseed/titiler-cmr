@@ -2673,7 +2673,7 @@ print(json.dumps(response, indent=2))</div>
     <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/xarray/timeseries/bbox/</span><span class="si">{</span><span class="n">minx</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">miny</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">maxx</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">maxy</span><span class="si">}</span><span class="s2">.gif"</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">"collection_concept_id"</span><span class="p">:</span> <span class="n">collection_concept_id</span><span class="p">,</span>
-        <span class="s2">"temporal"</span><span class="p">:</span> <span class="s2">"2024-10-01T00:00:01Z/2024-10-30T23:59:59Z"</span><span class="p">,</span>
+        <span class="s2">"temporal"</span><span class="p">:</span> <span class="s2">"2023-11-01T00:00:01Z/2024-10-30T23:59:59Z"</span><span class="p">,</span>
         <span class="s2">"step"</span><span class="p">:</span> <span class="s2">"P2W"</span><span class="p">,</span>
         <span class="s2">"temporal_mode"</span><span class="p">:</span> <span class="s2">"point"</span><span class="p">,</span>
         <span class="s2">"variables"</span><span class="p">:</span> <span class="s2">"analysed_sst"</span><span class="p">,</span>
@@ -2689,7 +2689,7 @@ request = httpx.get(
     f"{titiler_endpoint}/xarray/timeseries/bbox/{minx},{miny},{maxx},{maxy}.gif",
     params={
         "collection_concept_id": collection_concept_id,
-        "temporal": "2024-10-01T00:00:01Z/2024-10-30T23:59:59Z",
+        "temporal": "2023-11-01T00:00:01Z/2024-10-30T23:59:59Z",
         "step": "P2W",
         "temporal_mode": "point",
         "variables": "analysed_sst",
@@ -2710,7 +2710,7 @@ display(Image(request.content))</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
-<img alt="No description has been provided for this image" class="" src="data:image/png;base64,PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEgVHJhbnNpdGlvbmFsLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL2h0bWw0L2xvb3NlLmR0ZCI+CjxIVE1MPjxIRUFEPjxNRVRBIEhUVFAtRVFVSVY9IkNvbnRlbnQtVHlwZSIgQ09OVEVOVD0idGV4dC9odG1sOyBjaGFyc2V0PVVURi04Ij4KPFRJVExFPkVSUk9SOiBUaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkPC9USVRMRT4KPC9IRUFEPjxCT0RZPgo8SDE+NTA0IEdhdGV3YXkgVGltZW91dCBFUlJPUjwvSDE+CjxIMj5UaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkLjwvSDI+CjxIUiBub3NoYWRlIHNpemU9IjFweCI+CldlIGNhbid0IGNvbm5lY3QgdG8gdGhlIHNlcnZlciBmb3IgdGhpcyBhcHAgb3Igd2Vic2l0ZSBhdCB0aGlzIHRpbWUuIFRoZXJlIG1pZ2h0IGJlIHRvbyBtdWNoIHRyYWZmaWMgb3IgYSBjb25maWd1cmF0aW9uIGVycm9yLiBUcnkgYWdhaW4gbGF0ZXIsIG9yIGNvbnRhY3QgdGhlIGFwcCBvciB3ZWJzaXRlIG93bmVyLgo8QlIgY2xlYXI9ImFsbCI+CklmIHlvdSBwcm92aWRlIGNvbnRlbnQgdG8gY3VzdG9tZXJzIHRocm91Z2ggQ2xvdWRGcm9udCwgeW91IGNhbiBmaW5kIHN0ZXBzIHRvIHRyb3VibGVzaG9vdCBhbmQgaGVscCBwcmV2ZW50IHRoaXMgZXJyb3IgYnkgcmV2aWV3aW5nIHRoZSBDbG91ZEZyb250IGRvY3VtZW50YXRpb24uCjxCUiBjbGVhcj0iYWxsIj4KPEhSIG5vc2hhZGUgc2l6ZT0iMXB4Ij4KPFBSRT4KR2VuZXJhdGVkIGJ5IGNsb3VkZnJvbnQgKENsb3VkRnJvbnQpIEhUVFAzIFNlcnZlcgpSZXF1ZXN0IElEOiBRUVJNWXJYUGpKM1JKUm5uN1dUeDRJamlXVVNzTVBrUmtIb0NibkNxZTBHTXNvd3FfTjFqT3cmI3gzRDsmI3gzRDsKPC9QUkU+CjxBRERSRVNTPgo8L0FERFJFU1M+CjwvQk9EWT48L0hUTUw+"/>
+<img alt="No description has been provided for this image" class="" src="data:image/png;base64,PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEgVHJhbnNpdGlvbmFsLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL2h0bWw0L2xvb3NlLmR0ZCI+CjxIVE1MPjxIRUFEPjxNRVRBIEhUVFAtRVFVSVY9IkNvbnRlbnQtVHlwZSIgQ09OVEVOVD0idGV4dC9odG1sOyBjaGFyc2V0PVVURi04Ij4KPFRJVExFPkVSUk9SOiBUaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkPC9USVRMRT4KPC9IRUFEPjxCT0RZPgo8SDE+NTA0IEdhdGV3YXkgVGltZW91dCBFUlJPUjwvSDE+CjxIMj5UaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkLjwvSDI+CjxIUiBub3NoYWRlIHNpemU9IjFweCI+CldlIGNhbid0IGNvbm5lY3QgdG8gdGhlIHNlcnZlciBmb3IgdGhpcyBhcHAgb3Igd2Vic2l0ZSBhdCB0aGlzIHRpbWUuIFRoZXJlIG1pZ2h0IGJlIHRvbyBtdWNoIHRyYWZmaWMgb3IgYSBjb25maWd1cmF0aW9uIGVycm9yLiBUcnkgYWdhaW4gbGF0ZXIsIG9yIGNvbnRhY3QgdGhlIGFwcCBvciB3ZWJzaXRlIG93bmVyLgo8QlIgY2xlYXI9ImFsbCI+CklmIHlvdSBwcm92aWRlIGNvbnRlbnQgdG8gY3VzdG9tZXJzIHRocm91Z2ggQ2xvdWRGcm9udCwgeW91IGNhbiBmaW5kIHN0ZXBzIHRvIHRyb3VibGVzaG9vdCBhbmQgaGVscCBwcmV2ZW50IHRoaXMgZXJyb3IgYnkgcmV2aWV3aW5nIHRoZSBDbG91ZEZyb250IGRvY3VtZW50YXRpb24uCjxCUiBjbGVhcj0iYWxsIj4KPEhSIG5vc2hhZGUgc2l6ZT0iMXB4Ij4KPFBSRT4KR2VuZXJhdGVkIGJ5IGNsb3VkZnJvbnQgKENsb3VkRnJvbnQpIEhUVFAzIFNlcnZlcgpSZXF1ZXN0IElEOiBpR3B6bUttRld2cjdodXMydUhyNUl1bWFpVEgwUktwaGdNS3lMdzhCMHBESXNkdUJPUFRMYmcmI3gzRDsmI3gzRDsKPC9QUkU+CjxBRERSRVNTPgo8L0FERFJFU1M+CjwvQk9EWT48L0hUTUw+"/>
 </div>
 </div>
 </div>
@@ -2792,7 +2792,7 @@ display(Image(request.content))</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
-<img alt="No description has been provided for this image" class="" src="data:image/png;base64,PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEgVHJhbnNpdGlvbmFsLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL2h0bWw0L2xvb3NlLmR0ZCI+CjxIVE1MPjxIRUFEPjxNRVRBIEhUVFAtRVFVSVY9IkNvbnRlbnQtVHlwZSIgQ09OVEVOVD0idGV4dC9odG1sOyBjaGFyc2V0PVVURi04Ij4KPFRJVExFPkVSUk9SOiBUaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkPC9USVRMRT4KPC9IRUFEPjxCT0RZPgo8SDE+NTA0IEdhdGV3YXkgVGltZW91dCBFUlJPUjwvSDE+CjxIMj5UaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkLjwvSDI+CjxIUiBub3NoYWRlIHNpemU9IjFweCI+CldlIGNhbid0IGNvbm5lY3QgdG8gdGhlIHNlcnZlciBmb3IgdGhpcyBhcHAgb3Igd2Vic2l0ZSBhdCB0aGlzIHRpbWUuIFRoZXJlIG1pZ2h0IGJlIHRvbyBtdWNoIHRyYWZmaWMgb3IgYSBjb25maWd1cmF0aW9uIGVycm9yLiBUcnkgYWdhaW4gbGF0ZXIsIG9yIGNvbnRhY3QgdGhlIGFwcCBvciB3ZWJzaXRlIG93bmVyLgo8QlIgY2xlYXI9ImFsbCI+CklmIHlvdSBwcm92aWRlIGNvbnRlbnQgdG8gY3VzdG9tZXJzIHRocm91Z2ggQ2xvdWRGcm9udCwgeW91IGNhbiBmaW5kIHN0ZXBzIHRvIHRyb3VibGVzaG9vdCBhbmQgaGVscCBwcmV2ZW50IHRoaXMgZXJyb3IgYnkgcmV2aWV3aW5nIHRoZSBDbG91ZEZyb250IGRvY3VtZW50YXRpb24uCjxCUiBjbGVhcj0iYWxsIj4KPEhSIG5vc2hhZGUgc2l6ZT0iMXB4Ij4KPFBSRT4KR2VuZXJhdGVkIGJ5IGNsb3VkZnJvbnQgKENsb3VkRnJvbnQpIEhUVFAzIFNlcnZlcgpSZXF1ZXN0IElEOiA1VlFRTE5KT3VmMmtkcTA2SkMtRXRpaHBvS0o1U1ZVYUNwMXZubGpxYUUtV0NFVFV4WVo5a2cmI3gzRDsmI3gzRDsKPC9QUkU+CjxBRERSRVNTPgo8L0FERFJFU1M+CjwvQk9EWT48L0hUTUw+"/>
+<img alt="No description has been provided for this image" class="" src="data:image/png;base64,PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEgVHJhbnNpdGlvbmFsLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL2h0bWw0L2xvb3NlLmR0ZCI+CjxIVE1MPjxIRUFEPjxNRVRBIEhUVFAtRVFVSVY9IkNvbnRlbnQtVHlwZSIgQ09OVEVOVD0idGV4dC9odG1sOyBjaGFyc2V0PVVURi04Ij4KPFRJVExFPkVSUk9SOiBUaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkPC9USVRMRT4KPC9IRUFEPjxCT0RZPgo8SDE+NTA0IEdhdGV3YXkgVGltZW91dCBFUlJPUjwvSDE+CjxIMj5UaGUgcmVxdWVzdCBjb3VsZCBub3QgYmUgc2F0aXNmaWVkLjwvSDI+CjxIUiBub3NoYWRlIHNpemU9IjFweCI+CldlIGNhbid0IGNvbm5lY3QgdG8gdGhlIHNlcnZlciBmb3IgdGhpcyBhcHAgb3Igd2Vic2l0ZSBhdCB0aGlzIHRpbWUuIFRoZXJlIG1pZ2h0IGJlIHRvbyBtdWNoIHRyYWZmaWMgb3IgYSBjb25maWd1cmF0aW9uIGVycm9yLiBUcnkgYWdhaW4gbGF0ZXIsIG9yIGNvbnRhY3QgdGhlIGFwcCBvciB3ZWJzaXRlIG93bmVyLgo8QlIgY2xlYXI9ImFsbCI+CklmIHlvdSBwcm92aWRlIGNvbnRlbnQgdG8gY3VzdG9tZXJzIHRocm91Z2ggQ2xvdWRGcm9udCwgeW91IGNhbiBmaW5kIHN0ZXBzIHRvIHRyb3VibGVzaG9vdCBhbmQgaGVscCBwcmV2ZW50IHRoaXMgZXJyb3IgYnkgcmV2aWV3aW5nIHRoZSBDbG91ZEZyb250IGRvY3VtZW50YXRpb24uCjxCUiBjbGVhcj0iYWxsIj4KPEhSIG5vc2hhZGUgc2l6ZT0iMXB4Ij4KPFBSRT4KR2VuZXJhdGVkIGJ5IGNsb3VkZnJvbnQgKENsb3VkRnJvbnQpIEhUVFAzIFNlcnZlcgpSZXF1ZXN0IElEOiBET3BjYlprUnI0OUNUcDRhTHZvMFRpb1dEZTluVlJPRmFtZm1Hang4X1hMWU80T1c2SW1qNncmI3gzRDsmI3gzRDsKPC9QUkU+CjxBRERSRVNTPgo8L0FERFJFU1M+CjwvQk9EWT48L0hUTUw+"/>
 </div>
 </div>
 </div>
@@ -3316,7 +3316,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_9bd45a3cfe26fb1228761f799b18d1e1 {
+                #map_dee9ae59fdfc1bf217e449343027419a {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3353,14 +3353,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_9bd45a3cfe26fb1228761f799b18d1e1" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_dee9ae59fdfc1bf217e449343027419a" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_9bd45a3cfe26fb1228761f799b18d1e1 = L.map(
-                "map_9bd45a3cfe26fb1228761f799b18d1e1",
+            var map_dee9ae59fdfc1bf217e449343027419a = L.map(
+                "map_dee9ae59fdfc1bf217e449343027419a",
                 {
                     center: [0.0, 0.0],
                     crs: L.CRS.EPSG3857,
@@ -3377,7 +3377,7 @@ m</div>
 
         
     
-            var tile_layer_d5dbbda9a2af6d65e04d4cf4de2c73ea = L.tileLayer(
+            var tile_layer_a5cdc47dd1f4885bcd9bda7b304d393a = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 1,
@@ -3394,10 +3394,10 @@ m</div>
             );
         
     
-            tile_layer_d5dbbda9a2af6d65e04d4cf4de2c73ea.addTo(map_9bd45a3cfe26fb1228761f799b18d1e1);
+            tile_layer_a5cdc47dd1f4885bcd9bda7b304d393a.addTo(map_dee9ae59fdfc1bf217e449343027419a);
         
     
-            var tile_layer_3d81ffd5b9ffb08417682e8b4c822c07 = L.tileLayer(
+            var tile_layer_0da80de97e9c5d5662271928f1ae8237 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2023-11-01T00%3A00%3A01%2B00%3A00%2F2023-11-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3414,7 +3414,7 @@ m</div>
             );
         
     
-            var tile_layer_ae93d1382f99c34fd1688954a443e574 = L.tileLayer(
+            var tile_layer_2f8c7bfb8bd11956d4326a942da03418 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2023-12-01T00%3A00%3A01%2B00%3A00%2F2023-12-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3431,7 +3431,7 @@ m</div>
             );
         
     
-            var tile_layer_26473ad71921ae63bd8fc9e24dae8eb8 = L.tileLayer(
+            var tile_layer_2d3f4bc10b346931bb70e9fb46620633 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-01-01T00%3A00%3A01%2B00%3A00%2F2024-01-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3448,7 +3448,7 @@ m</div>
             );
         
     
-            var tile_layer_362f0fa0c926380eeda40e89f4a44e7d = L.tileLayer(
+            var tile_layer_594cc5e22eee3a873acb85b2af3aa07c = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-02-01T00%3A00%3A01%2B00%3A00%2F2024-02-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3465,7 +3465,7 @@ m</div>
             );
         
     
-            var tile_layer_17e57031d33c24634f790777dbfe88c8 = L.tileLayer(
+            var tile_layer_d6f8239d8d5163364d978dad846d6ec1 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-03-01T00%3A00%3A01%2B00%3A00%2F2024-03-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3482,7 +3482,7 @@ m</div>
             );
         
     
-            var tile_layer_f299726ebea55ca6c2e8d4b0b336f37b = L.tileLayer(
+            var tile_layer_68a684e622d6a6fb23f2d6d2d0a4f94c = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-04-01T00%3A00%3A01%2B00%3A00%2F2024-04-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3499,7 +3499,7 @@ m</div>
             );
         
     
-            var tile_layer_02be41c4b3d557e6bea78bd373155827 = L.tileLayer(
+            var tile_layer_cfa95248443f8ce57dce63c4da83aeb2 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-05-01T00%3A00%3A01%2B00%3A00%2F2024-05-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3516,7 +3516,7 @@ m</div>
             );
         
     
-            var tile_layer_9cd1627f2f26af022857e8426aba87e8 = L.tileLayer(
+            var tile_layer_0c97a846a614d32250e60610f12472cc = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-06-01T00%3A00%3A01%2B00%3A00%2F2024-06-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3533,7 +3533,7 @@ m</div>
             );
         
     
-            var tile_layer_f9fcda13e7309429210fb33560922016 = L.tileLayer(
+            var tile_layer_eef2b84210729b26fc798c4cc143e81b = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-07-01T00%3A00%3A01%2B00%3A00%2F2024-07-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3550,7 +3550,7 @@ m</div>
             );
         
     
-            var tile_layer_0b587e46be80644a0c7b6257c7da2f81 = L.tileLayer(
+            var tile_layer_80886a40a5e83c76a11e19e87d3caeb5 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-08-01T00%3A00%3A01%2B00%3A00%2F2024-08-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3567,7 +3567,7 @@ m</div>
             );
         
     
-            var tile_layer_9b449a3ac515c9c42dd9a234eb7997e3 = L.tileLayer(
+            var tile_layer_219f9ae5e042d2bf389bdd3a7cc4a6e5 = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-09-01T00%3A00%3A01%2B00%3A00%2F2024-09-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3584,7 +3584,7 @@ m</div>
             );
         
     
-            var tile_layer_e9d6e4a036565ab94a83fb3110ecb285 = L.tileLayer(
+            var tile_layer_0bf3a286479f01f410d9545bdad4ab7f = L.tileLayer(
                 "https://staging.openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2036881735-POCLOUD\u0026variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-10-01T00%3A00%3A01%2B00%3A00%2F2024-10-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3601,34 +3601,34 @@ m</div>
             );
         
     
-            var layer_control_ce791e96c23d7faa2d887604a0aabe90_layers = {
+            var layer_control_7769aef023528531d7f08e70d8469657_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_d5dbbda9a2af6d65e04d4cf4de2c73ea,
+                    "openstreetmap" : tile_layer_a5cdc47dd1f4885bcd9bda7b304d393a,
                 },
                 overlays :  {
-                    "2023-11" : tile_layer_3d81ffd5b9ffb08417682e8b4c822c07,
-                    "2023-12" : tile_layer_ae93d1382f99c34fd1688954a443e574,
-                    "2024-01" : tile_layer_26473ad71921ae63bd8fc9e24dae8eb8,
-                    "2024-02" : tile_layer_362f0fa0c926380eeda40e89f4a44e7d,
-                    "2024-03" : tile_layer_17e57031d33c24634f790777dbfe88c8,
-                    "2024-04" : tile_layer_f299726ebea55ca6c2e8d4b0b336f37b,
-                    "2024-05" : tile_layer_02be41c4b3d557e6bea78bd373155827,
-                    "2024-06" : tile_layer_9cd1627f2f26af022857e8426aba87e8,
-                    "2024-07" : tile_layer_f9fcda13e7309429210fb33560922016,
-                    "2024-08" : tile_layer_0b587e46be80644a0c7b6257c7da2f81,
-                    "2024-09" : tile_layer_9b449a3ac515c9c42dd9a234eb7997e3,
-                    "2024-10" : tile_layer_e9d6e4a036565ab94a83fb3110ecb285,
+                    "2023-11" : tile_layer_0da80de97e9c5d5662271928f1ae8237,
+                    "2023-12" : tile_layer_2f8c7bfb8bd11956d4326a942da03418,
+                    "2024-01" : tile_layer_2d3f4bc10b346931bb70e9fb46620633,
+                    "2024-02" : tile_layer_594cc5e22eee3a873acb85b2af3aa07c,
+                    "2024-03" : tile_layer_d6f8239d8d5163364d978dad846d6ec1,
+                    "2024-04" : tile_layer_68a684e622d6a6fb23f2d6d2d0a4f94c,
+                    "2024-05" : tile_layer_cfa95248443f8ce57dce63c4da83aeb2,
+                    "2024-06" : tile_layer_0c97a846a614d32250e60610f12472cc,
+                    "2024-07" : tile_layer_eef2b84210729b26fc798c4cc143e81b,
+                    "2024-08" : tile_layer_80886a40a5e83c76a11e19e87d3caeb5,
+                    "2024-09" : tile_layer_219f9ae5e042d2bf389bdd3a7cc4a6e5,
+                    "2024-10" : tile_layer_0bf3a286479f01f410d9545bdad4ab7f,
                 },
             };
-            let layer_control_ce791e96c23d7faa2d887604a0aabe90 = L.control.layers(
-                layer_control_ce791e96c23d7faa2d887604a0aabe90_layers.base_layers,
-                layer_control_ce791e96c23d7faa2d887604a0aabe90_layers.overlays,
+            let layer_control_7769aef023528531d7f08e70d8469657 = L.control.layers(
+                layer_control_7769aef023528531d7f08e70d8469657_layers.base_layers,
+                layer_control_7769aef023528531d7f08e70d8469657_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_9bd45a3cfe26fb1228761f799b18d1e1);
+            ).addTo(map_dee9ae59fdfc1bf217e449343027419a);
 
         
 &lt;/script&gt;
