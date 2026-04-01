@@ -107,15 +107,23 @@ Changelog = "https://developmentseed.org/titiler-cmr/release-notes/"
 
 
 [build-system]
-requires = ["pdm-pep517"]
-build-backend = "pdm.pep517.api"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-[tool.pdm.version]
-source = "scm"
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
-[tool.pdm.build]
-includes = ["titiler/cmr"]
-excludes = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
+[tool.uv-dynamic-versioning]
+fallback-version = "0.0.0"
+
+[tool.hatch.build.targets.wheel]
+packages = ["titiler/cmr"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true } }]
 
 [tool.coverage.run]
 branch = true

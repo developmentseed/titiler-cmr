@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG PYTHON_VERSION=3.12
 ARG GDAL_VERSION=3.12.1
+ARG APP_VERSION=0.0.0
 
 # ── Stage 0: capture the unmodified Lambda runtime libs ───────────────────────
 # Used to pin libcurl to the exact version present in the Lambda execution
@@ -67,6 +68,7 @@ RUN cmake \
 
 # ── Stage 2: assemble Lambda package ──────────────────────────────────────────
 FROM --platform=linux/amd64 public.ecr.aws/lambda/python:${PYTHON_VERSION}
+ARG APP_VERSION
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY --from=gdal-builder /opt/gdal /opt/gdal
 
@@ -114,7 +116,7 @@ RUN uv export --locked --no-editable --no-dev --extra lambda \
 COPY titiler/ ./titiler/
 COPY LICENSE README.md ./
 
-RUN uv pip install --no-deps --compile-bytecode --target /asset .
+RUN UV_DYNAMIC_VERSIONING_BYPASS=$APP_VERSION uv pip install --no-deps --compile-bytecode --target /asset .
 
 # Bundle PROJ data directory so pyproj can find CRS definitions at runtime.
 # Source-built pyproj doesn't include data; it searches pyproj/proj_dir/share/proj/

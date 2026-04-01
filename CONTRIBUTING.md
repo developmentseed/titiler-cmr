@@ -66,6 +66,7 @@ This "version" of the documentation is really just a new directory of the docume
 
 Remember to delete that branch when you are done:
 
+
 ```
 uv run mike delete feat-reorg-documentation --push
 ```
@@ -73,3 +74,28 @@ uv run mike delete feat-reorg-documentation --push
 This will:
 1. Delete the feat-reorg-documentation version from the documentation
 2. Push the changes to the gh-pages branch
+
+## Releasing
+
+This project uses [`uv-dynamic-versioning`](https://github.com/nikvdp/uv-dynamic-versioning) to
+derive the package version from git tags. The version seen by `importlib.metadata` (and therefore
+the API's `/api` endpoint) is baked in at install time.
+
+**Always create annotated tags** for releases — lightweight tags are not picked up by the
+versioning tool:
+
+```bash
+git tag -a v1.2.3 HEAD -m "v1.2.3"
+```
+
+After tagging, re-sync your local environment so the new version is reflected immediately:
+
+```bash
+uv sync
+```
+
+When building Docker images locally, pass the version as a build argument:
+
+```bash
+APP_VERSION=1.2.3 docker compose up --build
+```

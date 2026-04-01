@@ -22,6 +22,7 @@ from aws_cdk import aws_sns_subscriptions as subscriptions
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from constructs import Construct
 
+from titiler.cmr import __version__ as titiler_cmr_version
 from titiler.cmr.settings import ApiSettings, EarthdataSettings, StackSettings
 
 from .permissions_boundary.construct import PermissionsBoundaryAspect
@@ -103,6 +104,7 @@ class LambdaStack(Stack):
                 path=os.path.abspath(context_dir),
                 file="infrastructure/aws/lambda/Dockerfile",
                 platform="linux/amd64",
+                build_args={"APP_VERSION": titiler_cmr_version},
             ),
             memory_size=stack_settings.memory,
             reserved_concurrent_executions=stack_settings.max_concurrent,

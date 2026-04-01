@@ -28,6 +28,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        APP_VERSION: ${APP_VERSION:-0.0.0}
       secrets:
         - earthdata-username
         - earthdata-password
@@ -37,6 +39,7 @@ services:
       - ./titiler:/app/titiler
     environment:
       # Application
+      - UV_DYNAMIC_VERSIONING_BYPASS=${APP_VERSION:-0.0.0}
       - HOST=0.0.0.0
       - PORT=8081
       - WEB_CONCURRENCY=1
