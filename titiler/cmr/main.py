@@ -241,9 +241,9 @@ app.add_middleware(LoggerMiddleware)
 
 
 @app.get("/docs", include_in_schema=False)
-def docs_redirect() -> RedirectResponse:
+def docs_redirect(request: Request) -> RedirectResponse:
     """Redirect /docs to /api.html (Swagger UI)."""
-    return RedirectResponse(url="/api.html")
+    return RedirectResponse(url=request.url_for("swagger_ui_html"))
 
 
 @app.get(

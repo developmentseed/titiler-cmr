@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Migrated build backend from `pdm-pep517` to `hatchling` + `uv-dynamic-versioning` for SCM-based
   versioning.
 
+### Fixed
+
+- Fixed /docs redirect for root path scenario
+
 ## [v1.0.0]
 
 ### Added
