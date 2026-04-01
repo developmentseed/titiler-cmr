@@ -792,9 +792,7 @@ class TimeseriesExtension(FactoryExtension):
                 param_list=query,
             )
 
-            logger.info(
-                f"generated {len(urls)} request urls", extra={"param_list": query}
-            )
+            logger.info(f"generated {len(urls)} request urls")
 
             timestep_requests = await asyncio.gather(
                 *[timestep_request(url, method="GET", timeout=None) for url in urls]

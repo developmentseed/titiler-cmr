@@ -1,5 +1,6 @@
 """titiler.cmr tests configuration."""
 
+import logging
 import os
 from collections.abc import Callable, Iterator, Mapping
 from typing import Any
@@ -15,6 +16,7 @@ from mypy_boto3_s3.service_resource import Bucket, Object, S3ServiceResource
 from vcr.request import Request
 
 from titiler.cmr.backend import CMRBackend
+from titiler.cmr.logger import XRayJsonFormatter
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 
 
@@ -22,6 +24,36 @@ def pytest_configure(config):
     """Set environmental variables before any imports happen."""
     os.environ["TITILER_CMR_EARTHDATA_USERNAME"] = "test_user"
     os.environ["TITILER_CMR_EARTHDATA_PASSWORD"] = "test_password"
+
+
+class _StrictJsonHandler(logging.Handler):
+    """Log handler that applies the production JSON formatter and propagates errors.
+
+    In deployment, XRayJsonFormatter runs for every log record emitted by the
+    application. Python's default handler swallows formatting errors (printing
+    to stderr), which lets bugs like passing non-serializable objects in `extra`
+    go undetected in tests. This handler re-raises instead, so the test fails.
+    """
+
+    _formatter = XRayJsonFormatter()
+
+    def emit(self, record: logging.LogRecord) -> None:
+        """Format record with the production formatter; let any error propagate."""
+        self._formatter.format(record)
+
+
+@pytest.fixture(autouse=True)
+def production_log_handler():
+    """Install the production JSON formatter for all tests.
+
+    Any log call that would cause a TypeError in the deployed formatter (e.g.
+    passing a Pydantic model in `extra`) will raise immediately in tests rather
+    than being silently swallowed.
+    """
+    handler = _StrictJsonHandler()
+    logging.getLogger("titiler").addHandler(handler)
+    yield
+    logging.getLogger("titiler").removeHandler(handler)
 
 
 def before_record_cb(request: Request):
