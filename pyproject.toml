@@ -117,7 +117,7 @@ source = "uv-dynamic-versioning"
 fallback-version = "0.0.0"
 
 [tool.hatch.build.targets.wheel]
-packages = ["titiler/cmr"]
+packages = ["titiler"]
 
 [tool.hatch.build.targets.sdist]
 exclude = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
