@@ -26,13 +26,19 @@ jobs:
     steps:
       - name: Determine branch to deploy
         id: set_branch
+        env:
+          # Prevent script injection, since refs/branches can be potentially malicious text.
+          # See https://docs.github.com/en/actions/reference/security/secure-use#good-practices-for-mitigating-script-injection-attacks
+          INPUT_BRANCH: ${{ github.event.inputs.branch }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+            echo "branch=$INPUT_BRANCH" >> $GITHUB_OUTPUT
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+            echo "branch=$HEAD_REF" >> $GITHUB_OUTPUT
           else
-            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "branch=$REF_NAME" >> $GITHUB_OUTPUT
           fi
 
       - name: Checkout
