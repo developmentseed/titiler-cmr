@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [v1.0.2]
+
+### Changed
+
+- Switched to BatchSpanProcessor for exporting OTEL traces to XRay
+
 ## [v1.0.1]
 
 ### Changed
@@ -185,8 +191,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Ability to run locally with Earthdata authentication ([#28](https://github.com/developmentseed/titiler-cmr/pull/28))
 
-[Unreleased]: <https://github.com/developmentseed/titiler-cmr/compare/v1.0.1..develop>
-[v1.0.0]: <https://github.com/developmentseed/titiler-cmr/compare/v1.0.0..v1.0.1>
+[Unreleased]: <https://github.com/developmentseed/titiler-cmr/compare/v1.0.2..develop>
+[v1.0.2]: <https://github.com/developmentseed/titiler-cmr/compare/v1.0.1..v1.0.2>
+[v1.0.1]: <https://github.com/developmentseed/titiler-cmr/compare/v1.0.0..v1.0.1>
 [v1.0.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.3.1..v1.0.0>
 [v0.3.1]: <https://github.com/developmentseed/titiler-cmr/compare/v0.3.0..v0.3.1>
 [v0.3.0]: <https://github.com/developmentseed/titiler-cmr/compare/v0.2.0..v0.3.0>

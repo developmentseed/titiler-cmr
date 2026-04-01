@@ -183,6 +183,3 @@ See [contributors](https://github.com/developmentseed/titiler-cmr/graphs/contrib
 
 See [CHANGELOG.md](https://github.com/developmentseed/titiler-cmr/blob/main/CHANGELOG.md).
 
-## Links
-
-* NISAR viz: http://localhost:8000/xarray/WebMercatorQuad/map.html?collection_concept_id=C3622214170-ASF&granule_ur=NISAR_L2_PR_GCOV_010_165_D_100_2005_DHDH_M_20260120T155930_20260120T155950_X05010_N_P_J_001&variable=HHHH&colormap_name=rainbow&rescale=0,0.6&group=/science/LSAR/GCOV/grids/frequencyB
