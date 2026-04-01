@@ -41,7 +41,7 @@ if "AWS_EXECUTION_ENV" in os.environ:
     from opentelemetry.propagators.aws import AwsXRayPropagator
     from opentelemetry.sdk.extension.aws.trace import AwsXRayIdGenerator
     from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
     from requests.adapters import HTTPAdapter
     from urllib3.util.retry import Retry
 
@@ -152,10 +152,16 @@ if "AWS_EXECUTION_ENV" in os.environ:
 
     # AwsXRayIdGenerator produces trace IDs whose first 8 hex chars encode the
     # epoch timestamp — the format X-Ray requires for time-indexed trace lookup.
-    # SimpleSpanProcessor (not Batch) is correct for Lambda: no background
-    # flush thread, so spans are exported synchronously and survive SnapStart.
+    # BatchSpanProcessor (not Simple) is used here so that span exports happen on
+    # a background thread and never block the asyncio event loop. SimpleSpanProcessor
+    # calls OTLPSpanExporter.export() synchronously inside span.end(), which runs
+    # inline on the event loop thread and blocks it for the duration of the OTLP
+    # HTTP round-trip. For endpoints like /timeseries/bbox that fan out N concurrent
+    # httpx sub-requests via asyncio.gather, this produces N sequential blocking
+    # exports that can exhaust the Lambda timeout before all responses are collected.
+    # Spans are flushed explicitly in the handler wrapper below before Lambda returns.
     _provider = TracerProvider(id_generator=AwsXRayIdGenerator())
-    _provider.add_span_processor(SimpleSpanProcessor(_exporter))
+    _provider.add_span_processor(BatchSpanProcessor(_exporter))
     trace.set_tracer_provider(_provider)
     propagate.set_global_textmap(_LambdaXRayPropagator())
 
@@ -188,7 +194,7 @@ _gdal_env.__enter__()
 pyproj.CRS.from_epsg(4326)
 # ──────────────────────────────────────────────────────────────────────────────
 
-lambda_handler = Mangum(
+_mangum = Mangum(
     app,
     # Prevent mangum from running lifespan because it will do so on every
     # invocation, rather than only during cold starts.
@@ -200,3 +206,20 @@ lambda_handler = Mangum(
         "application/vnd.api+json",
     ],
 )
+
+
+def lambda_handler(event: dict, context: object) -> dict:
+    """Lambda entry point with explicit OTEL flush after each invocation.
+
+    BatchSpanProcessor exports spans on a background thread during the
+    request. We flush here — after the response is fully assembled but
+    before returning — so spans are not silently dropped when Lambda
+    freezes the execution environment between invocations.
+
+    The flush timeout (5 s) is intentionally shorter than the Lambda
+    timeout so a slow X-Ray endpoint cannot push the invocation over
+    the function's configured limit.
+    """
+    result = _mangum(event, context)
+    _provider.force_flush(timeout_millis=5_000)
+    return result
