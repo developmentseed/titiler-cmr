@@ -1030,6 +1030,20 @@ uv run mkdocs serve -o</code></p>
 <p>This will:
 1. Delete the feat-reorg-documentation version from the documentation
 2. Push the changes to the gh-pages branch</p>
+<h2 id="releasing">Releasing<a class="headerlink" href="#releasing" title="Permanent link">&para;</a></h2>
+<p>This project uses <a href="https://github.com/nikvdp/uv-dynamic-versioning"><code>uv-dynamic-versioning</code></a> to
+derive the package version from git tags. The version seen by <code>importlib.metadata</code> (and therefore
+the API's <code>/api</code> endpoint) is baked in at install time.</p>
+<p><strong>Always create annotated tags</strong> for releases — lightweight tags are not picked up by the
+versioning tool:</p>
+<p><code>bash
+git tag -a v1.2.3 HEAD -m "v1.2.3"</code></p>
+<p>After tagging, re-sync your local environment so the new version is reflected immediately:</p>
+<p><code>bash
+uv sync</code></p>
+<p>When building Docker images locally, pass the version as a build argument:</p>
+<p><code>bash
+APP_VERSION=1.2.3 docker compose up --build</code></p>
 
 
 
