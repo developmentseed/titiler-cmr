@@ -24,12 +24,12 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0  # Important for mike to work with tags
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.version != 'dev' && (startsWith(inputs.version, 'v') || contains(inputs.version, '/')) && inputs.version || github.event_name == 'workflow_dispatch' && inputs.version != 'dev' && format('v{0}', inputs.version) || github.ref }}
 
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
         with:
           version: "0.9.*"
           enable-cache: true
