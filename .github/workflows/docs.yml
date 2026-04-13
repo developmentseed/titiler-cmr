@@ -11,6 +11,11 @@ on:
         description: 'Version to deploy (e.g., 0.1.4, "dev" for develop branch, or branch name like "feat/reorg-documentation")'
         required: true
         type: string
+      titiler_cmr_endpoint:
+        description: 'titiler-cmr API endpoint used when executing notebooks (default: production, use "staging" for staging, or provide a full URL)'
+        required: false
+        default: 'https://openveda.cloud/api/titiler-cmr'
+        type: string
 
 permissions:
   contents: write
@@ -52,6 +57,7 @@ jobs:
         env:
           EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}
           EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
+          TITILER_CMR_ENDPOINT: ${{ inputs.titiler_cmr_endpoint == 'staging' && 'https://staging.openveda.cloud/api/titiler-cmr' || inputs.titiler_cmr_endpoint || 'https://openveda.cloud/api/titiler-cmr' }}
         run: |
           echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
 
