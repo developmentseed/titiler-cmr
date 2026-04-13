@@ -2,7 +2,7 @@
 name = "titiler.cmr"
 description = "Connect Common Metadata Repository (CMR) and TiTiler."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 license = {file = "LICENSE"}
 authors = [
     {name = "Aimee Barciauskas", email = "aimee@developmentseed.com"},
@@ -16,33 +16,86 @@ classifiers = [
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dependencies = [
-    "orjson",
-    "titiler.core>=0.17.0,<0.18",
-    "xarray",
-    "rioxarray",
-    "earthaccess",
-    "ciso8601~=2.3",
-    "pydantic>=2.4,<3.0",
-    "pydantic-settings~=2.0",
+    "cachetools>=7.0.1",
+    "dask>=2026.1.2",
+    "fastapi==0.124.4",
+    "geojson-pydantic>=2.1.0",
+    "h5netcdf>=1.8.1",
+    "h5py>=3.15.1",
+    "httpx>=0.28.1",
+    "isodate>=0.7.2",
+    "obspec-utils>=0.9.0",
+    "pillow>=12.1.1",
+    "psutil>=7.2.2",
+    "pydantic-settings>=2.13.1",
+    "rio-tiler>=9.0,<10.0",
+    "shapely>=2.1.2",
+    "titiler-core>=2.0,<3.0",
+    "titiler-mosaic>=2.0,<3.0",
+    "titiler-xarray>=2.0,<3.0",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = [
-    "pre-commit",
+uvicorn = [
+    "uvicorn",
 ]
-test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-asyncio",
-    "httpx",
+
+lambda = [
+    "mangum==0.19.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.40.0",
+    "opentelemetry-instrumentation-fastapi>=0.61b0",
+    "opentelemetry-instrumentation-httpx>=0.61b0",
+    "opentelemetry-instrumentation-logging>=0.61b0",
+    "opentelemetry-propagator-aws-xray>=1.0.2",
+    "opentelemetry-sdk>=1.40.0",
+    "opentelemetry-sdk-extension-aws>=2.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "boto3>=1.42.60",
+    "boto3-stubs[s3]>=1.42.24",
+    "earthaccess>=0.16.0",
+    "folium>=0.17.0",
+    "freezegun>=1.5.1",
+    "ipython==8.28.0",
+    "ipywidgets>=8.1.5",
+    "jupyter>=1.1.1",
+    "lab>=8.8",
+    "markdown-callouts>=0.4.0",
+    "matplotlib>=3.9.2",
+    "mike>=2.1.3",
+    "mkdocs-jupyter>=0.25.1",
+    "mkdocs-material>=9.5.47",
+    "mkdocs>=1.6.1",
+    "moto[s3,server]>=5.1.18",
+    "mypy==1.19.1",
+    "plotly>=5.24.1",
+    "pre-commit>=4.0.1",
+    "pyarrow>=22.0.0",
+    "pytest-asyncio>=1.3.0",
+    "pytest-benchmark>=5.1.0",
+    "pytest-cov>=5.0.0",
+    "pytest-httpx>=0.36.0",
+    "pytest-mock>=3.14.0",
+    "pytest-recording>=0.13.2",
+    "pytest>=9.0.2",
+    "ruff>=0.8.0",
+    "seaborn>=0.13.2",
+    "uvicorn>=0.41.0",
+]
+deployment = [
+    "aws-cdk-lib~=2.177.0",
+    "boto3>=1.34.145",
+    "constructs>=10.4.2",
+    "pydantic-settings~=2.0",
+    "python-dotenv>=1.0.1",
 ]
 
 [project.urls]
@@ -52,17 +105,25 @@ Issues = "https://github.com/developmentseed/titiler-cmr/issues"
 Source = "https://github.com/developmentseed/titiler-cmr"
 Changelog = "https://developmentseed.org/titiler-cmr/release-notes/"
 
+
 [build-system]
-requires = ["pdm-pep517"]
-build-backend = "pdm.pep517.api"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-[tool.pdm.version]
-source = "file"
-path = "titiler/cmr/__init__.py"
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
-[tool.pdm.build]
-includes = ["titiler/cmr"]
-excludes = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
+[tool.uv-dynamic-versioning]
+fallback-version = "0.0.0"
+
+[tool.hatch.build.targets.wheel]
+packages = ["titiler"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true } }]
 
 [tool.coverage.run]
 branch = true
@@ -88,7 +149,7 @@ known_third_party = [
 default_section = "THIRDPARTY"
 
 [tool.ruff]
-select = [
+lint.select = [
     "D1",  # pydocstyle errors
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -96,7 +157,7 @@ select = [
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
 ]
-ignore = [
+lint.ignore = [
     "E501",  # line too long, handled by black
     "B008",  # do not perform function calls in argument defaults
     "B905",  # ignore zip() without an explicit strict= parameter, only support with python >3.10
@@ -107,3 +168,40 @@ no_implicit_optional = true
 strict_optional = true
 namespace_packages = true
 explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "shapely",
+    "shapely.geometry",
+    "rasterio",
+    "rasterio.features",
+    "rasterio.warp",
+    "rasterio.session",
+    "isodate",
+    "cachetools",
+    "psutil",
+    "earthaccess",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+# Address PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::rasterio.errors.NotGeoreferencedWarning",
+]
+markers = "vcr: records network activity"
+addopts = [
+    "-Werror",
+    "--cov=titiler.cmr",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "-vv",
+    "--benchmark-skip",
+    "--import-mode=importlib",
+    "--doctest-modules",
+    "--doctest-report=ndiff",
+    "--ignore=infrastructure",
+]
+doctest_optionflags = ["ELLIPSIS", "NORMALIZE_WHITESPACE", "NUMBER"]

@@ -1,0 +1,152 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - cmr.earthdata.nasa.gov
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2036881735-POCLOUD
+  response:
+    body:
+      string: !!binary |
+        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
+        BXYTWDiKOwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      CMR-Hits:
+      - '1'
+      CMR-Request-Id:
+      - 7846eb68-a28b-4400-8b58-802fd528ea66
+      CMR-Search-After:
+      - '["ghrsst level 4 gamssa_28km global foundation sea surface temperature analysis
+        v1.0 dataset (gds2)","POCLOUD","GAMSSA_28km-ABOM-L4-GLOB-v01","1.0",2036881735,21]'
+      CMR-Took:
+      - '10'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-MD5:
+      - 21616ad8e2e51fe359d6bdccf8990b36
+      Content-SHA1:
+      - 5087eb9eac1656b22a6626ea88c2507ddc9db686
+      Content-Type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.4; charset=utf-8
+      Date:
+      - Fri, 27 Mar 2026 13:42:06 GMT
+      Server:
+      - ServerTokens ProductOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Via:
+      - 1.1 24f41ad6cec46a6e94a3e850d746e294.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 2kEhrMisKMuoGmtQaYc2AZehkmXQFYykgcdVgZaRRHQN992_hSNqBw==
+      X-Amz-Cf-Pop:
+      - MSP50-P2
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - 2kEhrMisKMuoGmtQaYc2AZehkmXQFYykgcdVgZaRRHQN992_hSNqBw==
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

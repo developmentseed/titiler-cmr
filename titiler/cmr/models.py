@@ -1,912 +1,585 @@
-"""ogcapi pydantic models."""
+"""titiler.cmr models."""
 
-from datetime import datetime
-from typing import Any, Dict, List, Literal, Optional, Set, Tuple, Union
+import os
+import re
+from collections import defaultdict
+from typing import Annotated, Any, List, TypeAlias
 
-from pydantic import AnyHttpUrl, AnyUrl, BaseModel, Field, RootModel
-from typing_extensions import Annotated
+from fastapi import Query
+from geojson_pydantic import Feature, FeatureCollection
+from geojson_pydantic.geometries import Geometry
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    field_validator,
+    model_validator,
+)
+from shapely.geometry import shape
 
-from titiler.cmr.enums import MediaType
+from titiler.cmr.errors import S3CredentialsEndpointMissing
 
+# ---------------------------------------------------------------------------
+# Query parameter type aliases
+# ---------------------------------------------------------------------------
 
-class Link(BaseModel):
-    """Link model.
+ConceptID = Annotated[
+    str | None,
+    Query(
+        description="""A CMR concept id, in the format <concept-type-prefix> <unique-number> '-' <provider-id>
+- concept-type-prefix is a single capital letter prefix indicating the concept type. "C" is used for collections
+- unique-number is a single number assigned by the CMR during ingest.
+- provider-id is the short name for the provider. i.e. "LPDAAC_ECS"
+        """
+    ),
+]
 
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/common-core/link.yaml
+Temporal = Annotated[
+    str | None,
+    Query(
+        description="""Filters items that have a temporal property that intersects this value.\n
+Either a date-time or an interval, open or closed. Date and time expressions adhere to RFC 3339. Open intervals are expressed using double-dots.""",
+        openapi_examples={
+            "user-defined": {"value": None},
+            "datetime": {"value": "2018-02-12T23:20:50Z"},
+            "closed-interval": {"value": "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"},
+            "open-interval-from": {"value": "2018-02-12T00:00:00Z/"},
+            "open-interval-to": {"value": "/2018-03-18T12:31:12Z"},
+        },
+    ),
+]
 
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
+GranuleUr = Annotated[str | None, Query(description="Unique granule record id")]
 
-    href: Annotated[
-        str,
-        Field(
-            description="Supplies the URI to a remote resource (or resource fragment).",
-            example="http://data.example.com/buildings/123",
+CloudCover = Annotated[
+    str | None,
+    Query(
+        description="Cloud cover range",
+        openapi_examples={
+            "user-provided": {"value": None},
+            "max 20": {"value": "0,20"},
+        },
+    ),
+]
+
+BBox = Annotated[
+    str | None,
+    Query(
+        description="bounding box coordinates",
+        openapi_examples={
+            "user-provided": {"value": None},
+            "example": {"value": "-100,40,-90,50"},
+        },
+    ),
+]
+
+SortKey = Annotated[
+    List[str] | None,
+    Query(
+        description=(
+            "One or more sort keys for granule results. Prefix with `-` for descending order. "
+            "Valid keys: campaign, entry_title, dataset_id, data_size, end_date, granule_ur, "
+            "producer_granule_id, project, provider, readable_granule_name, short_name, "
+            "start_date, version, platform, instrument, sensor, day_night_flag, online_only, "
+            "browsable, cloud_cover, revision_date."
         ),
-    ]
-    rel: Annotated[
-        str,
-        Field(
-            description="The type or semantics of the relation.", example="alternate"
+        openapi_examples={
+            "user-provided": {"value": None},
+            "most-recent-first": {"value": ["-start_date"]},
+            "ascending-start-date": {"value": ["start_date"]},
+            "multi-key": {"value": ["provider", "-start_date"]},
+        },
+    ),
+]
+
+OrbitNumber = Annotated[
+    int | None,
+    Query(
+        description="Orbit number",
+        openapi_examples={
+            "user-provided": {"value": None},
+            "2512": {"value": 2512},
+        },
+    ),
+]
+
+AdditionalAttributeFilter = Annotated[
+    List[str] | None,
+    Query(
+        description=(
+            "Filter granules by additional attributes. "
+            "Format: `[type,]name[,min[,max]]`. "
+            "Type is one of: string, float, int, datetime, time, date. "
+            "Omit type to match by name only. "
+            "Omit min or max to create an open-ended range. "
+            "Repeat the parameter to filter on multiple attributes."
         ),
-    ]
-    type: Annotated[
-        Optional[MediaType],
-        Field(
-            description="A hint indicating what the media type of the result of dereferencing the link should be.",
-            example="application/geo+json",
-        ),
-    ] = None
-    templated: Annotated[
-        Optional[bool],
-        Field(description="This flag set to true if the link is a URL template."),
-    ] = None
-    varBase: Annotated[
-        Optional[str],
-        Field(
-            description="A base path to retrieve semantic information about the variables used in URL template.",
-            example="/ogcapi/vars/",
-        ),
-    ] = None
-    hreflang: Annotated[
-        Optional[str],
-        Field(
-            description="A hint indicating what the language of the result of dereferencing the link should be.",
-            example="en",
-        ),
-    ] = None
-    title: Annotated[
-        Optional[str],
-        Field(
-            description="Used to label the destination of a link such that it can be used as a human-readable identifier.",
-            example="Trierer Strasse 70, 53115 Bonn",
-        ),
-    ] = None
-    length: Optional[int] = None
+        openapi_examples={
+            "user-provided": {"value": None},
+            "name-only": {"value": ["PERCENTAGE"]},
+            "exact-value": {"value": ["float,PERCENTAGE,25.5"]},
+            "range": {"value": ["float,PERCENTAGE,25.5,30"]},
+            "min-only": {"value": ["float,PERCENTAGE,25.5,"]},
+            "max-only": {"value": ["float,PERCENTAGE,,30"]},
+            "multiple": {
+                "value": [
+                    "float,PERCENTAGE,25.5",
+                    "string,MISSION_NAME,Big Island\\, HI",
+                ]
+            },
+        },
+    ),
+]
 
-    model_config = {"use_enum_values": True}
+# ---------------------------------------------------------------------------
+# Granule search
+# ---------------------------------------------------------------------------
 
 
-class CRSUri(BaseModel):
-    """Coordinate Reference System (CRS) from URI."""
+class GranuleSearch(BaseModel):
+    """CMR granule search parameters."""
 
-    uri: Annotated[
-        AnyUrl,
-        Field(
-            description="Reference to one coordinate reference system (CRS) as URI",
-            examples=[
-                "http://www.opengis.net/def/crs/EPSG/0/3978",
-                "urn:ogc:def:crs:EPSG::2193",
-            ],
-        ),
-    ]
+    model_config = ConfigDict(populate_by_name=True)
+
+    collection_concept_id: ConceptID = Field(
+        default=None,
+        validation_alias=AliasChoices("collection_concept_id", "concept_id"),
+    )
+    granule_ur: GranuleUr = None
+    temporal: Temporal = Field(
+        default=None,
+        validation_alias=AliasChoices("temporal", "datetime"),
+    )
+    cloud_cover: CloudCover = None
+    bounding_box: BBox | None = None
+    sort_key: List[str] | None = None
+    orbit_number: OrbitNumber | None = None
+    attribute: List[str] | None = None
+
+    @field_validator("temporal")
+    @classmethod
+    def normalize_temporal(cls, v: str | None) -> str | None:
+        """Convert a singleton datetime to a closed interval.
+
+        CMR interprets a bare datetime (e.g. "2024-01-01T00:00:00Z") as an
+        open-ended range starting at that date. Convert it to a closed interval
+        ("2024-01-01T00:00:00Z/2024-01-01T00:00:00Z") so only granules for
+        that exact instant are matched.
+        """
+        if v is not None and "/" not in v:
+            return f"{v}/{v}"
+        return v
 
 
-class CRSWKT(BaseModel):
-    """Coordinate Reference System (CRS) from WKT."""
-
-    wkt: Annotated[
-        str,
-        Field(
-            description="Reference to one coordinate reference system (CRS) as WKT string",
-            examples=[
-                'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]',
-            ],
-        ),
-    ]
+# ---------------------------------------------------------------------------
+# Granule response models
+# ---------------------------------------------------------------------------
 
 
-class CRSRef(BaseModel):
-    """CRS from referenceSystem."""
+class Asset(BaseModel):
+    """A single CMR granule asset with direct (S3) and external (HTTPS) hrefs."""
 
-    referenceSystem: Dict[str, Any] = Field(
-        ...,
-        description="A reference system data structure as defined in the MD_ReferenceSystem of the ISO 19115",
+    direct_href: str
+    external_href: str
+    ext: str
+
+
+class RelatedUrl(BaseModel):
+    """A UMM RelatedUrl entry from a CMR granule search result."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    url: str = Field(alias="URL")
+    type: str = Field(alias="Type")
+    description: str | None = Field(None, alias="Description")
+
+
+class GPolygonPoint(BaseModel):
+    """A single point in a UMM GPolygon boundary."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    longitude: float = Field(alias="Longitude")
+    latitude: float = Field(alias="Latitude")
+
+
+class GPolygonBoundary(BaseModel):
+    """The boundary of a UMM GPolygon."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    points: list[GPolygonPoint] = Field(alias="Points")
+
+
+class GPolygon(BaseModel):
+    """A UMM GPolygon geometry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    boundary: GPolygonBoundary = Field(alias="Boundary")
+
+
+class BoundingRectangle(BaseModel):
+    """A UMM BoundingRectangle geometry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    west: float = Field(alias="WestBoundingCoordinate")
+    east: float = Field(alias="EastBoundingCoordinate")
+    north: float = Field(alias="NorthBoundingCoordinate")
+    south: float = Field(alias="SouthBoundingCoordinate")
+
+
+class UMMGeometry(BaseModel):
+    """UMM Geometry container with polygons and/or bounding rectangles."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    g_polygons: list[GPolygon] | None = Field(None, alias="GPolygons")
+    bounding_rectangles: list[BoundingRectangle] | None = Field(
+        None, alias="BoundingRectangles"
     )
 
 
-class CRS(RootModel[Union[str, Union[CRSUri, CRSWKT, CRSRef]]]):
-    """CRS model.
+class GranuleHorizontalSpatialDomain(BaseModel):
+    """UMM HorizontalSpatialDomain container for granules."""
 
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/common-geodata/crs.yaml
+    model_config = ConfigDict(populate_by_name=True)
 
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-
-class Spatial(BaseModel):
-    """Spatial Extent model.
-
-    Ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/extent.yaml
-
-    """
-
-    # Bbox
-    # One or more bounding boxes that describe the spatial extent of the dataset.
-    # The first bounding box describes the overall spatial
-    # extent of the data. All subsequent bounding boxes describe
-    # more precise bounding boxes, e.g., to identify clusters of data.
-    bbox: List[List[float]]
-    crs: str = "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+    geometry: UMMGeometry | None = Field(None, alias="Geometry")
 
 
-class Temporal(BaseModel):
-    """Temporal Extent model.
+class GranuleSpatialExtent(BaseModel):
+    """UMM SpatialExtent container for granules."""
 
-    Ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/extent.yaml
+    model_config = ConfigDict(populate_by_name=True)
 
-    """
-
-    # The first time interval describes the overall
-    # temporal extent of the data. All subsequent time intervals describe
-    # more precise time intervals, e.g., to identify clusters of data.
-    # Clients only interested in the overall temporal extent will only need
-    # to access the first time interval in the array (a pair of lower and upper
-    # bound instants).
-    interval: List[List[Optional[str]]]
-    trs: str = "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+    horizontal_spatial_domain: GranuleHorizontalSpatialDomain | None = Field(
+        None, alias="HorizontalSpatialDomain"
+    )
 
 
-class Extent(BaseModel):
-    """Extent model.
+class RangeDateTime(BaseModel):
+    """UMM RangeDateTime container."""
 
-    Ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/extent.yaml
+    model_config = ConfigDict(populate_by_name=True)
 
-    """
+    beginning_date_time: str | None = Field(None, alias="BeginningDateTime")
+    ending_date_time: str | None = Field(None, alias="EndingDateTime")
 
-    spatial: Optional[Spatial] = None
-    temporal: Optional[Temporal] = None
+
+class GranuleTemporalExtent(BaseModel):
+    """UMM TemporalExtent container for granules."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    range_date_time: RangeDateTime | None = Field(None, alias="RangeDateTime")
+
+
+class AdditionalAttribute(BaseModel):
+    """A UMM AdditionalAttribute entry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    name: str = Field(alias="Name")
+    values: list[str] = Field(alias="Values")
+
+
+class ArchiveAndDistributionInfo(BaseModel):
+    """A UMM ArchiveAndDistributionInformation entry."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    name: str = Field(alias="Name")
+    size_in_bytes: int | None = Field(None, alias="SizeInBytes")
+
+
+class DataGranule(BaseModel):
+    """UMM DataGranule container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    archive_and_distribution_information: list[ArchiveAndDistributionInfo] = Field(
+        alias="ArchiveAndDistributionInformation", default_factory=list
+    )
+
+
+class Granule(BaseModel):
+    """A single CMR granule parsed from a UMM JSON search response."""
+
+    id: str
+    granule_ur: str
+    collection_concept_id: str
+    related_urls: list[RelatedUrl] = Field(default_factory=list)
+    spatial_extent: GranuleSpatialExtent | None = None
+    temporal_extent: GranuleTemporalExtent | None = None
+    additional_attributes: list[AdditionalAttribute] = Field(default_factory=list)
+    data_granule: DataGranule | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _extract_from_umm_item(cls, data: Any) -> Any:
+        """Extract flat fields from a raw UMM item dict {"meta": ..., "umm": ...}."""
+        if isinstance(data, dict) and "meta" in data and "umm" in data:
+            meta = data["meta"]
+            umm = data["umm"]
+            return {
+                "id": meta["concept-id"],
+                "granule_ur": meta["native-id"],
+                "collection_concept_id": meta["collection-concept-id"],
+                "related_urls": umm.get("RelatedUrls", []),
+                "spatial_extent": umm.get("SpatialExtent"),
+                "temporal_extent": umm.get("TemporalExtent"),
+                "additional_attributes": umm.get("AdditionalAttributes", []),
+                "data_granule": umm.get("DataGranule"),
+            }
+        return data
+
+    def __str__(self) -> str:
+        """Use the granule_ur (native-id) as the string representation of a granule"""
+        return self.granule_ur
+
+    @property
+    def additional_attributes_dict(self) -> dict[str, list[str]]:
+        """Return additional attributes as a name→values dict."""
+        return {attr.name: attr.values for attr in self.additional_attributes}
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def geometry(self) -> dict[str, Any] | None:
+        """GeoJSON geometry derived from UMM SpatialExtent."""
+        if not (
+            self.spatial_extent
+            and (hsd := self.spatial_extent.horizontal_spatial_domain)
+            and (geom := hsd.geometry)
+        ):
+            return None
+
+        if geom.g_polygons:
+            polygons = []
+            for polygon in geom.g_polygons:
+                ring = [[pt.longitude, pt.latitude] for pt in polygon.boundary.points]
+                # Ensure ring is closed
+                if ring and ring[0] != ring[-1]:
+                    ring.append(ring[0])
+                polygons.append([ring])
+            if len(polygons) == 1:
+                return {"type": "Polygon", "coordinates": polygons[0]}
+            return {"type": "MultiPolygon", "coordinates": polygons}
+
+        if geom.bounding_rectangles:
+            rings = []
+            for br in geom.bounding_rectangles:
+                ring = [
+                    [br.west, br.south],
+                    [br.east, br.south],
+                    [br.east, br.north],
+                    [br.west, br.north],
+                    [br.west, br.south],
+                ]
+                rings.append(ring)
+            if len(rings) == 1:
+                return {"type": "Polygon", "coordinates": [rings[0]]}
+            return {"type": "MultiPolygon", "coordinates": [[ring] for ring in rings]}
+
+        return None
+
+    @property
+    def bbox(self) -> tuple[float, float, float, float]:
+        """Bounding box derived from the granule geometry."""
+        return shape(self.geometry).bounds
+
+    @property
+    def s3_credentials_endpoint(self) -> str:
+        """S3 credentials endpoint URL from the granule related URLs."""
+        endpoint = next(
+            (ru.url for ru in self.related_urls if "/s3credentials" in ru.url), None
+        )
+        if not endpoint:
+            raise S3CredentialsEndpointMissing(
+                f"granule ({self.id}) does not have an s3 credentials link"
+            )
+        return endpoint
+
+    def to_feature(self) -> "GranuleFeature":
+        """Convert this granule to a GeoJSON Feature."""
+        return GranuleFeature(
+            type="Feature",
+            geometry=self.geometry,
+            bbox=list(self.bbox) if self.geometry else None,
+            properties=self.model_dump(exclude={"geometry"}),
+        )
+
+    def get_assets(self, regex: str | None = None) -> dict[str, Asset]:  # noqa: C901
+        """Extract assets from granule related URLs, optionally filtered by regex."""
+        _assets: dict[str, dict] = defaultdict(dict)
+
+        # Restrict to canonical filenames from DataGranule when available
+        canonical_names: set[str] | None = None
+        if self.data_granule:
+            names = {
+                info.name
+                for info in self.data_granule.archive_and_distribution_information
+                if info.name != "Not provided"
+            }
+            if names:
+                canonical_names = names
+
+        for ru in self.related_urls:
+            if ru.type not in ("GET DATA VIA DIRECT ACCESS", "GET DATA"):
+                continue
+
+            root, extension = os.path.splitext(ru.url)
+            file = root.split("/")[-1]
+
+            if canonical_names is not None:
+                if (file + extension) not in canonical_names:
+                    continue
+
+            if regex:
+                if match := re.search(regex, file):
+                    key = match.group()
+                else:
+                    continue
+            else:
+                key = file
+
+            if ru.type == "GET DATA VIA DIRECT ACCESS":
+                _assets[key]["ext"] = extension
+                _assets[key]["direct_href"] = ru.url
+            elif ru.type == "GET DATA":
+                _assets[key]["external_href"] = ru.url
+
+        return {
+            (key if regex else str(i)): Asset(**data)
+            for i, (key, data) in enumerate(_assets.items())
+        }
+
+
+class GranuleSearchResponse(BaseModel):
+    """Top-level CMR granules.umm_json search response."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    hits: int
+    items: list[Granule]
+
+
+GranuleFeature: TypeAlias = Feature[Geometry, dict[str, Any]]
+GranuleFeatureCollection: TypeAlias = FeatureCollection[GranuleFeature]
+
+
+def granules_to_feature_collection(
+    granules: list[Granule],
+) -> GranuleFeatureCollection:
+    """Convert a list of Granule objects to a GeoJSON FeatureCollection."""
+    return GranuleFeatureCollection(
+        type="FeatureCollection",
+        features=[granule.to_feature() for granule in granules],
+    )
+
+
+# ---------------------------------------------------------------------------
+# Collection UMM models
+# ---------------------------------------------------------------------------
+
+
+class GenericResolution(BaseModel):
+    """A single horizontal resolution entry from UMM metadata."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    x_dimension: float = Field(alias="XDimension")
+    y_dimension: float = Field(alias="YDimension")
+    unit: str = Field(alias="Unit")
+
+
+class HorizontalDataResolution(BaseModel):
+    """UMM HorizontalDataResolution container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    generic_resolutions: list[GenericResolution] | None = Field(
+        None, alias="GenericResolutions"
+    )
+
+
+class ResolutionAndCoordinateSystem(BaseModel):
+    """UMM ResolutionAndCoordinateSystem container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    horizontal_data_resolution: HorizontalDataResolution | None = Field(
+        None, alias="HorizontalDataResolution"
+    )
+
+
+class HorizontalSpatialDomain(BaseModel):
+    """UMM HorizontalSpatialDomain container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    resolution_and_coordinate_system: ResolutionAndCoordinateSystem | None = Field(
+        None, alias="ResolutionAndCoordinateSystem"
+    )
+
+
+class CollectionSpatialExtent(BaseModel):
+    """UMM SpatialExtent container."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    horizontal_spatial_domain: HorizontalSpatialDomain | None = Field(
+        None, alias="HorizontalSpatialDomain"
+    )
 
 
 class Collection(BaseModel):
-    """Collection model.
+    """A CMR collection parsed from the UMM-JSON search response."""
 
-    Note: `CRS` is the list of CRS supported by the service not the CRS of the collection
+    model_config = ConfigDict(populate_by_name=True)
 
-    Ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/collection.yaml
+    temporal_extents: list[Any] = Field(alias="TemporalExtents")
+    spatial_extent: CollectionSpatialExtent | None = Field(None, alias="SpatialExtent")
 
-    """
-
-    id: str
-    title: Optional[str] = None
-    description: Optional[str] = None
-    links: List[Link]
-    extent: Optional[Extent] = None
-    itemType: Optional[str] = None
-    crs: List[str] = ["http://www.opengis.net/def/crs/OGC/1.3/CRS84"]
-
-    model_config = {"extra": "allow"}
-
-    # Custom property
     @property
-    def bounds(self) -> Optional[List[float]]:
-        """Return spatial bounds from collection extent."""
-        if self.extent and self.extent.spatial:
-            return self.extent.spatial.bbox[0]
+    def resolution_degrees(self) -> tuple[float | None, float | None]:
+        """Return (x_res, y_res) in decimal degrees, or (None, None) if unavailable.
 
-        return None
+        Meters are converted to degrees using the factor 0.00001 deg/m.
+        Raises ValueError if the unit is not meters or decimal degrees.
+        """
+        if not (
+            (se := self.spatial_extent)
+            and (hsd := se.horizontal_spatial_domain)
+            and (rcs := hsd.resolution_and_coordinate_system)
+            and (hdr := rcs.horizontal_data_resolution)
+            and (gr := hdr.generic_resolutions)
+        ):
+            return (None, None)
 
-    # Custom property
-    @property
-    def dt_bounds(self) -> Optional[List[Optional[str]]]:
-        """Return temporal bounds from collection extent."""
-        if self.extent and self.extent.temporal:
-            return self.extent.temporal.interval[0]
+        resolution_info = gr[0]
 
-        return None
+        units = resolution_info.unit.lower()
+        if units not in ("meters", "decimal degrees"):
+            raise ValueError(f"cannot convert coordinate units: {units}")
 
+        factor = 0.00001 if units == "meters" else 1
+        return (
+            resolution_info.x_dimension * factor,
+            resolution_info.y_dimension * factor,
+        )
 
-class Collections(BaseModel):
-    """
-    Collections model.
 
-    Ref: http://beta.schemas.opengis.net/ogcapi/common/part2/0.1/collections/openapi/schemas/collections.yaml
+class CollectionItem(BaseModel):
+    """A single item in a UMM-JSON collection search response."""
 
-    """
+    umm: Collection
 
-    links: List[Link]
-    timeStamp: Optional[str] = None
-    numberMatched: Optional[int] = None
-    numberReturned: Optional[int] = None
-    collections: List[Collection]
 
-    model_config = {"extra": "allow"}
+class CollectionSearchResponse(BaseModel):
+    """Top-level CMR collections.umm_json response."""
 
-
-class Conformance(BaseModel):
-    """Conformance model.
-
-    Ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/confClasses.yaml
-
-    """
-
-    conformsTo: List[str]
-
-
-class Landing(BaseModel):
-    """Landing page model.
-
-    Ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/landingPage.yaml
-
-    """
-
-    title: Optional[str] = None
-    description: Optional[str] = None
-    links: List[Link]
-
-
-class Queryables(BaseModel):
-    """Queryables model.
-
-    Ref: https://docs.ogc.org/DRAFTS/19-079r1.html#filter-queryables
-
-    """
-
-    title: str
-    properties: Dict[str, Dict[str, str]]
-    type: str = "object"
-    schema_name: Annotated[
-        str, Field(alias="$schema")
-    ] = "https://json-schema.org/draft/2019-09/schema"
-    link: Annotated[str, Field(alias="$id")]
-
-    model_config = {"populate_by_name": True}
-
-
-class TileMatrixSetLink(BaseModel):
-    """
-    TileMatrixSetLink model.
-    Based on http://docs.opengeospatial.org/per/19-069.html#_tilematrixsets
-    """
-
-    href: str
-    rel: str = "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes"
-    type: MediaType = MediaType.json
-
-    model_config = {"use_enum_values": True}
-
-
-class TileMatrixSetRef(BaseModel):
-    """
-    TileMatrixSetRef model.
-    Based on http://docs.opengeospatial.org/per/19-069.html#_tilematrixsets
-    """
-
-    id: str
-    title: Optional[str] = None
-    links: List[TileMatrixSetLink]
-
-
-class TileMatrixSetList(BaseModel):
-    """
-    TileMatrixSetList model.
-    Based on http://docs.opengeospatial.org/per/19-069.html#_tilematrixsets
-    """
-
-    tileMatrixSets: List[TileMatrixSetRef]
-
-
-class TimeStamp(RootModel):
-    """TimeStamp model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/common-geodata/timeStamp.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    root: Annotated[
-        datetime,
-        Field(
-            description="This property indicates the time and date when the response was generated using RFC 3339 notation.",
-            example="2017-08-17T08:05:32Z",
-        ),
-    ]
-
-
-class BoundingBox(BaseModel):
-    """BoundingBox model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/2DBoundingBox.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    lowerLeft: Annotated[
-        List[float],
-        Field(
-            max_length=2,
-            min_length=2,
-            description="A 2D Point in the CRS indicated elsewhere",
-        ),
-    ]
-    upperRight: Annotated[
-        List[float],
-        Field(
-            max_length=2,
-            min_length=2,
-            description="A 2D Point in the CRS indicated elsewhere",
-        ),
-    ]
-    crs: Annotated[Optional[CRS], Field(name="CRS")] = None
-    orderedAxes: Annotated[
-        Optional[List[str]], Field(max_length=2, min_length=2)
-    ] = None
-
-
-# Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/propertiesSchema.yaml
-Type = Literal["array", "boolean", "integer", "null", "number", "object", "string"]
-
-# Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/propertiesSchema.yaml
-AccessConstraints = Literal[
-    "unclassified", "restricted", "confidential", "secret", "topSecret"
-]
-
-
-class Properties(BaseModel):
-    """Properties model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/propertiesSchema.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    title: Optional[str] = None
-    description: Annotated[
-        Optional[str], Field(description="Implements 'description'")
-    ] = None
-    type: Optional[Type] = None
-    enum: Annotated[
-        Optional[Set],
-        Field(
-            description="Implements 'acceptedValues'",
-            min_length=1,
-        ),
-    ] = None
-    format: Annotated[
-        Optional[str],
-        Field(description="Complements implementation of 'type'"),
-    ] = None
-    contentMediaType: Annotated[
-        Optional[str], Field(description="Implements 'mediaType'")
-    ] = None
-    maximum: Annotated[Optional[float], Field(description="Implements 'range'")] = None
-    exclusiveMaximum: Annotated[
-        Optional[float], Field(description="Implements 'range'")
-    ] = None
-    minimum: Annotated[Optional[float], Field(description="Implements 'range'")] = None
-    exclusiveMinimum: Annotated[
-        Optional[float], Field(description="Implements 'range'")
-    ] = None
-    pattern: Optional[str] = None
-    maxItems: Annotated[
-        Optional[int],
-        Field(
-            description="Implements 'upperMultiplicity'",
-            ge=0,
-        ),
-    ] = None
-    minItems: Annotated[
-        Optional[int],
-        Field(
-            description="Implements 'lowerMultiplicity'",
-            ge=0,
-        ),
-    ] = 0
-    observedProperty: Optional[str] = None
-    observedPropertyURI: Optional[AnyUrl] = None
-    uom: Optional[str] = None
-    uomURI: Optional[AnyUrl] = None
-
-
-class PropertiesSchema(BaseModel):
-    """PropertiesSchema model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/propertiesSchema.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    type: Literal["object"]
-    required: Annotated[
-        Optional[List[str]],
-        Field(
-            description="Implements 'multiplicity' by citing property 'name' defined as 'additionalProperties'",
-            min_length=1,
-        ),
-    ] = None
-    properties: Dict[str, Properties]
-
-
-class Style(BaseModel):
-    """Style model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/style.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    id: Annotated[
-        str,
-        Field(
-            description="An identifier for this style. Implementation of 'identifier'"
-        ),
-    ]
-    title: Annotated[Optional[str], Field(description="A title for this style")] = None
-    description: Annotated[
-        Optional[str], Field(description="Brief narrative description of this style")
-    ] = None
-    keywords: Annotated[
-        Optional[List[str]], Field(description="keywords about this style")
-    ] = None
-    links: Annotated[
-        Optional[List[Link]],
-        Field(
-            description="Links to style related resources. Possible link 'rel' values are: 'style' for a URL pointing to the style description, 'styleSpec' for a URL pointing to the specification or standard used to define the style.",
-            min_length=1,
-        ),
-    ] = None
-
-
-class GeospatialData(BaseModel):
-    """Geospatial model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/geospatialData.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    title: Annotated[
-        Optional[str],
-        Field(
-            description="Title of this tile matrix set, normally used for display to a human",
-        ),
-    ] = None
-    description: Annotated[
-        Optional[str],
-        Field(
-            description="Brief narrative description of this tile matrix set, normally available for display to a human",
-        ),
-    ] = None
-    keywords: Annotated[
-        Optional[str],
-        Field(
-            description="Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe this layer",
-        ),
-    ] = None
-    id: Annotated[
-        str,
-        Field(
-            description="Unique identifier of the Layer. Implementation of 'identifier'"
-        ),
-    ]
-    dataType: Annotated[
-        Literal["map", "vector", "coverage"],
-        Field(description="Type of data represented in the tileset"),
-    ]
-    geometryDimension: Annotated[
-        Optional[int],
-        Field(  # type: ignore
-            description="The geometry dimension of the features shown in this layer (0: points, 1: curves, 2: surfaces, 3: solids), unspecified: mixed or unknown",
-            ge=0,
-            le=3,
-        ),
-    ] = None
-    featureType: Annotated[
-        Optional[str],
-        Field(
-            description="Feature type identifier. Only applicable to layers of datatype 'geometries'",
-        ),
-    ] = None
-    attribution: Annotated[
-        Optional[str],
-        Field(description="Short reference to recognize the author or provider"),
-    ] = None
-    license: Annotated[
-        Optional[str], Field(description="License applicable to the tiles")
-    ] = None
-    pointOfContact: Annotated[
-        Optional[str],
-        Field(
-            description="Useful information to contact the authors or custodians for the layer (e.g. e-mail address, a physical address,  phone numbers, etc)",
-        ),
-    ] = None
-    publisher: Annotated[
-        Optional[str],
-        Field(
-            description="Organization or individual responsible for making the layer available",
-        ),
-    ] = None
-    theme: Annotated[
-        Optional[str], Field(description="Category where the layer can be grouped")
-    ] = None
-    crs: Annotated[Optional[CRS], Field(name="CRS")] = None
-    epoch: Annotated[
-        Optional[float],
-        Field(description="Epoch of the Coordinate Reference System (CRS)"),
-    ] = None
-    minScaleDenominator: Annotated[
-        Optional[float],
-        Field(description="Minimum scale denominator for usage of the layer"),
-    ] = None
-    maxScaleDenominator: Annotated[
-        Optional[float],
-        Field(description="Maximum scale denominator for usage of the layer"),
-    ] = None
-    minCellSize: Annotated[
-        Optional[float], Field(description="Minimum cell size for usage of the layer")
-    ] = None
-    maxCellSize: Annotated[
-        Optional[float], Field(description="Maximum cell size for usage of the layer")
-    ] = None
-    maxTileMatrix: Annotated[
-        Optional[str],
-        Field(
-            description="TileMatrix identifier associated with the minScaleDenominator",
-        ),
-    ] = None
-    minTileMatrix: Annotated[
-        Optional[str],
-        Field(
-            description="TileMatrix identifier associated with the maxScaleDenominator",
-        ),
-    ] = None
-    boundingBox: Optional[BoundingBox] = None
-    created: Optional[TimeStamp] = None
-    updated: Optional[TimeStamp] = None
-    style: Optional[Style] = None
-    geoDataClasses: Annotated[
-        Optional[List[str]],
-        Field(
-            description="URI identifying a class of data contained in this layer (useful to determine compatibility with styles or processes)",
-        ),
-    ] = None
-    propertiesSchema: Optional[PropertiesSchema] = None
-    links: Annotated[
-        Optional[List[Link]],
-        Field(
-            description="Links related to this layer. Possible link 'rel' values are: 'geodata' for a URL pointing to the collection of geospatial data.",
-            min_length=1,
-        ),
-    ] = None
-
-
-class TilePoint(BaseModel):
-    """TilePoint model.
-
-    Ref: https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/tilePoint.yaml
-
-    Code generated using https://github.com/koxudaxi/datamodel-code-generator/
-    """
-
-    coordinates: Annotated[List[float], Field(max_length=2, min_length=2)]
-    crs: Annotated[Optional[CRS], Field(name="CRS")]
-    tileMatrix: Annotated[
-        Optional[str],
-        Field(description="TileMatrix identifier associated with the scaleDenominator"),
-    ] = None
-    scaleDenominator: Annotated[
-        Optional[float],
-        Field(description="Scale denominator of the tile matrix selected"),
-    ] = None
-    cellSize: Annotated[
-        Optional[float], Field(description="Cell size of the tile matrix selected")
-    ] = None
-
-
-class TileMatrixLimits(BaseModel):
-    """
-    The limits for an individual tile matrix of a TileSet's TileMatrixSet, as defined in the OGC 2D TileMatrixSet and TileSet Metadata Standard
-
-    Based on https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/tileMatrixLimits.yaml
-    """
-
-    tileMatrix: str
-    minTileRow: Annotated[int, Field(ge=0)]
-    maxTileRow: Annotated[int, Field(ge=0)]
-    minTileCol: Annotated[int, Field(ge=0)]
-    maxTileCol: Annotated[int, Field(ge=0)]
-
-
-class TileSet(BaseModel):
-    """
-    TileSet model.
-
-    Based on https://github.com/opengeospatial/ogcapi-tiles/blob/master/openapi/schemas/tms/tileSet.yaml
-    """
-
-    title: Annotated[
-        Optional[str], Field(description="A title for this tileset")
-    ] = None
-    description: Annotated[
-        Optional[str], Field(description="Brief narrative description of this tile set")
-    ] = None
-    dataType: Annotated[
-        Literal["map", "vector", "coverage"],
-        Field(description="Type of data represented in the tileset"),
-    ]
-    crs: Annotated[CRS, Field(name="CRS")]
-    tileMatrixSetURI: Annotated[
-        Optional[AnyUrl],
-        Field(
-            description="Reference to a Tile Matrix Set on an official source for Tile Matrix Sets"
-        ),
-    ] = None
-    links: Annotated[
-        List[Link],
-        Field(description="Links to related resources"),
-    ]
-    tileMatrixSetLimits: Annotated[
-        Optional[List[TileMatrixLimits]],
-        Field(
-            description="Limits for the TileRow and TileCol values for each TileMatrix in the tileMatrixSet. If missing, there are no limits other that the ones imposed by the TileMatrixSet. If present the TileMatrices listed are limited and the rest not available at all",
-        ),
-    ] = None
-    epoch: Annotated[
-        Optional[Union[float, int]],
-        Field(description="Epoch of the Coordinate Reference System (CRS)"),
-    ] = None
-    layers: Annotated[
-        Optional[List[GeospatialData]],
-        Field(min_length=1),
-    ] = None
-    boundingBox: Optional[BoundingBox] = None
-    centerPoint: Optional[TilePoint] = None
-    style: Optional[Style] = None
-    attribution: Annotated[
-        Optional[str],
-        Field(description="Short reference to recognize the author or provider"),
-    ] = None
-    license: Annotated[
-        Optional[str], Field(description="License applicable to the tiles")
-    ] = None
-    accessConstraints: Annotated[
-        Optional[AccessConstraints],
-        Field(
-            description="Restrictions on the availability of the Tile Set that the user needs to be aware of before using or redistributing the Tile Set",
-        ),
-    ] = "unclassified"
-    keywords: Annotated[
-        Optional[List[str]], Field(description="keywords about this tileset")
-    ] = None
-    version: Annotated[
-        Optional[str],
-        Field(
-            description="Version of the Tile Set. Changes if the data behind the tiles has been changed",
-        ),
-    ] = None
-    created: Optional[TimeStamp] = None
-    updated: Optional[TimeStamp] = None
-    pointOfContact: Annotated[
-        Optional[str],
-        Field(
-            description="Useful information to contact the authors or custodians for the Tile Set",
-        ),
-    ] = None
-    mediaTypes: Annotated[
-        Optional[List[str]], Field(description="Media types available for the tiles")
-    ] = None
-
-
-class TileSetList(BaseModel):
-    """
-    TileSetList model.
-
-    Based on https://docs.ogc.org/is/20-057/20-057.html#toc34
-    """
-
-    tilesets: List[TileSet]
-
-
-axesInfo = Annotated[List[str], Field(min_length=2, max_length=2)]
-NumType = Union[float, int]
-BoundsType = Tuple[NumType, NumType]
-
-
-class TMSBoundingBox(BaseModel, arbitrary_types_allowed=True):
-    """Bounding box
-
-    ref: https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/2DBoundingBox.json
-
-    """
-
-    lowerLeft: Annotated[
-        BoundsType,
-        Field(description="A 2D Point in the CRS indicated elsewhere"),
-    ]
-    upperRight: Annotated[
-        BoundsType,
-        Field(description="A 2D Point in the CRS indicated elsewhere"),
-    ]
-    crs: Annotated[
-        Optional[CRS],
-        Field(description="Coordinate Reference System (CRS)"),
-    ] = None
-    orderedAxes: Annotated[
-        Optional[axesInfo],
-        Field(description="Ordered list of names of the dimensions defined in the CRS"),
-    ] = None
-
-
-class variableMatrixWidth(BaseModel):
-    """Variable Matrix Width Definition
-
-    ref: https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json
-    """
-
-    coalesce: Annotated[
-        int,
-        Field(
-            ge=2,
-            multiple_of=1,
-            description="Number of tiles in width that coalesce in a single tile for these rows",
-        ),
-    ]
-    minTileRow: Annotated[
-        int,
-        Field(
-            ge=0,
-            multiple_of=1,
-            description="First tile row where the coalescence factor applies for this tilematrix",
-        ),
-    ]
-    maxTileRow: Annotated[
-        int,
-        Field(
-            ge=0,
-            multiple_of=1,
-            description="Last tile row where the coalescence factor applies for this tilematrix",
-        ),
-    ]
-
-
-class TileMatrix(BaseModel, extra="forbid"):
-    """Tile Matrix Definition
-
-    A tile matrix, usually corresponding to a particular zoom level of a TileMatrixSet.
-
-    ref: https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrix.json
-    """
-
-    title: Annotated[
-        Optional[str],
-        Field(
-            description="Title of this tile matrix, normally used for display to a human"
-        ),
-    ] = None
-    description: Annotated[
-        Optional[str],
-        Field(
-            description="Brief narrative description of this tile matrix set, normally available for display to a human",
-        ),
-    ] = None
-    keywords: Annotated[
-        Optional[List[str]],
-        Field(
-            description="Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe this dataset",
-        ),
-    ] = None
-    id: Annotated[
-        str,
-        Field(
-            pattern=r"^\-?[0-9]+$",
-            description="Identifier selecting one of the scales defined in the TileMatrixSet and representing the scaleDenominator the tile. Implementation of 'identifier'",
-        ),
-    ]
-    scaleDenominator: Annotated[
-        float,
-        Field(description="Scale denominator of this tile matrix"),
-    ]
-    cellSize: Annotated[
-        float,
-        Field(description="Cell size of this tile matrix"),
-    ]
-    cornerOfOrigin: Annotated[
-        Optional[Literal["topLeft", "bottomLeft"]],
-        Field(
-            description="The corner of the tile matrix (_topLeft_ or _bottomLeft_) used as the origin for numbering tile rows and columns. This corner is also a corner of the (0, 0) tile.",
-        ),
-    ] = None
-    pointOfOrigin: Annotated[
-        BoundsType,
-        Field(
-            description="Precise position in CRS coordinates of the corner of origin (e.g. the top-left corner) for this tile matrix. This position is also a corner of the (0, 0) tile. In previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did not exist.",
-        ),
-    ]
-    tileWidth: Annotated[
-        int,
-        Field(
-            ge=1,
-            multiple_of=1,
-            description="Width of each tile of this tile matrix in pixels",
-        ),
-    ]
-    tileHeight: Annotated[
-        int,
-        Field(
-            ge=1,
-            multiple_of=1,
-            description="Height of each tile of this tile matrix in pixels",
-        ),
-    ]
-    matrixWidth: Annotated[
-        int,
-        Field(
-            ge=1,
-            multiple_of=1,
-            description="Width of the matrix (number of tiles in width)",
-        ),
-    ]
-    matrixHeight: Annotated[
-        int,
-        Field(
-            ge=1,
-            multiple_of=1,
-            description="Height of the matrix (number of tiles in height)",
-        ),
-    ]
-    variableMatrixWidths: Annotated[
-        Optional[List[variableMatrixWidth]],
-        Field(description="Describes the rows that has variable matrix width"),
-    ] = None
-
-
-class TileMatrixSet(BaseModel, arbitrary_types_allowed=True):
-    """Tile Matrix Set Definition
-
-    A definition of a tile matrix set following the Tile Matrix Set standard.
-    For tileset metadata, such a description (in `tileMatrixSet` property) is only required for offline use,
-    as an alternative to a link with a `http://www.opengis.net/def/rel/ogc/1.0/tiling-scheme` relation type.
-
-    ref: https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrixSet.json
-
-    """
-
-    title: Annotated[
-        Optional[str],
-        Field(
-            description="Title of this tile matrix set, normally used for display to a human",
-        ),
-    ] = None
-    description: Optional[str] = Field(
-        None,
-        description="Brief narrative description of this tile matrix set, normally available for display to a human",
-    )
-    keywords: Annotated[
-        Optional[List[str]],
-        Field(
-            description="Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe this tile matrix set",
-        ),
-    ] = None
-    id: Annotated[
-        Optional[str],
-        Field(
-            pattern=r"^[\w\d_\-]+$",
-            description="Tile matrix set identifier. Implementation of 'identifier'",
-        ),
-    ] = None
-    uri: Annotated[
-        Optional[str],
-        Field(description="Reference to an official source for this tileMatrixSet"),
-    ] = None
-    orderedAxes: Annotated[
-        Optional[axesInfo],
-        Field(description="Ordered list of names of the dimensions defined in the CRS"),
-    ] = None
-    crs: Annotated[
-        CRS,
-        Field(description="Coordinate Reference System (CRS)"),
-    ]
-    wellKnownScaleSet: Annotated[
-        Optional[AnyHttpUrl],
-        Field(description="Reference to a well-known scale set"),
-    ] = None
-    boundingBox: Annotated[
-        Optional[TMSBoundingBox],
-        Field(
-            description="Minimum bounding rectangle surrounding the tile matrix set, in the supported CRS",
-        ),
-    ] = None
-    tileMatrices: Annotated[
-        List[TileMatrix],
-        Field(description="Describes scale levels and its tile matrices"),
-    ]
+    items: list[CollectionItem]

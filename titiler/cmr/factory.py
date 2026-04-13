@@ -1,352 +1,220 @@
 """titiler.cmr.factory: router factories."""
 
-import json
-import re
-from dataclasses import dataclass, field
-from typing import Any, Literal, Optional
+import logging
+from typing import Annotated, Callable, Literal
 
-import jinja2
-import orjson
-from fastapi import APIRouter, Depends, Path
-from fastapi.responses import ORJSONResponse
-from morecantile import tms as default_tms
-from morecantile.defaults import TileMatrixSets
-from starlette.requests import Request
-from starlette.routing import compile_path, replace_params
-from starlette.templating import Jinja2Templates, _TemplateResponse
-from typing_extensions import Annotated
-
-from titiler.cmr import models
-from titiler.cmr.dependencies import OutputType
-from titiler.cmr.enums import MediaType
-
-jinja2_env = jinja2.Environment(
-    loader=jinja2.ChoiceLoader([jinja2.PackageLoader(__package__, "templates")])
+import morecantile
+from attrs import define, field
+from fastapi import APIRouter, Depends, Path, Query
+from rio_tiler.constants import WGS84_CRS
+from titiler.core.dependencies import (
+    DatasetParams as RasterioDatasetParams,
 )
-DEFAULT_TEMPLATES = Jinja2Templates(env=jinja2_env)
+from titiler.core.dependencies import (
+    DefaultDependency,
+)
+from titiler.mosaic.factory import CoordCRSParams
+from titiler.mosaic.factory import MosaicTilerFactory as BaseFactory
+from titiler.xarray.dependencies import (
+    DatasetParams as XarrayDatasetParams,
+)
+from titiler.xarray.dependencies import (
+    XarrayParams,
+)
+
+from titiler.cmr.backend import CMRBackend
+from titiler.cmr.dependencies import (
+    BackendParams,
+    CMRAssetsParams,
+    GranuleSearch,
+    GranuleSearchBackendParams,
+    GranuleSearchParams,
+)
+from titiler.cmr.models import (
+    Granule,
+    GranuleFeatureCollection,
+    granules_to_feature_collection,
+)
+from titiler.cmr.reader import MultiBaseGranuleReader, XarrayGranuleReader
+
+logger = logging.getLogger(__name__)
 
 
-def create_html_response(
-    request: Request,
-    data: str,
-    templates: Jinja2Templates,
-    template_name: str,
-    router_prefix: Optional[str] = None,
-) -> _TemplateResponse:
-    """Create Template response."""
-    urlpath = request.url.path
-    if root_path := request.app.root_path:
-        urlpath = re.sub(r"^" + root_path, "", urlpath)
+@define(kw_only=True)
+class CMRTilerFactory(BaseFactory):
+    """Custom MosaicTiler for CMR Mosaic Backend."""
 
-    crumbs = []
-    baseurl = str(request.base_url).rstrip("/")
-
-    crumbpath = str(baseurl)
-    for crumb in urlpath.split("/"):
-        crumbpath = crumbpath.rstrip("/")
-        part = crumb
-        if part is None or part == "":
-            part = "Home"
-        crumbpath += f"/{crumb}"
-        crumbs.append({"url": crumbpath.rstrip("/"), "part": part.capitalize()})
-
-    if router_prefix:
-        baseurl += router_prefix
-
-    return templates.TemplateResponse(
-        f"{template_name}.html",
-        {
-            "request": request,
-            "response": orjson.loads(data),
-            "template": {
-                "api_root": baseurl,
-                "params": request.query_params,
-                "title": "",
-            },
-            "crumbs": crumbs,
-            "url": str(request.url),
-            "baseurl": baseurl,
-            "urlpath": str(request.url.path),
-            "urlparams": str(request.url.query),
-        },
+    path_dependency: Callable[..., GranuleSearch] = field(default=GranuleSearchParams)
+    dataset_reader: type[MultiBaseGranuleReader] | type[XarrayGranuleReader] = field(
+        default=MultiBaseGranuleReader
     )
 
+    reader_dependency: (
+        type[DefaultDependency] | type[CMRAssetsParams] | type[XarrayParams] | Callable
+    ) = field(default=DefaultDependency)  # type: ignore[assignment]
 
-@dataclass
-class Endpoints:
-    """Endpoints Factory."""
+    # Rasterio Dataset Options (nodata, unscale, resampling, reproject)
+    dataset_dependency: type[RasterioDatasetParams] | type[XarrayDatasetParams]
 
-    # FastAPI router
-    router: APIRouter = field(default_factory=APIRouter)
+    # Indexes/Expression Dependencies
+    layer_dependency: type[DefaultDependency] = field(default=DefaultDependency)
 
-    supported_tms: TileMatrixSets = default_tms
+    backend: type[CMRBackend] = CMRBackend
+    backend_dependency: type[DefaultDependency] = BackendParams
 
-    # Router Prefix is needed to find the path for routes when prefixed
-    # e.g if you mount the route with `/foo` prefix, set router_prefix to foo
-    router_prefix: str = ""
+    assets_accessor_dependency: type[DefaultDependency] = GranuleSearchBackendParams
 
-    templates: Jinja2Templates = DEFAULT_TEMPLATES
+    def register_routes(self) -> None:
+        """Register routes, excluding /granules (defined separately in granules_router)."""
+        self.info()
+        self.tilesets()
+        self.tile()
+        if self.add_viewer:
+            self.map_viewer()
+        self.tilejson()
+        self.point()
 
-    title: str = "TiTiler-CMR"
+        if self.add_part:
+            self.part()
 
-    def url_for(self, request: Request, name: str, **path_params: Any) -> str:
-        """Return full url (with prefix) for a specific handler."""
-        url_path = self.router.url_path_for(name, **path_params)
+        if self.add_statistics:
+            self.statistics()
 
-        base_url = str(request.base_url)
-        if self.router_prefix:
-            prefix = self.router_prefix.lstrip("/")
-            # If we have prefix with custom path param we check and replace them with
-            # the path params provided
-            if "{" in prefix:
-                _, path_format, param_convertors = compile_path(prefix)
-                prefix, _ = replace_params(
-                    path_format, param_convertors, request.path_params.copy()
-                )
-            base_url += prefix
+        if self.add_ogc_maps:
+            self.ogc_maps()
 
-        return str(url_path.make_absolute_url(base_url=base_url))
 
-    def _create_html_response(
-        self,
-        request: Request,
-        data: str,
-        template_name: str,
-    ) -> _TemplateResponse:
-        return create_html_response(
-            request,
-            data,
-            templates=self.templates,
-            template_name=template_name,
-            router_prefix=self.router_prefix,
+###############################################################################
+# Standalone granules router — backend-independent CMR granule metadata queries
+
+granules_router = APIRouter()
+
+
+@granules_router.get(
+    "/bbox/{minx},{miny},{maxx},{maxy}/granules",
+    response_model=list[Granule] | GranuleFeatureCollection,
+    response_model_exclude_none=True,
+    responses={200: {"description": "Return granules in bounding box"}},
+)
+def assets_for_bbox(
+    minx: Annotated[float, Path(description="Bounding box min X")],
+    miny: Annotated[float, Path(description="Bounding box min Y")],
+    maxx: Annotated[float, Path(description="Bounding box max X")],
+    maxy: Annotated[float, Path(description="Bounding box max Y")],
+    src_path: GranuleSearch = Depends(GranuleSearchParams),
+    backend_params=Depends(BackendParams),
+    assets_accessor_params=Depends(GranuleSearchBackendParams),
+    coord_crs=Depends(CoordCRSParams),
+    f: Annotated[
+        Literal["json", "geojson"],
+        Query(description="Response format"),
+    ] = "json",
+) -> list[Granule] | GranuleFeatureCollection:
+    """Return granules overlapping a bounding box."""
+    logger.info("assets_for_bbox: querying CMR for granules in bbox")
+    with CMRBackend(
+        src_path,
+        reader=MultiBaseGranuleReader,
+        **backend_params.as_dict(),
+    ) as src_dst:
+        granules = src_dst.assets_for_bbox(
+            minx,
+            miny,
+            maxx,
+            maxy,
+            coord_crs=coord_crs or WGS84_CRS,
+            **assets_accessor_params.as_dict(),
         )
 
-    def __post_init__(self):
-        """Post Init: register routes."""
+    return granules_to_feature_collection(granules) if f == "geojson" else granules
 
-        self.register_landing()
-        self.register_conformance()
-        self.register_tilematrixsets()
 
-    def register_landing(self) -> None:
-        """register landing page endpoint."""
-
-        @self.router.get(
-            "/",
-            response_model=models.Landing,
-            response_model_exclude_none=True,
-            response_class=ORJSONResponse,
-            responses={
-                200: {
-                    "content": {
-                        MediaType.json.value: {},
-                        MediaType.html.value: {},
-                    }
-                },
-            },
-            operation_id="getLandingPage",
-            summary="landing page",
-            tags=["Landing Page"],
+@granules_router.get(
+    "/point/{lon},{lat}/granules",
+    response_model=list[Granule] | GranuleFeatureCollection,
+    response_model_exclude_none=True,
+    responses={200: {"description": "Return granules at a point"}},
+)
+def assets_for_point(
+    lon: Annotated[float, Path(description="Longitude")],
+    lat: Annotated[float, Path(description="Latitude")],
+    src_path: GranuleSearch = Depends(GranuleSearchParams),
+    backend_params=Depends(BackendParams),
+    assets_accessor_params=Depends(GranuleSearchBackendParams),
+    coord_crs=Depends(CoordCRSParams),
+    f: Annotated[
+        Literal["json", "geojson"],
+        Query(description="Response format"),
+    ] = "json",
+) -> list[Granule] | GranuleFeatureCollection:
+    """Return granules overlapping a point."""
+    logger.info("assets_for_point: querying CMR for granules at point")
+    with CMRBackend(
+        src_path,
+        reader=MultiBaseGranuleReader,
+        **backend_params.as_dict(),
+    ) as src_dst:
+        granules = src_dst.assets_for_point(
+            lon,
+            lat,
+            coord_crs=coord_crs or WGS84_CRS,
+            **assets_accessor_params.as_dict(),
         )
-        def landing(
-            request: Request,
-            output_type: Annotated[Optional[MediaType], Depends(OutputType)] = None,
-        ):
-            """The landing page provides links to the API definition, the conformance statements and to the feature collections in this dataset."""
-            data = models.Landing(
-                title=self.title,
-                links=[
-                    models.Link(
-                        title="Landing Page",
-                        href=self.url_for(request, "landing"),
-                        type=MediaType.html,
-                        rel="self",
-                    ),
-                    models.Link(
-                        title="the API definition (JSON)",
-                        href=str(request.url_for("openapi")),
-                        type=MediaType.openapi30_json,
-                        rel="service-desc",
-                    ),
-                    models.Link(
-                        title="the API documentation",
-                        href=str(request.url_for("swagger_ui_html")),
-                        type=MediaType.html,
-                        rel="service-doc",
-                    ),
-                    models.Link(
-                        title="Conformance",
-                        href=self.url_for(request, "conformance"),
-                        type=MediaType.json,
-                        rel="conformance",
-                    ),
-                    models.Link(
-                        title="TiTiler-CMR Documentation (external link)",
-                        href="https://developmentseed.org/titiler-cmr/",
-                        type=MediaType.html,
-                        rel="doc",
-                    ),
-                    models.Link(
-                        title="TiTiler-CMR source code (external link)",
-                        href="https://github.com/developmentseed/titiler-cmr",
-                        type=MediaType.html,
-                        rel="doc",
-                    ),
-                ],
-            )
 
-            if output_type == MediaType.html:
-                return self._create_html_response(
-                    request,
-                    data.model_dump_json(exclude_none=True),
-                    template_name="landing",
-                )
+    return granules_to_feature_collection(granules) if f == "geojson" else granules
 
-            return data
 
-    def register_conformance(self) -> None:
-        """Register conformance endpoint."""
-
-        @self.router.get(
-            "/conformance",
-            response_model=models.Conformance,
-            response_model_exclude_none=True,
-            response_class=ORJSONResponse,
-            responses={
-                200: {
-                    "content": {
-                        MediaType.json.value: {},
-                        MediaType.html.value: {},
-                    }
-                },
-            },
-            operation_id="getConformanceDeclaration",
-            summary="information about specifications that this API conforms to",
-            tags=["Conformance"],
+@granules_router.get(
+    "/tiles/{tileMatrixSetId}/{z}/{x}/{y}/granules",
+    response_model=list[Granule] | GranuleFeatureCollection,
+    response_model_exclude_none=True,
+    responses={200: {"description": "Return granules for a tile"}},
+)
+def assets_for_tile(
+    tileMatrixSetId: Annotated[  # type: ignore[valid-type]
+        Literal[tuple(morecantile.tms.list())],
+        Path(description="Identifier selecting one of the TileMatrixSetId supported."),
+    ],
+    z: Annotated[
+        int,
+        Path(
+            description="Identifier (Z) selecting one of the scales defined in the TileMatrixSet and representing the scaleDenominator the tile.",
+        ),
+    ],
+    x: Annotated[
+        int,
+        Path(
+            description="Column (X) index of the tile on the selected TileMatrix. It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
+        ),
+    ],
+    y: Annotated[
+        int,
+        Path(
+            description="Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
+        ),
+    ],
+    src_path: GranuleSearch = Depends(GranuleSearchParams),
+    backend_params=Depends(BackendParams),
+    assets_accessor_params=Depends(GranuleSearchBackendParams),
+    f: Annotated[
+        Literal["json", "geojson"],
+        Query(description="Response format"),
+    ] = "json",
+) -> list[Granule] | GranuleFeatureCollection:
+    """Return granules overlapping a tile."""
+    logger.info("assets_for_tile: querying CMR for granules in tile")
+    tms = morecantile.tms.get(tileMatrixSetId)
+    with CMRBackend(
+        src_path,
+        tms=tms,
+        reader=MultiBaseGranuleReader,
+        **backend_params.as_dict(),
+    ) as src_dst:
+        granules = src_dst.assets_for_tile(
+            x,
+            y,
+            z,
+            **assets_accessor_params.as_dict(),
         )
-        def conformance(
-            request: Request,
-            output_type: Annotated[Optional[MediaType], Depends(OutputType)] = None,
-        ):
-            """A list of all conformance classes specified in a standard that the server conforms to."""
-            data = models.Conformance(
-                # TODO: Validate / Update
-                conformsTo=[
-                    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
-                    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/landing-page",
-                    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/json",
-                    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/html",
-                    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/oas30",
-                    "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core",
-                    "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/oas30",
-                    "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tileset",
-                    "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list",
-                ]
-            )
 
-            if output_type == MediaType.html:
-                return self._create_html_response(
-                    request,
-                    data.model_dump_json(exclude_none=True),
-                    template_name="conformance",
-                )
-
-            return data
-
-    def register_tilematrixsets(self):
-        """Register Tiling Schemes endpoints."""
-
-        @self.router.get(
-            r"/tileMatrixSets",
-            response_model=models.TileMatrixSetList,
-            response_model_exclude_none=True,
-            summary="retrieve the list of available tiling schemes (tile matrix sets)",
-            operation_id="getTileMatrixSetsList",
-            responses={
-                200: {
-                    "content": {
-                        MediaType.html.value: {},
-                        MediaType.json.value: {},
-                    },
-                },
-            },
-            tags=["Tiling Schemes"],
-        )
-        async def tilematrixsets(
-            request: Request,
-            output_type: Annotated[Optional[MediaType], Depends(OutputType)] = None,
-        ):
-            """Retrieve the list of available tiling schemes (tile matrix sets)."""
-            data = models.TileMatrixSetList(
-                tileMatrixSets=[
-                    models.TileMatrixSetRef(
-                        id=tms_id,
-                        title=f"Definition of {tms_id} tileMatrixSets",
-                        links=[
-                            models.TileMatrixSetLink(
-                                href=self.url_for(
-                                    request,
-                                    "tilematrixset",
-                                    tileMatrixSetId=tms_id,
-                                ),
-                                rel="http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes",
-                                type=MediaType.json,
-                            )
-                        ],
-                    )
-                    for tms_id in self.supported_tms.list()
-                ]
-            )
-
-            if output_type == MediaType.html:
-                return self._create_html_response(
-                    request,
-                    data.model_dump_json(exclude_none=True),
-                    template_name="tilematrixsets",
-                )
-
-            return data
-
-        @self.router.get(
-            "/tileMatrixSets/{tileMatrixSetId}",
-            response_model=models.TileMatrixSet,
-            response_model_exclude_none=True,
-            summary="retrieve the definition of the specified tiling scheme (tile matrix set)",
-            operation_id="getTileMatrixSet",
-            responses={
-                200: {
-                    "content": {
-                        MediaType.html.value: {},
-                        MediaType.json.value: {},
-                    },
-                },
-            },
-            tags=["Tiling Schemes"],
-        )
-        async def tilematrixset(
-            request: Request,
-            tileMatrixSetId: Annotated[
-                Literal[tuple(self.supported_tms.list())],
-                Path(description="Identifier for a supported TileMatrixSet."),
-            ],
-            output_type: Annotated[Optional[MediaType], Depends(OutputType)] = None,
-        ):
-            """Retrieve the definition of the specified tiling scheme (tile matrix set)."""
-            # Morecantile TileMatrixSet should be the same as `models.TileMatrixSet`
-            tms = self.supported_tms.get(tileMatrixSetId)
-            data = models.TileMatrixSet.model_validate(tms.model_dump())
-
-            if output_type == MediaType.html:
-                return self._create_html_response(
-                    request,
-                    # For visualization purpose we add the tms bbox
-                    json.dumps(
-                        {
-                            **tms.model_dump(exclude_none=True, mode="json"),
-                            "bbox": tms.bbox,  # morecantile attribute
-                        },
-                    ),
-                    template_name="tilematrixset",
-                )
-
-            return data
+    return granules_to_feature_collection(granules) if f == "geojson" else granules

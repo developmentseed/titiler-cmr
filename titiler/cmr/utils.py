@@ -1,0 +1,298 @@
+"""titiler.cmr utilities.
+
+Code from titiler.pgstac, MIT License.
+
+"""
+
+import logging
+import time
+from collections.abc import Sequence
+from datetime import datetime
+from typing import TYPE_CHECKING, Any
+
+import rasterio.features
+from geojson_pydantic import Feature, FeatureCollection
+from httpx import Client
+from isodate import parse_datetime as _parse_datetime
+from rasterio.warp import transform_bounds
+
+from titiler.cmr.errors import InvalidDatetime
+from titiler.cmr.query import get_collection
+
+logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    # During development, enable proper type checking and code completion for
+    # CRS and WGS84_CRS.
+    from pyproj import CRS
+
+    WGS84_CRS = CRS.from_epsg(4326)
+else:
+    from rasterio.crs import CRS
+    from rio_tiler.constants import WGS84_CRS
+
+
+def retry(
+    tries: int,
+    exceptions: type[Exception] | Sequence[type[Exception]] = Exception,
+    delay: float = 0.0,
+):
+    """Decorator that retries a wrapped function on specified exceptions.
+
+    If all retry attempts are exhausted, the function is called one final time
+    without catching exceptions, so any error propagates to the caller.
+
+    Args:
+        tries: Number of guarded retry attempts before the final unguarded call.
+        exceptions: Exception type or sequence of types to catch and retry on.
+        delay: Seconds to wait between retry attempts.
+    """
+
+    def _decorator(func: Any):
+        def _newfn(*args: Any, **kwargs: Any):
+            attempt = 0
+            while attempt < tries:
+                try:
+                    return func(*args, **kwargs)
+
+                except exceptions:  # type: ignore
+                    attempt += 1
+                    time.sleep(delay)
+
+            return func(*args, **kwargs)
+
+        return _newfn
+
+    return _decorator
+
+
+def _parse_date(date: str) -> datetime:
+    try:
+        return _parse_datetime(date)
+    except Exception as e:
+        raise InvalidDatetime(f"Invalid datetime {date}") from e
+
+
+def parse_datetime(
+    datetime_str: str,
+) -> tuple[datetime | None, datetime | None, datetime | None]:
+    """Parse a datetime string into a ``(datetime_, start, end)`` tuple.
+
+    Accepts a bare RFC 3339 datetime or an interval expressed as
+    ``start/end``.  Open bounds are represented by ``..`` or an empty string.
+
+    Args:
+        datetime_str: RFC 3339 datetime string or ``/``-delimited interval
+            (e.g. ``"2024-01-01T00:00:00Z"`` or
+            ``"2024-01-01T00:00:00Z/2024-12-31T00:00:00Z"``).
+
+    Returns:
+        Tuple of ``(datetime_, start, end)``.  For a bare datetime,
+        ``datetime_`` is set and both interval fields are ``None``.  For an
+        interval, ``start`` and/or ``end`` are set (each may be ``None`` for
+        open bounds) and ``datetime_`` is ``None``.
+
+    Raises:
+        InvalidDatetime: If any component cannot be parsed.
+    """
+    datetime_, start, end = None, None, None
+    dt = datetime_str.split("/")
+    if len(dt) == 1:
+        datetime_ = _parse_date(dt[0])
+
+    elif len(dt) == 2:
+        dates: list[str | None] = [None, None]
+        dates[0] = dt[0] if dt[0] not in ["..", ""] else None
+        dates[1] = dt[1] if dt[1] not in ["..", ""] else None
+
+        if dates[0]:
+            start = _parse_date(dates[0])
+
+        if dates[1]:
+            end = _parse_date(dates[1])
+
+    else:
+        raise InvalidDatetime("Invalid datetime: {datetime}")
+
+    return datetime_, start, end
+
+
+def get_bbox_degrees(
+    minx: float,
+    miny: float,
+    maxx: float,
+    maxy: float,
+    coord_crs: CRS | None = WGS84_CRS,
+) -> tuple[float, float, float, float]:
+    """Convert bounding box coordinates to WGS84 decimal degrees.
+
+    If ``coord_crs`` is `None` or `WGS84_CRS`, the input coordinates are
+    returned unchanged.  In the case of `None`, it is assumed that the inputs
+    are already in WGS84 coordinates; no validation is performed.
+
+    Parameters
+    ----------
+    minx
+        Minimum X coordinate of the input bounding box.
+    miny
+        Minimum Y coordinate of the input bounding box.
+    maxx
+        Maximum X coordinate of the input bounding box.
+    maxy
+        Maximum Y coordinate of the input bounding box.
+    coord_crs
+        Coordinate reference system of the input bounding box. If ``None`` or
+        equal to WGS84, no transformation is applied.
+
+    Returns
+    -------
+    tuple[float, float, float, float]
+        Bounding box coordinates expressed in WGS84 degrees as
+        `(minx, miny, maxx, maxy)`.
+
+    Examples
+    --------
+    Specifying no CRS or specifying WGS84 simply results in the same bounding
+    box as given:
+
+    >>> import pyproj
+    >>> WGS84_CRS = pyproj.CRS.from_epsg(4326)
+    >>> get_bbox_degrees(-180, -90, 180, 90)
+    (-180, -90, 180, 90)
+    >>> get_bbox_degrees(-180, -90, 180, 90, WGS84_CRS)
+    (-180, -90, 180, 90)
+
+    Specifying a CRS other than WGS84 results in an appropriately transformed
+    bounding box:
+
+    >>> WEB_MERCATOR_CRS = pyproj.CRS.from_epsg(3857)
+    >>> valencia_wm_bbox = (-55_660, 4_777_695, -27_830, 4_800_765)
+    >>> get_bbox_degrees(*valencia_wm_bbox, WEB_MERCATOR_CRS)
+    (-0.50, 39.39, -0.25, 39.55)
+    """
+    if coord_crs is not None and coord_crs != WGS84_CRS:
+        return transform_bounds(coord_crs, WGS84_CRS, minx, miny, maxx, maxy)
+
+    return minx, miny, maxx, maxy
+
+
+def calculate_time_series_request_size(
+    concept_id: str,
+    client: Client,
+    n_time_steps: int,
+    minx: float,
+    miny: float,
+    maxx: float,
+    maxy: float,
+    coord_crs: CRS,
+) -> float:
+    """Estimate the total pixel count for a time series request.
+
+    Fetches the collection's horizontal data resolution from CMR and multiplies
+    the spatial pixel count of the AOI by the number of time steps.  Returns 0
+    if the resolution cannot be determined from collection metadata.
+
+    Args:
+        concept_id: CMR collection concept ID.
+        client: HTTP client used for CMR requests.
+        n_time_steps: Number of time steps in the series.
+        minx: Minimum X coordinate of the AOI bounding box.
+        miny: Minimum Y coordinate of the AOI bounding box.
+        maxx: Maximum X coordinate of the AOI bounding box.
+        maxy: Maximum Y coordinate of the AOI bounding box.
+        coord_crs: CRS of the AOI bounding box coordinates.
+
+    Returns:
+        Approximate total number of pixels read across all time steps.
+    """
+    collection = get_collection(concept_id, client)
+    xres, yres = collection.resolution_degrees
+    if not (xres and yres):
+        logger.warning(
+            f"could not find HorizontalDataResolution for concept_id {concept_id}"
+        )
+        return 0
+
+    minx, miny, maxx, maxy = get_bbox_degrees(minx, miny, maxx, maxy, coord_crs)
+
+    n_pixels_per_request = (maxx - minx) / xres * (maxy - miny) / yres
+
+    return n_pixels_per_request * n_time_steps
+
+
+def get_geojson_bounds(
+    geojson: Feature | FeatureCollection,
+) -> tuple[float, float, float, float]:
+    """Get the global bounding box for a GeoJSON Feature or FeatureCollection.
+
+    Parameters
+    ----------
+    geojson
+        A GeoJSON Feature or FeatureCollection whose coordinates are expressed
+        in WGS84 longitude/latitude.
+
+    Returns
+    -------
+    tuple[float, float, float, float]
+        A tuple of `(minx, miny, maxx, maxy)` representing the bounding box in
+        WGS84 degrees.
+
+    Examples
+    --------
+    The bounding box for a point is simply the same point at both corners of the
+    box:
+
+    >>> point = Feature(
+    ...     **{
+    ...         "type": "Feature",
+    ...         "geometry": {
+    ...             "type": "Point",
+    ...             "coordinates": [12.38272, 53.46385],
+    ...         },
+    ...         "properties": None,
+    ...     }
+    ... )
+    >>> get_geojson_bounds(point)
+    (12.38272, 53.46385, 12.38272, 53.46385)
+
+    For a polygon, the bounds are simply the smallest and largest coordinates
+    in both the x and y directions amongst all points of the polygon:
+
+    >>> polygon = Feature(
+    ...     **{
+    ...         "type": "Feature",
+    ...         "geometry": {
+    ...             "type": "Polygon",
+    ...             "coordinates": [
+    ...                 [
+    ...                     [13.38272, 52.46385],
+    ...                     [13.42786, 52.46385],
+    ...                     [13.42786, 52.48445],
+    ...                     [13.38272, 52.48445],
+    ...                     [13.38272, 52.46385],
+    ...                 ]
+    ...             ],
+    ...         },
+    ...         "properties": None,
+    ...     }
+    ... )
+    >>> get_geojson_bounds(polygon)
+    (13.38272, 52.46385, 13.42786, 52.48445)
+
+    For a feature collection, the bounds are the smallest and largest
+    coordinates across all points of all geometries in the collection, as if a
+    single feature with all points from all geometries were supplied instead:
+
+    >>> fc = FeatureCollection(type="FeatureCollection", features=[point, polygon])
+    >>> get_geojson_bounds(fc)
+    (12.38272, 52.46385, 13.42786, 53.46385)
+
+    Notice that in the result above, the `minx` (first) and `maxy` (last)
+    coordinates come from the point, because it sits to the west and north of
+    the polygon, while the others (`maxx` and `miny`) come from the polygon.
+    """
+    return rasterio.features.bounds(
+        FeatureCollection(type="FeatureCollection", features=[geojson])
+        if isinstance(geojson, Feature)
+        else geojson
+    )

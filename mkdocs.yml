@@ -1,0 +1,137 @@
+site_name: TiTiler.CMR
+site_description: Connect Common Metadata Repository (CMR) and TiTiler.
+
+docs_dir: 'docs'
+site_dir: 'build'
+
+repo_name: developmentseed/titiler-cmr
+repo_url: https://github.com/developmentseed/titiler-cmr
+site_url: https://developmentseed.org/titiler-cmr/
+site_author: Development Seed
+site_description: An API for creating image tiles from CMR queries
+
+extra:
+  social:
+    - icon: "fontawesome/brands/github"
+      link: "https://github.com/developmentseed"
+    - icon: "fontawesome/brands/bluesky"
+      link: "https://bsky.app/profile/developmentseed.org"
+    - icon: "fontawesome/brands/twitter"
+      link: "https://twitter.com/developmentseed"
+    - icon: "fontawesome/brands/linkedin"
+      link: "https://www.linkedin.com/company/development-seed"
+  version:
+    provider: mike
+
+nav:
+  - Home: index.md
+  - How to use the API:
+    - api/compatibility_api_example.ipynb
+    - api/tiling_api_xarray_backend_example.ipynb
+    - api/statistics_api_example.ipynb
+    - api/time_series_example.ipynb
+    - api/time_series_api_limits.ipynb
+    - api/rasterio_backend_example.ipynb
+    - api/sel_parameter_example.ipynb
+    - api/visualizing_orbital_swath_data.ipynb
+  - Advanced:
+    - benchmarking/tiles.ipynb
+    - benchmarking/hls_tiling.ipynb
+  - Compatibility Testing:
+    - Compatibility Testing Tool: compatibility/tool.ipynb  
+    - Compatibility Report: compatibility/report.ipynb
+  - Architecture: architecture.md
+  - Migration Guide: migration.md
+  - Development + Contributing: contributing.md
+  - Release notes: release-notes.md
+
+watch:
+  - titiler/cmr
+  - docs
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      include_source: True
+      include_requirejs: True
+      execute: True
+      execute_ignore: ["*.py"]  # Don't execute these
+      remove_tag_config:
+        remove_input_tags:
+          - hide_code
+
+theme:
+  name: material
+  logo: assets/logo_no_text.png
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: default
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: default
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tracking
+    - search.suggest
+    - search.share
+
+
+extra_css:
+  - overrides/stylesheets/extra.css
+
+# https://github.com/developmentseed/titiler/blob/50934c929cca2fa8d3c408d239015f8da429c6a8/docs/mkdocs.yml#L115-L140
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite:
+      guess_lang: false
+  - def_list
+  - footnotes
+  - github-callouts
+  - md_in_html
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret:
+      insert: false
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.escapeall:
+      hardbreak: true
+      nbsp: true
+  - pymdownx.magiclink:
+      hide_protocol: true
+      repo_url_shortener: true
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - toc:
+      permalink: true

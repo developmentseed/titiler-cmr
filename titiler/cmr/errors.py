@@ -1,28 +1,25 @@
-"""tipg.errors: Error classes."""
-
-import logging
-
-from starlette import status
-
-from titiler.core.errors import TilerError
-
-logger = logging.getLogger(__name__)
+"""titiler.cmr custom exceptions."""
 
 
-class InvalidBBox(TilerError):
+class S3CredentialsEndpointMissing(Exception):
+    """No S3 credentials link"""
+
+
+class NoDataGranule(Exception):
+    """No DataGranule slot in granule metadata"""
+
+
+class InvalidMediaType(Exception):
+    """Invalid media type"""
+
+
+class InvalidBBox(Exception):
     """Invalid bounding box coordinates."""
 
 
-class InvalidDatetime(TilerError):
+class InvalidDatetime(Exception):
     """Invalid datetime."""
 
 
-class MissingCollectionCatalog(TilerError):
-    """`collection_catalog` not registered in the application state."""
-
-
-DEFAULT_STATUS_CODES = {
-    InvalidBBox: status.HTTP_422_UNPROCESSABLE_ENTITY,
-    InvalidDatetime: status.HTTP_422_UNPROCESSABLE_ENTITY,
-    MissingCollectionCatalog: status.HTTP_500_INTERNAL_SERVER_ERROR,
-}
+class CMRQueryTimeout(Exception):
+    """CMR granule search request timed out."""
