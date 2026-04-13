@@ -2012,11 +2012,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">earthaccess</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">earthaccess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datacube_benchmark</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DatasetParams</span><span class="p">,</span>
@@ -2024,11 +2027,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">tiling_benchmark_summary</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">import earthaccess
-from matplotlib.lines import Line2D
+<div class="clipboard-copy-txt" id="cell-1">import os
+
+import earthaccess
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.lines import Line2D
+
 
 from datacube_benchmark import (
     DatasetParams,
@@ -2159,7 +2165,7 @@ This function simulates the load of a typical viewport render in a slippy map, w
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"TITILER_CMR_ENDPOINT"</span><span class="p">,</span> <span class="s2">"https://openveda.cloud/api/titiler-cmr"</span><span class="p">)</span>
 
 <span class="n">ds_xarray</span> <span class="o">=</span> <span class="n">DatasetParams</span><span class="p">(</span>
     <span class="n">concept_id</span><span class="o">=</span><span class="s2">"C2723754864-GES_DISC"</span><span class="p">,</span>
@@ -2170,7 +2176,7 @@ This function simulates the load of a typical viewport render in a slippy map, w
     <span class="n">temporal_mode</span><span class="o">=</span><span class="s2">"point"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">endpoint = "https://staging.openveda.cloud/api/titiler-cmr"
+<div class="clipboard-copy-txt" id="cell-3">endpoint = os.getenv("TITILER_CMR_ENDPOINT", "https://openveda.cloud/api/titiler-cmr")
 
 ds_xarray = DatasetParams(
     concept_id="C2723754864-GES_DISC",
@@ -2305,7 +2311,7 @@ lat = 29.0</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Tile Benchmark ===
-Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2723754864-GES_DISC (xarray)
 Query params: 8 parameters
   concept_id: C2723754864-GES_DISC
@@ -2323,7 +2329,7 @@ Query params: 8 parameters
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
-URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2723754864-GES_DISC&amp;backend=xarray&amp;datetime=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variable=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
+URL: https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2723754864-GES_DISC&amp;backend=xarray&amp;datetime=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variable=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
 Error: 301 Moved Permanently
 Body: 
 </pre>
@@ -2397,8 +2403,8 @@ File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python
 <span class="ansi-green-intense-fg ansi-bold">    828</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
 <span class="ansi-green-fg">--&gt; 829</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
 
-<span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2723754864-GES_DISC&amp;backend=xarray&amp;datetime=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variable=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
-Redirect location: 'https://staging.openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C2723754864-GES_DISC&amp;temporal=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variables=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
+<span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2723754864-GES_DISC&amp;backend=xarray&amp;datetime=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variable=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
+Redirect location: 'https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C2723754864-GES_DISC&amp;temporal=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variables=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301</pre>
 </div>
 </div>
@@ -2625,7 +2631,7 @@ Cell <span class="ansi-green-fg">In[7], line 1</span>
     <span class="n">df_viewport</span><span class="p">,</span>
     <span class="n">title_lines</span><span class="o">=</span><span class="p">[</span>
         <span class="s2">"concept_id: C2723754864-GES_DISC"</span><span class="p">,</span>
-        <span class="s2">"endpoint: https://staging.openveda.cloud/api/titiler-cmr"</span><span class="p">,</span>
+        <span class="s2">"endpoint: https://openveda.cloud/api/titiler-cmr"</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -2707,7 +2713,7 @@ summary, (fig, ax) = summarize_and_plot_tiles_from_df(
     df_viewport,
     title_lines=[
         "concept_id: C2723754864-GES_DISC",
-        "endpoint: https://staging.openveda.cloud/api/titiler-cmr",
+        "endpoint: https://openveda.cloud/api/titiler-cmr",
     ],
 )
 plt.show()</div>
@@ -2732,7 +2738,7 @@ Cell <span class="ansi-green-fg">In[8], line 75</span>
 <span class="ansi-green-fg">---&gt; 75</span>     <span class="ansi-yellow-bg">df_viewport</span>,
 <span class="ansi-green-intense-fg ansi-bold">     76</span>     title_lines<span style="color: rgb(98,98,98)">=</span>[
 <span class="ansi-green-intense-fg ansi-bold">     77</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">concept_id: C2723754864-GES_DISC</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     78</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://staging.openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">     78</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
 <span class="ansi-green-intense-fg ansi-bold">     79</span>     ],
 <span class="ansi-green-intense-fg ansi-bold">     80</span> )
 <span class="ansi-green-intense-fg ansi-bold">     81</span> plt<span style="color: rgb(98,98,98)">.</span>show()
@@ -2889,7 +2895,7 @@ df_viewport_day_summary.head()</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Tile Benchmark ===
-Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
 Query params: 11 parameters
   concept_id: C2021957295-LPCLOUD
@@ -2903,14 +2909,8 @@ Query params: 11 parameters
   temporal_mode: point
   tile_format: png
   tile_scale: 1
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
-URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+URL: https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
 Error: 301 Moved Permanently
 Body: 
 </pre>
@@ -2986,8 +2986,8 @@ File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python
 <span class="ansi-green-intense-fg ansi-bold">    828</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
 <span class="ansi-green-fg">--&gt; 829</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
 
-<span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
-Redirect location: 'https://staging.openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957295-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
+<span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
+Redirect location: 'https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957295-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301</pre>
 </div>
 </div>
@@ -3054,7 +3054,7 @@ df_viewport_week_summary.head()</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>=== TiTiler-CMR Tile Benchmark ===
-Client: 2 physical / 4 logical cores | RAM: 15.62 GiB
+Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2021957657-LPCLOUD (rasterio)
 Query params: 11 parameters
   concept_id: C2021957657-LPCLOUD
@@ -3075,7 +3075,7 @@ Query params: 11 parameters
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
-URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
+URL: https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
 Error: 301 Moved Permanently
 Body: 
 </pre>
@@ -3151,8 +3151,8 @@ File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python
 <span class="ansi-green-intense-fg ansi-bold">    828</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
 <span class="ansi-green-fg">--&gt; 829</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
 
-<span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
-Redirect location: 'https://staging.openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
+<span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
+Redirect location: 'https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301</pre>
 </div>
 </div>
@@ -3183,7 +3183,7 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
     <span class="n">title_lines</span><span class="o">=</span><span class="p">[</span>
         <span class="s2">"concept_id: C2036881735-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"Viewport: 3x3 tiles -- daily"</span><span class="p">,</span>
-        <span class="s2">"endpoint: https://staging.openveda.cloud/api/titiler-cmr"</span><span class="p">,</span>
+        <span class="s2">"endpoint: https://openveda.cloud/api/titiler-cmr"</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
@@ -3194,7 +3194,7 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
     title_lines=[
         "concept_id: C2036881735-POCLOUD",
         "Viewport: 3x3 tiles -- daily",
-        "endpoint: https://staging.openveda.cloud/api/titiler-cmr",
+        "endpoint: https://openveda.cloud/api/titiler-cmr",
     ],
 )
 
@@ -3219,7 +3219,7 @@ Cell <span class="ansi-green-fg">In[12], line 2</span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     title_lines<span style="color: rgb(98,98,98)">=</span>[
 <span class="ansi-green-intense-fg ansi-bold">      4</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">concept_id: C2036881735-POCLOUD</span><span style="color: rgb(175,0,0)">"</span>,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Viewport: 3x3 tiles -- daily</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://staging.openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">      6</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
 <span class="ansi-green-intense-fg ansi-bold">      7</span>     ],
 <span class="ansi-green-intense-fg ansi-bold">      8</span> )
 <span class="ansi-green-intense-fg ansi-bold">     10</span> plt<span style="color: rgb(98,98,98)">.</span>show()
@@ -3254,7 +3254,7 @@ Cell <span class="ansi-green-fg">In[12], line 2</span>
     <span class="n">title_lines</span><span class="o">=</span><span class="p">[</span>
         <span class="s2">"concept_id: C2036881735-POCLOUD"</span><span class="p">,</span>
         <span class="s2">"Viewport: 3x3 tiles -- weekly"</span><span class="p">,</span>
-        <span class="s2">"endpoint: https://staging.openveda.cloud/api/titiler-cmr"</span><span class="p">,</span>
+        <span class="s2">"endpoint: https://openveda.cloud/api/titiler-cmr"</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
@@ -3265,7 +3265,7 @@ Cell <span class="ansi-green-fg">In[12], line 2</span>
     title_lines=[
         "concept_id: C2036881735-POCLOUD",
         "Viewport: 3x3 tiles -- weekly",
-        "endpoint: https://staging.openveda.cloud/api/titiler-cmr",
+        "endpoint: https://openveda.cloud/api/titiler-cmr",
     ],
 )
 
@@ -3290,7 +3290,7 @@ Cell <span class="ansi-green-fg">In[13], line 2</span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     title_lines<span style="color: rgb(98,98,98)">=</span>[
 <span class="ansi-green-intense-fg ansi-bold">      4</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">concept_id: C2036881735-POCLOUD</span><span style="color: rgb(175,0,0)">"</span>,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Viewport: 3x3 tiles -- weekly</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://staging.openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">      6</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
 <span class="ansi-green-intense-fg ansi-bold">      7</span>     ],
 <span class="ansi-green-intense-fg ansi-bold">      8</span> )
 <span class="ansi-green-intense-fg ansi-bold">     10</span> plt<span style="color: rgb(98,98,98)">.</span>show()
