@@ -1,32 +1,33 @@
 name: Deploy
+description: Deploy CDK stack
 
 inputs:
   env_aws_secret_name:
+    description: Name of AWS secret containing environment configuration
     required: false
-    type: string
     default: ''
   dir:
+    description: Deployment working directory
     required: false
-    type: string
     default: "."
   script_path:
+    description: Path of a deployment script
     required: true
-    type: string
     default: ''
   skip_deploy:
+    description: Skip deployment?
     required: false
-    type: string
     default: 'false'
 
 runs:
   using: "composite"
   steps:
     - name: Install node and related deps
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
       with:
         node-version: 20
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ~/.npm
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
@@ -36,9 +37,9 @@ runs:
       run: npm install -g aws-cdk@2
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
       with:
-        version: "0.5.*" 
+        version: "0.11.*"
 
     - name: Install dependencies
       shell: bash
@@ -53,7 +54,9 @@ runs:
       working-directory: ${{ inputs.dir }}
       env:
         AWS_DEFAULT_REGION: us-west-2
-      run: uv run --only-group deployment ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}
+        SCRIPT_PATH: ${{ inputs.script_path }}
+        ENV_AWS_SECRET_NAME: ${{ inputs.env_aws_secret_name }}
+      run: uv run --only-group deployment "${SCRIPT_PATH}" --secret-id "${ENV_AWS_SECRET_NAME}"
 
     - name: CDK Synth
       shell: bash
@@ -64,12 +67,12 @@ runs:
       shell: bash
       working-directory: ${{ inputs.dir }}
       run: |
-        MAX_SIZE_BYTES=262144000  # 262 MB in bytes
+        MAX_SIZE_BYTES=262144000  # 250 MiB in bytes (250 * 1024 * 1024)
         for dir in cdk.out/asset.*; do
           if [ -d "$dir" ]; then
             size=$(du -sb "$dir" | cut -f1)
             if [ "$size" -gt $MAX_SIZE_BYTES ]; then
-              echo "Directory $dir exceeds 262 MB with size $size bytes (max: $MAX_SIZE_BYTES bytes)."
+              echo "Directory $dir exceeds 250 MiB with size $size bytes (max: $MAX_SIZE_BYTES bytes)."
               exit 1
             fi
             echo "Asset directory $dir size: $size bytes"
