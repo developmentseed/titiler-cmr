@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ECCO Sea Ice Velocity - Particle Animation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; font-family: sans-serif; }
+    #map-container { position: absolute; inset: 0; }
+    #particle-canvas {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    #panel {
+      position: absolute; top: 20px; left: 20px; z-index: 10;
+      background: rgba(15,15,15,0.88);
+      color: #fff; padding: 16px 20px; border-radius: 8px;
+      backdrop-filter: blur(4px);
+      width: 270px;
+    }
+    #panel h3 { font-size: 15px; margin-bottom: 2px; }
+    #panel p  { font-size: 12px; color: #bbb; margin-bottom: 12px; }
+
+    .time-row {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+    }
+    .time-row label { font-size: 11px; color: #888; white-space: nowrap; }
+    .time-row select {
+      flex: 1; background: #222; color: #eee;
+      border: 1px solid #444; border-radius: 4px;
+      padding: 4px 6px; font-size: 12px;
+    }
+    #load-btn {
+      width: 100%; padding: 7px; margin-bottom: 10px;
+      background: #1a6fa8; color: #fff; border: none;
+      border-radius: 4px; font-size: 13px; cursor: pointer;
+    }
+    #load-btn:hover { background: #2186c8; }
+    #load-btn:disabled { background: #333; color: #666; cursor: default; }
+
+    #status { font-size: 11px; color: #888; min-height: 14px; }
+    #status.error { color: #f66; }
+
+    .legend { margin-top: 12px; padding-top: 10px; border-top: 1px solid #333; }
+    .legend-title { font-size: 10px; color: #777; margin-bottom: 5px; }
+    .legend-bar {
+      height: 8px; border-radius: 4px;
+      background: linear-gradient(to right, #0a2a3a, #1a6fa8, #61add6, #ffffff);
+      margin-bottom: 4px;
+    }
+    .legend-labels {
+      display: flex; justify-content: space-between;
+      font-size: 10px; color: #888;
+    }
+
+    small.credit {
+      display: block; margin-top: 10px;
+      font-size: 10px; color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div id="map-container"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div id="panel">
+    <h3>Arctic Sea Ice Flow</h3>
+    <p>ECCO L4 Sea Ice Velocity — Monthly 1992–2018</p>
+
+    <div class="time-row">
+      <label>Year</label>
+      <select id="sel-year"></select>
+    </div>
+    <div class="time-row">
+      <label>Month</label>
+      <select id="sel-month">
+        <option value="01">Jan</option><option value="02">Feb</option>
+        <option value="03">Mar</option><option value="04">Apr</option>
+        <option value="05">May</option><option value="06">Jun</option>
+        <option value="07">Jul</option><option value="08">Aug</option>
+        <option value="09">Sep</option><option value="10">Oct</option>
+        <option value="11">Nov</option><option value="12">Dec</option>
+      </select>
+    </div>
+    <button id="load-btn">Load</button>
+
+    <div id="status">Initializing...</div>
+
+    <div class="legend">
+      <div class="legend-title">Ice speed (m/s)</div>
+      <div class="legend-bar"></div>
+      <div class="legend-labels"><span>0</span><span>0.1</span><span>0.2</span><span>0.4</span></div>
+    </div>
+
+    <small class="credit">TiTiler-CMR · NASA ECCO · MapLibre</small>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
