@@ -21,6 +21,7 @@ from titiler.core.middleware import CacheControlMiddleware, LoggerMiddleware
 from titiler.core.models.OGC import Conformance, Landing
 from titiler.core.resources.enums import MediaType
 from titiler.core.utils import accept_media_type, create_html_response
+from titiler.extensions import wmtsExtension
 from titiler.mosaic.errors import MOSAIC_STATUS_CODES
 from titiler.xarray.dependencies import (
     DatasetParams as XarrayDatasetParams,
@@ -410,7 +411,7 @@ xarray = CMRTilerFactory(
     reader_dependency=interpolated_xarray_ds_params,
     dataset_dependency=XarrayDatasetParams,
     layer_dependency=ExpressionParams,
-    extensions=[TimeseriesExtension()],
+    extensions=[TimeseriesExtension(), wmtsExtension()],
     add_statistics=True,
     add_viewer=True,
     add_part=True,
