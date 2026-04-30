@@ -36,7 +36,6 @@ dependencies = [
     "rio-tiler>=9.0,<10.0",
     "shapely>=2.1.2",
     "titiler-core>=2.0,<3.0",
-    "titiler-extensions>=2.0,<3.0",
     "titiler-mosaic>=2.0,<3.0",
     "titiler-xarray>=2.0,<3.0",
 ]

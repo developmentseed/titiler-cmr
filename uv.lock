@@ -4974,7 +4974,6 @@ dependencies = [
     { name = "rio-tiler" },
     { name = "shapely" },
     { name = "titiler-core" },
-    { name = "titiler-extensions" },
     { name = "titiler-mosaic" },
     { name = "titiler-xarray" },
 ]
@@ -5060,7 +5059,6 @@ requires-dist = [
     { name = "rio-tiler", specifier = ">=9.0,<10.0" },
     { name = "shapely", specifier = ">=2.1.2" },
     { name = "titiler-core", specifier = ">=2.0,<3.0" },
-    { name = "titiler-extensions", specifier = ">=2.0,<3.0" },
     { name = "titiler-mosaic", specifier = ">=2.0,<3.0" },
     { name = "titiler-xarray", specifier = ">=2.0,<3.0" },
     { name = "uvicorn", marker = "extra == 'uvicorn'" },
@@ -5126,18 +5124,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e5/ea/35fb336b14aff9f4df8f8defc54002ad859555c931911c979f9a0f4042e8/titiler_core-2.0.2.tar.gz", hash = "sha256:5fb7fb8a328c7a607e713827654a667d6a3e156cc6c38eb73abbeeedd39c35b9", size = 69013, upload-time = "2026-04-28T07:16:48.053Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fb/5c/3d61e7c4fb588c5c453537d66799b29913f0e1fbc691ce959e8b196cf580/titiler_core-2.0.2-py3-none-any.whl", hash = "sha256:5a123199bb61b31d61ddf0531f7f34f787c1b04eeafe59bd437b5758893485f4", size = 87425, upload-time = "2026-04-28T07:16:41.176Z" },
-]
-
-[[package]]
-name = "titiler-extensions"
-version = "2.0.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "titiler-core" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/3b/7ae05999f6440c9b92768de05da0b45e8794737f9fa03aafb8f8becd5279/titiler_extensions-2.0.2.tar.gz", hash = "sha256:2bd3230d2a0705cf3f296c085c22ace21d0d8e5e7dee0cb9e22d65e2d364d7e0", size = 31953, upload-time = "2026-04-28T07:16:49.272Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/85/203d14ca96e8069621030ef7a69e3257a1b856792ec0a06a3d1da4864428/titiler_extensions-2.0.2-py3-none-any.whl", hash = "sha256:230eee24ee7ef94aef1f76cbdb0adf49df7472e8e911a5b7be44471818bbcbce", size = 38648, upload-time = "2026-04-28T07:16:43.16Z" },
 ]
 
 [[package]]
