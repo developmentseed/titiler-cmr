@@ -742,8 +742,6 @@
       
         
       
-        
-      
     
     
     
@@ -762,7 +760,7 @@
   <span class="md-ellipsis">
     
   
-    Advanced
+    Examples
   
 
     
@@ -775,6 +773,94 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/ecco_sea_ice_velocity_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Use the ECCO Sea Ice Velocity Dataset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -868,10 +954,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -889,8 +975,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2045,55 +2131,7 @@ The HLSL30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each
 
 The HLS project is funded by NASA’s Satellite Needs Working Group (SNWG) which provides data products developed to meet the needs of stakeholders from US government agencies.
 
-Known Issues
-
-* Unrealistically high aerosol and low surface reflectance over bright areas: The atmospheric correction over bright targets occasionally retrieves unrealistically high aerosol and thus makes the surface reflectance too low. High aerosol retrievals, both false high aerosol and realistically high aerosol, are masked when quality bits 6 and 7 are both set to 1 (see Table 9 in the [User Guide](https://lpdaac.usgs.gov/documents/1698/HLS_User_Guide_V2.pdf)); the corresponding spectral data should be discarded from analysis.
-
-* Issues over high latitudes: For scenes greater than or equal to 80 degrees north, multiple overpasses can be gridded into a single MGRS tile resulting in an L30 granule with data sensed at two different times. In this same area, it is also possible that Landsat overpasses that should be gridded into a single MGRS tile are actually written as separate data files. Finally, for scenes with a latitude greater than or equal to 65 degrees north, ascending Landsat scenes may have a slightly higher error in the BRDF correction because the algorithm is calibrated using descending scenes.
-
-* Fmask omission errors: There are known issues regarding the Fmask band of this data product that impacts HLSL30 data prior to April of 2022. The HLS Fmask data band may have omission errors in water detection for cases where water detection using spectral data alone is difficult, and omission and commission errors in cloud shadow detection for areas with great topographic relief. This issue does not impact other bands in the dataset.
-
-* Inconsistent snow surface reflectance between Landsat and Sentinel-2: The HLS snow surface reflectance can be highly inconsistent between Landsat and Sentinel-2. When assessed on same-day acquisitions from Landsat and Sentinel-2, Landsat reflectance is generally higher than Sentinel-2 reflectance in the visible bands.
-
-* Unrealistically high snow surface reflectance in the visible bands: By design, the Land Surface Reflectance Code (LaSRC) atmospheric correction does not attempt aerosol retrieval over snow; instead, a default aerosol optical thickness (AOT) is used to drive the snow surface reflectance. If the snow detection fails, the full LaSRC is used in both AOT retrieval and surface reflectance derivation over snow, which produces surface reflectance values as high as 1.6 in the visible bands. This is a common problem for spring images at high latitudes.
-
-* Unrealistically low surface reflectance surrounding snow/ice: Related to the above, the AOT retrieval over snow/ice is generally too high. When this artificially high AOT is used to derive the surface reflectance of the neighboring non-snow pixels, very low surface reflectance will result. These pixels will appear very dark in the visible bands. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used.
-
-* Unrealistically low reflectance surrounding clouds: Like for snow, the HLS atmospheric correction does not attempt aerosol retrieval over clouds and a default AOT is used instead. But if the cloud detection fails, an artificially high AOT will be retrieved over clouds. If the high AOT is used to derive the surface reflectance of the neighboring cloud-free pixels, very low surface reflectance values will result. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. 
-
-* Unusually low reflectance around other bright land targets: While the HLS atmospheric correction retrieves AOT over non-cloud, non-snow bright pixels, the retrieved AOT over bright targets can be unrealistically high in some cases, similar to cloud or snow. If this unrealistically high AOT is used to derive the surface reflectance of the neighboring pixels, very low surface reflectance values can result as shown in Figure 2. If the surface reflectance value of a pixel is below -0.2, a NO_DATA value of -9999 is used. These types of bright targets are mostly man-made, such as buildings, parking lots, and roads.  
-
-* Dark plumes over water: The HLS atmospheric correction does not attempt aerosol retrieval over water. For water pixels, the AOT retrieved from the nearest land pixels is used to derive the surface reflectance, but if the retrieval is incorrect, e.g. from a cloud pixel, this high AOT will create dark stripes over water, as shown in Figure 3. This happens more often over large water bodies, such as lakes and bays, than over narrow rivers.  
-
-* Landsat WRS-2 Path/Row boundary in L30 reflectance: HLS performs atmospheric correction on Landsat Level 1 images in the original Worldwide Reference System 2 (WRS2) path/row before the derived surface reflectance is reprojected into Military Grid Reference System (MGRS) tiles. If a WRS-2 Landsat image is very cloudy, the AOT from a few remaining clear pixels might be used for the atmospheric correction of the entire image. The AOT that is used can be quite different from the value for the adjacent row in the same path, which results in an artificial abrupt change from one row to the next, as shown in Figure 4. This occurrence is very rare.  
- 
-* Landsat WRS2 path/row boundary in cloud masks: The cloud mask algorithm Fmask creates mask labels by applying thresholds to the histograms of some metrics for each path/row independently. If two adjacent rows in the same path have distinct distributions within the metrics, abrupt changes in masking patterns can appear across the row boundary, as shown in Figure 5. This occurrence is very rare.  
-
-* Fmask configuration was deficient for 2-3 months in 2021: The HLS installation of Fmask failed to include auxiliary digital elevation model (DEM) and European Space Agency (ESA) Global Surface Water Occurrence data for a 2-3 month run in 2021. This impacted the masking results over water and in mountainous regions. 
-
-* The reflectance “scale_factor” and “offset” for some L30 and S30 bands were not set: The HLS reflectance scaling factor is 0.0001 and offset is 0. However, this information was not set in the Cloud Optimized GeoTIFF (COG) files of some bands for a small number of granules. The lack of this information creates a problem for automatic conversion of the reflectance data, requiring explicit scaling in applications. The problem has been corrected, but the affected granules have not been reprocessed. 
-
-* Incomplete map projection information: For a time, HLS imagery was produced with an incomplete coordinate reference system (CRS). The metadata contains the Universal Transverse Mercator (UTM) zone and coordinates necessary to geolocate pixels within the image but might not be in a standard form, especially for granules produced early in the HLS mission. As a result, an error will occur in certain image processing packages due to the incomplete CRS. The simplest solution is to update to the latest version of Geospatial Data Abstraction Library (GDAL) and/or rasterio, which use the available information without error. 
-
-* False northing of 10^7 for the L30 angle data: The L30 and S30 products do not use a false northing for the UTM projection, and the angle data are supposed to follow the same convention. However, the L30 angle data incorrectly uses a false northing of 10^7. There is no problem with the angle data itself, but the false northing needs to be set to 0 for it to be aligned with the reflectance.
-
-* L30 from Landsat L1GT scenes: Landsat L1GT scenes were not intended for HLS due to their poor geolocation. However, some scenes made it through screening for a short period of HLS production. L1GT L30 scenes mainly consist of extensive cloud or snow that can be eliminated using the Fmask quality bits layer. Users can also identify an L1GT-originated L30 granule by examining the HLS cmr.xml metadata file.
-
-* The UTC dates in the L30/S30 filenames may not be the local dates: UTC dates are used by ESA and the U.S. Geological Survey (USGS) in naming their Level 1 images, and HLS processing retains this information to name the L30 and S30 products. Landsat and Sentinel-2 overpass eastern Australia and New Zealand around 10AM local solar time, but this area is in either UTC+10:00 or +11:00 zone; therefore, the UTC time for some orbits is in fact near the end of the preceding UTC day. For example, HLS.S30.T59HQS.2016117T221552.v2.0 was acquired in the 22nd hour of day 117 of year 2016 in UTC, but the time was 10:15:52 of day 118 locally. Approximately 100 minutes later HLS.S30.T56JML.2016117T235252.v2.0 was acquired in the next orbit in eastern Australia. 
-
-     This issue also occurs for Landsat. For example, HLS.L30.T59HQS.2016117T221209.v2.0 was acquired on the same day as the first S30 example given above, but both on day 118 of 2016 locally. Adding to the confusion for L30, in the same region, Landsat 8 and 9 can each overpass once in one of the two adjacent WRS-2 Paths (91/92/93) over a two-day period on a local calendar, but based on UTC time, the two overpasses can appear to be on the same day. For example, in the following seemingly same-day pair, the second L30 is actually for day 168 locally:  
-     HLS.L30.T55GCN.2023167T000407.v2.0  
-     HLS.L30.T55GCN.2023167T235747.v2.0  
-     Bear in mind, the date peculiarity for the data occurs when the overpass time is during the late hours of a UTC day. 
-
-* The atmospheric ancillary data from the wrong date was used for LaSRC: Related to the above, for eastern Australia and New Zealand, L30 and S30 surface reflectance on certain days was created using the atmospheric ancillary data from a date that was one day too early. The exact geographic extent of the affected HLS products and the impact on the surface reflectance quality are under investigation. Practice caution when using data with overpass times during the late hours of a UTC day.
-
-* Duplicates in L30: The Landsat 9 acquisitions from October 2021 to March 2023 in Landsat Collection 2 were reprocessed by USGS in March 2023. This reprocessing updated the overpass time by a fraction of a second for some scenes. Since HLS uses overpass time as part of the L30 filename, the older L30 granules were not automatically overwritten due to the different filenames. For example, the first L30 granule in the following pair originated from an older version of L1TP of Landsat 9 with the second granule originating from the reprocessed version.    
-HLS.L30.T11SLC.2022166T182646.v2.0  
-HLS.L30.T11SLC.2022166T182645.v2.0  
-There are other causes of duplicate L30 granules, but the overall number of duplicates is very small.
-
-* Poor Geolocation: A large amount of granules that were processed for May through July 2023 were created with L1GT input scenes which were deemed undesirable due to a poor geolocation issue. These granules were removed from the archive. (see the full list of removed [granules](https://lpdaac.usgs.gov/documents/2161/L30_L1GT_granules_May_July_2023.csv))
+For information on [known issues](https://lpdaac.usgs.gov/documents/2434/HLS_v2.0_L30_known_issues_April2026.pdf) see the anomalies link under the Documents and Resources tab.
 </pre>
 </div>
 </div>
@@ -2433,7 +2471,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_548be1b6b4405229f8059eeb7e30b8a6 {
+                #map_dacc65ad5477ab4738999b8e0ac83e21 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2470,14 +2508,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_548be1b6b4405229f8059eeb7e30b8a6" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_dacc65ad5477ab4738999b8e0ac83e21" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_548be1b6b4405229f8059eeb7e30b8a6 = L.map(
-                "map_548be1b6b4405229f8059eeb7e30b8a6",
+            var map_dacc65ad5477ab4738999b8e0ac83e21 = L.map(
+                "map_dacc65ad5477ab4738999b8e0ac83e21",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -2494,7 +2532,7 @@ m</div>
 
         
     
-            var tile_layer_28b0173477ccdf0b90d2645893f26803 = L.tileLayer(
+            var tile_layer_012e9cafaa7b3547a6c02b71d914372a = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2511,10 +2549,10 @@ m</div>
             );
         
     
-            tile_layer_28b0173477ccdf0b90d2645893f26803.addTo(map_548be1b6b4405229f8059eeb7e30b8a6);
+            tile_layer_012e9cafaa7b3547a6c02b71d914372a.addTo(map_dacc65ad5477ab4738999b8e0ac83e21);
         
     
-            var tile_layer_95bc72e3f34b9c7fc174d3ce93dd3e7f = L.tileLayer(
+            var tile_layer_a7a1b2d4066b5074f0237c51af893aa7 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026temporal=2024-10-01T00%3A00%3A00Z%2F2024-10-31T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2531,7 +2569,7 @@ m</div>
             );
         
     
-            tile_layer_95bc72e3f34b9c7fc174d3ce93dd3e7f.addTo(map_548be1b6b4405229f8059eeb7e30b8a6);
+            tile_layer_a7a1b2d4066b5074f0237c51af893aa7.addTo(map_dacc65ad5477ab4738999b8e0ac83e21);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2677,7 +2715,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_24941dd35ae3d35f376a269b83ae43c8 {
+                #map_ddb37d0135a73b228d93473f7ff4c250 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2714,14 +2752,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_24941dd35ae3d35f376a269b83ae43c8" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_ddb37d0135a73b228d93473f7ff4c250" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_24941dd35ae3d35f376a269b83ae43c8 = L.map(
-                "map_24941dd35ae3d35f376a269b83ae43c8",
+            var map_ddb37d0135a73b228d93473f7ff4c250 = L.map(
+                "map_ddb37d0135a73b228d93473f7ff4c250",
                 {
                     center: [47.9221313337365, -91.65432884883238],
                     crs: L.CRS.EPSG3857,
@@ -2738,7 +2776,7 @@ m</div>
 
         
     
-            var tile_layer_733138e842ecef1cad039ee1e9733d80 = L.tileLayer(
+            var tile_layer_8ac7db6305d9b9c83d055acfe9af10ea = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2755,10 +2793,10 @@ m</div>
             );
         
     
-            tile_layer_733138e842ecef1cad039ee1e9733d80.addTo(map_24941dd35ae3d35f376a269b83ae43c8);
+            tile_layer_8ac7db6305d9b9c83d055acfe9af10ea.addTo(map_ddb37d0135a73b228d93473f7ff4c250);
         
     
-            var tile_layer_7a2d4045cd831c243a5821497477d053 = L.tileLayer(
+            var tile_layer_a5818cc1f07372b6aa6c994dc50d2d59 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026temporal=2024-06-01T00%3A00%3A00Z%2F2024-06-30T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026asset_as_band=true\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026assets=B05\u0026assets=B04\u0026colormap_name=greens\u0026rescale=-1%2C1\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2775,7 +2813,7 @@ m</div>
             );
         
     
-            tile_layer_7a2d4045cd831c243a5821497477d053.addTo(map_24941dd35ae3d35f376a269b83ae43c8);
+            tile_layer_a5818cc1f07372b6aa6c994dc50d2d59.addTo(map_ddb37d0135a73b228d93473f7ff4c250);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2914,7 +2952,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_752bd33eac6f169dae6d75700d3a9191 {
+                #map_3d2567f0a80a43a0eedfc92c510c6935 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2951,14 +2989,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_752bd33eac6f169dae6d75700d3a9191" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_3d2567f0a80a43a0eedfc92c510c6935" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_752bd33eac6f169dae6d75700d3a9191 = L.map(
-                "map_752bd33eac6f169dae6d75700d3a9191",
+            var map_3d2567f0a80a43a0eedfc92c510c6935 = L.map(
+                "map_3d2567f0a80a43a0eedfc92c510c6935",
                 {
                     center: [27.50497661, 83.582384025],
                     crs: L.CRS.EPSG3857,
@@ -2975,7 +3013,7 @@ m</div>
 
         
     
-            var tile_layer_0a8c20164d9f35b5cecf46be83a9d95b = L.tileLayer(
+            var tile_layer_1fa877d7c67ba492d4a4a8fdd4799632 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2992,10 +3030,10 @@ m</div>
             );
         
     
-            tile_layer_0a8c20164d9f35b5cecf46be83a9d95b.addTo(map_752bd33eac6f169dae6d75700d3a9191);
+            tile_layer_1fa877d7c67ba492d4a4a8fdd4799632.addTo(map_3d2567f0a80a43a0eedfc92c510c6935);
         
     
-            var tile_layer_5d55424944a02b1c6217a3d726fe3e13 = L.tileLayer(
+            var tile_layer_24a609f98ecdc3c277af3edd659e9776 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026granule_ur=HLS.L30.T44RQR.2026061T045429.v2.0\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3012,7 +3050,7 @@ m</div>
             );
         
     
-            tile_layer_5d55424944a02b1c6217a3d726fe3e13.addTo(map_752bd33eac6f169dae6d75700d3a9191);
+            tile_layer_24a609f98ecdc3c277af3edd659e9776.addTo(map_3d2567f0a80a43a0eedfc92c510c6935);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
