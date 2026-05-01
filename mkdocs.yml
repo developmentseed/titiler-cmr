@@ -35,7 +35,7 @@ nav:
     - api/sel_parameter_example.ipynb
     - api/visualizing_orbital_swath_data.ipynb
   - Examples:
-    - api/ecco_sea_ice_velocity_example.ipynb
+    - examples/ecco_sea_ice_velocity_example.ipynb
   - Advanced:
     - benchmarking/tiles.ipynb
     - benchmarking/hls_tiling.ipynb
