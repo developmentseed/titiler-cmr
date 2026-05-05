@@ -178,6 +178,8 @@ timeseries_field_names = {field.name for field in fields(TimeseriesParams)} | {
     "datetime"
 }
 
+granule_search_field_names = set(GranuleSearch.model_fields.keys())
+
 
 def generate_datetime_ranges(
     start_datetime: datetime,
@@ -254,17 +256,20 @@ def build_request_urls(
     urls = []
 
     # Convert query_params to list of tuples, excluding timeseries fields
+    excluded_fields = timeseries_field_names | granule_search_field_names
     non_timeseries_params = [
         (key, value)
         for key, value in request.query_params.multi_items()
-        if key not in timeseries_field_names
+        if key not in excluded_fields
     ]
 
     for _params in param_list:
-        model_params = [
-            (str(key), str(value))
-            for key, value in _params.model_dump(exclude_none=True).items()
-        ]
+        model_params = []
+        for key, value in _params.model_dump(exclude_none=True).items():
+            if isinstance(value, list):
+                model_params.extend([(str(key), str(v)) for v in value])
+            else:
+                model_params.append((str(key), str(value)))
 
         url = (
             f"{base_url}?{urlencode(non_timeseries_params + model_params, doseq=True)}"
@@ -301,6 +306,7 @@ async def timestep_request(
             raise ValueError(f"{method} must be one of GET or POST")
 
         response = await _method(url, **kwargs)
+        response.raise_for_status()
 
         return response
 
