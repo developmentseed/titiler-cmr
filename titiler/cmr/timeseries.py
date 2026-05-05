@@ -306,7 +306,12 @@ async def timestep_request(
             raise ValueError(f"{method} must be one of GET or POST")
 
         response = await _method(url, **kwargs)
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(
+                status_code=response.status_code, detail=response.text
+            ) from e
 
         return response
 
@@ -818,7 +823,7 @@ class TimeseriesExtension(FactoryExtension):
                 elif r.status_code == 204:
                     continue
                 else:
-                    r.raise_for_status()
+                    raise HTTPException(status_code=r.status_code, detail=r.text)
 
             logging.info(f"Time to convert to PIL: {time() - convert_start_time:.2f}s")
             logging.info(
