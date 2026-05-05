@@ -1,5 +1,10 @@
 [
   {
+    "version": "fix-time-series-duplicate-params",
+    "title": "fix-time-series-duplicate-params",
+    "aliases": []
+  },
+  {
     "version": "docs-update-endpoint",
     "title": "docs-update-endpoint",
     "aliases": []
