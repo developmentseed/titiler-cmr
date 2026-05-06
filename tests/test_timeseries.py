@@ -3,17 +3,20 @@
 from collections.abc import Callable
 from datetime import datetime
 from unittest.mock import MagicMock
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from fastapi import HTTPException
 from freezegun import freeze_time
 from httpx import Client
+from starlette.requests import Request
 
 from titiler.cmr.models import GranuleSearch
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.timeseries import (
     TemporalMode,
     TimeseriesParams,
+    build_request_urls,
     generate_datetime_ranges,
     timeseries_cmr_query,
 )
@@ -316,3 +319,104 @@ def test_timeseries_mixed_datetime(
         ),
     )
     assert len(mixed_query) == 6
+
+
+def test_build_request_urls_no_duplicate_params() -> None:
+    """GranuleSearch fields must not appear twice in sub-request URLs.
+
+    When a caller passes e.g. ?collection_concept_id=C123&bounding_box=...
+    those values end up in both the original request's query string AND in the
+    GranuleSearch model objects.  build_request_urls must strip them from the
+    pass-through params so they are not duplicated.
+    """
+    scope = {
+        "type": "http",
+        "method": "GET",
+        "path": "/rasterio/timeseries/statistics",
+        "query_string": b"collection_concept_id=C123&temporal=2024-01-01T00:00:00Z/2024-06-01T00:00:00Z&step=P1M&max_size=512",
+        "headers": [],
+    }
+    request = Request(scope)
+
+    param_list = [
+        GranuleSearch(
+            collection_concept_id="C123",
+            temporal="2024-01-01T00:00:00Z/2024-01-31T23:59:59Z",
+        ),
+        GranuleSearch(
+            collection_concept_id="C123",
+            temporal="2024-02-01T00:00:00Z/2024-02-29T23:59:59Z",
+        ),
+    ]
+
+    urls = build_request_urls(
+        base_url="http://testserver/rasterio/statistics",
+        request=request,
+        param_list=param_list,
+    )
+
+    for url in urls:
+        parsed = parse_qs(urlparse(url).query)
+        # Each GranuleSearch field must appear exactly once
+        assert len(parsed.get("collection_concept_id", [])) == 1
+        assert len(parsed.get("temporal", [])) == 1
+        # Pass-through params unrelated to GranuleSearch must be preserved
+        assert parsed.get("max_size") == ["512"]
+        # Timeseries-only params must be stripped entirely
+        assert "step" not in parsed
+
+    # List fields (sort_key, attribute) must expand to repeated key=value pairs,
+    # not be stringified as Python list literals like "['key1', 'key2']".
+    scope_with_lists = {
+        "type": "http",
+        "method": "GET",
+        "path": "/rasterio/timeseries/statistics",
+        "query_string": b"collection_concept_id=C123&temporal=2024-01-01T00:00:00Z/2024-06-01T00:00:00Z&step=P1M",
+        "headers": [],
+    }
+    request_with_lists = Request(scope_with_lists)
+    param_list_with_sort = [
+        GranuleSearch(
+            collection_concept_id="C123",
+            temporal="2024-01-01T00:00:00Z/2024-01-31T23:59:59Z",
+            sort_key=["-start_date", "granule_ur"],
+        ),
+    ]
+    urls_with_sort = build_request_urls(
+        base_url="http://testserver/rasterio/statistics",
+        request=request_with_lists,
+        param_list=param_list_with_sort,
+    )
+    parsed_sort = parse_qs(urlparse(urls_with_sort[0]).query)
+    assert parsed_sort["sort_key"] == ["-start_date", "granule_ur"]
+
+
+def test_build_request_urls_multi_value_pass_through() -> None:
+    """Repeated query params that are *not* GranuleSearch fields must survive unchanged."""
+    scope = {
+        "type": "http",
+        "method": "GET",
+        "path": "/rasterio/timeseries/bbox/-100,40,-90,50.png",
+        "query_string": b"collection_concept_id=C123&assets=B04&assets=B05&max_size=512&step=P1D",
+        "headers": [],
+    }
+    request = Request(scope)
+    param_list = [
+        GranuleSearch(
+            collection_concept_id="C123",
+            temporal="2024-01-01T00:00:00Z/2024-01-01T23:59:59Z",
+        ),
+    ]
+
+    urls = build_request_urls(
+        base_url="http://testserver/rasterio/bbox/-100,40,-90,50.png",
+        request=request,
+        param_list=param_list,
+    )
+    parsed = parse_qs(urlparse(urls[0]).query)
+
+    assert parsed["assets"] == ["B04", "B05"]
+    assert parsed["max_size"] == ["512"]
+    assert "step" not in parsed
+    assert parsed["collection_concept_id"] == ["C123"]
+    assert parsed["temporal"] == ["2024-01-01T00:00:00Z/2024-01-01T23:59:59Z"]
