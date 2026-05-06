@@ -35,6 +35,7 @@ nav:
     - api/sel_parameter_example.ipynb
     - api/visualizing_orbital_swath_data.ipynb
   - Examples:
+    - examples/hls-ndvi-cloud-mask.ipynb
     - examples/ecco_sea_ice_velocity_example.ipynb
   - Advanced:
     - benchmarking/tiles.ipynb
