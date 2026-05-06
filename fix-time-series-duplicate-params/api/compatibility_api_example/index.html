@@ -692,6 +692,8 @@
       
         
       
+        
+      
     
     
     
@@ -731,6 +733,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/hls-ndvi-cloud-mask/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HLS cloud/water-masked max seasonal NDVI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2104,12 +2134,12 @@ print(json.dumps(compatibility_response, indent=2))</div>
       ],
       "dtype": "float64",
       "min": 271.34999999999997,
-      "max": 305.986,
-      "mean": 285.8165012239021,
+      "max": 306.08599999999996,
+      "mean": 287.1906905797314,
       "p01": 271.34999999999997,
       "p05": 271.34999999999997,
-      "p95": 302.47479999999996,
-      "p99": 303.46
+      "p95": 302.385,
+      "p99": 303.41499999999996
     },
     "analysis_error": {
       "shape": [
@@ -2118,12 +2148,12 @@ print(json.dumps(compatibility_response, indent=2))</div>
         36000
       ],
       "dtype": "float64",
-      "min": 0.34,
+      "min": 0.35000000000000003,
       "max": 0.42,
-      "mean": 0.3789838458333976,
-      "p01": 0.34,
+      "mean": 0.3784222968394742,
+      "p01": 0.35000000000000003,
       "p05": 0.35000000000000003,
-      "p95": 0.41000000000000003,
+      "p95": 0.4,
       "p99": 0.41000000000000003
     },
     "mask": {
@@ -2135,7 +2165,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float32",
       "min": 1.0,
       "max": 13.0,
-      "mean": 2.9027099609375,
+      "mean": 2.902750015258789,
       "p01": 1.0,
       "p05": 1.0,
       "p95": 9.0,
@@ -2150,7 +2180,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float64",
       "min": 0.0,
       "max": 1.0,
-      "mean": 0.3662798812175205,
+      "mean": 0.4556743930658509,
       "p01": 0.0,
       "p05": 0.0,
       "p95": 1.0,
@@ -2187,19 +2217,19 @@ print(json.dumps(compatibility_response, indent=2))</div>
   "links": [
     {
       "rel": "tilejson",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
+      "href": "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
       "title": "TileJSON",
       "type": "application/json"
     },
     {
       "rel": "map",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/map.html?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
+      "href": "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/xarray/WebMercatorQuad/map.html?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
       "title": "Map viewer",
       "type": "text/html"
     },
     {
       "rel": "tile",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
+      "href": "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
       "title": "Map tile",
       "type": "image/png"
     }

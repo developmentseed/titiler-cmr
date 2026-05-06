@@ -610,6 +610,8 @@
       
         
       
+        
+      
     
     
     
@@ -649,6 +651,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/hls-ndvi-cloud-mask/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HLS cloud/water-masked max seasonal NDVI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2798,7 +2828,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_029577fd9b1d90827c74c3cad04e90d7 {
+                #map_7428a458b09857835098bd4f6fcb6399 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2835,14 +2865,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_029577fd9b1d90827c74c3cad04e90d7" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_7428a458b09857835098bd4f6fcb6399" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_029577fd9b1d90827c74c3cad04e90d7 = L.map(
-                "map_029577fd9b1d90827c74c3cad04e90d7",
+            var map_7428a458b09857835098bd4f6fcb6399 = L.map(
+                "map_7428a458b09857835098bd4f6fcb6399",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -2859,7 +2889,7 @@ m</div>
 
         
     
-            var tile_layer_72bcd1edb5f5865a3e3b1fc989f11645 = L.tileLayer(
+            var tile_layer_36203ffeb0a6761592ea0594a1ba9f41 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2876,11 +2906,11 @@ m</div>
             );
         
     
-            tile_layer_72bcd1edb5f5865a3e3b1fc989f11645.addTo(map_029577fd9b1d90827c74c3cad04e90d7);
+            tile_layer_36203ffeb0a6761592ea0594a1ba9f41.addTo(map_7428a458b09857835098bd4f6fcb6399);
         
     
-            var tile_layer_bde87c61a88c4815b430c1ac7b4343a4 = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
+            var tile_layer_30e8209f2e66306de1b72c6846058046 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2896,11 +2926,11 @@ m</div>
             );
         
     
-            tile_layer_bde87c61a88c4815b430c1ac7b4343a4.addTo(map_029577fd9b1d90827c74c3cad04e90d7);
+            tile_layer_30e8209f2e66306de1b72c6846058046.addTo(map_7428a458b09857835098bd4f6fcb6399);
         
     
-            var tile_layer_b8c756133484f92a38d247b80880519e = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
+            var tile_layer_a109a649360c0dd7d89ebf22912ea7b7 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2916,8 +2946,8 @@ m</div>
             );
         
     
-            var tile_layer_80f87c3407234a5124a962f39451e85c = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
+            var tile_layer_542e00c09aeb276aaecf7aa148acbbc2 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026datetime=2024-08-06T00%3A00%3A00Z%2F2024-08-06T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B05\u0026assets=B04\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2933,25 +2963,25 @@ m</div>
             );
         
     
-            var layer_control_2cc50261d95edfbcf3ce5336e4e206c0_layers = {
+            var layer_control_88303d341ea82a2dd9db802ace167d4a_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_72bcd1edb5f5865a3e3b1fc989f11645,
+                    "openstreetmap" : tile_layer_36203ffeb0a6761592ea0594a1ba9f41,
                 },
                 overlays :  {
-                    "HLSL30 true color" : tile_layer_bde87c61a88c4815b430c1ac7b4343a4,
-                    "HLSL30 false color" : tile_layer_b8c756133484f92a38d247b80880519e,
-                    "HLSL30 NDVI" : tile_layer_80f87c3407234a5124a962f39451e85c,
+                    "HLSL30 true color" : tile_layer_30e8209f2e66306de1b72c6846058046,
+                    "HLSL30 false color" : tile_layer_a109a649360c0dd7d89ebf22912ea7b7,
+                    "HLSL30 NDVI" : tile_layer_542e00c09aeb276aaecf7aa148acbbc2,
                 },
             };
-            let layer_control_2cc50261d95edfbcf3ce5336e4e206c0 = L.control.layers(
-                layer_control_2cc50261d95edfbcf3ce5336e4e206c0_layers.base_layers,
-                layer_control_2cc50261d95edfbcf3ce5336e4e206c0_layers.overlays,
+            let layer_control_88303d341ea82a2dd9db802ace167d4a = L.control.layers(
+                layer_control_88303d341ea82a2dd9db802ace167d4a_layers.base_layers,
+                layer_control_88303d341ea82a2dd9db802ace167d4a_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_029577fd9b1d90827c74c3cad04e90d7);
+            ).addTo(map_7428a458b09857835098bd4f6fcb6399);
 
         
 &lt;/script&gt;
@@ -3228,7 +3258,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_9c60d26daec0c6836706a48cd48451ae {
+                #map_db13f3eb587f4723f7a25a78aff9ee5b {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3265,14 +3295,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_9c60d26daec0c6836706a48cd48451ae" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_db13f3eb587f4723f7a25a78aff9ee5b" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_9c60d26daec0c6836706a48cd48451ae = L.map(
-                "map_9c60d26daec0c6836706a48cd48451ae",
+            var map_db13f3eb587f4723f7a25a78aff9ee5b = L.map(
+                "map_db13f3eb587f4723f7a25a78aff9ee5b",
                 {
                     center: [46.7653, -91.0321],
                     crs: L.CRS.EPSG3857,
@@ -3289,7 +3319,7 @@ m</div>
 
         
     
-            var tile_layer_44016e2fc4a7c421857a6090f8184bd4 = L.tileLayer(
+            var tile_layer_9144adf30ab74ee1dd606e5ddf1a65cf = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3306,11 +3336,11 @@ m</div>
             );
         
     
-            tile_layer_44016e2fc4a7c421857a6090f8184bd4.addTo(map_9c60d26daec0c6836706a48cd48451ae);
+            tile_layer_9144adf30ab74ee1dd606e5ddf1a65cf.addTo(map_db13f3eb587f4723f7a25a78aff9ee5b);
         
     
-            var tile_layer_c074e7117ab79950dc44a7707d016aff = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
+            var tile_layer_b8cf031ae8ff53302dff5bdbd852a70b = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -3326,11 +3356,11 @@ m</div>
             );
         
     
-            tile_layer_c074e7117ab79950dc44a7707d016aff.addTo(map_9c60d26daec0c6836706a48cd48451ae);
+            tile_layer_b8cf031ae8ff53302dff5bdbd852a70b.addTo(map_db13f3eb587f4723f7a25a78aff9ee5b);
         
     
-            var tile_layer_adde96edc8b195dcea0645022ad751c2 = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
+            var tile_layer_87e10da2ccfa5f3c3dccea8db15eda24 = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+2.5+Saturation+1.2+Sigmoidal+RGB+10+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -3346,8 +3376,8 @@ m</div>
             );
         
     
-            var tile_layer_55edda06b9a96b823c0dc6d3c4ff5c41 = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
+            var tile_layer_f28753e037ab83cbe3f50084bd35ed6e = L.tileLayer(
+                "https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-08-13T00%3A00%3A00Z%2F2024-08-13T23%3A59%3A59Z\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B8A\u0026assets=B04\u0026expression=%28B8A-B04%29%2F%28B8A%2BB04%29\u0026rescale=-0.5%2C1\u0026colormap_name=summer_r\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -3363,25 +3393,25 @@ m</div>
             );
         
     
-            var layer_control_8146c17e3ab1470fa71e866147a1e980_layers = {
+            var layer_control_ab539290b84cc0f0e947a09c113bcf0c_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_44016e2fc4a7c421857a6090f8184bd4,
+                    "openstreetmap" : tile_layer_9144adf30ab74ee1dd606e5ddf1a65cf,
                 },
                 overlays :  {
-                    "HLSS30 true color" : tile_layer_c074e7117ab79950dc44a7707d016aff,
-                    "HLSS30 false color" : tile_layer_adde96edc8b195dcea0645022ad751c2,
-                    "HLSS30 NDVI" : tile_layer_55edda06b9a96b823c0dc6d3c4ff5c41,
+                    "HLSS30 true color" : tile_layer_b8cf031ae8ff53302dff5bdbd852a70b,
+                    "HLSS30 false color" : tile_layer_87e10da2ccfa5f3c3dccea8db15eda24,
+                    "HLSS30 NDVI" : tile_layer_f28753e037ab83cbe3f50084bd35ed6e,
                 },
             };
-            let layer_control_8146c17e3ab1470fa71e866147a1e980 = L.control.layers(
-                layer_control_8146c17e3ab1470fa71e866147a1e980_layers.base_layers,
-                layer_control_8146c17e3ab1470fa71e866147a1e980_layers.overlays,
+            let layer_control_ab539290b84cc0f0e947a09c113bcf0c = L.control.layers(
+                layer_control_ab539290b84cc0f0e947a09c113bcf0c_layers.base_layers,
+                layer_control_ab539290b84cc0f0e947a09c113bcf0c_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_9c60d26daec0c6836706a48cd48451ae);
+            ).addTo(map_db13f3eb587f4723f7a25a78aff9ee5b);
 
         
 &lt;/script&gt;
