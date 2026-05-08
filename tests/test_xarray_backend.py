@@ -11,7 +11,7 @@ from urllib.parse import urlencode
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, Polygon
-from httpx import Response
+from httpx import AsyncClient, Response
 from PIL import Image
 from titiler.core.models.mapbox import TileJSON
 
@@ -198,13 +198,15 @@ def test_timeseries_statistics(
         }
     }
 
-    async def mock_timestep_request(url: str, **kwargs) -> Response:
+    async def mock_timestep_request(
+        client: AsyncClient, url: str, **kwargs
+    ) -> Response:
         return Response(
             status_code=200,
             json=arctic_stats,
         )
 
-    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
 
     response = app.post(
         "/xarray/timeseries/statistics",
@@ -244,13 +246,15 @@ def test_timeseries_tilejson(
         maxzoom=1,
     )
 
-    async def mock_timestep_request(url: str, **kwargs) -> Response:
+    async def mock_timestep_request(
+        client: AsyncClient, url: str, **kwargs
+    ) -> Response:
         return Response(
             status_code=200,
             json=arctic_tilejson.model_dump(exclude_none=True),
         )
 
-    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
 
     response = app.get(
         "/xarray/timeseries/WebMercatorQuad/tilejson.json",
@@ -286,13 +290,15 @@ def test_timeseries_gif(
     png = Path(__file__).resolve().parent.parent / "titiler-cmr.png"
     arctic_png_content = png.read_bytes()
 
-    async def mock_timestep_request(url: str, **kwargs) -> Response:
+    async def mock_timestep_request(
+        client: AsyncClient, url: str, **kwargs
+    ) -> Response:
         return Response(
             status_code=200,
             content=arctic_png_content,
         )
 
-    mocker.patch("titiler.cmr.timeseries.timestep_request", new=mock_timestep_request)
+    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
 
     response = app.get(
         f"/xarray/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",

@@ -25,7 +25,6 @@ from types import DynamicClassAttribute
 from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, Union
 from urllib.parse import urlencode
 
-import httpx
 import psutil
 from attrs import define
 from fastapi import APIRouter, Body, Depends, Path, Query, Request, Response
@@ -33,6 +32,8 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature, FeatureCollection
 from geojson_pydantic.geometries import Geometry
+from httpx import AsyncClient, HTTPStatusError
+from httpx import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel
@@ -279,12 +280,16 @@ def build_request_urls(
     return urls
 
 
-async def timestep_request(
-    url: str, method: Literal["POST", "GET"], **kwargs
-) -> httpx.Response:
-    """Asynchronously send a GET or POST request to a URL.
+async def _timestep_request(
+    client: AsyncClient,
+    url: str,
+    method: Literal["POST", "GET"],
+    **kwargs,
+) -> HttpxResponse:
+    """Send a GET or POST request using the provided *client*.
 
     Args:
+        client: An active ``httpx.AsyncClient`` instance.
         url: Full URL to request.
         method: HTTP method — either ``"GET"`` or ``"POST"``.
         **kwargs: Additional arguments forwarded to the underlying httpx method
@@ -296,24 +301,55 @@ async def timestep_request(
     Raises:
         ValueError: If ``method`` is not ``"GET"`` or ``"POST"``.
     """
-    async with httpx.AsyncClient() as client:
-        _method: Any
-        if method == "POST":
-            _method = client.post
-        elif method == "GET":
-            _method = client.get
-        else:
-            raise ValueError(f"{method} must be one of GET or POST")
+    _method: Any
+    if method == "POST":
+        _method = client.post
+    elif method == "GET":
+        _method = client.get
+    else:
+        raise ValueError(f"{method} must be one of GET or POST")
 
-        response = await _method(url, **kwargs)
-        try:
-            response.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            raise HTTPException(
-                status_code=response.status_code, detail=response.text
-            ) from e
+    response = await _method(url, **kwargs)
+    try:
+        response.raise_for_status()
+    except HTTPStatusError as e:
+        raise HTTPException(
+            status_code=response.status_code, detail=response.text
+        ) from e
 
-        return response
+    return response
+
+
+async def _fetch_statistics(
+    client: AsyncClient,
+    url: str,
+    geojson: Union[FeatureCollection, Feature],
+) -> HttpxResponse:
+    """Fetch a statistics sub-request and return the parsed response dict."""
+    response = await _timestep_request(
+        client,
+        url,
+        method="POST",
+        json=geojson.model_dump(exclude_none=True),
+        timeout=None,
+    )
+    return response
+
+
+async def _fetch_tilejson(client: AsyncClient, url: str) -> dict[str, Any]:
+    """Fetch a TileJSON sub-request and return the parsed JSON body."""
+    response = await _timestep_request(client, url, method="GET")
+    return await asyncio.to_thread(response.json)
+
+
+async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
+    """Fetch a PNG sub-request and return an opened PIL Image, or ``None`` for 204."""
+    response = await _timestep_request(client, url, method="GET", timeout=None)
+    if response.status_code == 200:
+        return await asyncio.to_thread(Image.open, io.BytesIO(response.content))
+    if response.status_code == 204:
+        return None
+    raise HTTPException(status_code=response.status_code, detail=response.text)
 
 
 # The rest is titiler-cmr specific
@@ -576,17 +612,10 @@ class TimeseriesExtension(FactoryExtension):
                 param_list=query,
             )
 
-            timestep_requests = await asyncio.gather(
-                *[
-                    timestep_request(
-                        url,
-                        method="POST",
-                        json=geojson.model_dump(exclude_none=True),
-                        timeout=None,
-                    )
-                    for url in urls
-                ]
-            )
+            async with AsyncClient() as client:
+                timestep_requests = await asyncio.gather(
+                    *[_fetch_statistics(client, url, geojson) for url in urls]
+                )
 
             logging.info(
                 f"Time to fetch individual statistics: {time() - start_time:.2f}s"
@@ -607,9 +636,9 @@ class TimeseriesExtension(FactoryExtension):
             if geojson.properties is None:
                 geojson.properties = {}
             geojson.properties["statistics"] = {}
-            for r, datetime_str in zip(timestep_requests, datetime_strs):
-                if r.status_code == 200:
-                    geojson.properties["statistics"][datetime_str] = r.json()[
+            for response, datetime_str in zip(timestep_requests, datetime_strs):
+                if response.status_code == 200:
+                    geojson.properties["statistics"][datetime_str] = response.json()[
                         "properties"
                     ]["statistics"]
 
@@ -678,11 +707,10 @@ class TimeseriesExtension(FactoryExtension):
                 param_list=query,
             )
 
-            timestep_requests = await asyncio.gather(
-                *[timestep_request(url, method="GET") for url in urls]
-            )
-
-            results = [request.json() for request in timestep_requests]
+            async with AsyncClient() as client:
+                results = await asyncio.gather(
+                    *[_fetch_tilejson(client, url) for url in urls]
+                )
 
             datetime_strs = [d.temporal for d in query]
 
@@ -805,44 +833,35 @@ class TimeseriesExtension(FactoryExtension):
 
             logger.info(f"generated {len(urls)} request urls")
 
-            timestep_requests = await asyncio.gather(
-                *[timestep_request(url, method="GET", timeout=None) for url in urls]
-            )
+            async with AsyncClient() as client:
+                pngs = await asyncio.gather(*[_fetch_png(client, url) for url in urls])
+
+            # Filter out ``None`` values from 204 responses.
+            valid_pngs: list[Image.Image] = [img for img in pngs if img is not None]
+
+            if not valid_pngs:
+                raise HTTPException(
+                    status_code=204,
+                    detail="No images available for the requested timeseries",
+                )
 
             logging.info(f"Time to fetch PNGs: {time() - start_time:.2f}s")
             logging.info(
                 f"Memory after fetching: {process.memory_info().rss / 1024 / 1024} MB"
             )
-            logging.info(f"Number of PNG responses: {len(timestep_requests)}")
+            logging.info(f"Number of PNG responses: {len(valid_pngs)}")
+            logging.info(f"First image dimensions: {valid_pngs[0].size}")
 
-            convert_start_time = time()
-            pngs = []
-            for r in timestep_requests:
-                if r.status_code == 200:
-                    pngs.append(Image.open(io.BytesIO(r.content)))
-                elif r.status_code == 204:
-                    continue
-                else:
-                    raise HTTPException(status_code=r.status_code, detail=r.text)
-
-            logging.info(f"Time to convert to PIL: {time() - convert_start_time:.2f}s")
-            logging.info(
-                f"Memory after PIL conversion: {process.memory_info().rss / 1024 / 1024} MB"
-            )
-            logging.info(
-                f"First image dimensions: {pngs[0].size if pngs else 'No images'}"
-            )
-
-            logging.info(f"Starting GIF creation with {len(pngs)} frames")
+            logging.info(f"Starting GIF creation with {len(valid_pngs)} frames")
             gif_start = time()
 
             gif_bytes = io.BytesIO()
 
-            pngs[0].save(
+            valid_pngs[0].save(
                 gif_bytes,
                 format="GIF",
                 save_all=True,
-                append_images=pngs[1:],
+                append_images=valid_pngs[1:],
                 loop=0,
                 duration=1000 // fps,
             )
