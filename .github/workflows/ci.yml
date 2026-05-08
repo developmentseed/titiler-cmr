@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
     tags:
       - 'v*'
     paths:
@@ -12,7 +12,7 @@ on:
       - '.pre-commit-config.yaml'
       - '.github/workflows/ci.yml'
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 permissions: {}
 
