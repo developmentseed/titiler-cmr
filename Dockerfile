@@ -1,4 +1,3 @@
-ARG APP_VERSION=0.0.0
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 RUN <<'EOF'
@@ -9,10 +8,9 @@ EOF
 
 WORKDIR /app
 
-ARG APP_VERSION
 COPY pyproject.toml uv.lock README.md LICENSE ./
 RUN <<EOF
-UV_DYNAMIC_VERSIONING_BYPASS=$APP_VERSION uv sync --no-dev --frozen --extra uvicorn
+uv sync --no-dev --frozen --extra uvicorn
 # Remove *.dist-info directories except titiler_cmr (needed for importlib.metadata version lookup)
 find .venv/lib/python3.12/site-packages -mindepth 1 -maxdepth 1 -type d -name '*.dist-info' ! -name 'titiler_cmr*' -exec rm -rf {} \;
 EOF
