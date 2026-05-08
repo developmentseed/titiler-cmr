@@ -5,10 +5,10 @@ repos:
       - id: validate-pyproject
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.14
+    rev: v0.15.4
     hooks:
       - id: ruff
-        args: ["--fix"]
+        args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -18,8 +18,13 @@ repos:
         language_version: python
         exclude: tests/.*
         additional_dependencies:
-        - types-cachetools
-        - types-attrs
-        - types-python-dateutil
-        - types-requests
-        - pydantic>=2.4
+          - types-cachetools
+          - types-attrs
+          - types-python-dateutil
+          - types-requests
+          - pydantic>=2.4
+
+  - repo: https://github.com/tsvikas/sync-with-uv
+    rev: v0.5.0
+    hooks:
+      - id: sync-with-uv

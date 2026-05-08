@@ -1,0 +1,23 @@
+name: PR Conventional Commit Validation
+
+# NOTE: pull_request_target runs in the base repo context with access to secrets.
+# Do NOT checkout untrusted code in this workflow.
+on:
+  # zizmor: ignore[dangerous-triggers]
+  # Safe: this workflow does not check out any code; it only validates
+  # the PR title via the GitHub API.
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+
+permissions: {}
+
+jobs:
+  validate-pr-title:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: PR Conventional Commit Validation
+        uses: ytanikin/pr-conventional-commits@639145d78959c53c43112365837e3abd21ed67c1 # 1.5.2
+        with:
+          task_types: '["feat","fix","docs","test","ci","refactor","perf","chore","revert"]'

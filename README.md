@@ -44,7 +44,7 @@ uv sync --all-extras
 ## Authentication for data read access
 
 `titiler-cmr` can read data either over `HTTP` (external) or directly from `AWS S3` (direct) depending on the app configuration.
-The behavior is controlled by environment variables (or a `.env` file) read by `EarthdataSettings` and `ApiSettings` in [`titiler/cmr/settings.py`](titiler/cmr/settings.py).
+The behavior is controlled by environment variables (or a `.env` file) read by `EarthdataSettings` and `ApiSettings` in [`titiler/cmr/settings.py`](../titiler/cmr/settings.py).
 
 ### Direct from S3
 
@@ -147,11 +147,11 @@ The application will be available at this address: [http://localhost:8000/api.ht
 
 ## Deployment to AWS via `veda-deploy`
 
-Deployment to AWS is currently triggered using [veda-deploy](https://github.com/NASA-IMPACT/veda-deploy). veda-deploy checks out this repo as a submodule and then executes [.github/actions/cdk-deploy/action.yml](.github/actions/cdk-deploy/action.yml) (see also: [veda-deploy/.github/workflows/deploy.yml](https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml)). For more details, please review the [veda-deploy README section on adding new components](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components).
+Deployment to AWS is currently triggered using [veda-deploy](https://github.com/NASA-IMPACT/veda-deploy). veda-deploy checks out this repo as a submodule and then executes [.github/actions/cdk-deploy/action.yml](../.github/actions/cdk-deploy/action.yml) (see also: [veda-deploy/.github/workflows/deploy.yml](https://github.com/NASA-IMPACT/veda-deploy/blob/dev/.github/workflows/deploy.yml)). For more details, please review the [veda-deploy README section on adding new components](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#add-new-components).
 
 ### Environment Variables
 
-Environment variables for the `veda-deploy` deployment should be configured in the `veda-deploy` environment-specific AWS Secret. See also [these instructions](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager). The variables in the AWS Secret will be written to an `.env` file and used by the CDK deployment. All settings are defined in [`titiler/cmr/settings.py`](titiler/cmr/settings.py): `StackSettings` controls CDK infrastructure (stack name, memory, timeout, etc.), `EarthdataSettings` and `ApiSettings` are read by both the CDK (to set Lambda environment variables) and the Lambda runtime itself.
+Environment variables for the `veda-deploy` deployment should be configured in the `veda-deploy` environment-specific AWS Secret. See also [these instructions](https://github.com/NASA-IMPACT/veda-deploy/tree/dev?tab=readme-ov-file#store-env-configuration-in-aws-secrets-manager). The variables in the AWS Secret will be written to an `.env` file and used by the CDK deployment. All settings are defined in [`titiler/cmr/settings.py`](../titiler/cmr/settings.py): `StackSettings` controls CDK infrastructure (stack name, memory, timeout, etc.), `EarthdataSettings` and `ApiSettings` are read by both the CDK (to set Lambda environment variables) and the Lambda runtime itself.
 
 The environment variables which should be set in the `veda-deploy` AWS secret are:
 
