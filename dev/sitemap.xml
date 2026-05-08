@@ -2,110 +2,118 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/architecture/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/contributing/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/dev/conventional-commits/</loc>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/migration/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/release-notes/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/compatibility_api_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/rasterio_backend_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/sel_parameter_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/statistics_api_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/tiling_api_xarray_backend_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/time_series_api_limits/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/time_series_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/api/visualizing_orbital_swath_data/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/benchmarking/hls_tiling/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/benchmarking/tiles/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/compatibility/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/compatibility/generate_table/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/compatibility/plotting/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/compatibility/report/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/compatibility/tool/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/examples/ecco_sea_ice_velocity_example/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
+    </url>
+    <url>
+         <loc>https://developmentseed.org/titiler-cmr/dev/examples/hls-ndvi-cloud-mask/</loc>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/packages/datacube_benchmark/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/packages/datacube_benchmark/src/datacube_benchmark/__init__/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/packages/datacube_benchmark/src/datacube_benchmark/config/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/packages/datacube_benchmark/src/datacube_benchmark/utils/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/packages/datacube_benchmark/src/datacube_benchmark/cmr/__init__/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
     <url>
          <loc>https://developmentseed.org/titiler-cmr/dev/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark/</loc>
-         <lastmod>2026-05-01</lastmod>
+         <lastmod>2026-05-08</lastmod>
     </url>
 </urlset>
