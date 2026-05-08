@@ -57,7 +57,7 @@ plugins:
   - mkdocs-jupyter:
       include_source: True
       include_requirejs: True
-      execute: True
+      execute: !ENV [MKDOCS_JUPYTER_EXECUTE, True]
       execute_ignore: ["*.py"]  # Don't execute these
       remove_tag_config:
         remove_input_tags:
