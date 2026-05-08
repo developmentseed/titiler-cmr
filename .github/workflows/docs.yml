@@ -2,17 +2,19 @@ name: Documentation
 on:
   push:
     branches:
-      - develop
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to deploy (e.g., 0.1.4, "dev" for develop branch, or branch name like "feat/reorg-documentation")'
+        description: 'Version to deploy (e.g., 0.1.4, "dev" for develop branch, or
+          branch name like "feat/reorg-documentation")'
         required: true
         type: string
       titiler_cmr_endpoint:
-        description: 'titiler-cmr API endpoint used when executing notebooks (default: production, use "staging" for staging, or provide a full URL)'
+        description: 'titiler-cmr API endpoint used when executing notebooks (default:
+          production, use "staging" for staging, or provide a full URL)'
         required: false
         default: 'https://openveda.cloud/api/titiler-cmr'
         type: string
@@ -30,14 +32,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        # zizmor: ignore[artipacked]
+        # This workflow uses mike to push to gh-pages via git, so persisted
+        # credentials are required for the subsequent git operations.
         with:
-          fetch-depth: 0  # Important for mike to work with tags
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.version != 'dev' && (startsWith(inputs.version, 'v') || contains(inputs.version, '/')) && inputs.version || github.event_name == 'workflow_dispatch' && inputs.version != 'dev' && format('v{0}', inputs.version) || github.ref }}
+          fetch-depth: 0 # Important for mike to work with tags
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.version != 'dev' &&
+            (startsWith(inputs.version, 'v') || contains(inputs.version, '/'))
+            && inputs.version || github.event_name == 'workflow_dispatch' &&
+            inputs.version != 'dev' && format('v{0}', inputs.version) ||
+            github.ref }}
 
-      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
-          version: "0.9.*"
-          enable-cache: true
+          version: "0.11.*"
+          enable-cache: false
+
       - name: Sync
         run: |
           uv sync
@@ -52,18 +62,25 @@ jobs:
       - name: Fetch gh-pages branch
         run: |
           git fetch origin gh-pages --depth=1 || true
-      
+
       - name: Deploy docs
         env:
           EARTHDATA_USERNAME: ${{ secrets.earthdata_username }}
           EARTHDATA_PASSWORD: ${{ secrets.earthdata_password }}
-          TITILER_CMR_ENDPOINT: ${{ inputs.titiler_cmr_endpoint == 'staging' && 'https://staging.openveda.cloud/api/titiler-cmr' || inputs.titiler_cmr_endpoint || 'https://openveda.cloud/api/titiler-cmr' }}
+          TITILER_CMR_ENDPOINT: ${{ inputs.titiler_cmr_endpoint == 'staging' &&
+            'https://staging.openveda.cloud/api/titiler-cmr' ||
+            inputs.titiler_cmr_endpoint ||
+            'https://openveda.cloud/api/titiler-cmr' }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          echo "machine urs.earthdata.nasa.gov\nlogin ${EARTHDATA_USERNAME}\npassword ${EARTHDATA_PASSWORD}" > ~/.netrc
+          echo "machine urs.earthdata.nasa.gov
+          login ${EARTHDATA_USERNAME}
+          password ${EARTHDATA_PASSWORD}" > ~/.netrc
 
           # Handle manual workflow dispatch
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            VERSION="${{ inputs.version }}"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            VERSION="$INPUT_VERSION"
             if [[ "$VERSION" == "dev" ]]; then
               uv run mike deploy --push --update-aliases dev
               uv run mike set-default --push dev
@@ -72,27 +89,27 @@ jobs:
               # Sanitize branch name for use as mike version (replace / with -)
               SAFE_VERSION=$(echo "$VERSION" | sed 's/\//-/g')
               echo "Deploying branch version: $SAFE_VERSION"
-              uv run mike deploy --push $SAFE_VERSION
+              uv run mike deploy --push "$SAFE_VERSION"
             else
               # Assume it's a version number
-              uv run mike deploy --push $VERSION
+              uv run mike deploy --push "$VERSION"
 
               # Check if this should be the latest version
               LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
               if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
-                uv run mike alias --push --update-aliases $VERSION latest
+                uv run mike alias --push --update-aliases "$VERSION" latest
               fi
             fi
-          elif [[ $GITHUB_REF == refs/tags/* ]]; then
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             # For tags, deploy the tagged version
             VERSION=${GITHUB_REF#refs/tags/v}
-            uv run mike deploy --push $VERSION
+            uv run mike deploy --push "$VERSION"
 
             # If this is the latest version, update the 'latest' alias
             LATEST_TAG=$(git tag --sort=-creatordate | head -n 1)
-          if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
-            uv run mike alias --push --update-aliases $VERSION latest
-          fi
+            if [[ "v$VERSION" == "$LATEST_TAG" ]]; then
+              uv run mike alias --push --update-aliases "$VERSION" latest
+            fi
           else
             # For develop branch, deploy to 'dev'
             uv run mike deploy --push --update-aliases dev
