@@ -4875,6 +4875,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
+version = "1.0.3"
 source = { editable = "." }
 dependencies = [
     { name = "cachetools" },
@@ -4981,7 +4982,7 @@ requires-dist = [
     { name = "titiler-xarray", specifier = ">=2.0,<3.0" },
     { name = "uvicorn", marker = "extra == 'uvicorn'" },
 ]
-provides-extras = ["lambda", "uvicorn"]
+provides-extras = ["uvicorn", "lambda"]
 
 [package.metadata.requires-dev]
 deployment = [
