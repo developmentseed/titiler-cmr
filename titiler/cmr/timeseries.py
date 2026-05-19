@@ -312,10 +312,10 @@ async def _timestep_request(
     response = await _method(url, **kwargs)
     try:
         response.raise_for_status()
-    except HTTPStatusError as e:
+    except HTTPStatusError:
         raise HTTPException(
             status_code=response.status_code, detail=response.text
-        ) from e
+        ) from None
 
     return response
 
@@ -326,14 +326,13 @@ async def _fetch_statistics(
     geojson: Union[FeatureCollection, Feature],
 ) -> HttpxResponse:
     """Fetch a statistics sub-request and return the parsed response dict."""
-    response = await _timestep_request(
+    return await _timestep_request(
         client,
         url,
         method="POST",
         json=geojson.model_dump(exclude_none=True),
         timeout=None,
     )
-    return response
 
 
 async def _fetch_tilejson(client: AsyncClient, url: str) -> dict[str, Any]:
@@ -849,10 +848,10 @@ class TimeseriesExtension(FactoryExtension):
             logging.info(
                 f"Memory after fetching: {process.memory_info().rss / 1024 / 1024} MB"
             )
-            logging.info(f"Number of PNG responses: {len(valid_pngs)}")
-            logging.info(f"First image dimensions: {valid_pngs[0].size}")
+            logging.info("Number of PNG responses: %d", len(valid_pngs))
+            logging.info("First image dimensions: %s", valid_pngs[0].size)
 
-            logging.info(f"Starting GIF creation with {len(valid_pngs)} frames")
+            logging.info("Starting GIF creation with %d frames", len(valid_pngs))
             gif_start = time()
 
             gif_bytes = io.BytesIO()
