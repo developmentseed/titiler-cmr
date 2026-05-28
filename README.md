@@ -103,7 +103,7 @@ echo "machine urs.earthdata.nasa.gov login ${EARTHDATA_USERNAME} password ${EART
 ```
 
 > [!NOTE]
-> See [NASA's docs](https://uat.urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget) for details
+> See [NASA's docs](https://urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget) for details
 
 ## Docker deployment
 
