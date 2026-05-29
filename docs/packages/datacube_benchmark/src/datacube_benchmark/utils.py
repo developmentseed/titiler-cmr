@@ -11,7 +11,7 @@ from __future__ import annotations
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
-import httpx
+import httpx2 as httpx
 import morecantile
 import psutil
 import pandas as pd

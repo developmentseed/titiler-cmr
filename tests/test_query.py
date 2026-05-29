@@ -5,7 +5,7 @@ import unittest.mock as mock
 import pytest
 import shapely
 import shapely.geometry
-from httpx import ReadTimeout
+from httpx2 import ReadTimeout
 
 from titiler.cmr.errors import CMRQueryTimeout
 from titiler.cmr.models import Granule, GranuleSearch, GranuleSpatialExtent

@@ -11,7 +11,7 @@ from urllib.parse import urlencode
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, Polygon
-from httpx import AsyncClient, Response
+from httpx2 import AsyncClient, Response
 from PIL import Image
 from titiler.core.models.mapbox import TileJSON
 

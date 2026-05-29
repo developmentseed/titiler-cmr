@@ -8,7 +8,7 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from fastapi import HTTPException
 from freezegun import freeze_time
-from httpx import Client
+from httpx2 import Client
 from starlette.requests import Request
 
 from titiler.cmr.models import GranuleSearch
@@ -219,52 +219,53 @@ def test_timeseries_query_no_step(
 ) -> None:
     """Test timeseries_query when no step is given (CMR granule search path)"""
     mock_request = MagicMock()
-    mock_request.app.state.client = Client(base_url=CMR_GRANULE_SEARCH_API)
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        mock_request.app.state.client = client
 
-    # no step parameter will force a CMR query to get unique datetimes from available granules
-    query = timeseries_cmr_query(
-        request=mock_request,
-        granule_search=GranuleSearch(
-            collection_concept_id=xarray_query_params()["collection_concept_id"],
-        ),
-        timeseries_params=TimeseriesParams(
-            temporal=xarray_query_params()["temporal"],
-        ),
-    )
-    assert len(query) == 1
+        # no step parameter will force a CMR query to get unique datetimes from available granules
+        query = timeseries_cmr_query(
+            request=mock_request,
+            granule_search=GranuleSearch(
+                collection_concept_id=xarray_query_params()["collection_concept_id"],
+            ),
+            timeseries_params=TimeseriesParams(
+                temporal=xarray_query_params()["temporal"],
+            ),
+        )
+        assert len(query) == 1
 
-    # query CMR to get the actual timesteps from a geographically limited collection
-    geographically_limited_concept_id = "C2623694361-GES_DISC"
-    query = timeseries_cmr_query(
-        request=mock_request,
-        granule_search=GranuleSearch(
-            collection_concept_id=geographically_limited_concept_id,
-        ),
-        timeseries_params=TimeseriesParams(
-            temporal=xarray_query_params()["temporal"],
-        ),
-        minx=-100,
-        miny=30,
-        maxx=-90,
-        maxy=40,
-    )
-    assert len(query) == 8
+        # query CMR to get the actual timesteps from a geographically limited collection
+        geographically_limited_concept_id = "C2623694361-GES_DISC"
+        query = timeseries_cmr_query(
+            request=mock_request,
+            granule_search=GranuleSearch(
+                collection_concept_id=geographically_limited_concept_id,
+            ),
+            timeseries_params=TimeseriesParams(
+                temporal=xarray_query_params()["temporal"],
+            ),
+            minx=-100,
+            miny=30,
+            maxx=-90,
+            maxy=40,
+        )
+        assert len(query) == 8
 
-    # run a bbox query that returns no granules
-    query = timeseries_cmr_query(
-        request=mock_request,
-        granule_search=GranuleSearch(
-            collection_concept_id=geographically_limited_concept_id,
-        ),
-        timeseries_params=TimeseriesParams(
-            temporal=xarray_query_params()["temporal"],
-        ),
-        minx=1,
-        miny=1,
-        maxx=1,
-        maxy=1,
-    )
-    assert len(query) == 0
+        # run a bbox query that returns no granules
+        query = timeseries_cmr_query(
+            request=mock_request,
+            granule_search=GranuleSearch(
+                collection_concept_id=geographically_limited_concept_id,
+            ),
+            timeseries_params=TimeseriesParams(
+                temporal=xarray_query_params()["temporal"],
+            ),
+            minx=1,
+            miny=1,
+            maxx=1,
+            maxy=1,
+        )
+        assert len(query) == 0
 
 
 @freeze_time("2024-10-01T00:00:00Z")

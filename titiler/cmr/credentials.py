@@ -6,7 +6,7 @@ from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
 import cachetools
-from httpx import Client, HTTPError
+from httpx2 import Client, HTTPError
 
 from titiler.cmr.logger import logger
 from titiler.cmr.utils import retry

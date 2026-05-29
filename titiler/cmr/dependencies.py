@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Annotated, List, Optional
 
 from fastapi import Depends, HTTPException, Query, Request
-from httpx import Client
+from httpx2 import Client
 from pydantic import AfterValidator
 from titiler.core.dependencies import (
     AssetsExprParams,

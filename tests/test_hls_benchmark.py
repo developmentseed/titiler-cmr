@@ -4,7 +4,7 @@ import asyncio
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, NamedTuple, Tuple
 
-import httpx
+import httpx2 as httpx
 import morecantile
 import pytest
 
