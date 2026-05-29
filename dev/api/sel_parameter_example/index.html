@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1930,7 +1930,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">httpx2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">httpx</span>
 
 <span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span>
     <span class="s2">"TITILER_CMR_ENDPOINT"</span><span class="p">,</span> <span class="s2">"https://openveda.cloud/api/titiler-cmr"</span>
@@ -1940,7 +1940,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 import os
 from datetime import datetime, timezone
 
-import httpx
+import httpx2 as httpx
 
 titiler_endpoint = os.getenv(
     "TITILER_CMR_ENDPOINT", "https://openveda.cloud/api/titiler-cmr"

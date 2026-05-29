@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1556,8 +1556,7 @@
 <p>Each variant is registered as a separate router (e.g. <code>/rasterio/tiles/…</code> and <code>/xarray/tiles/…</code>) but shares the same <code>CMRBackend</code> for granule search. The reader class and its dependency are swapped to handle the format-specific opening logic.</p>
 <hr />
 <h2 id="class-hierarchy">Class Hierarchy<a class="headerlink" href="#class-hierarchy" title="Permanent link">&para;</a></h2>
-<p>```
-rio_tiler.io.base.SpatialMixin
+<div class="highlight"><pre><span></span><code>rio_tiler.io.base.SpatialMixin
    │
    ├── rio_tiler.io.base.BaseReader
    │       │
@@ -1571,13 +1570,14 @@ rio_tiler.io.base.SpatialMixin
    │
    └── rio_tiler.io.base.MultiBaseReader
            │
-           └── MultiBaseGranuleReader</p>
-<p>titiler.core.factory.BaseFactory
+           └── MultiBaseGranuleReader
+
+titiler.core.factory.BaseFactory
    │
    └── titiler.mosaic.factory.MosaicTilerFactory
            │
            └── CMRTilerFactory
-```</p>
+</code></pre></div>
 <p><code>CMRBackend</code> is instantiated once per request. It receives the granule search parameters and holds a reference to whichever reader class (<code>XarrayGranuleReader</code> or <code>MultiBaseGranuleReader</code>) was configured at factory registration time.</p>
 <hr />
 <h2 id="dependency-injection-flow">Dependency Injection Flow<a class="headerlink" href="#dependency-injection-flow" title="Permanent link">&para;</a></h2>
@@ -1633,59 +1633,47 @@ rio_tiler.io.base.SpatialMixin
 <hr />
 <h2 id="request-flow-for-a-tile-endpoint">Request Flow for a Tile Endpoint<a class="headerlink" href="#request-flow-for-a-tile-endpoint" title="Permanent link">&para;</a></h2>
 <p>The following trace follows a request through the xarray backend. The rasterio equivalent is described below.</p>
-<p>```
-GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&amp;variables=sst</p>
-<ol>
-<li>FastAPI resolves dependencies:</li>
-<li>GranuleSearchParams            → GranuleSearch(collection_concept_id=...)</li>
-<li>BackendParams                  → {client, auth_token, s3_access}  (from app.state)</li>
-<li>interpolated_xarray_ds_params  → {variables=["sst"], group=None, ...}</li>
-<li>GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}</li>
-<li>
-<p>XarrayDatasetParams            → {nodata, reproject_method}</p>
-</li>
-<li>
-<p>MosaicTilerFactory.tile() opens the backend:
+<div class="highlight"><pre><span></span><code>GET /xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=...&amp;variables=sst
+
+1. FastAPI resolves dependencies:
+   - GranuleSearchParams            → GranuleSearch(collection_concept_id=...)
+   - BackendParams                  → {client, auth_token, s3_access}  (from app.state)
+   - interpolated_xarray_ds_params  → {variables=[&quot;sst&quot;], group=None, ...}
+   - GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}
+   - XarrayDatasetParams            → {nodata, reproject_method}
+
+2. MosaicTilerFactory.tile() opens the backend:
    CMRBackend(
      input=GranuleSearch,
      reader=XarrayGranuleReader,
-     reader_options={"variables": ["sst"], ...},                       ← from interpolated_xarray_ds_params
+     reader_options={&quot;variables&quot;: [&quot;sst&quot;], ...},                       ← from interpolated_xarray_ds_params
      client=..., auth_token=..., s3_access=..., get_s3_credentials=... ← from BackendParams
-   )</p>
-</li>
-<li>
-<p>CMRBackend.<strong>attrs_post_init</strong> merges auth_token, s3_access, and get_s3_credentials into reader_options:
-   reader_options = {"variables": ["sst"], "auth_token": "...", "s3_access": False, "get_s3_credentials": ...}</p>
-</li>
-<li>
-<p>BaseBackend.tile(x, y, z, search_options={...}) runs:
+   )
+
+3. CMRBackend.__attrs_post_init__ merges auth_token, s3_access, and get_s3_credentials into reader_options:
+   reader_options = {&quot;variables&quot;: [&quot;sst&quot;], &quot;auth_token&quot;: &quot;...&quot;, &quot;s3_access&quot;: False, &quot;get_s3_credentials&quot;: ...}
+
+4. BaseBackend.tile(x, y, z, search_options={...}) runs:
    a. CMRBackend.assets_for_tile(x, y, z, exitwhenfull=True)
-      → queries CMR API → returns [Granule, Granule, ...]</p>
-</li>
-</ol>
-<p>b. For each Granule:
-      XarrayGranuleReader(granule, tms=tms, **reader_options)</p>
-<ol>
-<li>
-<p>XarrayGranuleReader.<strong>attrs_post_init</strong>:
-   a. Calls granule.get_assets() → asset dict keyed "0", "1", ...
-   b. Selects asset["0"], resolves href (direct_href vs external_href)
+      → queries CMR API → returns [Granule, Granule, ...]
+
+   b. For each Granule:
+      XarrayGranuleReader(granule, tms=tms, **reader_options)
+
+5. XarrayGranuleReader.__attrs_post_init__:
+   a. Calls granule.get_assets() → asset dict keyed &quot;0&quot;, &quot;1&quot;, ...
+   b. Selects asset[&quot;0&quot;], resolves href (direct_href vs external_href)
    c. Calls open_dataset(href, group=..., decode_times=..., auth_token=...)
-   d. Calls get_variables(ds, variables=["sst"], sel=...) → xarray.DataArray
+   d. Calls get_variables(ds, variables=[&quot;sst&quot;], sel=...) → xarray.DataArray
    e. Sets self.input = DataArray
-   f. Calls super().<strong>attrs_post_init</strong>() → rio_tiler.XarrayReader sets bounds, CRS, etc.</p>
-</li>
-<li>
-<p>src_dst.tile(x, y, z, **dataset_params) → ImageData</p>
-</li>
-<li>
-<p>mosaic_reader merges N ImageData arrays using the configured pixel_selection method</p>
-</li>
-<li>
-<p>Post-process (algorithm) → render → Response(bytes)
-```</p>
-</li>
-</ol>
+   f. Calls super().__attrs_post_init__() → rio_tiler.XarrayReader sets bounds, CRS, etc.
+
+6. src_dst.tile(x, y, z, **dataset_params) → ImageData
+
+7. mosaic_reader merges N ImageData arrays using the configured pixel_selection method
+
+8. Post-process (algorithm) → render → Response(bytes)
+</code></pre></div>
 <p>For the <strong>rasterio</strong> backend, steps 2–6 are replaced by <code>MultiBaseGranuleReader</code>. It discovers the list of assets from the <code>Granule</code> at instantiation time and, for each asset, dispatches to a rasterio <code>Reader</code> (for COG/GeoTIFF) or <code>XarrayReader</code> (for NetCDF). <code>MultiBaseReader</code> handles iterating assets, merging per-asset results, and exposing them with index/expression filtering.</p>
 <hr />
 <h2 id="why-two-reader-base-classes">Why Two Reader Base Classes?<a class="headerlink" href="#why-two-reader-base-classes" title="Permanent link">&para;</a></h2>

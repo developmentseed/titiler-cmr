@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2235,6 +2235,14 @@ print(f"Found {len(results)} granules between {time_range[0]} and {time_range[1]
 </pre>
 </div>
 </div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>/home/runner/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/results.py:348: FutureWarning: As of version 1.0, `DataGranule.size` will be accessed as an attribute; e.g. use `DataCollection.size` **not** `DataCollection.size()`
+  self["size"] = self.size()
+</pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2514,10 +2522,10 @@ File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/da
 <span class="ansi-green-intense-fg ansi-bold">    771</span> elapsed <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>perf_counter() <span style="color: rgb(98,98,98)">-</span> t0
 <span class="ansi-green-intense-fg ansi-bold">    772</span> data <span style="color: rgb(98,98,98)">=</span> response<span style="color: rgb(98,98,98)">.</span>json()
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx/_models.py:829</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">    827</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    828</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
-<span class="ansi-green-fg">--&gt; 829</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:802</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    800</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">    801</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
+<span class="ansi-green-fg">--&gt; 802</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
 
 <span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2723754864-GES_DISC&amp;backend=xarray&amp;datetime=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variable=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 Redirect location: 'https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C2723754864-GES_DISC&amp;temporal=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variables=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
@@ -3025,7 +3033,13 @@ Query params: 11 parameters
   temporal_mode: point
   tile_format: png
   tile_scale: 1
-~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
 Error: 301 Moved Permanently
 Body: 
@@ -3097,10 +3111,10 @@ File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/da
 <span class="ansi-green-intense-fg ansi-bold">    771</span> elapsed <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>perf_counter() <span style="color: rgb(98,98,98)">-</span> t0
 <span class="ansi-green-intense-fg ansi-bold">    772</span> data <span style="color: rgb(98,98,98)">=</span> response<span style="color: rgb(98,98,98)">.</span>json()
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx/_models.py:829</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">    827</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    828</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
-<span class="ansi-green-fg">--&gt; 829</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:802</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    800</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">    801</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
+<span class="ansi-green-fg">--&gt; 802</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
 
 <span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 Redirect location: 'https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957295-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
@@ -3262,10 +3276,10 @@ File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/da
 <span class="ansi-green-intense-fg ansi-bold">    771</span> elapsed <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>perf_counter() <span style="color: rgb(98,98,98)">-</span> t0
 <span class="ansi-green-intense-fg ansi-bold">    772</span> data <span style="color: rgb(98,98,98)">=</span> response<span style="color: rgb(98,98,98)">.</span>json()
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx/_models.py:829</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">    827</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    828</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
-<span class="ansi-green-fg">--&gt; 829</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:802</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    800</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">    801</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
+<span class="ansi-green-fg">--&gt; 802</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
 
 <span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 Redirect location: 'https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'

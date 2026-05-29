@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1082,6 +1082,8 @@
   
 
 
+  <h1>Generate table</h1>
+
 <script>
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1805,7 +1807,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=028e8caa">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6dde86ab">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1832,7 +1834,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ffdbbc5b">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=234bf922">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1863,7 +1865,7 @@ from pathlib import Path</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b0974ad2">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=967802ec">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2100,15 +2102,14 @@ from pathlib import Path</div>
     ]
 
     # Generate HTML
-    html_content = f"""<!DOCTYPE html>
-
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TiTiler-CMR Dataset Compatibility Results</title>
-<link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet"/>
-<style>
+    html_content = f"""&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;TiTiler-CMR Dataset Compatibility Results&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"&gt;
+    &lt;style&gt;
         body {{
             font-family: 'Roboto', Arial, sans-serif;
             margin: 20px;
@@ -2159,25 +2160,30 @@ from pathlib import Path</div>
         .back-link:hover {{
             text-decoration: underline;
         }}
-    </style>
-</head>
-<body>
-<div class="container">
-<a class="back-link" href="index.html">← Back to Compatibility Report</a>
-<h1>TiTiler-CMR Dataset Compatibility Results</h1>
-<div class="info-box">
-<strong>Total datasets:</strong> {len(df)}<br/>
-<strong>Compatible datasets:</strong> {len(df[df.tiling_compatible])}<br/>
-<strong>Compatibility rate:</strong> {len(df[df.tiling_compatible]) / len(df) * 100:.2f}%
-        </div>
-<p>Use the search box and column filters below to explore the dataset compatibility results.
-        Click on column headers to sort.</p>
-<table class="display" id="resultsTable" style="width:100%">
-</table>
-</div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script>
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;a href="index.html" class="back-link"&gt;&amp;larr; Back to Compatibility Report&lt;/a&gt;
+
+        &lt;h1&gt;TiTiler-CMR Dataset Compatibility Results&lt;/h1&gt;
+
+        &lt;div class="info-box"&gt;
+            &lt;strong&gt;Total datasets:&lt;/strong&gt; {len(df)}&lt;br&gt;
+            &lt;strong&gt;Compatible datasets:&lt;/strong&gt; {len(df[df.tiling_compatible])}&lt;br&gt;
+            &lt;strong&gt;Compatibility rate:&lt;/strong&gt; {len(df[df.tiling_compatible]) / len(df) * 100:.2f}%
+        &lt;/div&gt;
+
+        &lt;p&gt;Use the search box and column filters below to explore the dataset compatibility results.
+        Click on column headers to sort.&lt;/p&gt;
+
+        &lt;table id="resultsTable" class="display" style="width:100%"&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+
+    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
         const data = {json.dumps(records, default=str)};
         const columns = {json.dumps(columns)};
 
@@ -2190,11 +2196,11 @@ from pathlib import Path</div>
                 deferRender: true,
                 columnDefs: [
                     {{
-                        targets: columns.findIndex(col => col.data === 'tiling_compatible'),
+                        targets: columns.findIndex(col =&gt; col.data === 'tiling_compatible'),
                         render: function(data, type, row) {{
                             if (type === 'display') {{
                                 const className = data ? 'compatible-true' : 'compatible-false';
-                                return '<span class="' + className + '">' + data + '</span>';
+                                return '&lt;span class="' + className + '"&gt;' + data + '&lt;/span&gt;';
                             }}
                             return data;
                         }}
@@ -2204,7 +2210,7 @@ from pathlib import Path</div>
                         targets: '_all',
                         render: function(data, type, row) {{
                             if (data === null || data === undefined) {{
-                                return type === 'display' ? '<em style="color: #999;">N/A</em>' : '';
+                                return type === 'display' ? '&lt;em style="color: #999;"&gt;N/A&lt;/em&gt;' : '';
                             }}
                             return data;
                         }}
@@ -2219,7 +2225,7 @@ from pathlib import Path</div>
                         // Add filter for specific columns
                         const filterColumns = ['data_center', 'format', 'tiling_compatible', 'incompatible_reason'];
                         if (filterColumns.includes(column.dataSrc())) {{
-                            const select = $('<select><option value="">All</option></select>')
+                            const select = $('&lt;select&gt;&lt;option value=""&gt;All&lt;/option&gt;&lt;/select&gt;')
                                 .appendTo($(column.header()))
                                 .on('change', function() {{
                                     const val = $.fn.dataTable.util.escapeRegex($(this).val());
@@ -2227,8 +2233,8 @@ from pathlib import Path</div>
                                 }});
 
                             column.data().unique().sort().each(function(d) {{
-                                if (d !== null && d !== undefined && d !== '') {{
-                                    select.append('<option value="' + d + '">' + d + '</option>');
+                                if (d !== null &amp;&amp; d !== undefined &amp;&amp; d !== '') {{
+                                    select.append('&lt;option value="' + d + '"&gt;' + d + '&lt;/option&gt;');
                                 }}
                             }});
                         }}
@@ -2236,9 +2242,9 @@ from pathlib import Path</div>
                 }}
             }});
         }});
-    </script>
-</body>
-</html>"""
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;"""
 
     # Write the HTML file
     output_path = Path("results_table.html")
@@ -2250,7 +2256,7 @@ from pathlib import Path</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=df2c1a18">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d35fd35c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>

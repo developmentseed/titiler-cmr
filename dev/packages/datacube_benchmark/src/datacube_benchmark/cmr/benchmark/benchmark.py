@@ -18,7 +18,7 @@ from asyncio import BoundedSemaphore
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import random
 
-import httpx
+import httpx2 as httpx
 import morecantile
 import pandas as pd
 import psutil

@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1973,7 +1973,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">earthaccess</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">httpx2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">httpx</span>
 
 <span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span>
     <span class="s2">"TITILER_CMR_ENDPOINT"</span><span class="p">,</span> <span class="s2">"https://openveda.cloud/api/titiler-cmr"</span>
@@ -1983,7 +1983,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 import json
 import earthaccess
-import httpx
+import httpx2 as httpx
 
 titiler_endpoint = os.getenv(
     "TITILER_CMR_ENDPOINT", "https://openveda.cloud/api/titiler-cmr"
@@ -2134,12 +2134,12 @@ print(json.dumps(compatibility_response, indent=2))</div>
       ],
       "dtype": "float64",
       "min": 271.34999999999997,
-      "max": 305.76599999999996,
-      "mean": 287.12925582793497,
+      "max": 305.75899999999996,
+      "mean": 286.7339839783865,
       "p01": 271.34999999999997,
       "p05": 271.34999999999997,
-      "p95": 302.534,
-      "p99": 303.505
+      "p95": 302.72484999999995,
+      "p99": 303.52236999999997
     },
     "analysis_error": {
       "shape": [
@@ -2150,7 +2150,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float64",
       "min": 0.34,
       "max": 0.42,
-      "mean": 0.378690309202903,
+      "mean": 0.3779374130524514,
       "p01": 0.35000000000000003,
       "p05": 0.35000000000000003,
       "p95": 0.4,
@@ -2165,7 +2165,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float32",
       "min": 1.0,
       "max": 13.0,
-      "mean": 2.553697347640991,
+      "mean": 2.6783769130706787,
       "p01": 1.0,
       "p05": 1.0,
       "p95": 9.0,
@@ -2180,7 +2180,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float64",
       "min": 0.0,
       "max": 1.0,
-      "mean": 0.4235707022463255,
+      "mean": 0.38123532583896796,
       "p01": 0.0,
       "p05": 0.0,
       "p95": 1.0,
