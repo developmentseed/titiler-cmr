@@ -10,7 +10,7 @@ import moto
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, FeatureCollection, Polygon
-from httpx import Client
+from httpx2 import Client
 from moto.server import ThreadedMotoServer
 from mypy_boto3_s3.service_resource import Bucket, Object, S3ServiceResource
 from vcr.request import Request
@@ -86,7 +86,12 @@ def app():
     app.state.earthdata_token_provider = None
     app.state.get_s3_credentials = None
 
-    return TestClient(app)
+    client = TestClient(app)
+    try:
+        yield client
+    finally:
+        client.close()
+        app.state.client.close()
 
 
 @pytest.fixture

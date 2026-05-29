@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 import rasterio.features
 from geojson_pydantic import Feature, FeatureCollection
-from httpx import Client
+from httpx2 import Client
 from isodate import parse_datetime as _parse_datetime
 from rasterio.warp import transform_bounds
 

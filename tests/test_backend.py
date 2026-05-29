@@ -7,7 +7,7 @@ from collections.abc import Callable, Mapping
 import pytest
 import rasterio
 from geojson_pydantic import Polygon
-from httpx import Client
+from httpx2 import Client
 from mypy_boto3_s3.service_resource import Object
 from rio_tiler.errors import NoAssetFoundError
 from rio_tiler.models import ImageData
@@ -25,29 +25,31 @@ from titiler.cmr.reader import MultiBaseGranuleReader
 
 def test_bounds_granule_ur_not_found() -> None:
     """Test that NoAssetFoundError is raised when granule_ur search returns no results."""
-    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])):
-        backend = CMRBackend(
-            input=GranuleSearch(granule_ur="nonexistent-granule-ur"),
-            client=Client(base_url=CMR_GRANULE_SEARCH_API),
-            reader=MultiBaseGranuleReader,
-        )
-        with pytest.raises(NoAssetFoundError):
-            _ = backend.bounds
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])):
+            backend = CMRBackend(
+                input=GranuleSearch(granule_ur="nonexistent-granule-ur"),
+                client=client,
+                reader=MultiBaseGranuleReader,
+            )
+            with pytest.raises(NoAssetFoundError):
+                _ = backend.bounds
 
 
 @pytest.mark.vcr
 def test_get_assets() -> None:
     """Test fetching asset metadata from CMR"""
-    backend = CMRBackend(
-        input=GranuleSearch(
-            collection_concept_id="C2021957657-LPCLOUD",
-            temporal="2024-02-11T00:00:00Z/2024-02-13T23:59:59Z",
-        ),
-        client=Client(base_url=CMR_GRANULE_SEARCH_API),
-        reader=MultiBaseGranuleReader,
-        s3_access=True,
-    )
-    granules = backend.assets_for_bbox(-91.663, 47.862, -91.537, 47.928)
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        backend = CMRBackend(
+            input=GranuleSearch(
+                collection_concept_id="C2021957657-LPCLOUD",
+                temporal="2024-02-11T00:00:00Z/2024-02-13T23:59:59Z",
+            ),
+            client=client,
+            reader=MultiBaseGranuleReader,
+            s3_access=True,
+        )
+        granules = backend.assets_for_bbox(-91.663, 47.862, -91.537, 47.928)
 
     assert granules
     granule = granules[0]
@@ -138,38 +140,38 @@ def test_s3_credentials_used_for_session_creation(
 
         return provider
 
-    with mock.patch(
-        "titiler.cmr.backend.get_granules", return_value=stub_get_granules()
-    ):
-        backend = CMRBackend(
-            input=GranuleSearch(),
-            client=Client(base_url=CMR_GRANULE_SEARCH_API),
-            reader=MultiBaseGranuleReader,
-            s3_access=True,
-            get_s3_credentials=mock_get_s3_credentials,
-        )
-        with rasterio.Env(**rasterio_env_kwargs):
-            image_data: ImageData
-            image_data, _ = method_call(backend)
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        with mock.patch(
+            "titiler.cmr.backend.get_granules", return_value=stub_get_granules()
+        ):
+            backend = CMRBackend(
+                input=GranuleSearch(),
+                client=client,
+                reader=MultiBaseGranuleReader,
+                s3_access=True,
+                get_s3_credentials=mock_get_s3_credentials,
+            )
+            with rasterio.Env(**rasterio_env_kwargs):
+                image_data: ImageData
+                image_data, _ = method_call(backend)
 
     assert called_get_s3_credentials
     assert image_data.data.ndim == 3  # bands, height, width
     assert image_data.data.shape[0] == 3  # Number of bands in tif
 
 
-def _make_backend() -> CMRBackend:
-    """Return a CMRBackend with no-op CMR client for unit testing."""
-    return CMRBackend(
-        input=GranuleSearch(),
-        client=Client(base_url=CMR_GRANULE_SEARCH_API),
-        reader=MultiBaseGranuleReader,
-    )
-
-
 def test_get_assets_forwards_skipcovered_true() -> None:
     """get_assets passes skipcovered=True through to get_granules."""
-    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])) as mg:
-        _make_backend().get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=True)
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        backend = CMRBackend(
+            input=GranuleSearch(),
+            client=client,
+            reader=MultiBaseGranuleReader,
+        )
+        with mock.patch(
+            "titiler.cmr.backend.get_granules", return_value=iter([])
+        ) as mg:
+            backend.get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=True)
 
     _, kwargs = mg.call_args
     assert kwargs.get("skipcovered") is True
@@ -177,8 +179,16 @@ def test_get_assets_forwards_skipcovered_true() -> None:
 
 def test_get_assets_forwards_skipcovered_false() -> None:
     """get_assets passes skipcovered=False through to get_granules."""
-    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])) as mg:
-        _make_backend().get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=False)
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        backend = CMRBackend(
+            input=GranuleSearch(),
+            client=client,
+            reader=MultiBaseGranuleReader,
+        )
+        with mock.patch(
+            "titiler.cmr.backend.get_granules", return_value=iter([])
+        ) as mg:
+            backend.get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=False)
 
     _, kwargs = mg.call_args
     assert kwargs.get("skipcovered") is False
@@ -186,8 +196,16 @@ def test_get_assets_forwards_skipcovered_false() -> None:
 
 def test_get_assets_skipcovered_none_not_forwarded() -> None:
     """When skipcovered=None, get_granules is not given a skipcovered kwarg."""
-    with mock.patch("titiler.cmr.backend.get_granules", return_value=iter([])) as mg:
-        _make_backend().get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=None)
+    with Client(base_url=CMR_GRANULE_SEARCH_API) as client:
+        backend = CMRBackend(
+            input=GranuleSearch(),
+            client=client,
+            reader=MultiBaseGranuleReader,
+        )
+        with mock.patch(
+            "titiler.cmr.backend.get_granules", return_value=iter([])
+        ) as mg:
+            backend.get_assets(Polygon.from_bounds(0, 0, 1, 1), skipcovered=None)
 
     _, kwargs = mg.call_args
     assert "skipcovered" not in kwargs

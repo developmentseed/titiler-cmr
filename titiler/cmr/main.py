@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 import jinja2
 from fastapi import FastAPI, Query, Request
 from fastapi.responses import RedirectResponse
-from httpx import Client
+from httpx2 import Client
 from starlette.middleware.cors import CORSMiddleware
 from starlette.templating import Jinja2Templates
 from titiler.core.dependencies import DatasetParams as RasterioDatasetParams

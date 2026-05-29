@@ -5,7 +5,7 @@ from typing import Any, cast
 
 import attr
 from geojson_pydantic.geometries import Geometry, Point, Polygon
-from httpx import Client
+from httpx2 import Client
 from morecantile import Tile, TileMatrixSet
 from rasterio.crs import CRS
 from rasterio.warp import transform, transform_bounds

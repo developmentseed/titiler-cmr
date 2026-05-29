@@ -32,8 +32,8 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature, FeatureCollection
 from geojson_pydantic.geometries import Geometry
-from httpx import AsyncClient, HTTPStatusError
-from httpx import Response as HttpxResponse
+from httpx2 import AsyncClient, HTTPStatusError
+from httpx2 import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel

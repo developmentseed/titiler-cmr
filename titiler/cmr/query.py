@@ -5,7 +5,7 @@ from typing import Any, Generator
 import shapely
 from fastapi import HTTPException
 from geojson_pydantic.geometries import Geometry, Point
-from httpx import Client, HTTPStatusError, ReadTimeout
+from httpx2 import Client, HTTPStatusError, ReadTimeout
 from shapely.geometry import shape
 
 from titiler.cmr.errors import CMRQueryTimeout
