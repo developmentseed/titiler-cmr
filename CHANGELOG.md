@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.4](https://github.com/developmentseed/titiler-cmr/compare/v1.0.3...v1.0.4) (2026-05-29)
+
+
+### Bug Fixes
+
+* better async request handling in timeseries endpoints ([#178](https://github.com/developmentseed/titiler-cmr/issues/178)) ([378a8da](https://github.com/developmentseed/titiler-cmr/commit/378a8daceb624ed34e659afdd9449ea49cd79230))
+* upgrade dependencies ([#182](https://github.com/developmentseed/titiler-cmr/issues/182)) ([e064628](https://github.com/developmentseed/titiler-cmr/commit/e0646282033c5d59fecb3e453c2d1e349b824489))
+
 ## [Unreleased]
 
 ## [v1.0.2]
