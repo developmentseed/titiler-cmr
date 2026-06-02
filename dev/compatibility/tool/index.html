@@ -2362,16 +2362,156 @@ data_vars</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>Data variables:
-    analysed_sst      (time, lat, lon) float64 5GB ...
-    analysis_error    (time, lat, lon) float64 5GB ...
-    mask              (time, lat, lon) float32 3GB ...
-    sea_ice_fraction  (time, lat, lon) float64 5GB ...
-    dt_1km_data       (time, lat, lon) timedelta64[ns] 5GB ...
-    sst_anomaly       (time, lat, lon) float64 5GB ...</pre>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ClientResponseError</span>                       Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[5], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> fs <span style="color: rgb(98,98,98)">=</span> earthaccess<span style="color: rgb(98,98,98)">.</span>get_fsspec_https_session()
+<span class="ansi-green-fg">----&gt; 3</span> ds <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">xr</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">open_dataset</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">results</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">data_links</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">access</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">external</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">engine</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">h5netcdf</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">decode_timedelta</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">True</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span> data_vars <span style="color: rgb(98,98,98)">=</span> ds<span style="color: rgb(98,98,98)">.</span>data_vars
+<span class="ansi-green-intense-fg ansi-bold">      9</span> data_vars
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/xarray/backends/api.py:607</span>, in <span class="ansi-cyan-fg">open_dataset</span><span class="ansi-blue-fg">(filename_or_obj, engine, chunks, cache, decode_cf, mask_and_scale, decode_times, decode_timedelta, use_cftime, concat_characters, decode_coords, drop_variables, create_default_indexes, inline_array, chunked_array_type, from_array_kwargs, backend_kwargs, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    595</span> decoders <span style="color: rgb(98,98,98)">=</span> _resolve_decoders_kwargs(
+<span class="ansi-green-intense-fg ansi-bold">    596</span>     decode_cf,
+<span class="ansi-green-intense-fg ansi-bold">    597</span>     open_backend_dataset_parameters<span style="color: rgb(98,98,98)">=</span>backend<span style="color: rgb(98,98,98)">.</span>open_dataset_parameters,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    603</span>     decode_coords<span style="color: rgb(98,98,98)">=</span>decode_coords,
+<span class="ansi-green-intense-fg ansi-bold">    604</span> )
+<span class="ansi-green-intense-fg ansi-bold">    606</span> overwrite_encoded_chunks <span style="color: rgb(98,98,98)">=</span> kwargs<span style="color: rgb(98,98,98)">.</span>pop(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">overwrite_encoded_chunks</span><span style="color: rgb(175,0,0)">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)
+<span class="ansi-green-fg">--&gt; 607</span> backend_ds <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">open_dataset</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    608</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filename_or_obj</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    609</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">drop_variables</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">drop_variables</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    610</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">decoders</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    611</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    612</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    613</span> ds <span style="color: rgb(98,98,98)">=</span> _dataset_from_backend_dataset(
+<span class="ansi-green-intense-fg ansi-bold">    614</span>     backend_ds,
+<span class="ansi-green-intense-fg ansi-bold">    615</span>     filename_or_obj,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    626</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    627</span> )
+<span class="ansi-green-intense-fg ansi-bold">    628</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> ds
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/xarray/backends/h5netcdf_.py:557</span>, in <span class="ansi-cyan-fg">H5netcdfBackendEntrypoint.open_dataset</span><span class="ansi-blue-fg">(self, filename_or_obj, mask_and_scale, decode_times, concat_characters, decode_coords, drop_variables, use_cftime, decode_timedelta, format, group, lock, invalid_netcdf, phony_dims, decode_vlen_strings, driver, driver_kwds, storage_options, open_kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    554</span> emit_phony_dims_warning, phony_dims <span style="color: rgb(98,98,98)">=</span> _check_phony_dims(phony_dims)
+<span class="ansi-green-intense-fg ansi-bold">    556</span> filename_or_obj <span style="color: rgb(98,98,98)">=</span> _normalize_filename_or_obj(filename_or_obj)
+<span class="ansi-green-fg">--&gt; 557</span> store <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">H5NetCDFStore</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">open</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    558</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filename_or_obj</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    559</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">format</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">format</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    560</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">group</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">group</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    561</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">lock</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">lock</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    562</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">invalid_netcdf</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">invalid_netcdf</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    563</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">phony_dims</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">phony_dims</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    564</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">decode_vlen_strings</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">decode_vlen_strings</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    565</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">driver</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">driver</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    566</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">driver_kwds</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">driver_kwds</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    567</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    568</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">open_kwargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">open_kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    569</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    571</span> store_entrypoint <span style="color: rgb(98,98,98)">=</span> StoreBackendEntrypoint()
+<span class="ansi-green-intense-fg ansi-bold">    573</span> ds <span style="color: rgb(98,98,98)">=</span> store_entrypoint<span style="color: rgb(98,98,98)">.</span>open_dataset(
+<span class="ansi-green-intense-fg ansi-bold">    574</span>     store,
+<span class="ansi-green-intense-fg ansi-bold">    575</span>     mask_and_scale<span style="color: rgb(98,98,98)">=</span>mask_and_scale,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    581</span>     decode_timedelta<span style="color: rgb(98,98,98)">=</span>decode_timedelta,
+<span class="ansi-green-intense-fg ansi-bold">    582</span> )
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/xarray/backends/h5netcdf_.py:217</span>, in <span class="ansi-cyan-fg">H5NetCDFStore.open</span><span class="ansi-blue-fg">(cls, filename, mode, format, group, lock, autoclose, invalid_netcdf, phony_dims, decode_vlen_strings, driver, driver_kwds, storage_options, open_kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    214</span>     source<span style="color: rgb(98,98,98)">.</span>getvalue <span style="color: rgb(98,98,98)">=</span> filename<span style="color: rgb(98,98,98)">.</span>getbuffer
+<span class="ansi-green-intense-fg ansi-bold">    216</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(filename, io<span style="color: rgb(98,98,98)">.</span>IOBase) <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> mode <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">r</span><span style="color: rgb(175,0,0)">"</span>:
+<span class="ansi-green-fg">--&gt; 217</span>     magic_number <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">read_magic_number_from_file</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">filename</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    218</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> magic_number<span style="color: rgb(98,98,98)">.</span>startswith(<span style="color: rgb(175,0,0)">b</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\211</span><span style="color: rgb(175,0,0)">HDF</span><span class="ansi-bold" style="color: rgb(175,95,0)">\r</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,0)">\032</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">"</span>):
+<span class="ansi-green-intense-fg ansi-bold">    219</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(
+<span class="ansi-green-intense-fg ansi-bold">    220</span>             <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>magic_number<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span style="color: rgb(175,0,0)"> is not the signature of a valid netCDF4 file</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">    221</span>         )
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/xarray/core/utils.py:775</span>, in <span class="ansi-cyan-fg">read_magic_number_from_file</span><span class="ansi-blue-fg">(filename_or_obj, count)</span>
+<span class="ansi-green-intense-fg ansi-bold">    773</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filename_or_obj<span style="color: rgb(98,98,98)">.</span>tell() <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>:
+<span class="ansi-green-intense-fg ansi-bold">    774</span>     filename_or_obj<span style="color: rgb(98,98,98)">.</span>seek(<span style="color: rgb(98,98,98)">0</span>)
+<span class="ansi-green-fg">--&gt; 775</span> magic_number <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">filename_or_obj</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">count</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    776</span> filename_or_obj<span style="color: rgb(98,98,98)">.</span>seek(<span style="color: rgb(98,98,98)">0</span>)
+<span class="ansi-green-intense-fg ansi-bold">    777</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> magic_number
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/implementations/http.py:649</span>, in <span class="ansi-cyan-fg">HTTPFile.read</span><span class="ansi-blue-fg">(self, length)</span>
+<span class="ansi-green-intense-fg ansi-bold">    647</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">    648</span>     length <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">min</span>(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>size <span style="color: rgb(98,98,98)">-</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>loc, length)
+<span class="ansi-green-fg">--&gt; 649</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">super</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">length</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/spec.py:2125</span>, in <span class="ansi-cyan-fg">AbstractBufferedFile.read</span><span class="ansi-blue-fg">(self, length)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2122</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> length <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">0</span>:
+<span class="ansi-green-intense-fg ansi-bold">   2123</span>     <span style="color: rgb(95,135,135)"># don't even bother calling fetch</span>
+<span class="ansi-green-intense-fg ansi-bold">   2124</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(175,0,0)">b</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">-&gt; 2125</span> out <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">cache</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_fetch</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">loc</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">loc</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">+</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">length</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2127</span> logger<span style="color: rgb(98,98,98)">.</span>debug(
+<span class="ansi-green-intense-fg ansi-bold">   2128</span>     <span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span style="color: rgb(175,0,0)"> read: </span><span class="ansi-bold" style="color: rgb(175,95,135)">%i</span><span style="color: rgb(175,0,0)"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">%i</span><span style="color: rgb(175,0,0)"> </span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">   2129</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2132</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>cache<span style="color: rgb(98,98,98)">.</span>_log_stats(),
+<span class="ansi-green-intense-fg ansi-bold">   2133</span> )
+<span class="ansi-green-intense-fg ansi-bold">   2134</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>loc <span style="color: rgb(98,98,98)">+</span><span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">len</span>(out)
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/caching.py:517</span>, in <span class="ansi-cyan-fg">BytesCache._fetch</span><span class="ansi-blue-fg">(self, start, end)</span>
+<span class="ansi-green-intense-fg ansi-bold">    515</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>total_requested_bytes <span style="color: rgb(98,98,98)">+</span><span style="color: rgb(98,98,98)">=</span> bend <span style="color: rgb(98,98,98)">-</span> start
+<span class="ansi-green-intense-fg ansi-bold">    516</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>miss_count <span style="color: rgb(98,98,98)">+</span><span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(98,98,98)">1</span>
+<span class="ansi-green-fg">--&gt; 517</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>cache <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">fetcher</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">start</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">bend</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    518</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>start <span style="color: rgb(98,98,98)">=</span> start
+<span class="ansi-green-intense-fg ansi-bold">    519</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/asyn.py:118</span>, in <span class="ansi-cyan-fg">sync_wrapper.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    115</span> <span style="color: rgb(175,0,255)">@functools</span><span style="color: rgb(98,98,98)">.</span>wraps(func)
+<span class="ansi-green-intense-fg ansi-bold">    116</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span style="color: rgb(0,0,255)">wrapper</span>(<span style="color: rgb(98,98,98)">*</span>args, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs):
+<span class="ansi-green-intense-fg ansi-bold">    117</span>     <span style="color: rgb(0,135,0)">self</span> <span style="color: rgb(98,98,98)">=</span> obj <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> args[<span style="color: rgb(98,98,98)">0</span>]
+<span class="ansi-green-fg">--&gt; 118</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">sync</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">loop</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">func</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/asyn.py:103</span>, in <span class="ansi-cyan-fg">sync</span><span class="ansi-blue-fg">(loop, func, timeout, *args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    101</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> FSTimeoutError <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">return_result</span>
+<span class="ansi-green-intense-fg ansi-bold">    102</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> <span style="color: rgb(0,135,0)">isinstance</span>(return_result, <span class="ansi-bold" style="color: rgb(215,95,95)">BaseException</span>):
+<span class="ansi-green-fg">--&gt; 103</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> return_result
+<span class="ansi-green-intense-fg ansi-bold">    104</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">    105</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> return_result
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/asyn.py:56</span>, in <span class="ansi-cyan-fg">_runner</span><span class="ansi-blue-fg">(event, coro, result, timeout)</span>
+<span class="ansi-green-intense-fg ansi-bold">     54</span>     coro <span style="color: rgb(98,98,98)">=</span> asyncio<span style="color: rgb(98,98,98)">.</span>wait_for(coro, timeout<span style="color: rgb(98,98,98)">=</span>timeout)
+<span class="ansi-green-intense-fg ansi-bold">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; 56</span>     result[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> coro
+<span class="ansi-green-intense-fg ansi-bold">     57</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> ex:
+<span class="ansi-green-intense-fg ansi-bold">     58</span>     result[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">=</span> ex
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/fsspec/implementations/http.py:704</span>, in <span class="ansi-cyan-fg">HTTPFile.async_fetch_range</span><span class="ansi-blue-fg">(self, start, end)</span>
+<span class="ansi-green-intense-fg ansi-bold">    701</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> r<span style="color: rgb(98,98,98)">.</span>status <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">416</span>:
+<span class="ansi-green-intense-fg ansi-bold">    702</span>     <span style="color: rgb(95,135,135)"># range request outside file</span>
+<span class="ansi-green-intense-fg ansi-bold">    703</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(175,0,0)">b</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">--&gt; 704</span> <span class="ansi-yellow-bg">r</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">raise_for_status</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    706</span> <span style="color: rgb(95,135,135)"># If the server has handled the range request, it should reply</span>
+<span class="ansi-green-intense-fg ansi-bold">    707</span> <span style="color: rgb(95,135,135)"># with status 206 (partial content). But we'll guess that a suitable</span>
+<span class="ansi-green-intense-fg ansi-bold">    708</span> <span style="color: rgb(95,135,135)"># Content-Range header or a Content-Length no more than the</span>
+<span class="ansi-green-intense-fg ansi-bold">    709</span> <span style="color: rgb(95,135,135)"># requested range also mean we have got the desired range.</span>
+<span class="ansi-green-intense-fg ansi-bold">    710</span> response_is_range <span style="color: rgb(98,98,98)">=</span> (
+<span class="ansi-green-intense-fg ansi-bold">    711</span>     r<span style="color: rgb(98,98,98)">.</span>status <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">206</span>
+<span class="ansi-green-intense-fg ansi-bold">    712</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parse_content_range(r<span style="color: rgb(98,98,98)">.</span>headers)[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">==</span> start
+<span class="ansi-green-intense-fg ansi-bold">    713</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> <span style="color: rgb(0,135,0)">int</span>(r<span style="color: rgb(98,98,98)">.</span>headers<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Content-Length</span><span style="color: rgb(175,0,0)">"</span>, end <span style="color: rgb(98,98,98)">+</span> <span style="color: rgb(98,98,98)">1</span>)) <span style="color: rgb(98,98,98)">&lt;</span><span style="color: rgb(98,98,98)">=</span> end <span style="color: rgb(98,98,98)">-</span> start
+<span class="ansi-green-intense-fg ansi-bold">    714</span> )
+
+File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/aiohttp/client_reqrep.py:636</span>, in <span class="ansi-cyan-fg">ClientResponse.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    633</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_in_context:
+<span class="ansi-green-intense-fg ansi-bold">    634</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>release()
+<span class="ansi-green-fg">--&gt; 636</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> ClientResponseError(
+<span class="ansi-green-intense-fg ansi-bold">    637</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>request_info,
+<span class="ansi-green-intense-fg ansi-bold">    638</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>history,
+<span class="ansi-green-intense-fg ansi-bold">    639</span>     status<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>status,
+<span class="ansi-green-intense-fg ansi-bold">    640</span>     message<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reason,
+<span class="ansi-green-intense-fg ansi-bold">    641</span>     headers<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>headers,
+<span class="ansi-green-intense-fg ansi-bold">    642</span> )
+
+<span class="ansi-red-fg">ClientResponseError</span>: 500, message='Internal Server Error', url='https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20241012090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc'</pre>
 </div>
 </div>
 </div>
@@ -2805,13 +2945,7 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <pre>=== TiTiler-CMR Compatibility Check ===
 Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2024-07-01T00%3A00%3A00Z%2F2024-07-10T23%3A59%3A59Z&amp;bands=B04&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point
 Error: 301 Moved Permanently
 Body: 
