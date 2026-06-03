@@ -8,6 +8,9 @@ from fastapi import HTTPException
 
 from titiler.cmr.compatibility import (
     CompatibilityResponse,
+    _candidate_group_paths,
+    _dataset_dim_scale_names,
+    _group_has_spatial_dims,
     evaluate_concept_compatibility,
     evaluate_rasterio_compatibility,
     evaluate_xarray_compatibility,
@@ -125,12 +128,122 @@ class TestExtractXarrayMetadata:
         assert "max" not in result["coordinates"]["labels"]
 
 
+class _FakeScale:
+    def __init__(self, name: str):
+        self.name = name
+
+
+class _FakeDim:
+    def __init__(self, scale_names: list[str]):
+        self._scale_names = scale_names
+
+    def values(self):
+        return [_FakeScale(name) for name in self._scale_names]
+
+
+class _FakeDataset:
+    def __init__(self, dim_scale_names: list[list[str]]):
+        self.ndim = len(dim_scale_names)
+        self.dims = [_FakeDim(names) for names in dim_scale_names]
+
+
+class _FakeGroup:
+    def __init__(self, children):
+        self._children = children
+
+    def values(self):
+        return self._children.values()
+
+    def items(self):
+        return self._children.items()
+
+
+class TestGroupPruningHelpers:
+    """Test HDF5 group pruning helpers."""
+
+    def test_dataset_dim_scale_names(self):
+        """Test extraction of attached dimension-scale names."""
+        dataset = _FakeDataset([["/science/yCoordinates"], ["/science/xCoordinates"]])
+
+        assert _dataset_dim_scale_names(dataset) == {"yCoordinates", "xCoordinates"}
+
+    @patch("titiler.cmr.compatibility.h5py.Dataset", new=_FakeDataset)
+    def test_group_has_spatial_dims(self):
+        """Test spatial-dimension detection for a group."""
+        group = _FakeGroup(
+            {
+                "HHHH": _FakeDataset([["yCoordinates"], ["xCoordinates"]]),
+                "mask": _FakeDataset([["yCoordinates"], ["xCoordinates"]]),
+            }
+        )
+
+        assert _group_has_spatial_dims(group) is True
+
+    @patch("titiler.cmr.compatibility.h5py.Dataset", new=_FakeDataset)
+    def test_group_has_spatial_dims_false_when_aliases_missing(self):
+        """Test non-spatial groups are rejected by the dim-alias filter."""
+        group = _FakeGroup(
+            {
+                "quaternions": _FakeDataset([[], []]),
+                "time": _FakeDataset([[]]),
+            }
+        )
+
+        assert _group_has_spatial_dims(group) is False
+
+    @patch("titiler.cmr.compatibility.h5py.Group", new=_FakeGroup)
+    @patch("titiler.cmr.compatibility.h5py.Dataset", new=_FakeDataset)
+    @patch("titiler.cmr.compatibility._make_blockstore_reader")
+    @patch("titiler.cmr.compatibility.h5py.File")
+    def test_candidate_group_paths_prefers_non_metadata_spatial_groups(
+        self, mock_h5py_file, mock_reader
+    ):
+        """Test group pruning prefers non-metadata groups with spatial dims."""
+        mock_reader.return_value = MagicMock()
+
+        fake_groups = {
+            "science/LSAR/GCOV/grids/frequencyA": _FakeGroup(
+                {"HHHH": _FakeDataset([["yCoordinates"], ["xCoordinates"]])}
+            ),
+            "science/LSAR/GCOV/metadata/radarGrid": _FakeGroup(
+                {
+                    "slantRange": _FakeDataset(
+                        [["heightAboveEllipsoid"], ["yCoordinates"], ["xCoordinates"]]
+                    )
+                }
+            ),
+            "science/LSAR/GCOV/metadata/attitude": _FakeGroup(
+                {"quaternions": _FakeDataset([[], []])}
+            ),
+        }
+
+        file_handle = MagicMock()
+
+        def visititems(visitor):
+            for name, obj in fake_groups.items():
+                visitor(name, obj)
+
+        file_handle.visititems.side_effect = visititems
+        mock_h5py_file.return_value.__enter__.return_value = file_handle
+        mock_h5py_file.return_value.__exit__.return_value = False
+
+        result = _candidate_group_paths("https://example.com/file.h5")
+
+        assert result == ["science/LSAR/GCOV/grids/frequencyA"]
+
+
 class TestXarrayCompatibility:
     """Test evaluate_xarray_compatibility function."""
 
+    @patch("titiler.cmr.compatibility._group_hints")
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
-    def test_xarray_success(self, mock_get_granules, mock_open_dataset):
+    def test_xarray_success(
+        self,
+        mock_get_granules,
+        mock_open_dataset,
+        mock_group_hints,
+    ):
         """Test successful xarray compatibility check."""
         request = _make_request()
         granule = _make_granule()
@@ -148,11 +261,19 @@ class TestXarrayCompatibility:
         mock_ds.coords = mock_coords
         mock_ds.dims = {"x": 10, "y": 20}
         mock_open_dataset.return_value = mock_ds
+        mock_group_hints.return_value = {
+            "requires_group": False,
+            "group_hints": [],
+            "default_group": None,
+            "sampled_group": None,
+        }
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
 
         assert result["backend"] == "xarray"
         assert result["example_assets"] == "https://example.com/file.nc"
+        assert result["requires_group"] is False
+        assert result["group_hints"] == []
         assert "temp" in result["variables"]
 
     @patch("titiler.cmr.compatibility.get_granules")
@@ -164,10 +285,14 @@ class TestXarrayCompatibility:
         with pytest.raises(ValueError, match="No assets found"):
             evaluate_xarray_compatibility("C1234-TEST", request)
 
+    @patch("titiler.cmr.compatibility._group_hints")
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
     def test_xarray_uses_direct_href_when_s3_access(
-        self, mock_get_granules, mock_open_dataset
+        self,
+        mock_get_granules,
+        mock_open_dataset,
+        mock_group_hints,
     ):
         """Test that direct_href is used when s3_access is True."""
         request = _make_request(s3_access=True)
@@ -180,10 +305,62 @@ class TestXarrayCompatibility:
         mock_ds.coords.items.return_value = []
         mock_ds.dims = {}
         mock_open_dataset.return_value = mock_ds
+        mock_group_hints.return_value = {
+            "requires_group": False,
+            "group_hints": [],
+            "default_group": None,
+            "sampled_group": None,
+        }
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
 
         assert result["example_assets"] == "s3://bucket/file.nc"
+
+    @patch("titiler.cmr.compatibility._group_hints")
+    @patch("titiler.cmr.compatibility.open_dataset")
+    @patch("titiler.cmr.compatibility.get_granules")
+    def test_xarray_sets_group_hints_when_root_dataset_is_empty(
+        self,
+        mock_get_granules,
+        mock_open_dataset,
+        mock_group_hints,
+    ):
+        """Test grouped xarray compatibility metadata for hierarchical datasets."""
+        request = _make_request()
+        granule = _make_granule()
+        mock_get_granules.return_value = iter([granule])
+
+        root_ds = MagicMock()
+        root_ds.data_vars = []
+        root_ds.coords = MagicMock()
+        root_ds.coords.items.return_value = []
+        root_ds.dims = {}
+
+        grouped_ds = MagicMock()
+        grouped_var = MagicMock()
+        grouped_var.shape = (10, 20)
+        grouped_var.dtype = np.dtype("float32")
+        grouped_ds.data_vars = ["backscatter"]
+        grouped_ds.__getitem__ = lambda self, key: grouped_var
+        grouped_ds.coords = MagicMock()
+        grouped_ds.coords.items.return_value = []
+        grouped_ds.dims = {"x": 10, "y": 20}
+
+        mock_open_dataset.side_effect = [root_ds, grouped_ds]
+        mock_group_hints.return_value = {
+            "requires_group": False,
+            "group_hints": ["science/grids/frequencyA"],
+            "default_group": "science/grids/frequencyA",
+            "sampled_group": "science/grids/frequencyA",
+        }
+
+        result = evaluate_xarray_compatibility("C1234-TEST", request)
+
+        assert result["requires_group"] is True
+        assert result["group_hints"] == ["science/grids/frequencyA"]
+        assert result["default_group"] == "science/grids/frequencyA"
+        assert result["sampled_group"] == "science/grids/frequencyA"
+        assert "backscatter" in result["variables"]
 
 
 class TestRasterioCompatibility:
@@ -241,6 +418,10 @@ class TestConceptCompatibility:
             "dimensions": {"x": 10},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
+            "requires_group": False,
+            "group_hints": [],
+            "default_group": None,
+            "sampled_group": None,
         }
 
         result = evaluate_concept_compatibility("C1234-TEST", request)
@@ -272,6 +453,10 @@ class TestConceptCompatibility:
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
+            "requires_group": False,
+            "group_hints": [],
+            "default_group": None,
+            "sampled_group": None,
         }
 
         result = evaluate_concept_compatibility("C1234-TEST", request)
@@ -280,6 +465,37 @@ class TestConceptCompatibility:
         assert "variable=sea_ice" in tilejson_link.href
         assert "{temporal}" in tilejson_link.href
         assert "/xarray/" in tilejson_link.href
+
+    @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
+    @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
+    @patch("titiler.cmr.compatibility.get_collection")
+    def test_xarray_links_include_sampled_group(
+        self, mock_get_collection, mock_xarray, mock_rasterio
+    ):
+        """Test that xarray links include the sampled group when metadata came from it."""
+        request = _make_request()
+
+        mock_collection = MagicMock()
+        mock_collection.temporal_extents = []
+        mock_get_collection.return_value = mock_collection
+
+        mock_xarray.return_value = {
+            "backend": "xarray",
+            "variables": {"backscatter": {"shape": [10], "dtype": "float32"}},
+            "dimensions": {},
+            "coordinates": {},
+            "example_assets": "https://example.com/file.nc",
+            "requires_group": True,
+            "group_hints": ["science/grids/frequencyA"],
+            "default_group": None,
+            "sampled_group": "science/grids/frequencyA",
+        }
+
+        result = evaluate_concept_compatibility("C1234-TEST", request)
+
+        tilejson_link = next(link for link in result.links if link.rel == "tilejson")
+        assert "group=science/grids/frequencyA" in tilejson_link.href
+        mock_rasterio.assert_not_called()
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
@@ -354,3 +570,34 @@ class TestCompatibilityEndpoint:
         data = response.json()
         assert data["backend"] == "xarray"
         assert data["concept_id"] == "C1234-TEST"
+        assert mock_evaluate.call_args.kwargs["group"] is None
+
+    @patch("titiler.cmr.compatibility.evaluate_concept_compatibility")
+    def test_endpoint_accepts_group(self, mock_evaluate, app):
+        """Test the /compatibility endpoint forwards the optional group parameter."""
+        mock_evaluate.return_value = CompatibilityResponse(
+            concept_id="C1234-TEST",
+            backend="xarray",
+            datetime=[],
+            sampled_group="science/grids/frequencyA",
+            links=[],
+        )
+
+        response = app.get(
+            "/compatibility?collection_concept_id=C1234-TEST&group=science/grids/frequencyA"
+        )
+
+        assert response.status_code == 200
+        assert mock_evaluate.call_args.kwargs["group"] == "science/grids/frequencyA"
+
+    def test_endpoint_openapi_documents_group_like_xarray_routes(self, app):
+        """Test the /compatibility endpoint reuses the shared xarray group parameter docs."""
+        response = app.get("/api")
+
+        assert response.status_code == 200
+        parameters = response.json()["paths"]["/compatibility"]["get"]["parameters"]
+        group_param = next(param for param in parameters if param["name"] == "group")
+        assert group_param["description"] == (
+            "Select a specific zarr group from a zarr hierarchy. "
+            "Could be associated with a zoom level or dataset."
+        )

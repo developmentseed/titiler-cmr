@@ -1,18 +1,28 @@
 """titiler.cmr.compatibility: Compatibility testing utilities."""
 
-from typing import Any, Dict, List, Literal, Optional
+import urllib.parse
+from typing import Any, Dict, List, Literal, Optional, TypeAlias, cast
 
+import h5py
 import numpy as np
 from fastapi import APIRouter, Depends, HTTPException, Query
+from obspec_utils.readers import BlockStoreReader
+from obstore import store
 from pydantic import BaseModel
 from rio_tiler.models import Info
 from starlette.requests import Request
+from titiler.xarray.dependencies import XarrayIOParams
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
 from titiler.cmr.models import GranuleSearch
 from titiler.cmr.query import get_collection, get_granules
-from titiler.cmr.reader import MultiBaseGranuleReader, open_dataset
+from titiler.cmr.reader import (
+    X_DIM_NAMES,
+    Y_DIM_NAMES,
+    MultiBaseGranuleReader,
+    open_dataset,
+)
 
 
 class VariableInfo(BaseModel):
@@ -58,6 +68,10 @@ class CompatibilityResponse(BaseModel):
     coordinates: Optional[Dict[str, CoordinateInfo]] = None
     example_assets: Optional[Dict[str, str] | str] = None
     sample_asset_raster_info: Optional[Info] = None
+    requires_group: Optional[bool] = None
+    group_hints: Optional[List[str]] = None
+    default_group: Optional[str] = None
+    sampled_group: Optional[str] = None
     links: Optional[List[TemplateLink]] = None
 
 
@@ -163,9 +177,187 @@ def extract_xarray_metadata(
     }
 
 
+def _get_credential_provider(granule: Any, request: Request) -> Any:
+    """Return a credential provider for a granule when direct S3 access is enabled."""
+    if not request.app.state.s3_access:
+        return None
+
+    get_s3_credentials = request.app.state.get_s3_credentials
+    if get_s3_credentials is None:
+        return None
+
+    try:
+        return get_s3_credentials(granule.s3_credentials_endpoint)
+    except S3CredentialsEndpointMissing:
+        logger.warning(
+            "No S3 credentials endpoint found for granule %s; falling back to token auth",
+            granule.id,
+        )
+        return None
+
+
+def _make_blockstore_reader(
+    src_path: str,
+    auth_token: str | None = None,
+    credential_provider: Any = None,
+) -> BlockStoreReader:
+    """Create a block-based reader for a remote NetCDF/HDF5 asset."""
+
+    parsed = urllib.parse.urlparse(src_path)
+    store_root = f"{parsed.scheme}://{parsed.netloc}"
+
+    if credential_provider is not None:
+        object_store = store.from_url(
+            store_root,
+            credential_provider=credential_provider,
+        )
+    elif auth_token:
+        object_store = store.from_url(
+            store_root,
+            client_options={
+                "default_headers": {"Authorization": f"Bearer {auth_token}"}
+            },
+        )
+    else:
+        object_store = store.from_url(store_root)
+
+    return BlockStoreReader(object_store, parsed.path, block_size=8 * 1024**2)
+
+
+def _dataset_dim_scale_names(dataset: Any) -> set[str]:
+    """Return all attached HDF5 dimension-scale names for a dataset."""
+    dim_names: set[str] = set()
+
+    for axis in range(dataset.ndim):
+        try:
+            scales = dataset.dims[axis].values()
+        except Exception:
+            continue
+
+        for scale in scales:
+            scale_name = getattr(scale, "name", "")
+            if scale_name:
+                dim_names.add(scale_name.rsplit("/", 1)[-1])
+
+    return dim_names
+
+
+def _group_has_spatial_dims(group: Any) -> bool:
+    """Return True when a group contains a dataset with both x and y dimension aliases."""
+    x_names = set(X_DIM_NAMES)
+    y_names = set(Y_DIM_NAMES)
+
+    for child in group.values():
+        if not isinstance(child, h5py.Dataset):
+            continue
+
+        dim_names = _dataset_dim_scale_names(child)
+        if dim_names & x_names and dim_names & y_names:
+            return True
+
+    return False
+
+
+def _candidate_group_paths(
+    src_path: str,
+    auth_token: str | None = None,
+    credential_provider: Any = None,
+) -> list[str]:
+    """Return likely xarray group paths, preferring spatial non-metadata groups."""
+    reader = _make_blockstore_reader(
+        src_path,
+        auth_token=auth_token,
+        credential_provider=credential_provider,
+    )
+    try:
+        with h5py.File(reader, "r") as file_handle:
+            all_group_paths: list[str] = []
+            spatial_group_paths: list[str] = []
+            spatial_metadata_group_paths: list[str] = []
+
+            def visitor(name: str, obj: Any) -> None:
+                if not name or not isinstance(obj, h5py.Group):
+                    return
+
+                if not any(isinstance(child, h5py.Dataset) for child in obj.values()):
+                    return
+
+                all_group_paths.append(name)
+
+                if not _group_has_spatial_dims(obj):
+                    return
+
+                normalized_name = f"/{name.strip('/')}/"
+                if "/metadata/" in normalized_name:
+                    spatial_metadata_group_paths.append(name)
+                else:
+                    spatial_group_paths.append(name)
+
+            file_handle.visititems(visitor)
+
+            if spatial_group_paths:
+                return spatial_group_paths
+            if spatial_metadata_group_paths:
+                return spatial_metadata_group_paths
+            return all_group_paths
+    finally:
+        reader.close()
+
+
+def _group_hints(
+    src_path: str,
+    auth_token: str | None = None,
+    credential_provider: Any = None,
+) -> dict[str, Any]:
+    """Inspect a hierarchical asset and return lightweight xarray group hints."""
+    try:
+        group_paths = _candidate_group_paths(
+            src_path,
+            auth_token=auth_token,
+            credential_provider=credential_provider,
+        )
+    except Exception as exc:
+        logger.info("Skipping group inspection for %s: %s", src_path, exc)
+        return {
+            "requires_group": False,
+            "group_hints": [],
+            "default_group": None,
+            "sampled_group": None,
+        }
+
+    group_hints: list[str] = []
+    for group_path in group_paths:
+        try:
+            grouped_dataset = open_dataset(
+                src_path,
+                group=group_path,
+                credential_provider=credential_provider,
+                auth_token=auth_token,
+            )
+        except Exception as exc:
+            logger.info(
+                "Skipping incompatible group %s for %s: %s",
+                group_path,
+                src_path,
+                exc,
+            )
+            continue
+
+        if grouped_dataset.data_vars:
+            group_hints.append(group_path)
+
+    return {
+        "requires_group": False,
+        "group_hints": group_hints,
+        "default_group": group_hints[0] if len(group_hints) == 1 else None,
+        "sampled_group": group_hints[0] if group_hints else None,
+    }
+
+
 def evaluate_xarray_compatibility(
     concept_id: str,
     request: Request,
+    group: str | None = None,
 ) -> Dict[str, Any]:
     """Test XarrayReader compatibility with a concept.
 
@@ -188,7 +380,6 @@ def evaluate_xarray_compatibility(
     s3_access = request.app.state.s3_access
     token_provider = getattr(request.app.state, "earthdata_token_provider", None)
     auth_token = token_provider() if token_provider else None
-    get_s3_credentials = request.app.state.get_s3_credentials
 
     granule = next(
         get_granules(
@@ -207,23 +398,37 @@ def evaluate_xarray_compatibility(
     asset = assets["0"]
     href = asset.direct_href if s3_access else asset.external_href
 
-    credential_provider = None
-    if s3_access and get_s3_credentials is not None:
-        try:
-            credential_provider = get_s3_credentials(granule.s3_credentials_endpoint)
-        except S3CredentialsEndpointMissing:
-            logger.warning(
-                "No S3 credentials endpoint found for granule %s; "
-                "falling back to token auth",
-                granule.id,
-            )
+    credential_provider = _get_credential_provider(granule, request)
 
     ds = open_dataset(
         href,
+        group=group,
         credential_provider=credential_provider,
         auth_token=auth_token,
     )
     result = extract_xarray_metadata(ds)
+    group_hints = _group_hints(
+        href,
+        auth_token=auth_token,
+        credential_provider=credential_provider,
+    )
+
+    sampled_group = group if group else group_hints.get("sampled_group")
+    if not group and not result["variables"] and sampled_group:
+        sampled_ds = open_dataset(
+            href,
+            group=sampled_group,
+            credential_provider=credential_provider,
+            auth_token=auth_token,
+        )
+        result = extract_xarray_metadata(sampled_ds)
+
+    group_hints["requires_group"] = (
+        bool(group_hints["group_hints"]) and not bool(group) and not bool(ds.data_vars)
+    )
+    group_hints["sampled_group"] = sampled_group
+
+    result.update(group_hints)
     result["example_assets"] = href
     return result
 
@@ -294,11 +499,15 @@ def _build_links(
     concept_id: str,
     backend: str,
     first_var: Optional[str] = None,
+    group: Optional[str] = None,
 ) -> List[TemplateLink]:
     """Build template links for the compatibility response."""
     if backend == "xarray" and first_var:
         prefix = "/xarray"
         extra_params = f"&variable={first_var}"
+        if group:
+            quoted_group = urllib.parse.quote(group, safe="/")
+            extra_params = f"{extra_params}&group={quoted_group}"
     else:
         prefix = "/rasterio"
         extra_params = ""
@@ -333,6 +542,7 @@ def _build_links(
 def evaluate_concept_compatibility(
     concept_id: str,
     request: Request,
+    group: str | None = None,
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
@@ -359,9 +569,15 @@ def evaluate_concept_compatibility(
     # Try xarray first
     xarray_error: Exception | None = None
     try:
-        result = evaluate_xarray_compatibility(concept_id, request)
+        result = evaluate_xarray_compatibility(concept_id, request, group=group)
         first_var = next(iter(result.get("variables") or {}), None)
-        links = _build_links(base_url, concept_id, "xarray", first_var)
+        links = _build_links(
+            base_url,
+            concept_id,
+            "xarray",
+            first_var,
+            group or result.get("sampled_group") or result.get("default_group"),
+        )
         return CompatibilityResponse(
             concept_id=concept_id,
             datetime=temporal_extent,
@@ -404,6 +620,9 @@ def _concept_id_param(
     return collection_concept_id or concept_id
 
 
+XarrayGroupParam: TypeAlias = cast(Any, XarrayIOParams.__annotations__["group"])
+
+
 router = APIRouter()
 
 
@@ -411,8 +630,9 @@ router = APIRouter()
 def compatibility_check(
     request: Request,
     concept_id: Optional[str] = Depends(_concept_id_param),
+    group: XarrayGroupParam = None,
 ) -> CompatibilityResponse:
     """Check which backend is compatible with a CMR collection concept."""
     if concept_id is None:
         raise HTTPException(status_code=400, detail="concept_id is required")
-    return evaluate_concept_compatibility(concept_id, request)
+    return evaluate_concept_compatibility(concept_id, request, group=group)

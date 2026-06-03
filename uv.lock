@@ -5112,7 +5112,7 @@ wheels = [
 
 [[package]]
 name = "titiler-cmr"
-version = "1.0.3"
+version = "1.0.4"
 source = { editable = "." }
 dependencies = [
     { name = "cachetools" },
