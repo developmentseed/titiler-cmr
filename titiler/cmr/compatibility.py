@@ -504,7 +504,7 @@ def _build_links(
     """Build template links for the compatibility response."""
     if backend == "xarray" and first_var:
         prefix = "/xarray"
-        extra_params = f"&variable={first_var}"
+        extra_params = f"&variables={first_var}"
         if group:
             quoted_group = urllib.parse.quote(group, safe="/")
             extra_params = f"{extra_params}&group={quoted_group}"
