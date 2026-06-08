@@ -1,7 +1,7 @@
 """titiler.cmr.compatibility: Compatibility testing utilities."""
 
 import urllib.parse
-from typing import Any, Dict, List, Literal, Optional, TypeAlias, cast
+from typing import Any, Literal, TypeAlias, cast
 
 import h5py
 import numpy as np
@@ -26,26 +26,26 @@ from titiler.cmr.reader import (
 
 
 class VariableInfo(BaseModel):
-    """Metadata for a single xarray variable"""
+    """Metadata for a single xarray variable."""
 
-    shape: List[int]
+    shape: list[int]
     dtype: str
-    min: Optional[float] = None
-    max: Optional[float] = None
-    mean: Optional[float] = None
-    p01: Optional[float] = None
-    p05: Optional[float] = None
-    p95: Optional[float] = None
-    p99: Optional[float] = None
+    min: float | None = None
+    max: float | None = None
+    mean: float | None = None
+    p01: float | None = None
+    p05: float | None = None
+    p95: float | None = None
+    p99: float | None = None
 
 
 class CoordinateInfo(BaseModel):
-    """Metadata for a single xarray coordinate"""
+    """Metadata for a single xarray coordinate."""
 
     size: int
     dtype: str
-    min: Optional[float] = None
-    max: Optional[float] = None
+    min: float | None = None
+    max: float | None = None
 
 
 class TemplateLink(BaseModel):
@@ -53,28 +53,28 @@ class TemplateLink(BaseModel):
 
     rel: str
     href: str
-    title: Optional[str] = None
-    type: Optional[str] = None
+    title: str | None = None
+    type: str | None = None
 
 
 class CompatibilityResponse(BaseModel):
-    """Compatibility endpoint response model"""
+    """Compatibility endpoint response model."""
 
     concept_id: str
     backend: Literal["rasterio", "xarray"]
-    datetime: List[Dict[str, Any]]
-    variables: Optional[Dict[str, VariableInfo]] = None
-    dimensions: Optional[Dict[str, int]] = None
-    coordinates: Optional[Dict[str, CoordinateInfo]] = None
-    compatible_groups: Optional[List[str]] = None
-    example_assets: Optional[Dict[str, str] | str] = None
-    sample_asset_raster_info: Optional[Info] = None
-    links: Optional[List[TemplateLink]] = None
+    datetime: list[dict[str, Any]]
+    variables: dict[str, VariableInfo] | None = None
+    dimensions: dict[str, int] | None = None
+    coordinates: dict[str, CoordinateInfo] | None = None
+    compatible_groups: list[str] | None = None
+    example_assets: dict[str, str] | str | None = None
+    sample_asset_raster_info: Info | None = None
+    links: list[TemplateLink] | None = None
 
 
 def extract_xarray_metadata(
     ds: Any, max_sample_size: float = 100_000.0
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Extract comprehensive metadata from an xarray Dataset.
 
     For large arrays, uses sampling along each dimension to avoid memory issues.
@@ -89,12 +89,12 @@ def extract_xarray_metadata(
     """
     variables = {}
     for var in ds.data_vars:
-        var_info: Dict[str, Any] = {
+        var_info: dict[str, Any] = {
             "shape": list(ds[var].shape),
             "dtype": str(ds[var].dtype),
         }
 
-        if ds[var].dtype.kind in ["i", "f", "u"]:
+        if ds[var].dtype.kind in {"i", "f", "u"}:
             try:
                 var_data = ds[var]
                 total_size = var_data.size
@@ -158,7 +158,7 @@ def extract_xarray_metadata(
             "dtype": str(coord_data.dtype),
         }
 
-        if coord_data.dtype.kind in ["i", "f", "u"]:
+        if coord_data.dtype.kind in {"i", "f", "u"}:
             try:
                 coord_info["min"] = float(coord_data.min())
                 coord_info["max"] = float(coord_data.max())
@@ -239,17 +239,18 @@ def _dataset_dim_scale_names(dataset: Any) -> set[str]:
     return dim_names
 
 
+X_DIM_ALIASES = set(X_DIM_NAMES)
+Y_DIM_ALIASES = set(Y_DIM_NAMES)
+
+
 def _group_has_spatial_dims(group: Any) -> bool:
     """Return True when a group contains a dataset with both x and y dimension aliases."""
-    x_names = set(X_DIM_NAMES)
-    y_names = set(Y_DIM_NAMES)
-
     for child in group.values():
         if not isinstance(child, h5py.Dataset):
             continue
 
         dim_names = _dataset_dim_scale_names(child)
-        if dim_names & x_names and dim_names & y_names:
+        if dim_names & X_DIM_ALIASES and dim_names & Y_DIM_ALIASES:
             return True
 
     return False
@@ -322,11 +323,30 @@ def _compatible_groups(
         return []
 
 
+def _sample_granule(concept_id: str, request: Request) -> Any:
+    """Return the first granule for a collection concept."""
+    return next(
+        get_granules(
+            search_params=GranuleSearch(collection_concept_id=concept_id),
+            client=request.app.state.client,
+            page_size=1,
+            limit=1,
+        ),
+        None,
+    )
+
+
+def _get_auth_token(request: Request) -> str | None:
+    """Return an Earthdata auth token when configured."""
+    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
+    return token_provider() if token_provider else None
+
+
 def evaluate_xarray_compatibility(
     concept_id: str,
     request: Request,
     group: str | None = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Test XarrayReader compatibility with a concept.
 
     Args:
@@ -344,20 +364,9 @@ def evaluate_xarray_compatibility(
     """
     logger.info("Testing XarrayReader")
 
-    client = request.app.state.client
     s3_access = request.app.state.s3_access
-    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
-    auth_token = token_provider() if token_provider else None
-
-    granule = next(
-        get_granules(
-            search_params=GranuleSearch(collection_concept_id=concept_id),
-            client=client,
-            page_size=1,
-            limit=1,
-        ),
-        None,
-    )
+    auth_token = _get_auth_token(request)
+    granule = _sample_granule(concept_id, request)
 
     if granule is None:
         raise ValueError("No assets found for XarrayReader")
@@ -390,7 +399,7 @@ def evaluate_xarray_compatibility(
 def evaluate_rasterio_compatibility(
     concept_id: str,
     request: Request,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Test MultiBaseGranuleReader compatibility with a concept.
 
     Args:
@@ -408,21 +417,10 @@ def evaluate_rasterio_compatibility(
     """
     logger.info("Testing MultiBaseGranuleReader")
 
-    client = request.app.state.client
     s3_access = request.app.state.s3_access
-    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
-    auth_token = token_provider() if token_provider else None
+    auth_token = _get_auth_token(request)
     get_s3_credentials = request.app.state.get_s3_credentials
-
-    granule = next(
-        get_granules(
-            search_params=GranuleSearch(collection_concept_id=concept_id),
-            client=client,
-            page_size=1,
-            limit=1,
-        ),
-        None,
-    )
+    granule = _sample_granule(concept_id, request)
 
     if granule is None:
         raise ValueError("No assets found for MultiBaseGranuleReader")
@@ -452,9 +450,9 @@ def _build_links(
     base_url: str,
     concept_id: str,
     backend: str,
-    first_var: Optional[str] = None,
-    group: Optional[str] = None,
-) -> List[TemplateLink]:
+    first_var: str | None = None,
+    group: str | None = None,
+) -> list[TemplateLink]:
     """Build template links for the compatibility response."""
     if backend == "xarray":
         if not first_var:
@@ -570,9 +568,9 @@ def evaluate_concept_compatibility(
 
 
 def _concept_id_param(
-    collection_concept_id: Optional[str] = None,
-    concept_id: Optional[str] = Query(default=None, include_in_schema=False),
-) -> Optional[str]:
+    collection_concept_id: str | None = None,
+    concept_id: str | None = Query(default=None, include_in_schema=False),
+) -> str | None:
     """Accept both collection_concept_id and legacy concept_id."""
     return collection_concept_id or concept_id
 
@@ -586,7 +584,7 @@ router = APIRouter()
 @router.get("/compatibility", response_model=CompatibilityResponse)
 def compatibility_check(
     request: Request,
-    concept_id: Optional[str] = Depends(_concept_id_param),
+    concept_id: str | None = Depends(_concept_id_param),
     group: XarrayGroupParam = None,
 ) -> CompatibilityResponse:
     """Check which backend is compatible with a CMR collection concept."""
