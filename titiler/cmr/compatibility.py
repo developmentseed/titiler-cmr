@@ -66,12 +66,9 @@ class CompatibilityResponse(BaseModel):
     variables: Optional[Dict[str, VariableInfo]] = None
     dimensions: Optional[Dict[str, int]] = None
     coordinates: Optional[Dict[str, CoordinateInfo]] = None
+    compatible_groups: Optional[List[str]] = None
     example_assets: Optional[Dict[str, str] | str] = None
     sample_asset_raster_info: Optional[Info] = None
-    requires_group: Optional[bool] = None
-    group_hints: Optional[List[str]] = None
-    default_group: Optional[str] = None
-    sampled_group: Optional[str] = None
     links: Optional[List[TemplateLink]] = None
 
 
@@ -304,54 +301,25 @@ def _candidate_group_paths(
         reader.close()
 
 
-def _group_hints(
+def _compatible_groups(
     src_path: str,
     auth_token: str | None = None,
     credential_provider: Any = None,
-) -> dict[str, Any]:
-    """Inspect a hierarchical asset and return lightweight xarray group hints."""
+) -> list[str]:
+    """Return candidate group paths for hierarchical assets.
+
+    This stays intentionally lightweight. It only scans HDF5 groups for datasets
+    with spatial dimension aliases and does not open each candidate with xarray.
+    """
     try:
-        group_paths = _candidate_group_paths(
+        return _candidate_group_paths(
             src_path,
             auth_token=auth_token,
             credential_provider=credential_provider,
         )
     except Exception as exc:
         logger.info("Skipping group inspection for %s: %s", src_path, exc)
-        return {
-            "requires_group": False,
-            "group_hints": [],
-            "default_group": None,
-            "sampled_group": None,
-        }
-
-    group_hints: list[str] = []
-    for group_path in group_paths:
-        try:
-            grouped_dataset = open_dataset(
-                src_path,
-                group=group_path,
-                credential_provider=credential_provider,
-                auth_token=auth_token,
-            )
-        except Exception as exc:
-            logger.info(
-                "Skipping incompatible group %s for %s: %s",
-                group_path,
-                src_path,
-                exc,
-            )
-            continue
-
-        if grouped_dataset.data_vars:
-            group_hints.append(group_path)
-
-    return {
-        "requires_group": False,
-        "group_hints": group_hints,
-        "default_group": group_hints[0] if len(group_hints) == 1 else None,
-        "sampled_group": group_hints[0] if group_hints else None,
-    }
+        return []
 
 
 def evaluate_xarray_compatibility(
@@ -407,28 +375,14 @@ def evaluate_xarray_compatibility(
         auth_token=auth_token,
     )
     result = extract_xarray_metadata(ds)
-    group_hints = _group_hints(
-        href,
-        auth_token=auth_token,
-        credential_provider=credential_provider,
-    )
 
-    sampled_group = group if group else group_hints.get("sampled_group")
-    if not group and not result["variables"] and sampled_group:
-        sampled_ds = open_dataset(
+    if not group and not result["variables"]:
+        result["compatible_groups"] = _compatible_groups(
             href,
-            group=sampled_group,
-            credential_provider=credential_provider,
             auth_token=auth_token,
+            credential_provider=credential_provider,
         )
-        result = extract_xarray_metadata(sampled_ds)
 
-    group_hints["requires_group"] = (
-        bool(group_hints["group_hints"]) and not bool(group) and not bool(ds.data_vars)
-    )
-    group_hints["sampled_group"] = sampled_group
-
-    result.update(group_hints)
     result["example_assets"] = href
     return result
 
@@ -502,7 +456,10 @@ def _build_links(
     group: Optional[str] = None,
 ) -> List[TemplateLink]:
     """Build template links for the compatibility response."""
-    if backend == "xarray" and first_var:
+    if backend == "xarray":
+        if not first_var:
+            return []
+
         prefix = "/xarray"
         extra_params = f"&variables={first_var}"
         if group:
@@ -576,7 +533,7 @@ def evaluate_concept_compatibility(
             concept_id,
             "xarray",
             first_var,
-            group or result.get("sampled_group") or result.get("default_group"),
+            group,
         )
         return CompatibilityResponse(
             concept_id=concept_id,

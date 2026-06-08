@@ -235,14 +235,14 @@ class TestGroupPruningHelpers:
 class TestXarrayCompatibility:
     """Test evaluate_xarray_compatibility function."""
 
-    @patch("titiler.cmr.compatibility._group_hints")
+    @patch("titiler.cmr.compatibility._compatible_groups")
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
     def test_xarray_success(
         self,
         mock_get_granules,
         mock_open_dataset,
-        mock_group_hints,
+        mock_compatible_groups,
     ):
         """Test successful xarray compatibility check."""
         request = _make_request()
@@ -261,19 +261,13 @@ class TestXarrayCompatibility:
         mock_ds.coords = mock_coords
         mock_ds.dims = {"x": 10, "y": 20}
         mock_open_dataset.return_value = mock_ds
-        mock_group_hints.return_value = {
-            "requires_group": False,
-            "group_hints": [],
-            "default_group": None,
-            "sampled_group": None,
-        }
+        mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
 
         assert result["backend"] == "xarray"
         assert result["example_assets"] == "https://example.com/file.nc"
-        assert result["requires_group"] is False
-        assert result["group_hints"] == []
+        assert result.get("compatible_groups") is None
         assert "temp" in result["variables"]
 
     @patch("titiler.cmr.compatibility.get_granules")
@@ -285,14 +279,14 @@ class TestXarrayCompatibility:
         with pytest.raises(ValueError, match="No assets found"):
             evaluate_xarray_compatibility("C1234-TEST", request)
 
-    @patch("titiler.cmr.compatibility._group_hints")
+    @patch("titiler.cmr.compatibility._compatible_groups")
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
     def test_xarray_uses_direct_href_when_s3_access(
         self,
         mock_get_granules,
         mock_open_dataset,
-        mock_group_hints,
+        mock_compatible_groups,
     ):
         """Test that direct_href is used when s3_access is True."""
         request = _make_request(s3_access=True)
@@ -305,27 +299,22 @@ class TestXarrayCompatibility:
         mock_ds.coords.items.return_value = []
         mock_ds.dims = {}
         mock_open_dataset.return_value = mock_ds
-        mock_group_hints.return_value = {
-            "requires_group": False,
-            "group_hints": [],
-            "default_group": None,
-            "sampled_group": None,
-        }
+        mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
 
         assert result["example_assets"] == "s3://bucket/file.nc"
 
-    @patch("titiler.cmr.compatibility._group_hints")
+    @patch("titiler.cmr.compatibility._compatible_groups")
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
-    def test_xarray_sets_group_hints_when_root_dataset_is_empty(
+    def test_xarray_lists_compatible_groups_when_root_dataset_is_empty(
         self,
         mock_get_granules,
         mock_open_dataset,
-        mock_group_hints,
+        mock_compatible_groups,
     ):
-        """Test grouped xarray compatibility metadata for hierarchical datasets."""
+        """Test grouped xarray compatibility returns group paths without nested inspection."""
         request = _make_request()
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
@@ -336,31 +325,13 @@ class TestXarrayCompatibility:
         root_ds.coords.items.return_value = []
         root_ds.dims = {}
 
-        grouped_ds = MagicMock()
-        grouped_var = MagicMock()
-        grouped_var.shape = (10, 20)
-        grouped_var.dtype = np.dtype("float32")
-        grouped_ds.data_vars = ["backscatter"]
-        grouped_ds.__getitem__ = lambda self, key: grouped_var
-        grouped_ds.coords = MagicMock()
-        grouped_ds.coords.items.return_value = []
-        grouped_ds.dims = {"x": 10, "y": 20}
-
-        mock_open_dataset.side_effect = [root_ds, grouped_ds]
-        mock_group_hints.return_value = {
-            "requires_group": False,
-            "group_hints": ["science/grids/frequencyA"],
-            "default_group": "science/grids/frequencyA",
-            "sampled_group": "science/grids/frequencyA",
-        }
+        mock_open_dataset.return_value = root_ds
+        mock_compatible_groups.return_value = ["science/grids/frequencyA"]
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
 
-        assert result["requires_group"] is True
-        assert result["group_hints"] == ["science/grids/frequencyA"]
-        assert result["default_group"] == "science/grids/frequencyA"
-        assert result["sampled_group"] == "science/grids/frequencyA"
-        assert "backscatter" in result["variables"]
+        assert result["compatible_groups"] == ["science/grids/frequencyA"]
+        assert result["variables"] == {}
 
 
 class TestRasterioCompatibility:
@@ -418,10 +389,7 @@ class TestConceptCompatibility:
             "dimensions": {"x": 10},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
-            "requires_group": False,
-            "group_hints": [],
-            "default_group": None,
-            "sampled_group": None,
+            "compatible_groups": None,
         }
 
         result = evaluate_concept_compatibility("C1234-TEST", request)
@@ -453,26 +421,23 @@ class TestConceptCompatibility:
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
-            "requires_group": False,
-            "group_hints": [],
-            "default_group": None,
-            "sampled_group": None,
+            "compatible_groups": None,
         }
 
         result = evaluate_concept_compatibility("C1234-TEST", request)
 
         tilejson_link = next(link for link in result.links if link.rel == "tilejson")
-        assert "variable=sea_ice" in tilejson_link.href
+        assert "variables=sea_ice" in tilejson_link.href
         assert "{temporal}" in tilejson_link.href
         assert "/xarray/" in tilejson_link.href
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
     @patch("titiler.cmr.compatibility.get_collection")
-    def test_xarray_links_include_sampled_group(
+    def test_xarray_links_include_explicit_group(
         self, mock_get_collection, mock_xarray, mock_rasterio
     ):
-        """Test that xarray links include the sampled group when metadata came from it."""
+        """Test that xarray links include the explicit group parameter."""
         request = _make_request()
 
         mock_collection = MagicMock()
@@ -485,16 +450,43 @@ class TestConceptCompatibility:
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
-            "requires_group": True,
-            "group_hints": ["science/grids/frequencyA"],
-            "default_group": None,
-            "sampled_group": "science/grids/frequencyA",
+            "compatible_groups": None,
+        }
+
+        result = evaluate_concept_compatibility(
+            "C1234-TEST", request, group="science/grids/frequencyA"
+        )
+
+        tilejson_link = next(link for link in result.links if link.rel == "tilejson")
+        assert "group=science/grids/frequencyA" in tilejson_link.href
+        mock_rasterio.assert_not_called()
+
+    @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
+    @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
+    @patch("titiler.cmr.compatibility.get_collection")
+    def test_xarray_returns_no_links_without_variable_inspection(
+        self, mock_get_collection, mock_xarray, mock_rasterio
+    ):
+        """Test grouped root responses do not fabricate xarray links."""
+        request = _make_request()
+
+        mock_collection = MagicMock()
+        mock_collection.temporal_extents = []
+        mock_get_collection.return_value = mock_collection
+
+        mock_xarray.return_value = {
+            "backend": "xarray",
+            "variables": {},
+            "dimensions": {},
+            "coordinates": {},
+            "example_assets": "https://example.com/file.nc",
+            "compatible_groups": ["science/grids/frequencyA"],
         }
 
         result = evaluate_concept_compatibility("C1234-TEST", request)
 
-        tilejson_link = next(link for link in result.links if link.rel == "tilejson")
-        assert "group=science/grids/frequencyA" in tilejson_link.href
+        assert result.backend == "xarray"
+        assert result.links == []
         mock_rasterio.assert_not_called()
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
@@ -579,7 +571,7 @@ class TestCompatibilityEndpoint:
             concept_id="C1234-TEST",
             backend="xarray",
             datetime=[],
-            sampled_group="science/grids/frequencyA",
+            compatible_groups=["science/grids/frequencyA"],
             links=[],
         )
 
