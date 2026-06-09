@@ -459,10 +459,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#explore-the-collection-using-the-endpoint" class="md-nav__link">
+  <a href="#explore-the-collection-using" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Explore the collection using the endpoint
+        Explore the collection using
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpret-the-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpret the response
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect-a-specific-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect a specific group
       
     </span>
   </a>
@@ -1186,10 +1208,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#explore-the-collection-using-the-endpoint" class="md-nav__link">
+  <a href="#explore-the-collection-using" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Explore the collection using the endpoint
+        Explore the collection using
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpret-the-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpret the response
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect-a-specific-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect a specific group
       
     </span>
   </a>
@@ -1938,20 +1982,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=cdeef4c6-75b0-44d9-90d4-c850b5d8908a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=intro">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="how-to-use-the-compatibility-api">How to use the Compatibility API<a class="anchor-link" href="#how-to-use-the-compatibility-api">¶</a></h1><p>The <code>/compatibility</code> endpoint displays information about the collection and returns some details about a sample granule. The output is helpful for understanding the structure of the collection and the granules so that you can craft the right set of parameters for visualization or statistics requests.</p>
-<p>This notebook demonstrates how to use the compatibility endpoint for th <a href="https://cmr.earthdata.nasa.gov/search/concepts/C1996881146-POCLOUD">GHRSST Level 4 MUR Global Foundation Sea Surface Temperature Analysis (v4.1)</a> dataset.</p>
+<h1 id="how-to-use-the-compatibility-api">How to use the Compatibility API<a class="anchor-link" href="#how-to-use-the-compatibility-api">¶</a></h1><p>The <code>/compatibility</code> endpoint helps you understand how to call TiTiler-CMR for a collection. For hierarchical HDF5 and NetCDF datasets it can return a lightweight list of candidate <code>group</code> paths from the root request, then let you inspect variables by making a follow-up request with <code>group=...</code>.</p>
+<p>This notebook demonstrates that workflow for the <a href="https://www.earthdata.nasa.gov/data/catalog/asf-nisar-l2-gcov-beta-v1-1">NISAR Beta Geocoded Polarimetric Covariance (GCOV)</a> collection, which is a known example of a hierarchical HDF5 dataset that needs a <code>group</code> parameter for xarray requests.</p>
 <h2 id="setup">Setup<a class="anchor-link" href="#setup">¶</a></h2>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7d015182-5347-437a-8b66-d7d62212f0e3">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=setup">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1969,24 +2013,24 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">earthaccess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">httpx2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">httpx</span>
 
 <span class="n">titiler_endpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span>
-    <span class="s2">"TITILER_CMR_ENDPOINT"</span><span class="p">,</span> <span class="s2">"https://openveda.cloud/api/titiler-cmr"</span>
+    <span class="s2">"TITILER_CMR_ENDPOINT"</span><span class="p">,</span> <span class="s2">"https://staging.openveda.cloud/api/titiler-cmr"</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">import os
+<div class="clipboard-copy-txt" id="cell-1">import json
+import os
 
-import json
 import earthaccess
 import httpx2 as httpx
 
 titiler_endpoint = os.getenv(
-    "TITILER_CMR_ENDPOINT", "https://openveda.cloud/api/titiler-cmr"
+    "TITILER_CMR_ENDPOINT", "https://staging.openveda.cloud/api/titiler-cmr"
 )</div>
 </div>
 </div>
@@ -1994,18 +2038,18 @@ titiler_endpoint = os.getenv(
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d375b5b7-9322-4f1e-8859-000ef8ac4898">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=identify-dataset">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="identify-the-dataset">Identify the dataset<a class="anchor-link" href="#identify-the-dataset">¶</a></h2><p>You can find the MUR SST dataset using the <code>earthaccess.search_datasets</code> function.</p>
+<h2 id="identify-the-dataset">Identify the dataset<a class="anchor-link" href="#identify-the-dataset">¶</a></h2><p>You can find the collection with <code>earthaccess.search_datasets</code>.</p>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f3fcc9cd-6105-42fc-98bf-2de40910a79c">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=search-dataset">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2023,21 +2067,21 @@ titiler_endpoint = os.getenv(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">datasets</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_datasets</span><span class="p">(</span><span class="n">concept_id</span><span class="o">=</span><span class="s2">"C1996881146-POCLOUD"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">datasets</span> <span class="o">=</span> <span class="n">earthaccess</span><span class="o">.</span><span class="n">search_datasets</span><span class="p">(</span><span class="n">concept_id</span><span class="o">=</span><span class="s2">"C3622214170-ASF"</span><span class="p">)</span>
 <span class="n">ds</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">collection_concept_id</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">][</span><span class="s2">"concept-id"</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"CollectionConcept-Id: "</span><span class="p">,</span> <span class="n">collection_concept_id</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Abstract: "</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"umm"</span><span class="p">][</span><span class="s2">"Abstract"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"CollectionConcept-Id:"</span><span class="p">,</span> <span class="n">collection_concept_id</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Short name:"</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"umm"</span><span class="p">][</span><span class="s2">"ShortName"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Version:"</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"umm"</span><span class="p">][</span><span class="s2">"Version"</span><span class="p">])</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">datasets = earthaccess.search_datasets(concept_id="C1996881146-POCLOUD")
+<div class="clipboard-copy-txt" id="cell-2">datasets = earthaccess.search_datasets(concept_id="C3622214170-ASF")
 ds = datasets[0]
 
 collection_concept_id = ds["meta"]["concept-id"]
-print("CollectionConcept-Id: ", collection_concept_id)
-
-print("Abstract: ", ds["umm"]["Abstract"])</div>
+print("CollectionConcept-Id:", collection_concept_id)
+print("Short name:", ds["umm"]["ShortName"])
+print("Version:", ds["umm"]["Version"])</div>
 </div>
 </div>
 </div>
@@ -2049,8 +2093,9 @@ print("Abstract: ", ds["umm"]["Abstract"])</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>CollectionConcept-Id:  C1996881146-POCLOUD
-Abstract:  A Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface temperature analysis produced as a retrospective dataset (four day latency) and near-real-time dataset (one day latency) at the JPL Physical Oceanography DAAC using wavelets as basis functions in an optimal interpolation approach on a global 0.01 degree grid. The version 4 Multiscale Ultrahigh Resolution (MUR) L4 analysis is based upon nighttime GHRSST L2P skin and subskin SST observations from several instruments including the NASA Advanced Microwave Scanning Radiometer-EOS (AMSR-E), the JAXA Advanced Microwave Scanning Radiometer 2 on GCOM-W1, the Moderate Resolution Imaging Spectroradiometers (MODIS) on the NASA Aqua and Terra platforms, the US Navy microwave WindSat radiometer, the Advanced Very High Resolution Radiometer (AVHRR) on several NOAA satellites, and in situ SST observations from the NOAA iQuam project. The ice concentration data are from the archives at the EUMETSAT Ocean and Sea Ice Satellite Application Facility (OSI SAF) High Latitude Processing Center and are also used for an improved SST parameterization for the high-latitudes.  The dataset also contains additional variables for some granules including the SST anomaly (variable sst_anomaly) derived from a MUR climatology, and the temporal distance in hours to the nearest IR measurement for each pixel (variable dt_1km_data). Variable dt_1km_data first appears in the time series on October 4, 2015,  while sst_anomaly starts July 23, 2019.  This dataset was originally funded by the NASA MEaSUREs program (http://earthdata.nasa.gov/our-community/community-data-system-programs/measures-projects), and created by a team led by Dr. Toshio M. Chin from JPL. It adheres to the GHRSST Data Processing Specification (GDS) version 2 format specifications. Use the file global metadata "history:" attribute to determine if a granule is near-realtime or retrospective.
+<pre>CollectionConcept-Id: C3622214170-ASF
+Short name: NISAR_L2_GCOV_BETA_V1
+Version: 1
 </pre>
 </div>
 </div>
@@ -2058,18 +2103,18 @@ Abstract:  A Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2a4cffa6-0059-4033-a708-db60d743f0e3">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=explore-collection">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="explore-the-collection-using-the-compatibility-endpoint">Explore the collection using the <code>/compatibility</code> endpoint<a class="anchor-link" href="#explore-the-collection-using-the-compatibility-endpoint">¶</a></h2>
+<h2 id="explore-the-collection-using-compatibility">Explore the collection using <code>/compatibility</code><a class="anchor-link" href="#explore-the-collection-using-compatibility">¶</a></h2>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1bde609a-26df-4f35-b7e1-9e1922e87808">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=compatibility-request">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2114,122 +2159,39 @@ print(json.dumps(compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "concept_id": "C1996881146-POCLOUD",
+  "concept_id": "C3622214170-ASF",
   "backend": "xarray",
   "datetime": [
     {
       "RangeDateTimes": [
         {
-          "BeginningDateTime": "2002-05-31T21:00:00.000Z"
+          "BeginningDateTime": "2025-10-01T00:00:00.000Z"
         }
-      ]
+      ],
+      "EndsAtPresentFlag": true
     }
   ],
-  "variables": {
-    "analysed_sst": {
-      "shape": [
-        1,
-        17999,
-        36000
-      ],
-      "dtype": "float64",
-      "min": 271.34999999999997,
-      "max": 305.604,
-      "mean": 285.80125534381017,
-      "p01": 271.34999999999997,
-      "p05": 271.34999999999997,
-      "p95": 302.409,
-      "p99": 303.41768999999994
-    },
-    "analysis_error": {
-      "shape": [
-        1,
-        17999,
-        36000
-      ],
-      "dtype": "float64",
-      "min": 0.34,
-      "max": 0.42,
-      "mean": 0.3792270669454179,
-      "p01": 0.34,
-      "p05": 0.35000000000000003,
-      "p95": 0.41000000000000003,
-      "p99": 0.41000000000000003
-    },
-    "mask": {
-      "shape": [
-        1,
-        17999,
-        36000
-      ],
-      "dtype": "float32",
-      "min": 1.0,
-      "max": 13.0,
-      "mean": 2.5547287464141846,
-      "p01": 1.0,
-      "p05": 1.0,
-      "p95": 9.0,
-      "p99": 9.0
-    },
-    "sea_ice_fraction": {
-      "shape": [
-        1,
-        17999,
-        36000
-      ],
-      "dtype": "float64",
-      "min": 0.0,
-      "max": 1.0,
-      "mean": 0.4819458534308386,
-      "p01": 0.0,
-      "p05": 0.0,
-      "p95": 1.0,
-      "p99": 1.0
-    }
-  },
-  "dimensions": {
-    "time": 1,
-    "lat": 17999,
-    "lon": 36000
-  },
-  "coordinates": {
-    "time": {
-      "size": 1,
-      "dtype": "datetime64[ns]",
-      "min": null,
-      "max": null
-    },
-    "lat": {
-      "size": 17999,
-      "dtype": "float32",
-      "min": -89.98999786376953,
-      "max": 89.98999786376953
-    },
-    "lon": {
-      "size": 36000,
-      "dtype": "float32",
-      "min": -179.99000549316406,
-      "max": 180.0
-    }
-  },
-  "example_assets": "s3://podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20020601090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc",
+  "variables": {},
+  "dimensions": {},
+  "coordinates": {},
+  "example_assets": "s3://sds-n-cumulus-prod-nisar-products/NISAR_L2_GCOV_BETA_V1/NISAR_L2_PR_GCOV_002_109_D_063_4005_DHDH_A_20251012T182508_20251012T182531_X05010_N_P_J_001/NISAR_L2_PR_GCOV_002_109_D_063_4005_DHDH_A_20251012T182508_20251012T182531_X05010_N_P_J_001.h5",
   "sample_asset_raster_info": null,
   "links": [
     {
       "rel": "tilejson",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
+      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C3622214170-ASF&amp;temporal={temporal}",
       "title": "TileJSON",
       "type": "application/json"
     },
     {
       "rel": "map",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/map.html?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
+      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/map.html?collection_concept_id=C3622214170-ASF&amp;temporal={temporal}",
       "title": "Map viewer",
       "type": "text/html"
     },
     {
       "rel": "tile",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1996881146-POCLOUD&amp;variable=analysed_sst&amp;temporal={temporal}",
+      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C3622214170-ASF&amp;temporal={temporal}",
       "title": "Map tile",
       "type": "image/png"
     }
@@ -2242,14 +2204,256 @@ print(json.dumps(compatibility_response, indent=2))</div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=04014a32-9c11-4b75-b40a-e5ad4efd686b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=interpret-response">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The details from the sample granule show that it is a NetCDF file with four variables (<code>analysed_sst</code>, <code>analysis_error</code>, <code>mask</code>, and <code>sea_ice_fraction</code>) and each contains an array with a single time coordinate. The <code>datetime</code> key shows the reported temporal range from CMR which indicates that the dataset has granules from <code>2008-07-23</code> to present. For each variable several summary statistics are available to help you craft min/max values for the <code>rescale</code> parameter.</p>
-<p>This information is handy for generating tiles via the tiles API, which you can learn more about in <a href="../tiling_api_xarray_backend_example">the Tiles API Documentation</a>.</p>
+<h2 id="interpret-the-response">Interpret the response<a class="anchor-link" href="#interpret-the-response">¶</a></h2><p>For hierarchical datasets, a root <code>/compatibility</code> request stays lightweight. The most important field is:</p>
+<ul>
+<li><code>compatible_groups</code>: candidate group paths to try in a follow-up request</li>
+</ul>
+<p>At this stage the response may not include variable metadata or xarray links yet, because TiTiler-CMR has not inspected a nested group.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=summarize-response">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">compatible_groups</span> <span class="o">=</span> <span class="n">compatibility_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"compatible_groups"</span><span class="p">,</span> <span class="p">[])</span>
+<span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">compatibility_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"variables"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">tilejson_link</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="p">(</span>
+        <span class="n">link</span><span class="p">[</span><span class="s2">"href"</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">compatibility_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"links"</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">link</span><span class="p">[</span><span class="s2">"rel"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"tilejson"</span>
+    <span class="p">),</span>
+    <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"compatible_groups:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">compatible_groups</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">" -"</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-4">compatible_groups = compatibility_response.get("compatible_groups", [])
+variables = list((compatibility_response.get("variables") or {}).keys())
+tilejson_link = next(
+    (
+        link["href"]
+        for link in compatibility_response.get("links", [])
+        if link["rel"] == "tilejson"
+    ),
+    None,
+)
+
+print("compatible_groups:")
+for group in compatible_groups:
+    print(" -", group)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>compatible_groups:
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=inspect-explicit-group">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="inspect-a-specific-group">Inspect a specific group<a class="anchor-link" href="#inspect-a-specific-group">¶</a></h2><p>Once you choose a group from <code>compatible_groups</code>, make a follow-up <code>/compatibility</code> request with <code>group=...</code> to inspect variables and get xarray links.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=compatibility-request-with-group">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">selected_group</span> <span class="o">=</span> <span class="n">compatible_groups</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">grouped_compatibility_response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">titiler_endpoint</span><span class="si">}</span><span class="s2">/compatibility"</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"collection_concept_id"</span><span class="p">:</span> <span class="n">collection_concept_id</span><span class="p">,</span>
+        <span class="s2">"group"</span><span class="p">:</span> <span class="n">selected_group</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">grouped_compatibility_response</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-5">selected_group = compatible_groups[1]
+
+grouped_compatibility_response = httpx.get(
+    f"{titiler_endpoint}/compatibility",
+    params={
+        "collection_concept_id": collection_concept_id,
+        "group": selected_group,
+    },
+    timeout=30,
+).json()
+
+print(json.dumps(grouped_compatibility_response, indent=2))</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">IndexError</span>                                Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[5], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> selected_group <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">compatible_groups</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">]</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> grouped_compatibility_response <span style="color: rgb(98,98,98)">=</span> httpx<span style="color: rgb(98,98,98)">.</span>get(
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>titiler_endpoint<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/compatibility</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     params<span style="color: rgb(98,98,98)">=</span>{
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span>     timeout<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">30</span>,
+<span class="ansi-green-intense-fg ansi-bold">     10</span> )<span style="color: rgb(98,98,98)">.</span>json()
+<span class="ansi-green-intense-fg ansi-bold">     12</span> <span style="color: rgb(0,135,0)">print</span>(json<span style="color: rgb(98,98,98)">.</span>dumps(grouped_compatibility_response, indent<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">2</span>))
+
+<span class="ansi-red-fg">IndexError</span>: list index out of range</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=summarize-grouped-response">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">group_variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">grouped_compatibility_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"variables"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">group_tilejson_link</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="n">link</span><span class="p">[</span><span class="s2">"href"</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">grouped_compatibility_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"links"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="n">link</span><span class="p">[</span><span class="s2">"rel"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"tilejson"</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"selected group:"</span><span class="p">,</span> <span class="n">selected_group</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variables in selected group (first 10):"</span><span class="p">,</span> <span class="n">group_variables</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"tilejson link for selected group:"</span><span class="p">,</span> <span class="n">group_tilejson_link</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-6">group_variables = list((grouped_compatibility_response.get("variables") or {}).keys())
+group_tilejson_link = next(
+    link["href"]
+    for link in grouped_compatibility_response.get("links", [])
+    if link["rel"] == "tilejson"
+)
+
+print("selected group:", selected_group)
+print("variables in selected group (first 10):", group_variables[:10])
+print("tilejson link for selected group:", group_tilejson_link)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[6], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> group_variables <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">list</span>((<span class="ansi-yellow-bg">grouped_compatibility_response</span><span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">variables</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> {})<span style="color: rgb(98,98,98)">.</span>keys())
+<span class="ansi-green-intense-fg ansi-bold">      2</span> group_tilejson_link <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">next</span>(
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     link[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">href</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> link <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> grouped_compatibility_response<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">links</span><span style="color: rgb(175,0,0)">"</span>, [])
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> link[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">rel</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tilejson</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> )
+<span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">selected group:</span><span style="color: rgb(175,0,0)">"</span>, selected_group)
+
+<span class="ansi-red-fg">NameError</span>: name 'grouped_compatibility_response' is not defined</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=what-to-do-next">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>For a grouped dataset like NISAR GCOV, the workflow is:</p>
+<ol>
+<li>Call <code>/compatibility</code> without <code>group</code> to get candidate <code>compatible_groups</code>.</li>
+<li>Choose one of those group paths.</li>
+<li>Call <code>/compatibility</code> again with <code>group=...</code> to inspect variables and dimensions for that group.</li>
+<li>Pick a variable name from <code>variables</code>.</li>
+<li>Reuse the returned xarray links from the grouped response.</li>
+</ol>
+<p>That keeps the root compatibility response lightweight while still giving you a practical path to the next xarray request.</p>
 </div>
 </div>
 </div>

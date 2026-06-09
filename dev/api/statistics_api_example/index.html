@@ -2102,7 +2102,91 @@ print(json.dumps(r, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "detail": "CMR granule search timed out"
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -20.79973248834736,
+              83.55979308678764
+            ],
+            [
+              -20.79973248834736,
+              75.0115425216471
+            ],
+            [
+              14.483337068956956,
+              75.0115425216471
+            ],
+            [
+              14.483337068956956,
+              83.55979308678764
+            ],
+            [
+              -20.79973248834736,
+              83.55979308678764
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "statistics": {
+          "b1": {
+            "min": 12.448402404785156,
+            "max": 30.638206481933594,
+            "mean": 25.00276756286621,
+            "count": 236.0,
+            "sum": 5900.6533203125,
+            "std": 3.4685499803764728,
+            "median": 25.134218215942383,
+            "majority": 12.448402404785156,
+            "minority": 12.448402404785156,
+            "unique": 236.0,
+            "histogram": [
+              [
+                2,
+                1,
+                0,
+                6,
+                33,
+                39,
+                37,
+                42,
+                32,
+                44
+              ],
+              [
+                12.448402404785156,
+                14.267382621765137,
+                16.086362838745117,
+                17.905344009399414,
+                19.724323272705078,
+                21.543304443359375,
+                23.362285614013672,
+                25.18126678466797,
+                27.000246047973633,
+                28.81922721862793,
+                30.638206481933594
+              ]
+            ],
+            "valid_percent": 95.16,
+            "masked_pixels": 12.0,
+            "valid_pixels": 236.0,
+            "description": "0",
+            "percentile_2": 18.29606056213379,
+            "percentile_98": 30.242084503173828
+          }
+        },
+        "used_assets": [
+          "TRPSCRO3M3D.1:TROPESS_reanalysis_mon_o3_2021.nc"
+        ]
+      }
+    }
+  ]
 }
 </pre>
 </div>
