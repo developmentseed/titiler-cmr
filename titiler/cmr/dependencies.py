@@ -172,7 +172,7 @@ def _translate_legacy_expr(expression: str, names: list[str]) -> str:
     in `names`.
     """
     identifiers = re.findall(r"\b([a-zA-Z_]\w*)\b(?!\s*\()", expression)
-    new_style = re.compile(r"^b[1-9][0-9]*$", re.IGNORECASE)
+    new_style = re.compile(r"^b[1-9][0-9]*$")
     legacy = list(dict.fromkeys(n for n in identifiers if not new_style.match(n)))
     if not legacy:
         return expression
@@ -211,7 +211,7 @@ class CMRAssetsExprParams(AssetsExprParams):
             return
 
         identifiers = re.findall(r"\b([a-zA-Z_]\w*)\b(?!\s*\()", self.expression)
-        new_style_pattern = re.compile(r"^b[1-9][0-9]*$", re.IGNORECASE)
+        new_style_pattern = re.compile(r"^b[1-9][0-9]*$")
         asset_names = list(
             dict.fromkeys(
                 name for name in identifiers if not new_style_pattern.match(name)

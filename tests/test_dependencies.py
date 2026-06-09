@@ -148,6 +148,15 @@ def test_cmr_assets_expr_params_legacy_with_assets():
     assert params.expression == "(b2-b1)/(b2+b1)"
 
 
+def test_cmr_assets_expr_params_legacy_with_two_digit_band_names():
+    """Uppercase asset names like B11 should not be mistaken for b11 band refs."""
+    params = CMRAssetsExprParams(
+        assets=["B11", "B12"], expression="(B11-B12)/(B11+B12)"
+    )
+    assert list(params.assets) == ["B11", "B12"]
+    assert params.expression == "(b1-b2)/(b1+b2)"
+
+
 def test_cmr_assets_expr_params_new_style_passthrough():
     """New-style expression (b1, b2, ...) passes through unchanged."""
     params = CMRAssetsExprParams(assets=["B04", "B05"], expression="(b1-b2)/(b1+b2)")
