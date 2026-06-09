@@ -31,6 +31,12 @@ class _PathReader:
     def __init__(self, path: Path):
         self._path = path
 
+    def __enter__(self) -> "_PathReader":
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> bool:
+        return False
+
     def __fspath__(self) -> str:
         return str(self._path)
 
@@ -107,17 +113,6 @@ def _make_granule(external_href="https://example.com/file.nc") -> Granule:
     )
 
 
-def _make_xarray_dataset(
-    data_vars: dict[str, tuple[tuple[str, ...], np.ndarray]],
-    coords: dict[str, np.ndarray] | None = None,
-) -> xr.Dataset:
-    """Create a small in-memory xarray dataset for tests."""
-    return xr.Dataset(
-        data_vars={name: (dims, values) for name, (dims, values) in data_vars.items()},
-        coords=coords,
-    )
-
-
 def _write_test_hdf5(path: Path) -> Path:
     """Create a real HDF5 hierarchy with spatial and metadata groups."""
     with h5py.File(path, "w") as file_handle:
@@ -186,7 +181,7 @@ class TestExtractXarrayMetadata:
 
     def test_extract_basic_metadata(self):
         """Test extracting metadata from a simple dataset."""
-        dataset = _make_xarray_dataset(
+        dataset = xr.Dataset(
             {
                 "temperature": (
                     ("time", "lat", "lon"),
@@ -208,7 +203,7 @@ class TestExtractXarrayMetadata:
 
     def test_extract_metadata_with_non_numeric_coord(self):
         """Test extracting metadata with non-numeric coordinate."""
-        dataset = _make_xarray_dataset(
+        dataset = xr.Dataset(
             {"data": (("labels",), np.arange(10, dtype=np.float32))},
             coords={"labels": np.array([f"label-{i}" for i in range(10)])},
         )
@@ -306,7 +301,7 @@ class TestXarrayCompatibility:
         request = _make_request()
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-        mock_open_dataset.return_value = _make_xarray_dataset(
+        mock_open_dataset.return_value = xr.Dataset(
             {"temp": (("x", "y"), np.arange(200, dtype=np.float32).reshape(10, 20))}
         )
         mock_compatible_groups.return_value = []
@@ -340,7 +335,7 @@ class TestXarrayCompatibility:
         request = _make_request(s3_access=True)
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-        mock_open_dataset.return_value = _make_xarray_dataset({})
+        mock_open_dataset.return_value = xr.Dataset()
         mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
@@ -360,7 +355,7 @@ class TestXarrayCompatibility:
         request = _make_request()
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-        mock_open_dataset.return_value = _make_xarray_dataset({})
+        mock_open_dataset.return_value = xr.Dataset()
         mock_compatible_groups.return_value = ["science/grids/frequencyA"]
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)

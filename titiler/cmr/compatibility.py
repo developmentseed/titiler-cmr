@@ -262,44 +262,39 @@ def _candidate_group_paths(
     credential_provider: Any = None,
 ) -> list[str]:
     """Return likely xarray group paths, preferring spatial non-metadata groups."""
-    reader = _make_blockstore_reader(
-        src_path,
-        auth_token=auth_token,
-        credential_provider=credential_provider,
-    )
-    try:
-        with h5py.File(reader, "r") as file_handle:
-            all_group_paths: list[str] = []
-            spatial_group_paths: list[str] = []
-            spatial_metadata_group_paths: list[str] = []
+    all_group_paths: list[str] = []
+    spatial_group_paths: list[str] = []
+    spatial_metadata_group_paths: list[str] = []
 
-            def visitor(name: str, obj: Any) -> None:
-                if not name or not isinstance(obj, h5py.Group):
-                    return
+    def visitor(name: str, obj: Any) -> None:
+        if not (
+            name
+            and isinstance(obj, h5py.Group)
+            and any(isinstance(child, h5py.Dataset) for child in obj.values())
+        ):
+            return
 
-                if not any(isinstance(child, h5py.Dataset) for child in obj.values()):
-                    return
+        all_group_paths.append(name)
 
-                all_group_paths.append(name)
+        if not _group_has_spatial_dims(obj):
+            return
 
-                if not _group_has_spatial_dims(obj):
-                    return
+        if "/metadata/" in f"/{name.strip('/')}/":
+            spatial_metadata_group_paths.append(name)
+        else:
+            spatial_group_paths.append(name)
 
-                normalized_name = f"/{name.strip('/')}/"
-                if "/metadata/" in normalized_name:
-                    spatial_metadata_group_paths.append(name)
-                else:
-                    spatial_group_paths.append(name)
+    with (
+        _make_blockstore_reader(
+            src_path,
+            auth_token=auth_token,
+            credential_provider=credential_provider,
+        ) as reader,
+        h5py.File(reader, "r") as file_handle,
+    ):
+        file_handle.visititems(visitor)
 
-            file_handle.visititems(visitor)
-
-            if spatial_group_paths:
-                return spatial_group_paths
-            if spatial_metadata_group_paths:
-                return spatial_metadata_group_paths
-            return all_group_paths
-    finally:
-        reader.close()
+    return spatial_group_paths or spatial_metadata_group_paths or all_group_paths
 
 
 def _compatible_groups(
