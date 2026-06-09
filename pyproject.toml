@@ -92,7 +92,7 @@ dev = [
     "uvicorn>=0.41.0",
 ]
 deployment = [
-    "aws-cdk-lib~=2.177.0",
+    "aws-cdk-lib>=2.258.1",
     "boto3>=1.34.145",
     "constructs>=10.4.2",
     "pydantic-settings~=2.0",
