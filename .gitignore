@@ -102,6 +102,7 @@ ENV/
 
 # AWS CDK
 cdk.out/
+cdk.out.test/
 node_modules
 
 notebooks/
