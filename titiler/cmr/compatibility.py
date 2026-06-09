@@ -1,41 +1,51 @@
 """titiler.cmr.compatibility: Compatibility testing utilities."""
 
-from typing import Any, Dict, List, Literal, Optional
+import urllib.parse
+from typing import Any, Literal, TypeAlias, cast
 
+import h5py
 import numpy as np
 from fastapi import APIRouter, Depends, HTTPException, Query
+from obspec_utils.readers import BlockStoreReader
+from obstore import store
 from pydantic import BaseModel
 from rio_tiler.models import Info
 from starlette.requests import Request
+from titiler.xarray.dependencies import XarrayIOParams
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
 from titiler.cmr.models import GranuleSearch
 from titiler.cmr.query import get_collection, get_granules
-from titiler.cmr.reader import MultiBaseGranuleReader, open_dataset
+from titiler.cmr.reader import (
+    X_DIM_NAMES,
+    Y_DIM_NAMES,
+    MultiBaseGranuleReader,
+    open_dataset,
+)
 
 
 class VariableInfo(BaseModel):
-    """Metadata for a single xarray variable"""
+    """Metadata for a single xarray variable."""
 
-    shape: List[int]
+    shape: list[int]
     dtype: str
-    min: Optional[float] = None
-    max: Optional[float] = None
-    mean: Optional[float] = None
-    p01: Optional[float] = None
-    p05: Optional[float] = None
-    p95: Optional[float] = None
-    p99: Optional[float] = None
+    min: float | None = None
+    max: float | None = None
+    mean: float | None = None
+    p01: float | None = None
+    p05: float | None = None
+    p95: float | None = None
+    p99: float | None = None
 
 
 class CoordinateInfo(BaseModel):
-    """Metadata for a single xarray coordinate"""
+    """Metadata for a single xarray coordinate."""
 
     size: int
     dtype: str
-    min: Optional[float] = None
-    max: Optional[float] = None
+    min: float | None = None
+    max: float | None = None
 
 
 class TemplateLink(BaseModel):
@@ -43,27 +53,28 @@ class TemplateLink(BaseModel):
 
     rel: str
     href: str
-    title: Optional[str] = None
-    type: Optional[str] = None
+    title: str | None = None
+    type: str | None = None
 
 
 class CompatibilityResponse(BaseModel):
-    """Compatibility endpoint response model"""
+    """Compatibility endpoint response model."""
 
     concept_id: str
     backend: Literal["rasterio", "xarray"]
-    datetime: List[Dict[str, Any]]
-    variables: Optional[Dict[str, VariableInfo]] = None
-    dimensions: Optional[Dict[str, int]] = None
-    coordinates: Optional[Dict[str, CoordinateInfo]] = None
-    example_assets: Optional[Dict[str, str] | str] = None
-    sample_asset_raster_info: Optional[Info] = None
-    links: Optional[List[TemplateLink]] = None
+    datetime: list[dict[str, Any]]
+    variables: dict[str, VariableInfo] | None = None
+    dimensions: dict[str, int] | None = None
+    coordinates: dict[str, CoordinateInfo] | None = None
+    compatible_groups: list[str] | None = None
+    example_assets: dict[str, str] | str | None = None
+    sample_asset_raster_info: Info | None = None
+    links: list[TemplateLink] | None = None
 
 
 def extract_xarray_metadata(
     ds: Any, max_sample_size: float = 100_000.0
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Extract comprehensive metadata from an xarray Dataset.
 
     For large arrays, uses sampling along each dimension to avoid memory issues.
@@ -78,12 +89,12 @@ def extract_xarray_metadata(
     """
     variables = {}
     for var in ds.data_vars:
-        var_info: Dict[str, Any] = {
+        var_info: dict[str, Any] = {
             "shape": list(ds[var].shape),
             "dtype": str(ds[var].dtype),
         }
 
-        if ds[var].dtype.kind in ["i", "f", "u"]:
+        if ds[var].dtype.kind in {"i", "f", "u"}:
             try:
                 var_data = ds[var]
                 total_size = var_data.size
@@ -147,7 +158,7 @@ def extract_xarray_metadata(
             "dtype": str(coord_data.dtype),
         }
 
-        if coord_data.dtype.kind in ["i", "f", "u"]:
+        if coord_data.dtype.kind in {"i", "f", "u"}:
             try:
                 coord_info["min"] = float(coord_data.min())
                 coord_info["max"] = float(coord_data.max())
@@ -157,16 +168,180 @@ def extract_xarray_metadata(
 
     return {
         "variables": variables,
-        "dimensions": dict(ds.dims),
+        "dimensions": dict(ds.sizes),
         "coordinates": coordinates,
         "backend": "xarray",
     }
 
 
+def _get_credential_provider(granule: Any, request: Request) -> Any:
+    """Return a credential provider for a granule when direct S3 access is enabled."""
+    if not request.app.state.s3_access:
+        return None
+
+    get_s3_credentials = request.app.state.get_s3_credentials
+    if get_s3_credentials is None:
+        return None
+
+    try:
+        return get_s3_credentials(granule.s3_credentials_endpoint)
+    except S3CredentialsEndpointMissing:
+        logger.warning(
+            "No S3 credentials endpoint found for granule %s; falling back to token auth",
+            granule.id,
+        )
+        return None
+
+
+def _make_blockstore_reader(
+    src_path: str,
+    auth_token: str | None = None,
+    credential_provider: Any = None,
+) -> BlockStoreReader:
+    """Create a block-based reader for a remote NetCDF/HDF5 asset."""
+
+    parsed = urllib.parse.urlparse(src_path)
+    store_root = f"{parsed.scheme}://{parsed.netloc}"
+
+    if credential_provider is not None:
+        object_store = store.from_url(
+            store_root,
+            credential_provider=credential_provider,
+        )
+    elif auth_token:
+        object_store = store.from_url(
+            store_root,
+            client_options={
+                "default_headers": {"Authorization": f"Bearer {auth_token}"}
+            },
+        )
+    else:
+        object_store = store.from_url(store_root)
+
+    return BlockStoreReader(object_store, parsed.path, block_size=8 * 1024**2)
+
+
+def _dataset_dim_scale_names(dataset: Any) -> set[str]:
+    """Return all attached HDF5 dimension-scale names for a dataset."""
+    dim_names: set[str] = set()
+
+    for axis in range(dataset.ndim):
+        try:
+            scales = dataset.dims[axis].values()
+        except Exception:
+            continue
+
+        for scale in scales:
+            scale_name = getattr(scale, "name", "")
+            if scale_name:
+                dim_names.add(scale_name.rsplit("/", 1)[-1])
+
+    return dim_names
+
+
+X_DIM_ALIASES = set(X_DIM_NAMES)
+Y_DIM_ALIASES = set(Y_DIM_NAMES)
+
+
+def _group_has_spatial_dims(group: Any) -> bool:
+    """Return True when a group contains a dataset with both x and y dimension aliases."""
+    for child in group.values():
+        if not isinstance(child, h5py.Dataset):
+            continue
+
+        dim_names = _dataset_dim_scale_names(child)
+        if dim_names & X_DIM_ALIASES and dim_names & Y_DIM_ALIASES:
+            return True
+
+    return False
+
+
+def _candidate_group_paths(
+    src_path: str,
+    auth_token: str | None = None,
+    credential_provider: Any = None,
+) -> list[str]:
+    """Return likely xarray group paths, preferring spatial non-metadata groups."""
+    all_group_paths: list[str] = []
+    spatial_group_paths: list[str] = []
+    spatial_metadata_group_paths: list[str] = []
+
+    def visitor(name: str, obj: Any) -> None:
+        if not (
+            name
+            and isinstance(obj, h5py.Group)
+            and any(isinstance(child, h5py.Dataset) for child in obj.values())
+        ):
+            return
+
+        all_group_paths.append(name)
+
+        if not _group_has_spatial_dims(obj):
+            return
+
+        if "/metadata/" in f"/{name.strip('/')}/":
+            spatial_metadata_group_paths.append(name)
+        else:
+            spatial_group_paths.append(name)
+
+    with (
+        _make_blockstore_reader(
+            src_path,
+            auth_token=auth_token,
+            credential_provider=credential_provider,
+        ) as reader,
+        h5py.File(reader, "r") as file_handle,
+    ):
+        file_handle.visititems(visitor)
+
+    return spatial_group_paths or spatial_metadata_group_paths or all_group_paths
+
+
+def _compatible_groups(
+    src_path: str,
+    auth_token: str | None = None,
+    credential_provider: Any = None,
+) -> list[str]:
+    """Return candidate group paths for hierarchical assets.
+
+    This stays intentionally lightweight. It only scans HDF5 groups for datasets
+    with spatial dimension aliases and does not open each candidate with xarray.
+    """
+    try:
+        return _candidate_group_paths(
+            src_path,
+            auth_token=auth_token,
+            credential_provider=credential_provider,
+        )
+    except Exception as exc:
+        logger.info("Skipping group inspection for %s: %s", src_path, exc)
+        return []
+
+
+def _sample_granule(concept_id: str, request: Request) -> Any:
+    """Return the first granule for a collection concept."""
+    return next(
+        get_granules(
+            search_params=GranuleSearch(collection_concept_id=concept_id),
+            client=request.app.state.client,
+            page_size=1,
+            limit=1,
+        ),
+        None,
+    )
+
+
+def _get_auth_token(request: Request) -> str | None:
+    """Return an Earthdata auth token when configured."""
+    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
+    return token_provider() if token_provider else None
+
+
 def evaluate_xarray_compatibility(
     concept_id: str,
     request: Request,
-) -> Dict[str, Any]:
+    group: str | None = None,
+) -> dict[str, Any]:
     """Test XarrayReader compatibility with a concept.
 
     Args:
@@ -184,21 +359,9 @@ def evaluate_xarray_compatibility(
     """
     logger.info("Testing XarrayReader")
 
-    client = request.app.state.client
     s3_access = request.app.state.s3_access
-    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
-    auth_token = token_provider() if token_provider else None
-    get_s3_credentials = request.app.state.get_s3_credentials
-
-    granule = next(
-        get_granules(
-            search_params=GranuleSearch(collection_concept_id=concept_id),
-            client=client,
-            page_size=1,
-            limit=1,
-        ),
-        None,
-    )
+    auth_token = _get_auth_token(request)
+    granule = _sample_granule(concept_id, request)
 
     if granule is None:
         raise ValueError("No assets found for XarrayReader")
@@ -207,23 +370,23 @@ def evaluate_xarray_compatibility(
     asset = assets["0"]
     href = asset.direct_href if s3_access else asset.external_href
 
-    credential_provider = None
-    if s3_access and get_s3_credentials is not None:
-        try:
-            credential_provider = get_s3_credentials(granule.s3_credentials_endpoint)
-        except S3CredentialsEndpointMissing:
-            logger.warning(
-                "No S3 credentials endpoint found for granule %s; "
-                "falling back to token auth",
-                granule.id,
-            )
+    credential_provider = _get_credential_provider(granule, request)
 
     ds = open_dataset(
         href,
+        group=group,
         credential_provider=credential_provider,
         auth_token=auth_token,
     )
     result = extract_xarray_metadata(ds)
+
+    if not group and not result["variables"]:
+        result["compatible_groups"] = _compatible_groups(
+            href,
+            auth_token=auth_token,
+            credential_provider=credential_provider,
+        )
+
     result["example_assets"] = href
     return result
 
@@ -231,7 +394,7 @@ def evaluate_xarray_compatibility(
 def evaluate_rasterio_compatibility(
     concept_id: str,
     request: Request,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Test MultiBaseGranuleReader compatibility with a concept.
 
     Args:
@@ -249,21 +412,10 @@ def evaluate_rasterio_compatibility(
     """
     logger.info("Testing MultiBaseGranuleReader")
 
-    client = request.app.state.client
     s3_access = request.app.state.s3_access
-    token_provider = getattr(request.app.state, "earthdata_token_provider", None)
-    auth_token = token_provider() if token_provider else None
+    auth_token = _get_auth_token(request)
     get_s3_credentials = request.app.state.get_s3_credentials
-
-    granule = next(
-        get_granules(
-            search_params=GranuleSearch(collection_concept_id=concept_id),
-            client=client,
-            page_size=1,
-            limit=1,
-        ),
-        None,
-    )
+    granule = _sample_granule(concept_id, request)
 
     if granule is None:
         raise ValueError("No assets found for MultiBaseGranuleReader")
@@ -293,12 +445,19 @@ def _build_links(
     base_url: str,
     concept_id: str,
     backend: str,
-    first_var: Optional[str] = None,
-) -> List[TemplateLink]:
+    first_var: str | None = None,
+    group: str | None = None,
+) -> list[TemplateLink]:
     """Build template links for the compatibility response."""
-    if backend == "xarray" and first_var:
+    if backend == "xarray":
+        if not first_var:
+            return []
+
         prefix = "/xarray"
-        extra_params = f"&variable={first_var}"
+        extra_params = f"&variables={first_var}"
+        if group:
+            quoted_group = urllib.parse.quote(group, safe="/")
+            extra_params = f"{extra_params}&group={quoted_group}"
     else:
         prefix = "/rasterio"
         extra_params = ""
@@ -333,6 +492,7 @@ def _build_links(
 def evaluate_concept_compatibility(
     concept_id: str,
     request: Request,
+    group: str | None = None,
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
@@ -359,9 +519,15 @@ def evaluate_concept_compatibility(
     # Try xarray first
     xarray_error: Exception | None = None
     try:
-        result = evaluate_xarray_compatibility(concept_id, request)
+        result = evaluate_xarray_compatibility(concept_id, request, group=group)
         first_var = next(iter(result.get("variables") or {}), None)
-        links = _build_links(base_url, concept_id, "xarray", first_var)
+        links = _build_links(
+            base_url,
+            concept_id,
+            "xarray",
+            first_var,
+            group,
+        )
         return CompatibilityResponse(
             concept_id=concept_id,
             datetime=temporal_extent,
@@ -397,11 +563,14 @@ def evaluate_concept_compatibility(
 
 
 def _concept_id_param(
-    collection_concept_id: Optional[str] = None,
-    concept_id: Optional[str] = Query(default=None, include_in_schema=False),
-) -> Optional[str]:
+    collection_concept_id: str | None = None,
+    concept_id: str | None = Query(default=None, include_in_schema=False),
+) -> str | None:
     """Accept both collection_concept_id and legacy concept_id."""
     return collection_concept_id or concept_id
+
+
+XarrayGroupParam: TypeAlias = cast(Any, XarrayIOParams.__annotations__["group"])
 
 
 router = APIRouter()
@@ -410,9 +579,10 @@ router = APIRouter()
 @router.get("/compatibility", response_model=CompatibilityResponse)
 def compatibility_check(
     request: Request,
-    concept_id: Optional[str] = Depends(_concept_id_param),
+    concept_id: str | None = Depends(_concept_id_param),
+    group: XarrayGroupParam = None,
 ) -> CompatibilityResponse:
     """Check which backend is compatible with a CMR collection concept."""
     if concept_id is None:
         raise HTTPException(status_code=400, detail="concept_id is required")
-    return evaluate_concept_compatibility(concept_id, request)
+    return evaluate_concept_compatibility(concept_id, request, group=group)
