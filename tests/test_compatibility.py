@@ -1,9 +1,13 @@
 """Test titiler.cmr.compatibility module."""
 
-from unittest.mock import MagicMock, patch
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
+import h5py
 import numpy as np
 import pytest
+import xarray as xr
 from fastapi import HTTPException
 
 from titiler.cmr.compatibility import (
@@ -23,17 +27,53 @@ from titiler.cmr.models import (
 )
 
 
+class _PathReader:
+    def __init__(self, path: Path):
+        self._path = path
+
+    def __fspath__(self) -> str:
+        return str(self._path)
+
+    def close(self) -> None:
+        return None
+
+
+class _FakeRasterReader:
+    def __init__(self, info_result):
+        self.assets = ["0"]
+        self._info_result = info_result
+
+    def info(self, assets: list[str]):
+        assert assets == ["0"]
+        return {"0": self._info_result}
+
+
+class _FakeRasterReaderContext:
+    def __init__(self, info_result):
+        self._reader = _FakeRasterReader(info_result)
+
+    def __enter__(self) -> _FakeRasterReader:
+        return self._reader
+
+    def __exit__(self, exc_type, exc, tb) -> bool:
+        return False
+
+
 def _make_request(s3_access=False, auth_token=None, get_s3_credentials=None):
-    """Build a mock FastAPI Request with app.state fields set."""
-    request = MagicMock()
-    request.app.state.client = MagicMock()
-    request.app.state.s3_access = s3_access
-    request.app.state.earthdata_token_provider = (
-        (lambda: auth_token) if auth_token is not None else None
+    """Build a lightweight Request-like object with app.state fields set."""
+    return SimpleNamespace(
+        app=SimpleNamespace(
+            state=SimpleNamespace(
+                client=object(),
+                s3_access=s3_access,
+                earthdata_token_provider=(
+                    (lambda: auth_token) if auth_token is not None else None
+                ),
+                get_s3_credentials=get_s3_credentials,
+            )
+        ),
+        base_url="http://testserver/",
     )
-    request.app.state.get_s3_credentials = get_s3_credentials
-    request.base_url = "http://testserver/"
-    return request
 
 
 def _make_granule(external_href="https://example.com/file.nc") -> Granule:
@@ -67,165 +107,183 @@ def _make_granule(external_href="https://example.com/file.nc") -> Granule:
     )
 
 
+def _make_xarray_dataset(
+    data_vars: dict[str, tuple[tuple[str, ...], np.ndarray]],
+    coords: dict[str, np.ndarray] | None = None,
+) -> xr.Dataset:
+    """Create a small in-memory xarray dataset for tests."""
+    return xr.Dataset(
+        data_vars={name: (dims, values) for name, (dims, values) in data_vars.items()},
+        coords=coords,
+    )
+
+
+def _write_test_hdf5(path: Path) -> Path:
+    """Create a real HDF5 hierarchy with spatial and metadata groups."""
+    with h5py.File(path, "w") as file_handle:
+        grids = file_handle.create_group("science/LSAR/GCOV/grids/frequencyA")
+        metadata_grid = file_handle.create_group("science/LSAR/GCOV/metadata/radarGrid")
+        metadata_attitude = file_handle.create_group(
+            "science/LSAR/GCOV/metadata/attitude"
+        )
+
+        y = grids.create_dataset("yCoordinates", data=np.arange(2, dtype=np.float32))
+        y.make_scale("yCoordinates")
+        x = grids.create_dataset("xCoordinates", data=np.arange(3, dtype=np.float32))
+        x.make_scale("xCoordinates")
+        raster = grids.create_dataset("HHHH", data=np.zeros((2, 3), dtype=np.float32))
+        raster.dims[0].attach_scale(y)
+        raster.dims[1].attach_scale(x)
+
+        z = metadata_grid.create_dataset(
+            "heightAboveEllipsoid", data=np.arange(4, dtype=np.float32)
+        )
+        z.make_scale("heightAboveEllipsoid")
+        metadata_y = metadata_grid.create_dataset(
+            "yCoordinates", data=np.arange(2, dtype=np.float32)
+        )
+        metadata_y.make_scale("yCoordinates")
+        metadata_x = metadata_grid.create_dataset(
+            "xCoordinates", data=np.arange(3, dtype=np.float32)
+        )
+        metadata_x.make_scale("xCoordinates")
+        slant_range = metadata_grid.create_dataset(
+            "slantRange", data=np.zeros((4, 2, 3), dtype=np.float32)
+        )
+        slant_range.dims[0].attach_scale(z)
+        slant_range.dims[1].attach_scale(metadata_y)
+        slant_range.dims[2].attach_scale(metadata_x)
+
+        metadata_attitude.create_dataset(
+            "quaternions", data=np.zeros((2, 4), dtype=np.float32)
+        )
+
+    return path
+
+
+def _write_test_hdf5_with_unblessed_spatial_names(path: Path) -> Path:
+    """Create an HDF5 file whose scales look spatial but use unsupported names."""
+    with h5py.File(path, "w") as file_handle:
+        grids = file_handle.create_group("science/LSAR/GCOV/grids/frequencyA")
+
+        row = grids.create_dataset(
+            "rowCoordinates", data=np.arange(2, dtype=np.float32)
+        )
+        row.make_scale("rowCoordinates")
+        col = grids.create_dataset(
+            "columnCoordinates", data=np.arange(3, dtype=np.float32)
+        )
+        col.make_scale("columnCoordinates")
+        raster = grids.create_dataset("HHHH", data=np.zeros((2, 3), dtype=np.float32))
+        raster.dims[0].attach_scale(row)
+        raster.dims[1].attach_scale(col)
+
+    return path
+
+
 class TestExtractXarrayMetadata:
     """Test extract_xarray_metadata function."""
 
     def test_extract_basic_metadata(self):
         """Test extracting metadata from a simple dataset."""
-        mock_ds = MagicMock()
+        dataset = _make_xarray_dataset(
+            {
+                "temperature": (
+                    ("time", "lat", "lon"),
+                    np.arange(24, dtype=np.float32).reshape(3, 2, 4),
+                )
+            },
+            coords={"time": np.arange(3, dtype=np.float64)},
+        )
 
-        mock_var = MagicMock()
-        mock_var.shape = (365, 1800, 3600)
-        mock_var.dtype = np.dtype("float32")
-        mock_ds.data_vars = ["temperature"]
-        mock_ds.__getitem__ = lambda self, key: mock_var
-
-        mock_coord = MagicMock()
-        mock_coord.size = 365
-        mock_coord.dtype = np.dtype("float64")
-        mock_coord.min.return_value = 0.0
-        mock_coord.max.return_value = 364.0
-
-        mock_coords = MagicMock()
-        mock_coords.__getitem__ = lambda self, key: mock_coord
-        mock_coords.items.return_value = [("time", mock_coord)]
-        mock_ds.coords = mock_coords
-        mock_ds.dims = {"time": 365, "lat": 1800, "lon": 3600}
-
-        result = extract_xarray_metadata(mock_ds)
+        result = extract_xarray_metadata(dataset)
 
         assert result["backend"] == "xarray"
         assert "temperature" in result["variables"]
-        assert result["variables"]["temperature"]["shape"] == [365, 1800, 3600]
+        assert result["variables"]["temperature"]["shape"] == [3, 2, 4]
         assert result["variables"]["temperature"]["dtype"] == "float32"
-        assert result["dimensions"] == {"time": 365, "lat": 1800, "lon": 3600}
+        assert result["dimensions"] == {"time": 3, "lat": 2, "lon": 4}
         assert "time" in result["coordinates"]
-        assert result["coordinates"]["time"]["size"] == 365
+        assert result["coordinates"]["time"]["size"] == 3
 
     def test_extract_metadata_with_non_numeric_coord(self):
         """Test extracting metadata with non-numeric coordinate."""
-        mock_ds = MagicMock()
+        dataset = _make_xarray_dataset(
+            {"data": (("labels",), np.arange(10, dtype=np.float32))},
+            coords={"labels": np.array([f"label-{i}" for i in range(10)])},
+        )
 
-        mock_var = MagicMock()
-        mock_var.shape = (10,)
-        mock_var.dtype = np.dtype("float32")
-        mock_ds.data_vars = ["data"]
-        mock_ds.__getitem__ = lambda self, key: mock_var
-
-        mock_coord = MagicMock()
-        mock_coord.size = 10
-        mock_coord.dtype = np.dtype("U10")  # Unicode string
-
-        mock_coords = MagicMock()
-        mock_coords.__getitem__ = lambda self, key: mock_coord
-        mock_coords.items.return_value = [("labels", mock_coord)]
-        mock_ds.coords = mock_coords
-        mock_ds.dims = {"labels": 10}
-
-        result = extract_xarray_metadata(mock_ds)
+        result = extract_xarray_metadata(dataset)
 
         assert "min" not in result["coordinates"]["labels"]
         assert "max" not in result["coordinates"]["labels"]
 
 
-class _FakeScale:
-    def __init__(self, name: str):
-        self.name = name
-
-
-class _FakeDim:
-    def __init__(self, scale_names: list[str]):
-        self._scale_names = scale_names
-
-    def values(self):
-        return [_FakeScale(name) for name in self._scale_names]
-
-
-class _FakeDataset:
-    def __init__(self, dim_scale_names: list[list[str]]):
-        self.ndim = len(dim_scale_names)
-        self.dims = [_FakeDim(names) for names in dim_scale_names]
-
-
-class _FakeGroup:
-    def __init__(self, children):
-        self._children = children
-
-    def values(self):
-        return self._children.values()
-
-    def items(self):
-        return self._children.items()
-
-
 class TestGroupPruningHelpers:
     """Test HDF5 group pruning helpers."""
 
-    def test_dataset_dim_scale_names(self):
+    def test_dataset_dim_scale_names(self, tmp_path: Path):
         """Test extraction of attached dimension-scale names."""
-        dataset = _FakeDataset([["/science/yCoordinates"], ["/science/xCoordinates"]])
+        hdf5_path = _write_test_hdf5(tmp_path / "scales.h5")
 
-        assert _dataset_dim_scale_names(dataset) == {"yCoordinates", "xCoordinates"}
+        with h5py.File(hdf5_path, "r") as file_handle:
+            dataset = file_handle["science/LSAR/GCOV/grids/frequencyA/HHHH"]
+            assert _dataset_dim_scale_names(dataset) == {"yCoordinates", "xCoordinates"}
 
-    @patch("titiler.cmr.compatibility.h5py.Dataset", new=_FakeDataset)
-    def test_group_has_spatial_dims(self):
+    def test_group_has_spatial_dims(self, tmp_path: Path):
         """Test spatial-dimension detection for a group."""
-        group = _FakeGroup(
-            {
-                "HHHH": _FakeDataset([["yCoordinates"], ["xCoordinates"]]),
-                "mask": _FakeDataset([["yCoordinates"], ["xCoordinates"]]),
-            }
-        )
+        hdf5_path = _write_test_hdf5(tmp_path / "spatial.h5")
 
-        assert _group_has_spatial_dims(group) is True
+        with h5py.File(hdf5_path, "r") as file_handle:
+            group = file_handle["science/LSAR/GCOV/grids/frequencyA"]
+            assert _group_has_spatial_dims(group) is True
 
-    @patch("titiler.cmr.compatibility.h5py.Dataset", new=_FakeDataset)
-    def test_group_has_spatial_dims_false_when_aliases_missing(self):
+    def test_group_has_spatial_dims_false_when_aliases_missing(self, tmp_path: Path):
         """Test non-spatial groups are rejected by the dim-alias filter."""
-        group = _FakeGroup(
-            {
-                "quaternions": _FakeDataset([[], []]),
-                "time": _FakeDataset([[]]),
-            }
+        hdf5_path = _write_test_hdf5(tmp_path / "non-spatial.h5")
+
+        with h5py.File(hdf5_path, "r") as file_handle:
+            group = file_handle["science/LSAR/GCOV/metadata/attitude"]
+            assert _group_has_spatial_dims(group) is False
+
+    def test_group_has_spatial_dims_false_for_unblessed_spatial_names(
+        self, tmp_path: Path
+    ):
+        """Test spatial-looking scale names are ignored unless they are blessed aliases."""
+        hdf5_path = _write_test_hdf5_with_unblessed_spatial_names(
+            tmp_path / "unblessed-spatial.h5"
         )
 
-        assert _group_has_spatial_dims(group) is False
+        with h5py.File(hdf5_path, "r") as file_handle:
+            group = file_handle["science/LSAR/GCOV/grids/frequencyA"]
+            assert _group_has_spatial_dims(group) is False
+            dataset = file_handle["science/LSAR/GCOV/grids/frequencyA/HHHH"]
+            assert _dataset_dim_scale_names(dataset) == {
+                "rowCoordinates",
+                "columnCoordinates",
+            }
 
-    @patch("titiler.cmr.compatibility.h5py.Group", new=_FakeGroup)
-    @patch("titiler.cmr.compatibility.h5py.Dataset", new=_FakeDataset)
     @patch("titiler.cmr.compatibility._make_blockstore_reader")
-    @patch("titiler.cmr.compatibility.h5py.File")
+    def test_candidate_group_paths_falls_back_to_all_groups_when_aliases_are_unblessed(
+        self, mock_reader, tmp_path: Path
+    ):
+        """Test group discovery falls back when no group's scale names match blessed aliases."""
+        hdf5_path = _write_test_hdf5_with_unblessed_spatial_names(
+            tmp_path / "unblessed-groups.h5"
+        )
+        mock_reader.return_value = _PathReader(hdf5_path)
+
+        result = _candidate_group_paths("https://example.com/file.h5")
+
+        assert result == ["science/LSAR/GCOV/grids/frequencyA"]
+
+    @patch("titiler.cmr.compatibility._make_blockstore_reader")
     def test_candidate_group_paths_prefers_non_metadata_spatial_groups(
-        self, mock_h5py_file, mock_reader
+        self, mock_reader, tmp_path: Path
     ):
         """Test group pruning prefers non-metadata groups with spatial dims."""
-        mock_reader.return_value = MagicMock()
-
-        fake_groups = {
-            "science/LSAR/GCOV/grids/frequencyA": _FakeGroup(
-                {"HHHH": _FakeDataset([["yCoordinates"], ["xCoordinates"]])}
-            ),
-            "science/LSAR/GCOV/metadata/radarGrid": _FakeGroup(
-                {
-                    "slantRange": _FakeDataset(
-                        [["heightAboveEllipsoid"], ["yCoordinates"], ["xCoordinates"]]
-                    )
-                }
-            ),
-            "science/LSAR/GCOV/metadata/attitude": _FakeGroup(
-                {"quaternions": _FakeDataset([[], []])}
-            ),
-        }
-
-        file_handle = MagicMock()
-
-        def visititems(visitor):
-            for name, obj in fake_groups.items():
-                visitor(name, obj)
-
-        file_handle.visititems.side_effect = visititems
-        mock_h5py_file.return_value.__enter__.return_value = file_handle
-        mock_h5py_file.return_value.__exit__.return_value = False
+        hdf5_path = _write_test_hdf5(tmp_path / "groups.h5")
+        mock_reader.return_value = _PathReader(hdf5_path)
 
         result = _candidate_group_paths("https://example.com/file.h5")
 
@@ -248,19 +306,9 @@ class TestXarrayCompatibility:
         request = _make_request()
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-
-        mock_ds = MagicMock()
-        mock_var = MagicMock()
-        mock_var.shape = (10, 20)
-        mock_var.dtype = np.dtype("float32")
-        mock_ds.data_vars = ["temp"]
-        mock_ds.__getitem__ = lambda self, key: mock_var
-
-        mock_coords = MagicMock()
-        mock_coords.items.return_value = []
-        mock_ds.coords = mock_coords
-        mock_ds.dims = {"x": 10, "y": 20}
-        mock_open_dataset.return_value = mock_ds
+        mock_open_dataset.return_value = _make_xarray_dataset(
+            {"temp": (("x", "y"), np.arange(200, dtype=np.float32).reshape(10, 20))}
+        )
         mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
@@ -292,13 +340,7 @@ class TestXarrayCompatibility:
         request = _make_request(s3_access=True)
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-
-        mock_ds = MagicMock()
-        mock_ds.data_vars = []
-        mock_ds.coords = MagicMock()
-        mock_ds.coords.items.return_value = []
-        mock_ds.dims = {}
-        mock_open_dataset.return_value = mock_ds
+        mock_open_dataset.return_value = _make_xarray_dataset({})
         mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
@@ -318,14 +360,7 @@ class TestXarrayCompatibility:
         request = _make_request()
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-
-        root_ds = MagicMock()
-        root_ds.data_vars = []
-        root_ds.coords = MagicMock()
-        root_ds.coords.items.return_value = []
-        root_ds.dims = {}
-
-        mock_open_dataset.return_value = root_ds
+        mock_open_dataset.return_value = _make_xarray_dataset({})
         mock_compatible_groups.return_value = ["science/grids/frequencyA"]
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
@@ -345,19 +380,14 @@ class TestRasterioCompatibility:
         granule = _make_granule(external_href="https://example.com/file.tif")
         mock_get_granules.return_value = iter([granule])
 
-        mock_info = MagicMock()
-        mock_reader = MagicMock()
-        mock_reader.assets = ["0"]
-        mock_reader.info.return_value = {"0": mock_info}
-
-        mock_reader_cls.return_value.__enter__ = MagicMock(return_value=mock_reader)
-        mock_reader_cls.return_value.__exit__ = MagicMock(return_value=False)
+        info_result = object()
+        mock_reader_cls.return_value = _FakeRasterReaderContext(info_result)
 
         result = evaluate_rasterio_compatibility("C1234-TEST", request)
 
         assert result["backend"] == "rasterio"
         assert isinstance(result["example_assets"], dict)
-        assert result["sample_asset_raster_info"] is mock_info
+        assert result["sample_asset_raster_info"] is info_result
 
     @patch("titiler.cmr.compatibility.get_granules")
     def test_rasterio_no_assets(self, mock_get_granules):
@@ -379,10 +409,9 @@ class TestConceptCompatibility:
         """Test when xarray compatibility succeeds."""
         request = _make_request()
 
-        mock_collection = MagicMock()
-        mock_collection.temporal_extents = [{"RangeDateTimes": []}]
-        mock_get_collection.return_value = mock_collection
-
+        mock_get_collection.return_value = SimpleNamespace(
+            temporal_extents=[{"RangeDateTimes": []}]
+        )
         mock_xarray.return_value = {
             "backend": "xarray",
             "variables": {"temp": {"shape": [10], "dtype": "float32"}},
@@ -411,10 +440,7 @@ class TestConceptCompatibility:
         """Test that xarray links include the first variable name."""
         request = _make_request()
 
-        mock_collection = MagicMock()
-        mock_collection.temporal_extents = []
-        mock_get_collection.return_value = mock_collection
-
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
             "variables": {"sea_ice": {"shape": [10], "dtype": "float32"}},
@@ -440,10 +466,7 @@ class TestConceptCompatibility:
         """Test that xarray links include the explicit group parameter."""
         request = _make_request()
 
-        mock_collection = MagicMock()
-        mock_collection.temporal_extents = []
-        mock_get_collection.return_value = mock_collection
-
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
             "variables": {"backscatter": {"shape": [10], "dtype": "float32"}},
@@ -470,10 +493,7 @@ class TestConceptCompatibility:
         """Test grouped root responses do not fabricate xarray links."""
         request = _make_request()
 
-        mock_collection = MagicMock()
-        mock_collection.temporal_extents = []
-        mock_get_collection.return_value = mock_collection
-
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
             "variables": {},
@@ -498,10 +518,7 @@ class TestConceptCompatibility:
         """Test fallback to rasterio when xarray fails."""
         request = _make_request()
 
-        mock_collection = MagicMock()
-        mock_collection.temporal_extents = []
-        mock_get_collection.return_value = mock_collection
-
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.side_effect = ValueError("No assets found")
         mock_rasterio.return_value = {
             "backend": "rasterio",
@@ -525,10 +542,7 @@ class TestConceptCompatibility:
         """Test when both readers fail."""
         request = _make_request()
 
-        mock_collection = MagicMock()
-        mock_collection.temporal_extents = []
-        mock_get_collection.return_value = mock_collection
-
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.side_effect = ValueError("Xarray failed")
         mock_rasterio.side_effect = OSError("Rasterio failed")
 

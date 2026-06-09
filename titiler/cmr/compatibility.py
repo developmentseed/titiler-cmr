@@ -168,7 +168,7 @@ def extract_xarray_metadata(
 
     return {
         "variables": variables,
-        "dimensions": dict(ds.dims),
+        "dimensions": dict(ds.sizes),
         "coordinates": coordinates,
         "backend": "xarray",
     }
