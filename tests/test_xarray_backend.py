@@ -274,6 +274,7 @@ def test_timeseries_tilejson(
     }
 
 
+@pytest.mark.vcr
 def test_timeseries_gif(
     app,
     mocker,
@@ -368,6 +369,7 @@ def test_timeseries_statistics_image_size_limit(
     assert "The AOI for this request is too large" in response.text
 
 
+@pytest.mark.vcr
 def test_timeseries_statistics_request_size_limit(
     app,
 ):
