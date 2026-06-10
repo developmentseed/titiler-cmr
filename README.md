@@ -166,6 +166,20 @@ The environment variables which should be set in the `veda-deploy` AWS secret ar
 
 You can trigger a deploy to a "dev" stack (cloudformation stack name should be `titiler-cmr-dev`) in the VEDA SMCE account by labeling a PR with the "deploy-dev" tag. This stack is intended for testing new features.
 
+### Local CDK synth validation
+
+To validate that the CDK app still synthesizes locally without using real secrets, run:
+
+```bash
+./scripts/test-cdk-synth.sh
+```
+
+The script installs the deployment dependencies, installs the local CDK CLI from `infrastructure/aws/package-lock.json`, and synthesizes the stack with placeholder Earthdata credentials. Override any environment variable if you want to test a different configuration, for example:
+
+```bash
+STAGE=staging TITILER_CMR_ROOT_PATH=/api/titiler-cmr ./scripts/test-cdk-synth.sh
+```
+
 ## Contribution & Development
 
 See [CONTRIBUTING.md](https://github.com/developmentseed/titiler-cmr/blob/develop/CONTRIBUTING.md)
