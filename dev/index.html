@@ -457,6 +457,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#local-cdk-synth-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local CDK synth validation
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1409,6 +1420,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#local-cdk-synth-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local CDK synth validation
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1612,6 +1634,13 @@ Once the secrets are generated, you can start the application as follows:</p>
 </ul>
 <h3 id="deployment-to-a-developmenttest-instance">Deployment to a development/test instance<a class="headerlink" href="#deployment-to-a-developmenttest-instance" title="Permanent link">&para;</a></h3>
 <p>You can trigger a deploy to a "dev" stack (cloudformation stack name should be <code>titiler-cmr-dev</code>) in the VEDA SMCE account by labeling a PR with the "deploy-dev" tag. This stack is intended for testing new features.</p>
+<h3 id="local-cdk-synth-validation">Local CDK synth validation<a class="headerlink" href="#local-cdk-synth-validation" title="Permanent link">&para;</a></h3>
+<p>To validate that the CDK app still synthesizes locally without using real secrets, run:</p>
+<div class="highlight"><pre><span></span><code>./scripts/test-cdk-synth.sh
+</code></pre></div>
+<p>The script installs the deployment dependencies, installs the local CDK CLI from <code>infrastructure/aws/package-lock.json</code>, and synthesizes the stack with placeholder Earthdata credentials. Override any environment variable if you want to test a different configuration, for example:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">STAGE</span><span class="o">=</span>staging<span class="w"> </span><span class="nv">TITILER_CMR_ROOT_PATH</span><span class="o">=</span>/api/titiler-cmr<span class="w"> </span>./scripts/test-cdk-synth.sh
+</code></pre></div>
 <h2 id="contribution-development">Contribution &amp; Development<a class="headerlink" href="#contribution-development" title="Permanent link">&para;</a></h2>
 <p>See <a href="https://github.com/developmentseed/titiler-cmr/blob/develop/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
