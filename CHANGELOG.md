@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.0](https://github.com/developmentseed/titiler-cmr/compare/v1.0.4...v1.1.0) (2026-06-10)
+
+
+### Features
+
+* add group inspection to compatibility endpoint ([#186](https://github.com/developmentseed/titiler-cmr/issues/186)) ([50162a7](https://github.com/developmentseed/titiler-cmr/commit/50162a7d0b174df2f8ac424bfc6ae062e9c5e5c6))
+
+
+### Bug Fixes
+
+* do not ignore case when parsing expressions ([#188](https://github.com/developmentseed/titiler-cmr/issues/188)) ([c3b6dae](https://github.com/developmentseed/titiler-cmr/commit/c3b6dae985c0bd800d84c51916a4f69a67e47bff))
+
 ## [1.0.4](https://github.com/developmentseed/titiler-cmr/compare/v1.0.3...v1.0.4) (2026-05-29)
 
 
