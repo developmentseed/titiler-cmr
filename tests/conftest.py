@@ -2,6 +2,7 @@
 
 import logging
 import os
+import unittest.mock as mock
 from collections.abc import Callable, Iterator, Mapping
 from typing import Any
 
@@ -15,6 +16,9 @@ from moto.server import ThreadedMotoServer
 from mypy_boto3_s3.service_resource import Bucket, Object, S3ServiceResource
 from vcr.request import Request
 
+import httpcore2
+
+from tests.httpcore2_vcr_stubs import vcr_handle_async_request, vcr_handle_request
 from titiler.cmr.backend import CMRBackend
 from titiler.cmr.logger import XRayJsonFormatter
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
@@ -72,6 +76,31 @@ def vcr_config():
         "filter_headers": [("authorization", "DUMMY")],
         "before_record_request": before_record_cb,
     }
+
+
+@pytest.fixture(autouse=True)
+def patch_httpcore2_for_vcr(vcr):
+    """Extend pytest-recording so VCR cassettes also intercept httpx2 traffic."""
+    if vcr is None:
+        yield
+        return
+
+    with (
+        mock.patch.object(
+            httpcore2.ConnectionPool,
+            "handle_request",
+            vcr_handle_request(vcr, httpcore2.ConnectionPool.handle_request),
+        ),
+        mock.patch.object(
+            httpcore2.AsyncConnectionPool,
+            "handle_async_request",
+            vcr_handle_async_request(
+                vcr,
+                httpcore2.AsyncConnectionPool.handle_async_request,
+            ),
+        ),
+    ):
+        yield
 
 
 @pytest.fixture(scope="session")
