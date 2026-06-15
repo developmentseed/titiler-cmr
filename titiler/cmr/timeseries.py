@@ -41,7 +41,6 @@ from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import BaseFactory, FactoryExtension
 from titiler.core.models.mapbox import TileJSON
-from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
 
@@ -92,7 +91,15 @@ class TimeseriesImageType(str, Enum):
         return TimeseriesMediaType[self._name_].value
 
 
-TimeseriesStatistics = Dict[str, Statistics]
+# Per-interval statistics, keyed by interval then by band name:
+# ``{interval: {band: {stat: value}}}``. The per-band stats are taken verbatim
+# from the ``/statistics`` sub-responses, which report ``null`` for the numeric
+# fields (min/max/mean/...) of an interval that has no valid pixels. rio-tiler's
+# ``BandStatistics`` model requires those fields to be numbers, so re-validating
+# the sub-responses against it would raise a 500 for the *whole* series whenever
+# a single interval is empty. Keep the per-band leaf permissive so empty
+# intervals pass through unchanged.
+TimeseriesStatistics = Dict[str, Dict[str, Dict[str, Any]]]
 
 
 class TimeseriesStatisticsInGeoJSON(BaseModel):
@@ -547,8 +554,8 @@ class TimeseriesExtension(FactoryExtension):
         async def timeseries_geojson_statistics(
             request: Request,
             geojson: Annotated[
-                Union[FeatureCollection, Feature],
-                Body(description="GeoJSON Feature or FeatureCollection.", embed=False),
+                Feature,
+                Body(description="GeoJSON Feature.", embed=False),
             ],
             query=Depends(timeseries_cmr_query_no_bbox),
             coord_crs=Depends(CoordCRSParams),
@@ -628,10 +635,6 @@ class TimeseriesExtension(FactoryExtension):
             )
             combine_start = time()
             datetime_strs = [d.temporal for d in query]
-            if not isinstance(geojson, Feature):
-                raise HTTPException(
-                    status_code=400, detail="Expected a GeoJSON Feature"
-                )
             if geojson.properties is None:
                 geojson.properties = {}
             geojson.properties["statistics"] = {}
