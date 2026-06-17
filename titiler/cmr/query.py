@@ -154,10 +154,15 @@ def get_granules(
     count = 0
     while count < limit:
         try:
-            response = client.get("granules.umm_json", params=params, headers=headers)
+            request = client.build_request(
+                method="GET", url="granules.umm_json", params=params, headers=headers
+            )
+            logger.info("Querying CMR: %s with headers %s", request.url, headers)
+            response = client.send(request)
         except ReadTimeout as e:
-            raise CMRQueryTimeout("CMR granule search timed out") from e
-        logger.info("Querying CMR: %s with headers %s", response.url, headers)
+            msg = f"CMR granule search timed out after {client.timeout} seconds"
+            logger.exception(msg)
+            raise CMRQueryTimeout(msg) from e
 
         try:
             response.raise_for_status()
@@ -207,7 +212,9 @@ def get_collection(concept_id: str, client: Client) -> Collection:
             params={"concept_id": concept_id},
         )
     except ReadTimeout as e:
-        raise CMRQueryTimeout("CMR collection search timed out") from e
+        msg = f"CMR collection search timed out after {client.timeout} seconds"
+        logger.exception(msg)
+        raise CMRQueryTimeout(msg) from e
 
     try:
         response.raise_for_status()
