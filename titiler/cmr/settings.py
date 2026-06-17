@@ -32,7 +32,7 @@ class ApiSettings(BaseSettings):
     time_series_image_max_total_size: float = 1e8
     telemetry_enabled: bool = False
     debug: bool = False
-    cmr_timeout: float = 10.0
+    cmr_timeout: float = 20.0
     client_id: str | None = None
     aws_request_payer: str | None = None
 
