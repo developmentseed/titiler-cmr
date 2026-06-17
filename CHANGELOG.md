@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.1](https://github.com/developmentseed/titiler-cmr/compare/v1.1.0...v1.1.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* improve CMR query logging and error response, increase default timeout to 20s ([#201](https://github.com/developmentseed/titiler-cmr/issues/201)) ([4533a1c](https://github.com/developmentseed/titiler-cmr/commit/4533a1c46bd82731a97d6a2f404cc341221b98c2))
+* upgrade dependencies for security patches ([#198](https://github.com/developmentseed/titiler-cmr/issues/198)) ([e6e44f1](https://github.com/developmentseed/titiler-cmr/commit/e6e44f19781ae4db56eb81a8cedd39ac3ec0d9a5))
+
 ## [1.1.0](https://github.com/developmentseed/titiler-cmr/compare/v1.0.4...v1.1.0) (2026-06-10)
 
 
