@@ -13,7 +13,6 @@ from typing import (
     Sequence,
     Set,
     Type,
-    TypedDict,
 )
 
 import attr
@@ -30,6 +29,7 @@ from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
 from rio_tiler.io.xarray import Options, XarrayReader
 from rio_tiler.types import AssetInfo, AssetWithOptions
+from titiler.xarray.io import _parse_dsl
 from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
 
@@ -76,54 +76,6 @@ Y_DIM_NAMES = [
 cache_config = CacheSettings()
 cache_client: Any = TTLCache(maxsize=cache_config.maxsize, ttl=cache_config.ttl)
 _dataset_cache_lock = threading.Lock()
-
-
-class _Selector(TypedDict):
-    """Parsed xarray dimension selector."""
-
-    dimension: str
-    values: list[Any]
-    method: Literal["nearest", "pad", "ffill", "backfill", "bfill"] | None
-
-
-def _parse_dsl(sel: list[str] | None) -> list[_Selector]:
-    """Parse xarray dimension selectors.
-
-    This is copied from ``titiler.xarray.io`` so Lambda packaging does not
-    import that module at startup. ``titiler.xarray.io`` currently imports
-    ``httpx`` unconditionally, but the Lambda runtime intentionally ships
-    ``httpx2`` instead.
-    """
-    sel = sel or []
-
-    idx: dict[str, list[str]] = {}
-    for item in sel:
-        dimension, value = item.split("=", 1)
-        idx.setdefault(dimension, []).append(value)
-
-    selectors: list[_Selector] = []
-    for dimension, values in idx.items():
-        methods, parsed_values = zip(
-            *[
-                value.split("::", 1) if "::" in value else (None, value)
-                for value in values
-            ]
-        )
-        method_sets = {method for method in methods if method is not None}
-        if len(method_sets) > 1:
-            raise ValueError(
-                f"Multiple selection methods provided for dimension {dimension}: {methods}"
-            )
-
-        selectors.append(
-            {
-                "dimension": dimension,
-                "values": list(parsed_values),
-                "method": method_sets.pop() if method_sets else None,
-            }
-        )
-
-    return selectors
 
 
 def _arrange_dims(
