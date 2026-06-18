@@ -37,9 +37,9 @@ dependencies = [
     "pydantic-settings>=2.13.1",
     "rio-tiler>=9.0,<10.0",
     "shapely>=2.1.2",
-    "titiler-core>=2.0,<3.0",
-    "titiler-mosaic>=2.0,<3.0",
-    "titiler-xarray>=2.0,<3.0",
+    "titiler-core>=2.0.5,<3.0",
+    "titiler-mosaic>=2.0.5,<3.0",
+    "titiler-xarray>=2.0.5,<3.0",
 ]
 
 [project.optional-dependencies]
