@@ -1,11 +1,13 @@
 """titiler.cmr.factory: router factories."""
 
 import logging
-from typing import Annotated, Callable, Literal
+from typing import Annotated, Callable, Literal, Union
 
 import morecantile
 from attrs import define, field
 from fastapi import APIRouter, Depends, Path, Query
+from fastapi.responses import Response
+from shapely.geometry import box, shape
 from rio_tiler.constants import WGS84_CRS
 from titiler.core.dependencies import (
     DatasetParams as RasterioDatasetParams,
@@ -23,6 +25,7 @@ from titiler.xarray.dependencies import (
 )
 
 from titiler.cmr.backend import CMRBackend
+from titiler.cmr.enums import MediaType
 from titiler.cmr.dependencies import (
     BackendParams,
     CMRAssetsParams,
@@ -82,6 +85,18 @@ class CMRTilerFactory(BaseFactory):
 
         if self.add_ogc_maps:
             self.ogc_maps()
+
+
+def _fmt_temporal(t) -> str:
+    """Format GranuleTemporalExtent to a readable date range string."""
+    if t is None:
+        return "—"
+    rdt = getattr(t, "range_date_time", None)
+    if rdt is None:
+        return "—"
+    start = getattr(rdt, "beginning_date_time", None) or "?"
+    end = getattr(rdt, "ending_date_time", None) or "?"
+    return f"{start} / {end}"
 
 
 ###############################################################################
@@ -197,10 +212,10 @@ def assets_for_tile(
     backend_params=Depends(BackendParams),
     assets_accessor_params=Depends(GranuleSearchBackendParams),
     f: Annotated[
-        Literal["json", "geojson"],
+        Literal["json", "geojson", "mvt"],
         Query(description="Response format"),
     ] = "json",
-) -> list[Granule] | GranuleFeatureCollection:
+) -> Union[list[Granule], GranuleFeatureCollection, Response]:
     """Return granules overlapping a tile."""
     logger.info("assets_for_tile: querying CMR for granules in tile")
     tms = morecantile.tms.get(tileMatrixSetId)
@@ -216,5 +231,42 @@ def assets_for_tile(
             z,
             **assets_accessor_params.as_dict(),
         )
+
+    if f == "mvt":
+        import mapbox_vector_tile
+
+        bounds = tms.bounds(morecantile.Tile(x, y, z))
+        tile_box = box(bounds.left, bounds.bottom, bounds.right, bounds.top)
+        features = []
+        for g in granules:
+            if not g.geometry:
+                continue
+            geom = shape(
+                g.geometry if isinstance(g.geometry, dict) else g.geometry.model_dump()
+            )
+            clipped = geom.intersection(tile_box)
+            if not clipped.is_empty:
+                features.append(
+                    {
+                        "geometry": clipped.wkt,
+                        "properties": {
+                            "id": g.id,
+                            "temporal": _fmt_temporal(g.temporal_extent),
+                        },
+                    }
+                )
+        mvt_data = mapbox_vector_tile.encode(
+            [{"name": "granules", "features": features}],
+            default_options={
+                "quantize_bounds": (
+                    bounds.left,
+                    bounds.bottom,
+                    bounds.right,
+                    bounds.top,
+                ),
+                "extents": 4096,
+            },
+        )
+        return Response(content=mvt_data, media_type=MediaType.mvt)
 
     return granules_to_feature_collection(granules) if f == "geojson" else granules
