@@ -74,7 +74,9 @@ class CompatibilityResponse(BaseModel):
 
 
 def extract_xarray_metadata(
-    ds: Any, max_sample_size: float = 100_000.0
+    ds: Any,
+    max_sample_size: float = 100_000.0,
+    skip_variable_statistics: bool = False,
 ) -> dict[str, Any]:
     """Extract comprehensive metadata from an xarray Dataset.
 
@@ -83,7 +85,9 @@ def extract_xarray_metadata(
     Args:
         ds: xarray Dataset instance
         max_sample_size: Maximum number of elements to sample for statistics.
-            Arrays larger than this will be sampled. Default: 1,000,000
+            Arrays larger than this will be sampled. Default: 100,000.
+        skip_variable_statistics: Whether to skip numeric variable statistics
+            such as min, max, mean, and percentiles.
 
     Returns:
         Dictionary containing variables, dimensions, and coordinates metadata
@@ -95,7 +99,7 @@ def extract_xarray_metadata(
             "dtype": str(ds[var].dtype),
         }
 
-        if ds[var].dtype.kind in {"i", "f", "u"}:
+        if not skip_variable_statistics and ds[var].dtype.kind in {"i", "f", "u"}:
             try:
                 var_data = ds[var]
                 total_size = var_data.size
@@ -350,6 +354,7 @@ def evaluate_xarray_compatibility(
     request: Request,
     group: str | None = None,
     granule_ur: str | None = None,
+    skip_variable_statistics: bool = False,
 ) -> dict[str, Any]:
     """Test XarrayReader compatibility with a concept.
 
@@ -358,6 +363,8 @@ def evaluate_xarray_compatibility(
         request: FastAPI request object
         group: Optional xarray group to inspect
         granule_ur: Optional granule UR to sample
+        skip_variable_statistics: Whether to skip numeric variable statistics
+            such as min, max, mean, and percentiles.
 
     Returns:
         Dictionary with xarray compatibility information
@@ -389,7 +396,10 @@ def evaluate_xarray_compatibility(
         credential_provider=credential_provider,
         auth_token=auth_token,
     )
-    result = extract_xarray_metadata(ds)
+    result = extract_xarray_metadata(
+        ds,
+        skip_variable_statistics=skip_variable_statistics,
+    )
 
     if not group and not result["variables"]:
         result["compatible_groups"] = _compatible_groups(
@@ -509,6 +519,7 @@ def evaluate_concept_compatibility(
     request: Request,
     group: str | None = None,
     granule_ur: str | None = None,
+    skip_variable_statistics: bool = False,
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
@@ -520,6 +531,8 @@ def evaluate_concept_compatibility(
         request: FastAPI request object
         group: Optional xarray group to inspect
         granule_ur: Optional granule UR to sample
+        skip_variable_statistics: Whether to skip numeric variable statistics
+            such as min, max, mean, and percentiles.
 
     Returns:
         CompatibilityResponse with backend info, temporal extent, and metadata
@@ -542,6 +555,7 @@ def evaluate_concept_compatibility(
             request,
             group=group,
             granule_ur=granule_ur,
+            skip_variable_statistics=skip_variable_statistics,
         )
         first_var = next(iter(result.get("variables") or {}), None)
         links = _build_links(
@@ -609,6 +623,13 @@ def compatibility_check(
     concept_id: str | None = Depends(_concept_id_param),
     group: XarrayGroupParam = None,
     granule_ur: GranuleUr = None,
+    skip_variable_statistics: bool = Query(
+        default=False,
+        description=(
+            "Skip numeric variable statistics such as min, max, mean, and "
+            "percentiles in xarray compatibility responses."
+        ),
+    ),
 ) -> CompatibilityResponse:
     """Check which backend is compatible with a CMR collection concept."""
     if concept_id is None:
@@ -618,4 +639,5 @@ def compatibility_check(
         request,
         group=group,
         granule_ur=granule_ur,
+        skip_variable_statistics=skip_variable_statistics,
     )
