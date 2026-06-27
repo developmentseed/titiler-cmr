@@ -213,6 +213,23 @@ class TestExtractXarrayMetadata:
         assert "min" not in result["coordinates"]["labels"]
         assert "max" not in result["coordinates"]["labels"]
 
+    def test_extract_metadata_can_skip_variable_statistics(self):
+        """Test extracting variable metadata without summary statistics."""
+        dataset = xr.Dataset(
+            {"temperature": (("x",), np.arange(10, dtype=np.float32))},
+            coords={"x": np.arange(10, dtype=np.float32)},
+        )
+
+        result = extract_xarray_metadata(
+            dataset,
+            skip_variable_statistics=True,
+        )
+
+        variable = result["variables"]["temperature"]
+        assert variable == {"shape": [10], "dtype": "float32"}
+        assert result["coordinates"]["x"]["min"] == 0.0
+        assert result["coordinates"]["x"]["max"] == 9.0
+
 
 class TestGroupPruningHelpers:
     """Test HDF5 group pruning helpers."""
@@ -310,6 +327,7 @@ class TestXarrayCompatibility:
 
         assert result["backend"] == "xarray"
         assert result["example_assets"] == "https://example.com/file.nc"
+        assert result["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
         assert result.get("compatible_groups") is None
         assert "temp" in result["variables"]
 
@@ -363,6 +381,59 @@ class TestXarrayCompatibility:
         assert result["compatible_groups"] == ["science/grids/frequencyA"]
         assert result["variables"] == {}
 
+    @patch("titiler.cmr.compatibility._compatible_groups")
+    @patch("titiler.cmr.compatibility.open_dataset")
+    @patch("titiler.cmr.compatibility.get_granules")
+    def test_xarray_uses_requested_granule_ur(
+        self,
+        mock_get_granules,
+        mock_open_dataset,
+        mock_compatible_groups,
+    ):
+        """Test xarray compatibility forwards granule_ur to CMR search."""
+        request = _make_request()
+        granule = _make_granule()
+        mock_get_granules.return_value = iter([granule])
+        mock_open_dataset.return_value = xr.Dataset()
+        mock_compatible_groups.return_value = []
+
+        result = evaluate_xarray_compatibility(
+            "C1234-TEST",
+            request,
+            granule_ur="MOD09A1.A2020001.h12v04.hdf",
+        )
+
+        search_params = mock_get_granules.call_args.kwargs["search_params"]
+        assert search_params.collection_concept_id == "C1234-TEST"
+        assert search_params.granule_ur == "MOD09A1.A2020001.h12v04.hdf"
+        assert result["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
+
+    @patch("titiler.cmr.compatibility._compatible_groups")
+    @patch("titiler.cmr.compatibility.open_dataset")
+    @patch("titiler.cmr.compatibility.get_granules")
+    def test_xarray_can_skip_variable_statistics(
+        self,
+        mock_get_granules,
+        mock_open_dataset,
+        mock_compatible_groups,
+    ):
+        """Test xarray compatibility can skip variable summary statistics."""
+        request = _make_request()
+        granule = _make_granule()
+        mock_get_granules.return_value = iter([granule])
+        mock_open_dataset.return_value = xr.Dataset(
+            {"temp": (("x",), np.arange(10, dtype=np.float32))}
+        )
+        mock_compatible_groups.return_value = []
+
+        result = evaluate_xarray_compatibility(
+            "C1234-TEST",
+            request,
+            skip_variable_statistics=True,
+        )
+
+        assert result["variables"]["temp"] == {"shape": [10], "dtype": "float32"}
+
 
 class TestRasterioCompatibility:
     """Test evaluate_rasterio_compatibility function."""
@@ -382,6 +453,7 @@ class TestRasterioCompatibility:
 
         assert result["backend"] == "rasterio"
         assert isinstance(result["example_assets"], dict)
+        assert result["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
         assert result["sample_asset_raster_info"] is info_result
 
     @patch("titiler.cmr.compatibility.get_granules")
@@ -424,6 +496,36 @@ class TestConceptCompatibility:
         assert result.links is not None
         assert len(result.links) == 3
         mock_xarray.assert_called_once()
+        assert mock_xarray.call_args.kwargs["skip_variable_statistics"] is False
+        mock_rasterio.assert_not_called()
+
+    @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
+    @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
+    @patch("titiler.cmr.compatibility.get_collection")
+    def test_skip_variable_statistics_forwards_to_xarray(
+        self, mock_get_collection, mock_xarray, mock_rasterio
+    ):
+        """Test disabling variable statistics forwards to xarray compatibility."""
+        request = _make_request()
+
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
+        mock_xarray.return_value = {
+            "backend": "xarray",
+            "variables": {"temp": {"shape": [10], "dtype": "float32"}},
+            "dimensions": {},
+            "coordinates": {},
+            "example_assets": "https://example.com/file.nc",
+            "compatible_groups": None,
+        }
+
+        result = evaluate_concept_compatibility(
+            "C1234-TEST",
+            request,
+            skip_variable_statistics=True,
+        )
+
+        assert result.backend == "xarray"
+        assert mock_xarray.call_args.kwargs["skip_variable_statistics"] is True
         mock_rasterio.assert_not_called()
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
@@ -572,6 +674,8 @@ class TestCompatibilityEndpoint:
         assert data["backend"] == "xarray"
         assert data["concept_id"] == "C1234-TEST"
         assert mock_evaluate.call_args.kwargs["group"] is None
+        assert mock_evaluate.call_args.kwargs["granule_ur"] is None
+        assert mock_evaluate.call_args.kwargs["skip_variable_statistics"] is False
 
     @patch("titiler.cmr.compatibility.evaluate_concept_compatibility")
     def test_endpoint_accepts_group(self, mock_evaluate, app):
@@ -591,8 +695,50 @@ class TestCompatibilityEndpoint:
         assert response.status_code == 200
         assert mock_evaluate.call_args.kwargs["group"] == "science/grids/frequencyA"
 
-    def test_endpoint_openapi_documents_group_like_xarray_routes(self, app):
-        """Test the /compatibility endpoint reuses the shared xarray group parameter docs."""
+    @patch("titiler.cmr.compatibility.evaluate_concept_compatibility")
+    def test_endpoint_accepts_granule_ur(self, mock_evaluate, app):
+        """Test the /compatibility endpoint forwards the optional granule_ur parameter."""
+        mock_evaluate.return_value = CompatibilityResponse(
+            concept_id="C1234-TEST",
+            backend="xarray",
+            datetime=[],
+            granule_ur="MOD09A1.A2020001.h12v04.hdf",
+            links=[],
+        )
+
+        response = app.get(
+            "/compatibility?collection_concept_id=C1234-TEST"
+            "&granule_ur=MOD09A1.A2020001.h12v04.hdf"
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
+        assert mock_evaluate.call_args.kwargs["granule_ur"] == (
+            "MOD09A1.A2020001.h12v04.hdf"
+        )
+
+    @patch("titiler.cmr.compatibility.evaluate_concept_compatibility")
+    def test_endpoint_accepts_skip_variable_statistics(self, mock_evaluate, app):
+        """Test the endpoint forwards the variable statistics skip flag."""
+        mock_evaluate.return_value = CompatibilityResponse(
+            concept_id="C1234-TEST",
+            backend="xarray",
+            datetime=[],
+            variables={"temp": {"shape": [10], "dtype": "float32"}},
+            links=[],
+        )
+
+        response = app.get(
+            "/compatibility?collection_concept_id=C1234-TEST"
+            "&skip_variable_statistics=true"
+        )
+
+        assert response.status_code == 200
+        assert mock_evaluate.call_args.kwargs["skip_variable_statistics"] is True
+
+    def test_endpoint_openapi_documents_optional_parameters(self, app):
+        """Test the /compatibility endpoint documents optional sample controls."""
         response = app.get("/api")
 
         assert response.status_code == 200
@@ -601,4 +747,15 @@ class TestCompatibilityEndpoint:
         assert group_param["description"] == (
             "Select a specific zarr group from a zarr hierarchy. "
             "Could be associated with a zoom level or dataset."
+        )
+        granule_ur_param = next(
+            param for param in parameters if param["name"] == "granule_ur"
+        )
+        assert granule_ur_param["description"] == "Unique granule record id"
+        skip_stats_param = next(
+            param for param in parameters if param["name"] == "skip_variable_statistics"
+        )
+        assert skip_stats_param["description"] == (
+            "Skip numeric variable statistics such as min, max, mean, and "
+            "percentiles in xarray compatibility responses."
         )

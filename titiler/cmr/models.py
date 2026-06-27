@@ -3,7 +3,7 @@
 import os
 import re
 from collections import defaultdict
-from typing import Annotated, Any, List, TypeAlias
+from typing import Annotated, Any, List, TypeAlias, cast
 
 from fastapi import Query
 from geojson_pydantic import Feature, FeatureCollection
@@ -405,10 +405,11 @@ class Granule(BaseModel):
 
     def to_feature(self) -> "GranuleFeature":
         """Convert this granule to a GeoJSON Feature."""
+        geometry = cast(Geometry | None, self.geometry)
         return GranuleFeature(
             type="Feature",
-            geometry=self.geometry,
-            bbox=list(self.bbox) if self.geometry else None,
+            geometry=geometry,
+            bbox=self.bbox if geometry else None,
             properties=self.model_dump(exclude={"geometry"}),
         )
 
@@ -491,9 +492,9 @@ class GenericResolution(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    x_dimension: float = Field(alias="XDimension")
-    y_dimension: float = Field(alias="YDimension")
-    unit: str = Field(alias="Unit")
+    x_dimension: float | None = Field(None, alias="XDimension")
+    y_dimension: float | None = Field(None, alias="YDimension")
+    unit: str | None = Field(None, alias="Unit")
 
 
 class HorizontalDataResolution(BaseModel):
@@ -549,7 +550,8 @@ class Collection(BaseModel):
         """Return (x_res, y_res) in decimal degrees, or (None, None) if unavailable.
 
         Meters are converted to degrees using the factor 0.00001 deg/m.
-        Raises ValueError if the unit is not meters or decimal degrees.
+        Returns (None, None) when any resolution component is unavailable.
+        Raises ValueError if a complete resolution uses unsupported units.
         """
         if not (
             (se := self.spatial_extent)
@@ -561,16 +563,18 @@ class Collection(BaseModel):
             return (None, None)
 
         resolution_info = gr[0]
+        unit = resolution_info.unit
+        x_dimension = resolution_info.x_dimension
+        y_dimension = resolution_info.y_dimension
+        if unit is None or x_dimension is None or y_dimension is None:
+            return (None, None)
 
-        units = resolution_info.unit.lower()
+        units = unit.lower()
         if units not in ("meters", "decimal degrees"):
             raise ValueError(f"cannot convert coordinate units: {units}")
 
         factor = 0.00001 if units == "meters" else 1
-        return (
-            resolution_info.x_dimension * factor,
-            resolution_info.y_dimension * factor,
-        )
+        return (x_dimension * factor, y_dimension * factor)
 
 
 class CollectionItem(BaseModel):
