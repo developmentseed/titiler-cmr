@@ -1521,7 +1521,7 @@
 <ul>
 <li>Render tiles from assets discovered via queries to <a href="https://cmr.earthdata.nasa.gov/search">NASA's CMR</a></li>
 <li>Two backends: <strong>xarray</strong> (<code>/xarray</code>) for NetCDF/HDF5 datasets and <strong>rasterio</strong> (<code>/rasterio</code>) for GeoTIFF/COG assets</li>
-<li><code>/compatibility</code> helps inspect sample granules, including optional <code>group</code> selection and lightweight group discovery for hierarchical HDF5 and NetCDF assets</li>
+<li><code>/compatibility</code> helps inspect sample granules, including optional <code>granule_ur</code>, <code>group</code>, and <code>skip_variable_statistics</code> controls plus lightweight group discovery for hierarchical HDF5 and NetCDF assets</li>
 <li>Timeseries endpoints for generating GIFs, statistics, and tilejsons across a temporal range</li>
 <li>Queries CMR directly via the <a href="https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html">granule search API</a></li>
 <li>Built on top of <a href="https://github.com/developmentseed/titiler">titiler</a></li>

@@ -1988,7 +1988,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="how-to-use-the-compatibility-api">How to use the Compatibility API<a class="anchor-link" href="#how-to-use-the-compatibility-api">¶</a></h1><p>The <code>/compatibility</code> endpoint helps you understand how to call TiTiler-CMR for a collection. For hierarchical HDF5 and NetCDF datasets it can return a lightweight list of candidate <code>group</code> paths from the root request, then let you inspect variables by making a follow-up request with <code>group=...</code>.</p>
+<h1 id="how-to-use-the-compatibility-api">How to use the Compatibility API<a class="anchor-link" href="#how-to-use-the-compatibility-api">¶</a></h1><p>The <code>/compatibility</code> endpoint helps you understand how to call TiTiler-CMR for a collection. It returns the sampled <code>granule_ur</code> and accepts <code>granule_ur</code> when you want to inspect a specific granule. For hierarchical HDF5 and NetCDF datasets it can return a lightweight list of candidate <code>group</code> paths from the root request, then let you inspect variables by making a follow-up request with <code>group=...</code>.</p>
 <p>This notebook demonstrates that workflow for the <a href="https://www.earthdata.nasa.gov/data/catalog/asf-nisar-l2-gcov-beta-v1-1">NISAR Beta Geocoded Polarimetric Covariance (GCOV)</a> collection, which is a known example of a hierarchical HDF5 dataset that needs a <code>group</code> parameter for xarray requests.</p>
 <h2 id="setup">Setup<a class="anchor-link" href="#setup">¶</a></h2>
 </div>
@@ -2195,8 +2195,9 @@ print(json.dumps(compatibility_response, indent=2))</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="interpret-the-response">Interpret the response<a class="anchor-link" href="#interpret-the-response">¶</a></h2><p>For hierarchical datasets, a root <code>/compatibility</code> request stays lightweight. The most important field is:</p>
+<h2 id="interpret-the-response">Interpret the response<a class="anchor-link" href="#interpret-the-response">¶</a></h2><p>For hierarchical datasets, a root <code>/compatibility</code> request stays lightweight. The most important fields are:</p>
 <ul>
+<li><code>granule_ur</code>: the sampled granule used for this compatibility check</li>
 <li><code>compatible_groups</code>: candidate group paths to try in a follow-up request</li>
 </ul>
 <p>At this stage the response may not include variable metadata or xarray links yet, because TiTiler-CMR has not inspected a nested group.</p>
@@ -2357,13 +2358,13 @@ print(json.dumps(grouped_compatibility_response, indent=2))</div>
         4635
       ],
       "dtype": "float32",
-      "min": 1.8832862786616333e-15,
-      "max": 31.953369140625,
-      "mean": 0.241770401597023,
-      "p01": 5.073029127854178e-15,
-      "p05": 1.1617226278182183e-14,
-      "p95": 0.5727207183837887,
-      "p99": 1.1129724121093743
+      "min": 1.9753079380513405e-15,
+      "max": 126.9072265625,
+      "mean": 0.2488117665052414,
+      "p01": 5.214990765611826e-15,
+      "p05": 1.1158001606004219e-14,
+      "p95": 0.572845458984375,
+      "p99": 1.0888000488281195
     },
     "HVHV": {
       "shape": [
@@ -2371,13 +2372,13 @@ print(json.dumps(grouped_compatibility_response, indent=2))</div>
         4635
       ],
       "dtype": "float32",
-      "min": 2.390191451880075e-16,
-      "max": 3.112274169921875,
-      "mean": 0.053142450749874115,
-      "p01": 1.0423300135335712e-15,
-      "p05": 2.3915304415630947e-15,
-      "p95": 0.12976837158203122,
-      "p99": 0.2182251358032227
+      "min": 3.3623819874206706e-16,
+      "max": 1.6359405517578125,
+      "mean": 0.05236886069178581,
+      "p01": 9.670644276690842e-16,
+      "p05": 2.27081808218399e-15,
+      "p95": 0.13129768371582023,
+      "p99": 0.24061668395996075
     },
     "listOfCovarianceTerms": {
       "shape": [
@@ -2413,7 +2414,7 @@ print(json.dumps(grouped_compatibility_response, indent=2))</div>
       "dtype": "float32",
       "min": 0.0,
       "max": 3.0,
-      "mean": 1.7186812162399292,
+      "mean": 1.6180167198181152,
       "p01": 0.0,
       "p05": 0.0,
       "p95": 3.0,
@@ -2425,13 +2426,13 @@ print(json.dumps(grouped_compatibility_response, indent=2))</div>
         4635
       ],
       "dtype": "float32",
-      "min": 0.14548611640930176,
-      "max": 64.76309204101562,
-      "mean": 37.02350997924805,
-      "p01": 20.274718475341796,
-      "p05": 27.65355682373047,
-      "p95": 45.203744316101066,
-      "p99": 50.81333660125733
+      "min": 0.036182284355163574,
+      "max": 68.21331024169922,
+      "mean": 36.98814010620117,
+      "p01": 20.3447624206543,
+      "p05": 27.77091426849365,
+      "p95": 45.24116630554199,
+      "p99": 50.53271461486816
     },
     "numberOfSubSwaths": {
       "shape": [],
@@ -2450,13 +2451,13 @@ print(json.dumps(grouped_compatibility_response, indent=2))</div>
         4635
       ],
       "dtype": "float32",
-      "min": 0.1722254753112793,
-      "max": 0.9836357831954956,
-      "mean": 0.7485212087631226,
-      "p01": 0.5150275087356567,
-      "p05": 0.6132948487997055,
-      "p95": 0.8605117112398147,
-      "p99": 0.9140721911191941
+      "min": 0.2671063244342804,
+      "max": 0.9898551106452942,
+      "mean": 0.7490795254707336,
+      "p01": 0.5234366035461426,
+      "p05": 0.6213086247444153,
+      "p95": 0.8584897398948669,
+      "p99": 0.9072614645957946
     },
     "xCoordinateSpacing": {
       "shape": [],
