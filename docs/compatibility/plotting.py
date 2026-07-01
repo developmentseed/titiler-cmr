@@ -3,7 +3,6 @@ Utilities for plotting
 """
 
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import numpy as np
 
 
@@ -25,9 +24,13 @@ def create_pie_chart(
     legend: whether to show legend
     top_n: number of top categories to show percentages on (-1 for all)
     """
-    # Generate colors based on number of items
+    # Generate distinct categorical colors. Set3 only has 12 colors, so sampling
+    # it for larger pies repeats adjacent-looking colors. Interleave tab20 so
+    # neighboring slices stay visually distinct for charts with many categories.
     n = len(labels)
-    colors = cm.Set3(np.linspace(0, 1, n))
+    tab20 = plt.get_cmap("tab20").colors
+    color_order = list(range(0, len(tab20), 2)) + list(range(1, len(tab20), 2))
+    colors = [tab20[color_order[i % len(tab20)]] for i in range(n)]
 
     # Find the top N values - handle the case when top_n=-1
     if top_n == -1 or top_n >= n:
@@ -35,8 +38,11 @@ def create_pie_chart(
     else:
         top_indices = set(np.argsort(sizes)[::-1][:top_n])
 
-    # Create the pie chart
-    plt.figure(figsize=(8, 6))
+    # Create the pie chart. When a legend is shown, avoid duplicating long labels
+    # around the pie itself because tight layout can shrink the chart to make room.
+    figure_width = 11 if legend else 8
+    figure_height = max(6, n * 0.25) if legend else 6
+    _, ax = plt.subplots(figsize=(figure_width, figure_height))
 
     common_args = {
         "x": sizes,
@@ -44,18 +50,19 @@ def create_pie_chart(
         "autopct": "%1.1f%%",
         "startangle": 90,
         "textprops": {"fontsize": 11},
-        "labels": labels,
+        "labels": None if legend else labels,
     }
 
-    _, texts, autotexts = plt.pie(**common_args)
+    _, texts, autotexts = ax.pie(**common_args)
 
     if legend:
         # Add legend with labels and counts
         legend_labels = [f"{label}: {size}" for label, size in zip(labels, sizes)]
-        plt.legend(
+        legend_loc = "center left" if legend_position == "best" else legend_position
+        ax.legend(
             legend_labels,
-            loc=legend_position,
-            bbox_to_anchor=(1, 1),
+            loc=legend_loc,
+            bbox_to_anchor=(1.02, 0.5),
             fontsize=10,
             title="Counts",
         )
@@ -66,7 +73,7 @@ def create_pie_chart(
             text.set_text("")
             autotext.set_text("")
 
-    plt.title(title, fontsize=14, fontweight="bold")
-    plt.axis("equal")
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.axis("equal")
     plt.tight_layout()
     plt.show()
