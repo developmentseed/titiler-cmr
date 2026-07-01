@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.3](https://github.com/developmentseed/titiler-cmr/compare/v1.1.2...v1.1.3) (2026-07-01)
+
+
+### Bug Fixes
+
+* add granule_ur to compatibility params and response ([#205](https://github.com/developmentseed/titiler-cmr/issues/205)) ([988f356](https://github.com/developmentseed/titiler-cmr/commit/988f3566882ecfd05f9a2aaf38ad4a00331c4dd0))
+
 ## [1.1.2](https://github.com/developmentseed/titiler-cmr/compare/v1.1.1...v1.1.2) (2026-06-18)
 
 
