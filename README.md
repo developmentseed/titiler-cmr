@@ -22,7 +22,7 @@ See also the [API documentation](https://staging.openveda.cloud/api/titiler-cmr/
 
 - Render tiles from assets discovered via queries to [NASA's CMR](https://cmr.earthdata.nasa.gov/search)
 - Two backends: **xarray** (`/xarray`) for NetCDF/HDF5 datasets and **rasterio** (`/rasterio`) for GeoTIFF/COG assets
-- `/compatibility` helps inspect sample granules, including optional `granule_ur`, `group`, and `skip_variable_statistics` controls plus lightweight group discovery for hierarchical HDF5 and NetCDF assets
+- `/compatibility` helps inspect sample granules, including optional `granule_ur`, `group`, and `skip_variable_statistics` controls plus lightweight spatial group discovery for hierarchical HDF5 and NetCDF assets. Explicit `group` requests must contain xarray variables with recognizable x/y dimensions.
 - Timeseries endpoints for generating GIFs, statistics, and tilejsons across a temporal range
 - Queries CMR directly via the [granule search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html)
 - Built on top of [titiler](https://github.com/developmentseed/titiler)
