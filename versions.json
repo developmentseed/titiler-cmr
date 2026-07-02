@@ -10,6 +10,11 @@
     "aliases": []
   },
   {
+    "version": "chore-update-compatibility-report",
+    "title": "chore-update-compatibility-report",
+    "aliases": []
+  },
+  {
     "version": "dev",
     "title": "dev",
     "aliases": []
