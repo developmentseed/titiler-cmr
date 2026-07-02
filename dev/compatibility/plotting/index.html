@@ -1807,7 +1807,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7a0c3d94">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=58a044cb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1838,7 +1838,7 @@ Utilities for plotting
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d18e9c95">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f4e7cad9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1857,11 +1857,9 @@ Utilities for plotting
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import numpy as np</div>
 </div>
 </div>
@@ -1869,7 +1867,7 @@ import numpy as np</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1eb1c4d0">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7e92c98e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1905,9 +1903,13 @@ import numpy as np</div>
 <span class="sd">    legend: whether to show legend</span>
 <span class="sd">    top_n: number of top categories to show percentages on (-1 for all)</span>
 <span class="sd">    """</span>
-    <span class="c1"># Generate colors based on number of items</span>
+    <span class="c1"># Generate distinct categorical colors. Set3 only has 12 colors, so sampling</span>
+    <span class="c1"># it for larger pies repeats adjacent-looking colors. Interleave tab20 so</span>
+    <span class="c1"># neighboring slices stay visually distinct for charts with many categories.</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-    <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">Set3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="n">tab20</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">"tab20"</span><span class="p">)</span><span class="o">.</span><span class="n">colors</span>
+    <span class="n">color_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tab20</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tab20</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab20</span><span class="p">[</span><span class="n">color_order</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tab20</span><span class="p">)]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 
     <span class="c1"># Find the top N values - handle the case when top_n=-1</span>
     <span class="k">if</span> <span class="n">top_n</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">top_n</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
@@ -1915,8 +1917,11 @@ import numpy as np</div>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">top_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">sizes</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">top_n</span><span class="p">])</span>
 
-    <span class="c1"># Create the pie chart</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="c1"># Create the pie chart. When a legend is shown, avoid duplicating long labels</span>
+    <span class="c1"># around the pie itself because tight layout can shrink the chart to make room.</span>
+    <span class="n">figure_width</span> <span class="o">=</span> <span class="mi">11</span> <span class="k">if</span> <span class="n">legend</span> <span class="k">else</span> <span class="mi">8</span>
+    <span class="n">figure_height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">0.25</span><span class="p">)</span> <span class="k">if</span> <span class="n">legend</span> <span class="k">else</span> <span class="mi">6</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">figure_width</span><span class="p">,</span> <span class="n">figure_height</span><span class="p">))</span>
 
     <span class="n">common_args</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">"x"</span><span class="p">:</span> <span class="n">sizes</span><span class="p">,</span>
@@ -1924,18 +1929,19 @@ import numpy as np</div>
         <span class="s2">"autopct"</span><span class="p">:</span> <span class="s2">"</span><span class="si">%1.1f%%</span><span class="s2">"</span><span class="p">,</span>
         <span class="s2">"startangle"</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
         <span class="s2">"textprops"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"fontsize"</span><span class="p">:</span> <span class="mi">11</span><span class="p">},</span>
-        <span class="s2">"labels"</span><span class="p">:</span> <span class="n">labels</span><span class="p">,</span>
+        <span class="s2">"labels"</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">legend</span> <span class="k">else</span> <span class="n">labels</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="n">_</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">autotexts</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="o">**</span><span class="n">common_args</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">autotexts</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="o">**</span><span class="n">common_args</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">legend</span><span class="p">:</span>
         <span class="c1"># Add legend with labels and counts</span>
         <span class="n">legend_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">sizes</span><span class="p">)]</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+        <span class="n">legend_loc</span> <span class="o">=</span> <span class="s2">"center left"</span> <span class="k">if</span> <span class="n">legend_position</span> <span class="o">==</span> <span class="s2">"best"</span> <span class="k">else</span> <span class="n">legend_position</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
             <span class="n">legend_labels</span><span class="p">,</span>
-            <span class="n">loc</span><span class="o">=</span><span class="n">legend_position</span><span class="p">,</span>
-            <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">legend_loc</span><span class="p">,</span>
+            <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
             <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="s2">"Counts"</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1946,8 +1952,8 @@ import numpy as np</div>
             <span class="n">text</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
             <span class="n">autotext</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -1969,9 +1975,13 @@ import numpy as np</div>
     legend: whether to show legend
     top_n: number of top categories to show percentages on (-1 for all)
     """
-    # Generate colors based on number of items
+    # Generate distinct categorical colors. Set3 only has 12 colors, so sampling
+    # it for larger pies repeats adjacent-looking colors. Interleave tab20 so
+    # neighboring slices stay visually distinct for charts with many categories.
     n = len(labels)
-    colors = cm.Set3(np.linspace(0, 1, n))
+    tab20 = plt.get_cmap("tab20").colors
+    color_order = list(range(0, len(tab20), 2)) + list(range(1, len(tab20), 2))
+    colors = [tab20[color_order[i % len(tab20)]] for i in range(n)]
 
     # Find the top N values - handle the case when top_n=-1
     if top_n == -1 or top_n &gt;= n:
@@ -1979,8 +1989,11 @@ import numpy as np</div>
     else:
         top_indices = set(np.argsort(sizes)[::-1][:top_n])
 
-    # Create the pie chart
-    plt.figure(figsize=(8, 6))
+    # Create the pie chart. When a legend is shown, avoid duplicating long labels
+    # around the pie itself because tight layout can shrink the chart to make room.
+    figure_width = 11 if legend else 8
+    figure_height = max(6, n * 0.25) if legend else 6
+    _, ax = plt.subplots(figsize=(figure_width, figure_height))
 
     common_args = {
         "x": sizes,
@@ -1988,18 +2001,19 @@ import numpy as np</div>
         "autopct": "%1.1f%%",
         "startangle": 90,
         "textprops": {"fontsize": 11},
-        "labels": labels,
+        "labels": None if legend else labels,
     }
 
-    _, texts, autotexts = plt.pie(**common_args)
+    _, texts, autotexts = ax.pie(**common_args)
 
     if legend:
         # Add legend with labels and counts
         legend_labels = [f"{label}: {size}" for label, size in zip(labels, sizes)]
-        plt.legend(
+        legend_loc = "center left" if legend_position == "best" else legend_position
+        ax.legend(
             legend_labels,
-            loc=legend_position,
-            bbox_to_anchor=(1, 1),
+            loc=legend_loc,
+            bbox_to_anchor=(1.02, 0.5),
             fontsize=10,
             title="Counts",
         )
@@ -2010,8 +2024,8 @@ import numpy as np</div>
             text.set_text("")
             autotext.set_text("")
 
-    plt.title(title, fontsize=14, fontweight="bold")
-    plt.axis("equal")
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.axis("equal")
     plt.tight_layout()
     plt.show()</div>
 </div>

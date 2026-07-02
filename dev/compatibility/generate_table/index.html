@@ -1807,7 +1807,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=812eb0e4">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bf2f4163">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1825,16 +1825,16 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="sd">"""Generate HTML table from parquet file for mkdocs site."""</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="sd">"""Generate an HTML table from compatibility assessment parquet results."""</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">"""Generate HTML table from parquet file for mkdocs site."""</div>
+<div class="clipboard-copy-txt" id="cell-1">"""Generate an HTML table from compatibility assessment parquet results."""</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=322da785">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=acd10d91">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1852,20 +1852,16 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import json
-import pandas as pd
-from pathlib import Path</div>
+<div class="clipboard-copy-txt" id="cell-2">from __future__ import annotations</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=39421f8d">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=fc5aae69">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1883,42 +1879,461 @@ from pathlib import Path</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_searchable_table</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">"""Convert parquet to JSON and generate HTML with DataTables."""</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-3">import importlib
+import json
+import logging
+from pathlib import Path
+from typing import Any</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0a82f403">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-4">import pandas as pd</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=66884057">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">reporting</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"docs.compatibility.reporting"</span><span class="p">)</span>
+<span class="k">except</span> <span class="p">(</span>
+    <span class="ne">ModuleNotFoundError</span>
+<span class="p">):</span>  <span class="c1"># pragma: no cover - supports running from docs/compatibility</span>
+    <span class="n">reporting</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"reporting"</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-5">try:
+    reporting = importlib.import_module("docs.compatibility.reporting")
+except (
+    ModuleNotFoundError
+):  # pragma: no cover - supports running from docs/compatibility
+    reporting = importlib.import_module("reporting")</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=249f6380">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">DEFAULT_ASSESSMENT_PATH</span> <span class="o">=</span> <span class="n">reporting</span><span class="o">.</span><span class="n">DEFAULT_ASSESSMENT_PATH</span>
+<span class="n">classify_assessment</span> <span class="o">=</span> <span class="n">reporting</span><span class="o">.</span><span class="n">classify_assessment</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-6">DEFAULT_ASSESSMENT_PATH = reporting.DEFAULT_ASSESSMENT_PATH
+classify_assessment = reporting.classify_assessment</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=889c22e3">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-7">LOGGER = logging.getLogger(__name__)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=751c95a2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">DISPLAY_COLUMNS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"collection_short_name_and_version"</span><span class="p">,</span>
+    <span class="s2">"data_center"</span><span class="p">,</span>
+    <span class="s2">"backend"</span><span class="p">,</span>
+    <span class="s2">"format"</span><span class="p">,</span>
+    <span class="s2">"extension"</span><span class="p">,</span>
+    <span class="s2">"tiling_compatible"</span><span class="p">,</span>
+    <span class="s2">"assessment_status"</span><span class="p">,</span>
+    <span class="s2">"report_status"</span><span class="p">,</span>
+    <span class="s2">"report_category"</span><span class="p">,</span>
+    <span class="s2">"report_reason"</span><span class="p">,</span>
+    <span class="s2">"report_reason_detail"</span><span class="p">,</span>
+    <span class="s2">"error_code"</span><span class="p">,</span>
+    <span class="s2">"failure_stage"</span><span class="p">,</span>
+    <span class="s2">"failure_category"</span><span class="p">,</span>
+    <span class="s2">"failure_subcategory"</span><span class="p">,</span>
+    <span class="s2">"failure_http_status_code"</span><span class="p">,</span>
+    <span class="s2">"processing_level"</span><span class="p">,</span>
+    <span class="s2">"num_granules"</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-8">DISPLAY_COLUMNS = [
+    "collection_short_name_and_version",
+    "data_center",
+    "backend",
+    "format",
+    "extension",
+    "tiling_compatible",
+    "assessment_status",
+    "report_status",
+    "report_category",
+    "report_reason",
+    "report_reason_detail",
+    "error_code",
+    "failure_stage",
+    "failure_category",
+    "failure_subcategory",
+    "failure_http_status_code",
+    "processing_level",
+    "num_granules",
+]</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d5c13643">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">FILTER_COLUMNS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"report_category"</span><span class="p">,</span>
+    <span class="s2">"report_reason"</span><span class="p">,</span>
+    <span class="s2">"assessment_status"</span><span class="p">,</span>
+    <span class="s2">"data_center"</span><span class="p">,</span>
+    <span class="s2">"backend"</span><span class="p">,</span>
+    <span class="s2">"tiling_compatible"</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-9">FILTER_COLUMNS = [
+    "report_category",
+    "report_reason",
+    "assessment_status",
+    "data_center",
+    "backend",
+    "tiling_compatible",
+]</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1918926b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_searchable_table</span><span class="p">(</span>
+    <span class="n">input_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">DEFAULT_ASSESSMENT_PATH</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert assessment results to a searchable DataTables HTML page."""</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"</span><span class="si">%(levelname)s</span><span class="s2">:</span><span class="si">%(name)s</span><span class="s2">:</span><span class="si">%(message)s</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="c1"># Read the parquet file</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"tiling_results-11-24-2025.parquet"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataframe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Reading compatibility assessment from </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">input_path</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="c1"># Filter out rows with n/a collection short name and version</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"collection_short_name_and_version"</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">classify_assessment</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
-    <span class="c1"># Select key columns for display</span>
-    <span class="n">display_columns</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"collection_short_name_and_version"</span><span class="p">,</span>
-        <span class="s2">"data_center"</span><span class="p">,</span>
-        <span class="s2">"format"</span><span class="p">,</span>
-        <span class="s2">"extension"</span><span class="p">,</span>
-        <span class="s2">"tiling_compatible"</span><span class="p">,</span>
-        <span class="s2">"incompatible_reason"</span><span class="p">,</span>
-        <span class="s2">"processing_level"</span><span class="p">,</span>
-        <span class="s2">"num_granules"</span><span class="p">,</span>
-    <span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"collection_short_name_and_version"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"collection_short_name_and_version"</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()]</span>
 
-    <span class="c1"># Filter to only include columns that exist</span>
-    <span class="n">available_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">display_columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-    <span class="n">display_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">available_columns</span><span class="p">]</span>
-
-    <span class="c1"># Convert to records for JSON serialization</span>
-    <span class="n">records</span> <span class="o">=</span> <span class="n">display_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">"records"</span><span class="p">)</span>
-
-    <span class="c1"># Create column definitions for DataTables</span>
+    <span class="n">available_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">DISPLAY_COLUMNS</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="n">display_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">available_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">_json_records</span><span class="p">(</span><span class="n">display_df</span><span class="p">)</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span><span class="s2">"data"</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()}</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">available_columns</span>
     <span class="p">]</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">_status_counts</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
-    <span class="c1"># Generate HTML</span>
-    <span class="n">html_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""&lt;!DOCTYPE html&gt;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">"results_table.html"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">_render_html</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">counts</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Generated </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-10">def generate_searchable_table(
+    input_path: str | Path = DEFAULT_ASSESSMENT_PATH,
+    output_path: str | Path | None = None,
+    *,
+    dataframe: pd.DataFrame | None = None,
+) -&gt; Path:
+    """Convert assessment results to a searchable DataTables HTML page."""
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+
+    if dataframe is None:
+        LOGGER.info("Reading compatibility assessment from %s", input_path)
+        df = pd.read_parquet(input_path)
+    else:
+        df = dataframe.copy()
+
+    df = classify_assessment(df)
+
+    if "collection_short_name_and_version" in df.columns:
+        df = df[df["collection_short_name_and_version"].notna()]
+
+    available_columns = [col for col in DISPLAY_COLUMNS if col in df.columns]
+    display_df = df[available_columns].copy()
+    records = _json_records(display_df)
+    columns = [
+        {"data": col, "title": col.replace("_", " ").title()}
+        for col in available_columns
+    ]
+    counts = _status_counts(df)
+
+    output = (
+        Path(output_path)
+        if output_path is not None
+        else Path(__file__).with_name("results_table.html")
+    )
+    output.write_text(_render_html(records, columns, counts), encoding="utf-8")
+    LOGGER.info("Generated %s", output)
+    return output</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2e25d80c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_status_counts</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">compatible</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"tiling_compatible"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="k">if</span> <span class="n">total</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">status_counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">"assessment_status"</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s2">"object"</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+    <span class="n">inconclusive</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">status_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"inconclusive"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">incompatible</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">status_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"incompatible"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">compatible</span> <span class="o">/</span> <span class="n">total</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">total</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"total"</span><span class="p">:</span> <span class="n">total</span><span class="p">,</span>
+        <span class="s2">"compatible"</span><span class="p">:</span> <span class="n">compatible</span><span class="p">,</span>
+        <span class="s2">"incompatible"</span><span class="p">:</span> <span class="n">incompatible</span><span class="p">,</span>
+        <span class="s2">"inconclusive"</span><span class="p">:</span> <span class="n">inconclusive</span><span class="p">,</span>
+        <span class="s2">"rate"</span><span class="p">:</span> <span class="n">rate</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-11">def _status_counts(df: pd.DataFrame) -&gt; dict[str, Any]:
+    total = len(df)
+    compatible = int(df["tiling_compatible"].fillna(False).sum()) if total else 0
+    status_counts = df.get(
+        "assessment_status", pd.Series(dtype="object")
+    ).value_counts()
+    inconclusive = int(status_counts.get("inconclusive", 0))
+    incompatible = int(status_counts.get("incompatible", 0))
+    rate = compatible / total * 100 if total else 0
+    return {
+        "total": total,
+        "compatible": compatible,
+        "incompatible": incompatible,
+        "inconclusive": inconclusive,
+        "rate": rate,
+    }</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=57ed6884">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_json_records</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">"records"</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-12">def _json_records(df: pd.DataFrame) -&gt; list[dict[str, Any]]:
+    sanitized = df.astype(object).where(pd.notna(df), None)
+    return sanitized.to_dict("records")</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b2d2ac2d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_render_html</span><span class="p">(</span>
+    <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">filter_columns</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">FILTER_COLUMNS</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""&lt;!DOCTYPE html&gt;</span>
 <span class="s2">&lt;html lang="en"&gt;</span>
 <span class="s2">&lt;head&gt;</span>
 <span class="s2">    &lt;meta charset="UTF-8"&gt;</span>
@@ -1932,7 +2347,7 @@ from pathlib import Path</div>
 <span class="s2">            background-color: #f5f5f5;</span>
 <span class="s2">        </span><span class="se">}}</span>
 <span class="s2">        .container </span><span class="se">{{</span>
-<span class="s2">            max-width: 1400px;</span>
+<span class="s2">            max-width: 1600px;</span>
 <span class="s2">            margin: 0 auto;</span>
 <span class="s2">            background-color: white;</span>
 <span class="s2">            padding: 30px;</span>
@@ -1953,17 +2368,21 @@ from pathlib import Path</div>
 <span class="s2">        </span><span class="se">}}</span>
 <span class="s2">        table.dataTable </span><span class="se">{{</span>
 <span class="s2">            width: 100% !important;</span>
-<span class="s2">            font-size: 14px;</span>
+<span class="s2">            font-size: 13px;</span>
 <span class="s2">        </span><span class="se">}}</span>
 <span class="s2">        .dataTables_wrapper </span><span class="se">{{</span>
 <span class="s2">            margin-top: 20px;</span>
 <span class="s2">        </span><span class="se">}}</span>
 <span class="s2">        .compatible-true </span><span class="se">{{</span>
-<span class="s2">            color: #4caf50;</span>
+<span class="s2">            color: #2e7d32;</span>
 <span class="s2">            font-weight: bold;</span>
 <span class="s2">        </span><span class="se">}}</span>
 <span class="s2">        .compatible-false </span><span class="se">{{</span>
-<span class="s2">            color: #f44336;</span>
+<span class="s2">            color: #c62828;</span>
+<span class="s2">            font-weight: bold;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .status-inconclusive </span><span class="se">{{</span>
+<span class="s2">            color: #ef6c00;</span>
 <span class="s2">            font-weight: bold;</span>
 <span class="s2">        </span><span class="se">}}</span>
 <span class="s2">        .back-link </span><span class="se">{{</span>
@@ -1976,6 +2395,11 @@ from pathlib import Path</div>
 <span class="s2">        .back-link:hover </span><span class="se">{{</span>
 <span class="s2">            text-decoration: underline;</span>
 <span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        select </span><span class="se">{{</span>
+<span class="s2">            display: block;</span>
+<span class="s2">            max-width: 180px;</span>
+<span class="s2">            margin-top: 4px;</span>
+<span class="s2">        </span><span class="se">}}</span>
 <span class="s2">    &lt;/style&gt;</span>
 <span class="s2">&lt;/head&gt;</span>
 <span class="s2">&lt;body&gt;</span>
@@ -1985,13 +2409,16 @@ from pathlib import Path</div>
 <span class="s2">        &lt;h1&gt;TiTiler-CMR Dataset Compatibility Results&lt;/h1&gt;</span>
 
 <span class="s2">        &lt;div class="info-box"&gt;</span>
-<span class="s2">            &lt;strong&gt;Total datasets:&lt;/strong&gt; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
-<span class="s2">            &lt;strong&gt;Compatible datasets:&lt;/strong&gt; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">tiling_compatible</span><span class="p">])</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
-<span class="s2">            &lt;strong&gt;Compatibility rate:&lt;/strong&gt; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">tiling_compatible</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%</span>
+<span class="s2">            &lt;strong&gt;Total datasets:&lt;/strong&gt; </span><span class="si">{</span><span class="n">counts</span><span class="p">[</span><span class="s2">"total"</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">            &lt;strong&gt;Compatible datasets:&lt;/strong&gt; </span><span class="si">{</span><span class="n">counts</span><span class="p">[</span><span class="s2">"compatible"</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">            &lt;strong&gt;Incompatible datasets:&lt;/strong&gt; </span><span class="si">{</span><span class="n">counts</span><span class="p">[</span><span class="s2">"incompatible"</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">            &lt;strong&gt;Inconclusive datasets:&lt;/strong&gt; </span><span class="si">{</span><span class="n">counts</span><span class="p">[</span><span class="s2">"inconclusive"</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">            &lt;strong&gt;Compatibility rate:&lt;/strong&gt; </span><span class="si">{</span><span class="n">counts</span><span class="p">[</span><span class="s2">"rate"</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%</span>
 <span class="s2">        &lt;/div&gt;</span>
 
 <span class="s2">        &lt;p&gt;Use the search box and column filters below to explore the dataset compatibility results.</span>
-<span class="s2">        Click on column headers to sort.&lt;/p&gt;</span>
+<span class="s2">        The table includes raw assessment fields and normalized report category fields derived from</span>
+<span class="s2">        the 2026-07-01 assessment schema.&lt;/p&gt;</span>
 
 <span class="s2">        &lt;table id="resultsTable" class="display" style="width:100%"&gt;</span>
 <span class="s2">        &lt;/table&gt;</span>
@@ -2000,8 +2427,9 @@ from pathlib import Path</div>
 <span class="s2">    &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;</span>
 <span class="s2">    &lt;script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"&gt;&lt;/script&gt;</span>
 <span class="s2">    &lt;script&gt;</span>
-<span class="s2">        const data = </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">records</span><span class="p">,</span><span class="w"> </span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span>
+<span class="s2">        const data = </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">records</span><span class="p">,</span><span class="w"> </span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">allow_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span>
 <span class="s2">        const columns = </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span>
+<span class="s2">        const filterColumns = </span><span class="si">{</span><span class="n">filter_columns</span><span class="si">}</span><span class="s2">;</span>
 
 <span class="s2">        $(document).ready(function() </span><span class="se">{{</span>
 <span class="s2">            $('#resultsTable').DataTable(</span><span class="se">{{</span>
@@ -2022,10 +2450,18 @@ from pathlib import Path</div>
 <span class="s2">                        </span><span class="se">}}</span>
 <span class="s2">                    </span><span class="se">}}</span><span class="s2">,</span>
 <span class="s2">                    </span><span class="se">{{</span>
-<span class="s2">                        // Handle null values for all columns</span>
+<span class="s2">                        targets: columns.findIndex(col =&gt; col.data === 'assessment_status'),</span>
+<span class="s2">                        render: function(data, type, row) </span><span class="se">{{</span>
+<span class="s2">                            if (type === 'display' &amp;&amp; data === 'inconclusive') </span><span class="se">{{</span>
+<span class="s2">                                return '&lt;span class="status-inconclusive"&gt;' + data + '&lt;/span&gt;';</span>
+<span class="s2">                            </span><span class="se">}}</span>
+<span class="s2">                            return data;</span>
+<span class="s2">                        </span><span class="se">}}</span>
+<span class="s2">                    </span><span class="se">}}</span><span class="s2">,</span>
+<span class="s2">                    </span><span class="se">{{</span>
 <span class="s2">                        targets: '_all',</span>
 <span class="s2">                        render: function(data, type, row) </span><span class="se">{{</span>
-<span class="s2">                            if (data === null || data === undefined) </span><span class="se">{{</span>
+<span class="s2">                            if (data === null || data === undefined || data === '') </span><span class="se">{{</span>
 <span class="s2">                                return type === 'display' ? '&lt;em style="color: #999;"&gt;N/A&lt;/em&gt;' : '';</span>
 <span class="s2">                            </span><span class="se">}}</span>
 <span class="s2">                            return data;</span>
@@ -2033,13 +2469,8 @@ from pathlib import Path</div>
 <span class="s2">                    </span><span class="se">}}</span>
 <span class="s2">                ],</span>
 <span class="s2">                initComplete: function() </span><span class="se">{{</span>
-<span class="s2">                    // Add column filters</span>
 <span class="s2">                    this.api().columns().every(function() </span><span class="se">{{</span>
 <span class="s2">                        const column = this;</span>
-<span class="s2">                        const header = $(column.header());</span>
-
-<span class="s2">                        // Add filter for specific columns</span>
-<span class="s2">                        const filterColumns = ['data_center', 'format', 'tiling_compatible', 'incompatible_reason'];</span>
 <span class="s2">                        if (filterColumns.includes(column.dataSrc())) </span><span class="se">{{</span>
 <span class="s2">                            const select = $('&lt;select&gt;&lt;option value=""&gt;All&lt;/option&gt;&lt;/select&gt;')</span>
 <span class="s2">                                .appendTo($(column.header()))</span>
@@ -2061,48 +2492,14 @@ from pathlib import Path</div>
 <span class="s2">    &lt;/script&gt;</span>
 <span class="s2">&lt;/body&gt;</span>
 <span class="s2">&lt;/html&gt;"""</span>
-
-    <span class="c1"># Write the HTML file</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"results_table.html"</span><span class="p">)</span>
-    <span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generated </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">def generate_searchable_table():
-    """Convert parquet to JSON and generate HTML with DataTables."""
-
-    # Read the parquet file
-    df = pd.read_parquet("tiling_results-11-24-2025.parquet")
-
-    # Filter out rows with n/a collection short name and version
-    df = df[df["collection_short_name_and_version"].notna()]
-
-    # Select key columns for display
-    display_columns = [
-        "collection_short_name_and_version",
-        "data_center",
-        "format",
-        "extension",
-        "tiling_compatible",
-        "incompatible_reason",
-        "processing_level",
-        "num_granules",
-    ]
-
-    # Filter to only include columns that exist
-    available_columns = [col for col in display_columns if col in df.columns]
-    display_df = df[available_columns]
-
-    # Convert to records for JSON serialization
-    records = display_df.to_dict("records")
-
-    # Create column definitions for DataTables
-    columns = [
-        {"data": col, "title": col.replace("_", " ").title()}
-        for col in available_columns
-    ]
-
-    # Generate HTML
-    html_content = f"""&lt;!DOCTYPE html&gt;
+<div class="clipboard-copy-txt" id="cell-13">def _render_html(
+    records: list[dict[str, Any]],
+    columns: list[dict[str, str]],
+    counts: dict[str, Any],
+) -&gt; str:
+    filter_columns = json.dumps(FILTER_COLUMNS)
+    return f"""&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
@@ -2116,7 +2513,7 @@ from pathlib import Path</div>
             background-color: #f5f5f5;
         }}
         .container {{
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -2137,17 +2534,21 @@ from pathlib import Path</div>
         }}
         table.dataTable {{
             width: 100% !important;
-            font-size: 14px;
+            font-size: 13px;
         }}
         .dataTables_wrapper {{
             margin-top: 20px;
         }}
         .compatible-true {{
-            color: #4caf50;
+            color: #2e7d32;
             font-weight: bold;
         }}
         .compatible-false {{
-            color: #f44336;
+            color: #c62828;
+            font-weight: bold;
+        }}
+        .status-inconclusive {{
+            color: #ef6c00;
             font-weight: bold;
         }}
         .back-link {{
@@ -2160,6 +2561,11 @@ from pathlib import Path</div>
         .back-link:hover {{
             text-decoration: underline;
         }}
+        select {{
+            display: block;
+            max-width: 180px;
+            margin-top: 4px;
+        }}
     &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
@@ -2169,13 +2575,16 @@ from pathlib import Path</div>
         &lt;h1&gt;TiTiler-CMR Dataset Compatibility Results&lt;/h1&gt;
 
         &lt;div class="info-box"&gt;
-            &lt;strong&gt;Total datasets:&lt;/strong&gt; {len(df)}&lt;br&gt;
-            &lt;strong&gt;Compatible datasets:&lt;/strong&gt; {len(df[df.tiling_compatible])}&lt;br&gt;
-            &lt;strong&gt;Compatibility rate:&lt;/strong&gt; {len(df[df.tiling_compatible]) / len(df) * 100:.2f}%
+            &lt;strong&gt;Total datasets:&lt;/strong&gt; {counts["total"]}&lt;br&gt;
+            &lt;strong&gt;Compatible datasets:&lt;/strong&gt; {counts["compatible"]}&lt;br&gt;
+            &lt;strong&gt;Incompatible datasets:&lt;/strong&gt; {counts["incompatible"]}&lt;br&gt;
+            &lt;strong&gt;Inconclusive datasets:&lt;/strong&gt; {counts["inconclusive"]}&lt;br&gt;
+            &lt;strong&gt;Compatibility rate:&lt;/strong&gt; {counts["rate"]:.2f}%
         &lt;/div&gt;
 
         &lt;p&gt;Use the search box and column filters below to explore the dataset compatibility results.
-        Click on column headers to sort.&lt;/p&gt;
+        The table includes raw assessment fields and normalized report category fields derived from
+        the 2026-07-01 assessment schema.&lt;/p&gt;
 
         &lt;table id="resultsTable" class="display" style="width:100%"&gt;
         &lt;/table&gt;
@@ -2184,8 +2593,9 @@ from pathlib import Path</div>
     &lt;script src="https://code.jquery.com/jquery-3.7.1.min.js"&gt;&lt;/script&gt;
     &lt;script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"&gt;&lt;/script&gt;
     &lt;script&gt;
-        const data = {json.dumps(records, default=str)};
+        const data = {json.dumps(records, default=str, allow_nan=False)};
         const columns = {json.dumps(columns)};
+        const filterColumns = {filter_columns};
 
         $(document).ready(function() {{
             $('#resultsTable').DataTable({{
@@ -2206,10 +2616,18 @@ from pathlib import Path</div>
                         }}
                     }},
                     {{
-                        // Handle null values for all columns
+                        targets: columns.findIndex(col =&gt; col.data === 'assessment_status'),
+                        render: function(data, type, row) {{
+                            if (type === 'display' &amp;&amp; data === 'inconclusive') {{
+                                return '&lt;span class="status-inconclusive"&gt;' + data + '&lt;/span&gt;';
+                            }}
+                            return data;
+                        }}
+                    }},
+                    {{
                         targets: '_all',
                         render: function(data, type, row) {{
-                            if (data === null || data === undefined) {{
+                            if (data === null || data === undefined || data === '') {{
                                 return type === 'display' ? '&lt;em style="color: #999;"&gt;N/A&lt;/em&gt;' : '';
                             }}
                             return data;
@@ -2217,13 +2635,8 @@ from pathlib import Path</div>
                     }}
                 ],
                 initComplete: function() {{
-                    // Add column filters
                     this.api().columns().every(function() {{
                         const column = this;
-                        const header = $(column.header());
-
-                        // Add filter for specific columns
-                        const filterColumns = ['data_center', 'format', 'tiling_compatible', 'incompatible_reason'];
                         if (filterColumns.includes(column.dataSrc())) {{
                             const select = $('&lt;select&gt;&lt;option value=""&gt;All&lt;/option&gt;&lt;/select&gt;')
                                 .appendTo($(column.header()))
@@ -2244,19 +2657,14 @@ from pathlib import Path</div>
         }});
     &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;"""
-
-    # Write the HTML file
-    output_path = Path("results_table.html")
-    output_path.write_text(html_content)
-    print(f"Generated {output_path}")</div>
+&lt;/html&gt;"""</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=864f2ac8">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=fd1d4896">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2264,7 +2672,7 @@ from pathlib import Path</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-14">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -2277,7 +2685,7 @@ from pathlib import Path</div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">generate_searchable_table</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">if __name__ == "__main__":
+<div class="clipboard-copy-txt" id="cell-14">if __name__ == "__main__":
     generate_searchable_table()</div>
 </div>
 </div>
