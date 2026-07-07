@@ -67,6 +67,8 @@ class CompatibilityResponse(BaseModel):
     dimensions: dict[str, int] | None = None
     coordinates: dict[str, CoordinateInfo] | None = None
     compatible_groups: list[str] | None = None
+    tileable_variables: list[str] | None = None
+    incompatible_variables: dict[str, dict[str, Any]] | None = None
     granule_ur: str | None = None
     example_assets: dict[str, str] | str | None = None
     sample_asset_raster_info: Info | None = None
@@ -176,6 +178,56 @@ def extract_xarray_metadata(
         "dimensions": dict(ds.sizes),
         "coordinates": coordinates,
         "backend": "xarray",
+    }
+
+
+def _variable_dims(ds: Any, variable: str) -> list[str]:
+    """Return dimension names for a dataset variable."""
+    return list(ds[variable].dims)
+
+
+def validate_tileable_variables(ds: Any) -> dict[str, Any]:
+    """Return variables with recognized x/y dimensions for xarray tiling.
+
+    Compatibility cannot prove every required selector for extra dimensions, but
+    it can reject groups that cannot satisfy the basic spatial-dimension contract
+    used by ``XarrayGranuleReader``.
+    """
+    tileable_variables = []
+    incompatible_variables: dict[str, dict[str, Any]] = {}
+
+    for variable in ds.data_vars:
+        dims = _variable_dims(ds, variable)
+        has_x_dim = bool(set(dims) & X_DIM_ALIASES)
+        has_y_dim = bool(set(dims) & Y_DIM_ALIASES)
+
+        if has_x_dim and has_y_dim:
+            tileable_variables.append(variable)
+            continue
+
+        incompatible_variables[variable] = {
+            "dims": dims,
+            "reason": "missing recognized x/y dimensions",
+        }
+
+    return {
+        "tileable_variables": tileable_variables,
+        "incompatible_variables": incompatible_variables,
+    }
+
+
+def _xarray_group_incompatibility_detail(
+    group: str | None,
+    validation: dict[str, Any],
+) -> dict[str, Any]:
+    """Build a structured incompatibility detail for an xarray group."""
+    return {
+        "message": "Requested xarray group is not compatible with TiTiler-CMR tiling.",
+        "group": group,
+        "reason": "No data variables contain recognized X and Y spatial dimensions.",
+        "x_dimension_aliases": X_DIM_NAMES,
+        "y_dimension_aliases": Y_DIM_NAMES,
+        "variables": validation["incompatible_variables"],
     }
 
 
@@ -299,7 +351,7 @@ def _candidate_group_paths(
     ):
         file_handle.visititems(visitor)
 
-    return spatial_group_paths or spatial_metadata_group_paths or all_group_paths
+    return spatial_group_paths or spatial_metadata_group_paths
 
 
 def _compatible_groups(
@@ -400,6 +452,14 @@ def evaluate_xarray_compatibility(
         ds,
         skip_variable_statistics=skip_variable_statistics,
     )
+    validation = validate_tileable_variables(ds)
+    result.update(validation)
+
+    if group and not validation["tileable_variables"]:
+        raise HTTPException(
+            status_code=400,
+            detail=_xarray_group_incompatibility_detail(group, validation),
+        )
 
     if not group and not result["variables"]:
         result["compatible_groups"] = _compatible_groups(
@@ -574,6 +634,10 @@ def evaluate_concept_compatibility(
     except (ValueError, HTTPException, OSError, KeyError) as e:
         xarray_error = e
         logger.warning(f"XarrayReader failed: {e}")
+        if group:
+            if isinstance(e, HTTPException):
+                raise
+            raise HTTPException(status_code=400, detail=str(e)) from e
 
     # Fall back to rasterio
     rasterio_error: Exception | None = None
