@@ -421,3 +421,71 @@ def test_build_request_urls_multi_value_pass_through() -> None:
     assert "step" not in parsed
     assert parsed["collection_concept_id"] == ["C123"]
     assert parsed["temporal"] == ["2024-01-01T00:00:00Z/2024-01-01T23:59:59Z"]
+
+
+def test_timeseries_statistics_empty_interval(app, mocker, mn_geojson):
+    """An interval with no valid pixels yields null stats; the whole series must
+    still return 200.
+
+    Regression for the response-model 500: ``/statistics`` returns ``null`` for
+    the numeric fields of an empty interval, and re-validating those against
+    rio-tiler's ``BandStatistics`` used to fail the entire timeseries response.
+    """
+    from httpx2 import Response
+
+    # A ``/statistics`` response for an interval with no valid pixels.
+    empty_stats = {
+        **mn_geojson,
+        "properties": {
+            "statistics": {
+                "b1": {
+                    "min": None,
+                    "max": None,
+                    "mean": None,
+                    "count": 0.0,
+                    "sum": 0.0,
+                    "std": None,
+                    "median": None,
+                    "majority": None,
+                    "minority": None,
+                    "unique": 0.0,
+                    "histogram": [[], []],
+                    "valid_percent": 0.0,
+                    "masked_pixels": 100.0,
+                    "valid_pixels": 0.0,
+                    "percentile_2": None,
+                    "percentile_98": None,
+                    "description": "b1",
+                }
+            }
+        },
+    }
+
+    async def mock_timestep_request(client, url, **kwargs):
+        return Response(status_code=200, json=empty_stats)
+
+    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
+    # Skip the CMR request-size pre-check (and its HTTP call).
+    mocker.patch(
+        "titiler.cmr.timeseries.calculate_time_series_request_size",
+        return_value=1.0,
+    )
+
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            "collection_concept_id": "C2021957657-LPCLOUD",
+            "assets_regex": "Fmask",
+            "assets": "Fmask",
+            "temporal": "2024-01-01T00:00:00Z/2024-03-01T00:00:00Z",
+            "step": "P1M",
+        },
+        json=mn_geojson,
+    )
+
+    assert response.status_code == 200
+    stats = response.json()["properties"]["statistics"]
+    # Both monthly intervals are present despite their null statistics.
+    assert len(stats) == 2
+    for interval_stats in stats.values():
+        assert interval_stats["b1"]["valid_pixels"] == 0.0
