@@ -2152,16 +2152,16 @@ print("Abstract: ", ds["umm"]["Abstract"])</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Collection Concept-Id:  C2021957295-LPCLOUD
-Abstract:  The Harmonized Landsat Sentinel-2 (HLS) project provides consistent surface reflectance data from the Operational Land Imager (OLI) aboard the joint NASA/USGS Landsat 8 satellite and the Multi-Spectral Instrument (MSI) aboard Europe’s Copernicus Sentinel-2A, Sentinel-2B, and Sentinel-2C satellites. The combined measurement enables global observations of the land every 1.6 days at 30-meter (m) spatial resolution. The HLS project uses a set of algorithms to obtain seamless products from OLI and MSI that include atmospheric correction, cloud and cloud-shadow masking, spatial co-registration and common gridding, illumination and view angle normalization, and spectral bandpass adjustment. 
+<pre>Collection Concept-Id:  C2021957657-LPCLOUD
+Abstract:  The Harmonized Landsat Sentinel-2 (HLS) project provides consistent surface reflectance (SR) and top of atmosphere (TOA) brightness data from a virtual constellation of satellite sensors. The Operational Land Imager (OLI) is housed aboard the joint NASA/USGS Landsat 8 and Landsat 9 satellites, while the Multi-Spectral Instrument (MSI) is mounted aboard Europe’s Copernicus Sentinel-2A, Sentinel-2B, and Sentinel-2C satellites. The combined measurement enables global observations of the land every 1.6 days at 30-meter (m) spatial resolution. The HLS project uses a set of algorithms to obtain seamless products from OLI and MSI that include atmospheric correction, cloud and cloud-shadow masking, spatial co-registration and common gridding, illumination and view angle normalization, and spectral bandpass adjustment.
 
-The HLSS30 product provides 30-m Nadir Bidirectional Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) and is derived from Sentinel-2A, Sentinel-2B, and Sentinel-2C MSI data products. The HLSS30 and [HLSL30](https://doi.org/10.5067/HLS/HLSL30.002) products are gridded to the same resolution and Military Grid Reference System ([MGRS](https://hls.gsfc.nasa.gov/products-description/tiling-system/)) tiling system and thus are “stackable” for time series analysis.
+The HLSL30 product provides 30-m Nadir Bidirectional Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) and is derived from Landsat 8/9 OLI data products. The [HLSS30](https://doi.org/10.5067/HLS/HLSS30.002) and HLSL30 products are gridded to the same resolution and Military Grid Reference System ([MGRS](https://hls.gsfc.nasa.gov/products-description/tiling-system/)) tiling system and thus are “stackable” for time series analysis.
 
-The HLSS30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each band is distributed as a separate COG. There are 13 bands included in the HLSS30 product along with four angle bands and a quality assessment (QA) band. See the User Guide for a more detailed description of the individual bands provided in the HLSS30 product.
+The HLSL30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each band is distributed as a separate file. There are 11 bands included in the HLSL30 product along with one quality assessment (QA) band and four angle bands. See the User Guide for a more detailed description of the individual bands provided in the HLSL30 product.
 
 The HLS project is funded by NASA’s Satellite Needs Working Group (SNWG) which provides data products developed to meet the needs of stakeholders from US government agencies.
 
-For information on [known issues](https://lpdaac.usgs.gov/documents/2435/HLS_v2.0_S30_known_issues_April2026.pdf) see the anomalies link under the Documents and Resources tab.
+For information on [known issues](https://lpdaac.usgs.gov/documents/2434/HLS_v2.0_L30_known_issues_April2026.pdf) see the anomalies link under the Documents and Resources tab.
 </pre>
 </div>
 </div>
@@ -2225,13 +2225,13 @@ print(json.dumps(compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "concept_id": "C2021957295-LPCLOUD",
+  "concept_id": "C2021957657-LPCLOUD",
   "backend": "rasterio",
   "datetime": [
     {
       "RangeDateTimes": [
         {
-          "BeginningDateTime": "2015-11-28T00:00:00.000Z"
+          "BeginningDateTime": "2013-04-11T00:00:00.000Z"
         }
       ],
       "EndsAtPresentFlag": true,
@@ -2247,16 +2247,16 @@ print(json.dumps(compatibility_response, indent=2))</div>
   "coordinates": null,
   "compatible_groups": null,
   "example_assets": {
-    "0": "s3://lp-prod-protected/HLSS30.020/HLS.S30.T55JGM.2015332T001732.v2.0/HLS.S30.T55JGM.2015332T001732.v2.0.B08.tif"
+    "0": "s3://lp-prod-protected/HLSL30.020/HLS.L30.T59WPT.2013101T001445.v2.0/HLS.L30.T59WPT.2013101T001445.v2.0.B09.tif"
   },
   "sample_asset_raster_info": {
     "bounds": [
-      699960.0,
-      -2909760.0,
-      809760.0,
-      -2799960.0
+      600000.0,
+      7690200.0,
+      709800.0,
+      7800000.0
     ],
-    "crs": "http://www.opengis.net/def/crs/EPSG/0/32655",
+    "crs": "PROJCS[\"UTM Zone 59, Northern Hemisphere\",GEOGCS[\"Unknown datum based upon the WGS 84 ellipsoid\",DATUM[\"Not specified (based on WGS 84 spheroid)\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",171],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
     "band_metadata": [
       [
         "b1",
@@ -2266,7 +2266,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
     "band_descriptions": [
       [
         "b1",
-        "NIR_Broad"
+        "Cirrus"
       ]
     ],
     "dtype": "int16",
@@ -2296,19 +2296,19 @@ print(json.dumps(compatibility_response, indent=2))</div>
   "links": [
     {
       "rel": "tilejson",
-      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957295-LPCLOUD&amp;temporal={temporal}",
+      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957657-LPCLOUD&amp;temporal={temporal}",
       "title": "TileJSON",
       "type": "application/json"
     },
     {
       "rel": "map",
-      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/map.html?collection_concept_id=C2021957295-LPCLOUD&amp;temporal={temporal}",
+      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/map.html?collection_concept_id=C2021957657-LPCLOUD&amp;temporal={temporal}",
       "title": "Map viewer",
       "type": "text/html"
     },
     {
       "rel": "tile",
-      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD&amp;temporal={temporal}",
+      "href": "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD&amp;temporal={temporal}",
       "title": "Map tile",
       "type": "image/png"
     }
@@ -2427,7 +2427,7 @@ print(r)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'tilejson': '3.0.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD&amp;temporal=2024-10-01T00%3A00%3A00Z%2F2024-10-31T23%3A59%3A59Z&amp;sort_key=cloud_cover&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;assets=B04&amp;assets=B03&amp;assets=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35&amp;tilesize=512'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
+<pre>{'tilejson': '3.0.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2024-10-01T00%3A00%3A00Z%2F2024-10-31T23%3A59%3A59Z&amp;sort_key=cloud_cover&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;assets=B04&amp;assets=B03&amp;assets=B02&amp;color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35&amp;tilesize=512'], 'minzoom': 8, 'maxzoom': 13, 'bounds': [-180.0, -90.0, 180.0, 90.0], 'center': [0.0, 0.0, 8]}
 </pre>
 </div>
 </div>
@@ -2502,7 +2502,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_5ed343a6dec0d9b4d3a4c0bcceda097e {
+                #map_61bf775d7dd1e8685f3aa14ac9b5caa3 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2539,14 +2539,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_5ed343a6dec0d9b4d3a4c0bcceda097e" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_61bf775d7dd1e8685f3aa14ac9b5caa3" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_5ed343a6dec0d9b4d3a4c0bcceda097e = L.map(
-                "map_5ed343a6dec0d9b4d3a4c0bcceda097e",
+            var map_61bf775d7dd1e8685f3aa14ac9b5caa3 = L.map(
+                "map_61bf775d7dd1e8685f3aa14ac9b5caa3",
                 {
                     center: [47.590266824611675, -91.03729840730689],
                     crs: L.CRS.EPSG3857,
@@ -2563,7 +2563,7 @@ m</div>
 
         
     
-            var tile_layer_b3292616f42ab4c24cff1f570647ecbd = L.tileLayer(
+            var tile_layer_604f157d3709fd71f238115dd89c44c3 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2580,11 +2580,11 @@ m</div>
             );
         
     
-            tile_layer_b3292616f42ab4c24cff1f570647ecbd.addTo(map_5ed343a6dec0d9b4d3a4c0bcceda097e);
+            tile_layer_604f157d3709fd71f238115dd89c44c3.addTo(map_61bf775d7dd1e8685f3aa14ac9b5caa3);
         
     
-            var tile_layer_26bfadebf69120fbf77ce6e5d90e9d75 = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-10-01T00%3A00%3A00Z%2F2024-10-31T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
+            var tile_layer_1b2b57ca7f2672929736ba4dad8630a3 = L.tileLayer(
+                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026temporal=2024-10-01T00%3A00%3A00Z%2F2024-10-31T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2600,7 +2600,7 @@ m</div>
             );
         
     
-            tile_layer_26bfadebf69120fbf77ce6e5d90e9d75.addTo(map_5ed343a6dec0d9b4d3a4c0bcceda097e);
+            tile_layer_1b2b57ca7f2672929736ba4dad8630a3.addTo(map_61bf775d7dd1e8685f3aa14ac9b5caa3);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2746,7 +2746,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_6faca06db9a9459f01d9cf65c04e59a2 {
+                #map_2c371fbc34b6ff41c7762fa4a6409599 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2783,14 +2783,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_6faca06db9a9459f01d9cf65c04e59a2" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_2c371fbc34b6ff41c7762fa4a6409599" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_6faca06db9a9459f01d9cf65c04e59a2 = L.map(
-                "map_6faca06db9a9459f01d9cf65c04e59a2",
+            var map_2c371fbc34b6ff41c7762fa4a6409599 = L.map(
+                "map_2c371fbc34b6ff41c7762fa4a6409599",
                 {
                     center: [47.9221313337365, -91.65432884883238],
                     crs: L.CRS.EPSG3857,
@@ -2807,7 +2807,7 @@ m</div>
 
         
     
-            var tile_layer_d9805cf465f407077b235bc3cdfc85ed = L.tileLayer(
+            var tile_layer_6bb16942488b365dd1de183b1b76a6cf = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2824,11 +2824,11 @@ m</div>
             );
         
     
-            tile_layer_d9805cf465f407077b235bc3cdfc85ed.addTo(map_6faca06db9a9459f01d9cf65c04e59a2);
+            tile_layer_6bb16942488b365dd1de183b1b76a6cf.addTo(map_2c371fbc34b6ff41c7762fa4a6409599);
         
     
-            var tile_layer_8b0a7f80221b03f2d70bde83ee5e3b62 = L.tileLayer(
-                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026temporal=2024-06-01T00%3A00%3A00Z%2F2024-06-30T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026asset_as_band=true\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026assets=B05\u0026assets=B04\u0026colormap_name=greens\u0026rescale=-1%2C1\u0026tilesize=512",
+            var tile_layer_d85bc1fe6f10be70173f3822b1b523d1 = L.tileLayer(
+                "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026temporal=2024-06-01T00%3A00%3A00Z%2F2024-06-30T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026asset_as_band=true\u0026expression=%28B05-B04%29%2F%28B05%2BB04%29\u0026assets=B05\u0026assets=B04\u0026colormap_name=greens\u0026rescale=-1%2C1\u0026tilesize=512",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -2844,7 +2844,7 @@ m</div>
             );
         
     
-            tile_layer_8b0a7f80221b03f2d70bde83ee5e3b62.addTo(map_6faca06db9a9459f01d9cf65c04e59a2);
+            tile_layer_d85bc1fe6f10be70173f3822b1b523d1.addTo(map_2c371fbc34b6ff41c7762fa4a6409599);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -2983,7 +2983,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_089321c888050f72dc2d338a6d57375e {
+                #map_058dd1d454f122716626fa215e77c125 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3020,14 +3020,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_089321c888050f72dc2d338a6d57375e" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_058dd1d454f122716626fa215e77c125" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_089321c888050f72dc2d338a6d57375e = L.map(
-                "map_089321c888050f72dc2d338a6d57375e",
+            var map_058dd1d454f122716626fa215e77c125 = L.map(
+                "map_058dd1d454f122716626fa215e77c125",
                 {
                     center: [27.50497661, 83.582384025],
                     crs: L.CRS.EPSG3857,
@@ -3044,7 +3044,7 @@ m</div>
 
         
     
-            var tile_layer_402f976d1d3308bb085588a08c4aaf66 = L.tileLayer(
+            var tile_layer_51d5d2f6693882aa7611aa91548b1865 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3061,10 +3061,10 @@ m</div>
             );
         
     
-            tile_layer_402f976d1d3308bb085588a08c4aaf66.addTo(map_089321c888050f72dc2d338a6d57375e);
+            tile_layer_51d5d2f6693882aa7611aa91548b1865.addTo(map_058dd1d454f122716626fa215e77c125);
         
     
-            var tile_layer_a9ca4f969c13ae3d51136a66c25b7393 = L.tileLayer(
+            var tile_layer_b8b3effc149a1a0b12b6f25baef9c871 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957657-LPCLOUD\u0026granule_ur=HLS.L30.T44RQR.2026061T045429.v2.0\u0026assets_regex=B%5B0-9%5D%5B0-9%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.7+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3081,7 +3081,7 @@ m</div>
             );
         
     
-            tile_layer_a9ca4f969c13ae3d51136a66c25b7393.addTo(map_089321c888050f72dc2d338a6d57375e);
+            tile_layer_b8b3effc149a1a0b12b6f25baef9c871.addTo(map_058dd1d454f122716626fa215e77c125);
         
 &lt;/script&gt;
 &lt;/html&gt;' style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
@@ -3274,54 +3274,54 @@ print(json.dumps(r, indent=2))</div>
       "properties": {
         "statistics": {
           "b1": {
-            "min": -111.0,
-            "max": 1.7976931348623157e+308,
-            "mean": null,
-            "count": 57304.80078125,
-            "sum": null,
-            "std": null,
-            "median": 0.28023598820059,
-            "majority": 0.3333333333333333,
-            "minority": -111.0,
-            "unique": 42086.0,
+            "min": -75.4,
+            "max": 26.6,
+            "mean": 0.5241462608197205,
+            "count": 57155.80078125,
+            "sum": 29957.999263649046,
+            "std": 0.6059345886116388,
+            "median": 0.6050372066399542,
+            "majority": 0.75,
+            "minority": -75.4,
+            "unique": 47491.0,
             "histogram": [
               [
-                57796,
+                1,
+                0,
+                2,
+                1,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
+                16,
+                57615,
+                12,
                 2
               ],
               [
-                -111.0,
-                1.7976931348623158e+307,
-                3.5953862697246315e+307,
-                5.393079404586948e+307,
-                7.190772539449263e+307,
-                8.988465674311579e+307,
-                1.0786158809173895e+308,
-                1.258385194403621e+308,
-                1.4381545078898526e+308,
-                1.6179238213760842e+308,
-                1.7976931348623157e+308
+                -75.4,
+                -65.2,
+                -55.00000000000001,
+                -44.80000000000001,
+                -34.60000000000001,
+                -24.400000000000006,
+                -14.20000000000001,
+                -4.000000000000014,
+                6.199999999999989,
+                16.39999999999999,
+                26.6
               ]
             ],
-            "valid_percent": 100.0,
-            "masked_pixels": 0.0,
-            "valid_pixels": 57798.0,
-            "description": "(B05_Red_Edge1-B04_Red)/(B05_Red_Edge1+B04_Red)",
-            "percentile_2": 0.001119263773162542,
-            "percentile_98": 0.5649122807017544
+            "valid_percent": 99.74,
+            "masked_pixels": 149.0,
+            "valid_pixels": 57649.0,
+            "description": "(B05_NIR-B04_Red)/(B05_NIR+B04_Red)",
+            "percentile_2": 0.04376706768027161,
+            "percentile_98": 0.8688275512788047
           }
         },
         "used_assets": [
-          "HLS.S30.T15UXP.2024186T165849.v2.0",
-          "HLS.S30.T15UWP.2024186T165849.v2.0"
+          "HLS.L30.T15UXP.2024186T165705.v2.0",
+          "HLS.L30.T15UWP.2024186T165705.v2.0"
         ]
       }
     }
