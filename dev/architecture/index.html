@@ -1759,13 +1759,14 @@ imported and the Lambda function has <code>Tracing.DISABLED</code>. When enabled
 the X-Ray native OTLP ingestion endpoint (<code>xray:PutSpans</code>, <code>xray:PutSpansForIndexing</code>,
 <code>xray:PutTraceSegments</code>, <code>xray:PutTelemetryRecords</code>).</p>
 <h3 id="instrumentation-setup">Instrumentation setup<a class="headerlink" href="#instrumentation-setup" title="Permanent link">&para;</a></h3>
-<p>The entire OTEL setup lives inside an <code>if "AWS_EXECUTION_ENV" in os.environ</code> guard in
-<code>handler.py</code>, so it is skipped in local development and tests.</p>
+<p>The entire OTEL setup lives behind the <code>TITILER_CMR_TELEMETRY_ENABLED</code> setting and an
+<code>AWS_EXECUTION_ENV</code> check in <code>handler.py</code>, so it is skipped when telemetry is disabled, in local
+development, and in tests.</p>
 <p>Three instrumentors are activated:</p>
 <ul>
 <li><code>FastAPIInstrumentor</code> — patches <code>app.build_middleware_stack</code> to wrap the ASGI middleware stack
   with <code>OpenTelemetryMiddleware</code>, creating a server span for every HTTP request.</li>
-<li><code>HTTPXClientInstrumentor</code> — instruments the httpx <code>Client</code> created by <code>startup()</code>. It is
+<li><code>HTTPX2ClientInstrumentor</code> — instruments the httpx2 <code>Client</code> created by <code>startup()</code>. It is
   called before <code>startup()</code> so the client is captured at construction time.</li>
 <li><code>LoggingInstrumentor(set_logging_format=True)</code> — replaces the log record factory to inject
   <code>otelTraceID</code> and <code>otelSpanID</code> into every log record emitted while a span is active.
