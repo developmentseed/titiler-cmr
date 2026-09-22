@@ -36,6 +36,7 @@ if _otel_enabled:
     from opentelemetry import propagate, trace
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    from opentelemetry.instrumentation.httpx import HTTPX2ClientInstrumentor
     from opentelemetry.instrumentation.logging import LoggingInstrumentor
     from opentelemetry.propagators.aws import AwsXRayPropagator
     from opentelemetry.sdk.extension.aws.trace import AwsXRayIdGenerator
@@ -169,11 +170,8 @@ if _otel_enabled:
     # it calls logging.basicConfig() internally, which is a no-op when handlers
     # already exist (configure_logging() has already run).
     #
-    # HTTPXClientInstrumentor is intentionally disabled for now. The project uses
-    # httpx2 rather than httpx for application clients, and the upstream
-    # instrumentor still imports httpx directly. Track httpx2 instrumentation
-    # support here: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/4635
     LoggingInstrumentor().instrument(set_logging_format=True)
+    HTTPX2ClientInstrumentor().instrument()
     FastAPIInstrumentor.instrument_app(app)
 
 startup(app)

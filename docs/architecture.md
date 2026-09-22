@@ -226,7 +226,7 @@ Three instrumentors are activated:
 
 - `FastAPIInstrumentor` — patches `app.build_middleware_stack` to wrap the ASGI middleware stack
   with `OpenTelemetryMiddleware`, creating a server span for every HTTP request.
-- `HTTPXClientInstrumentor` — instruments the httpx `Client` created by `startup()`. It is
+- `HTTPX2ClientInstrumentor` — instruments the httpx2 `Client` created by `startup()`. It is
   called before `startup()` so the client is captured at construction time.
 - `LoggingInstrumentor(set_logging_format=True)` — replaces the log record factory to inject
   `otelTraceID` and `otelSpanID` into every log record emitted while a span is active.
