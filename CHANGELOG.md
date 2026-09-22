@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.3](https://github.com/developmentseed/titiler-cmr/compare/v1.1.2...v1.1.3) (2026-09-22)
+
+
+### Bug Fixes
+
+* add granule_ur to compatibility params and response ([#205](https://github.com/developmentseed/titiler-cmr/issues/205)) ([988f356](https://github.com/developmentseed/titiler-cmr/commit/988f3566882ecfd05f9a2aaf38ad4a00331c4dd0))
+* **deps:** upgrade otel instrumentation packages ([#217](https://github.com/developmentseed/titiler-cmr/issues/217)) ([be16dd0](https://github.com/developmentseed/titiler-cmr/commit/be16dd0c32173647e06b5f242fa7a6a4d2500980))
+
+
+### Documentation
+
+* add categorical statistics examples ([#215](https://github.com/developmentseed/titiler-cmr/issues/215)) ([07c0414](https://github.com/developmentseed/titiler-cmr/commit/07c0414c26109106e7eb7561b5bf1bb71f5106b3)), closes [#213](https://github.com/developmentseed/titiler-cmr/issues/213)
+
 ## [1.1.2](https://github.com/developmentseed/titiler-cmr/compare/v1.1.1...v1.1.2) (2026-06-18)
 
 
