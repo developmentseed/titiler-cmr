@@ -15,7 +15,7 @@ import rasterio
 from mangum import Mangum
 
 from titiler.cmr.logger import configure_logging
-from titiler.cmr.main import app, startup
+from titiler.cmr.main import app, settings, startup
 
 configure_logging()
 
@@ -23,9 +23,9 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("numexpr").setLevel(logging.WARNING)
 
-# Configure OTEL with X-Ray when running in Lambda.
-# Skipped outside Lambda so local dev/testing is unaffected.
-if "AWS_EXECUTION_ENV" in os.environ:
+# Configure OTEL with X-Ray only when enabled for a Lambda deployment.
+_otel_enabled = settings.telemetry_enabled and "AWS_EXECUTION_ENV" in os.environ
+if _otel_enabled:
     import hashlib
     from urllib.parse import urlparse
 
@@ -223,5 +223,6 @@ def lambda_handler(event: dict, context: object) -> dict:
     the function's configured limit.
     """
     result = _mangum(event, context)
-    _provider.force_flush(timeout_millis=5_000)
+    if _otel_enabled:
+        _provider.force_flush(timeout_millis=5_000)
     return result

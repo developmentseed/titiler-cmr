@@ -218,8 +218,9 @@ the X-Ray native OTLP ingestion endpoint (`xray:PutSpans`, `xray:PutSpansForInde
 
 ### Instrumentation setup
 
-The entire OTEL setup lives inside an `if "AWS_EXECUTION_ENV" in os.environ` guard in
-`handler.py`, so it is skipped in local development and tests.
+The entire OTEL setup lives behind the `TITILER_CMR_TELEMETRY_ENABLED` setting and an
+`AWS_EXECUTION_ENV` check in `handler.py`, so it is skipped when telemetry is disabled, in local
+development, and in tests.
 
 Three instrumentors are activated:
 
