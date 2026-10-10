@@ -19,6 +19,7 @@ from titiler.cmr.compatibility import (
     evaluate_rasterio_compatibility,
     evaluate_xarray_compatibility,
     extract_xarray_metadata,
+    validate_tileable_variables,
 )
 from titiler.cmr.models import (
     Granule,
@@ -276,10 +277,10 @@ class TestGroupPruningHelpers:
             }
 
     @patch("titiler.cmr.compatibility._make_blockstore_reader")
-    def test_candidate_group_paths_falls_back_to_all_groups_when_aliases_are_unblessed(
+    def test_candidate_group_paths_returns_empty_when_aliases_are_unblessed(
         self, mock_reader, tmp_path: Path
     ):
-        """Test group discovery falls back when no group's scale names match blessed aliases."""
+        """Test group discovery rejects groups without blessed spatial aliases."""
         hdf5_path = _write_test_hdf5_with_unblessed_spatial_names(
             tmp_path / "unblessed-groups.h5"
         )
@@ -287,7 +288,7 @@ class TestGroupPruningHelpers:
 
         result = _candidate_group_paths("https://example.com/file.h5")
 
-        assert result == ["science/LSAR/GCOV/grids/frequencyA"]
+        assert result == []
 
     @patch("titiler.cmr.compatibility._make_blockstore_reader")
     def test_candidate_group_paths_prefers_non_metadata_spatial_groups(
@@ -433,6 +434,80 @@ class TestXarrayCompatibility:
         )
 
         assert result["variables"]["temp"] == {"shape": [10], "dtype": "float32"}
+
+    def test_validate_tileable_variables_reports_non_spatial_variables(self):
+        """Test tileability validation explains variables without x/y dimensions."""
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+
+        result = validate_tileable_variables(ds)
+
+        assert result["tileable_variables"] == []
+        assert result["incompatible_variables"]["radiance"]["dims"] == [
+            "atrack",
+            "xtrack",
+        ]
+        assert (
+            result["incompatible_variables"]["radiance"]["reason"]
+            == "missing recognized x/y dimensions"
+        )
+
+    def test_validate_tileable_variables_identifies_spatial_variables(self):
+        """Test tileability validation accepts variables with x/y dimensions."""
+        ds = xr.Dataset(
+            {"temperature": (("lat", "lon"), np.zeros((2, 3), dtype=np.float32))}
+        )
+
+        result = validate_tileable_variables(ds)
+
+        assert result["tileable_variables"] == ["temperature"]
+        assert result["incompatible_variables"] == {}
+
+    def test_validate_tileable_variables_allows_extra_dimensions(self):
+        """Test tileability validation allows spatial variables with extra dimensions."""
+        ds = xr.Dataset(
+            {
+                "temperature": (
+                    ("time", "lat", "lon"),
+                    np.zeros((4, 2, 3), dtype=np.float32),
+                )
+            }
+        )
+
+        result = validate_tileable_variables(ds)
+
+        assert result["tileable_variables"] == ["temperature"]
+        assert result["incompatible_variables"] == {}
+
+    @patch("titiler.cmr.compatibility.open_dataset")
+    @patch("titiler.cmr.compatibility.get_granules")
+    def test_xarray_explicit_group_fails_when_no_variables_are_tileable(
+        self,
+        mock_get_granules,
+        mock_open_dataset,
+    ):
+        """Test explicit group requests reject groups without tileable variables."""
+        request = _make_request()
+        granule = _make_granule()
+        mock_get_granules.return_value = iter([granule])
+        mock_open_dataset.return_value = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_xarray_compatibility(
+                "C1234-TEST",
+                request,
+                group="AIRS/Radiances",
+            )
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail["group"] == "AIRS/Radiances"
+        assert exc_info.value.detail["variables"]["radiance"]["dims"] == [
+            "atrack",
+            "xtrack",
+        ]
 
 
 class TestRasterioCompatibility:
@@ -631,6 +706,32 @@ class TestConceptCompatibility:
         assert "{temporal}" in rasterio_link.href
         mock_xarray.assert_called_once()
         mock_rasterio.assert_called_once()
+
+    @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
+    @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
+    @patch("titiler.cmr.compatibility.get_collection")
+    def test_explicit_group_xarray_failure_does_not_fallback_to_rasterio(
+        self, mock_get_collection, mock_xarray, mock_rasterio
+    ):
+        """Test explicit xarray group failures are returned instead of falling back."""
+        request = _make_request()
+
+        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
+        mock_xarray.side_effect = HTTPException(
+            status_code=400,
+            detail={"message": "not tileable", "group": "AIRS/Radiances"},
+        )
+
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_concept_compatibility(
+                "C1234-TEST",
+                request,
+                group="AIRS/Radiances",
+            )
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail["group"] == "AIRS/Radiances"
+        mock_rasterio.assert_not_called()
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
