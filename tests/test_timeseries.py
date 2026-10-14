@@ -1,16 +1,23 @@
 """Test timeseries module"""
 
+import json
 from collections.abc import Callable
 from datetime import datetime
+from typing import Any
 from unittest.mock import MagicMock
 from urllib.parse import parse_qs, urlparse
 
+import numpy
 import pytest
 from fastapi import HTTPException
+from fastapi.routing import APIRoute
 from freezegun import freeze_time
 from httpx2 import Client
+from pydantic import TypeAdapter
+from rio_tiler.models import ImageData
 from starlette.requests import Request
 
+from titiler.cmr.main import rasterio as rasterio_factory
 from titiler.cmr.models import GranuleSearch
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.timeseries import (
@@ -423,69 +430,74 @@ def test_build_request_urls_multi_value_pass_through() -> None:
     assert parsed["temporal"] == ["2024-01-01T00:00:00Z/2024-01-01T23:59:59Z"]
 
 
-def test_timeseries_statistics_empty_interval(app, mocker, mn_geojson):
-    """An interval with no valid pixels yields null stats; the whole series must
-    still return 200.
+def _post_response(path: str, content: Any) -> Any:
+    """Return the JSON that the rasterio POST route at path sends when its
+    handler returns content.
 
-    Regression for the response-model 500: ``/statistics`` returns ``null`` for
-    the numeric fields of an empty interval, and re-validating those against
-    rio-tiler's ``BandStatistics`` used to fail the entire timeseries response.
+    This lets a test check what a route does with a handler's result without
+    calling the endpoint. Calling it would need CMR searches and granule reads,
+    and, for /timeseries/statistics, HTTP requests to /statistics that cannot
+    reach the app under test. FastAPI processes a handler's result according to
+    the route's response_model and response_model_exclude_none settings, and
+    this helper applies those settings the same way.
     """
-    from httpx2 import Response
+    route = next(
+        route
+        for route in rasterio_factory.router.routes
+        if isinstance(route, APIRoute)
+        and route.path == path
+        and route.methods == {"POST"}
+    )
+    # Unlike Model.model_validate, TypeAdapter also accepts a union, such as
+    # the /statistics response_model, which is a union of Feature and
+    # FeatureCollection.
+    adapter = TypeAdapter(route.response_model)
 
-    # A ``/statistics`` response for an interval with no valid pixels.
-    empty_stats = {
-        **mn_geojson,
-        "properties": {
-            "statistics": {
-                "b1": {
-                    "min": None,
-                    "max": None,
-                    "mean": None,
-                    "count": 0.0,
-                    "sum": 0.0,
-                    "std": None,
-                    "median": None,
-                    "majority": None,
-                    "minority": None,
-                    "unique": 0.0,
-                    "histogram": [[], []],
-                    "valid_percent": 0.0,
-                    "masked_pixels": 100.0,
-                    "valid_pixels": 0.0,
-                    "percentile_2": None,
-                    "percentile_98": None,
-                    "description": "b1",
-                }
-            }
-        },
-    }
-
-    async def mock_timestep_request(client, url, **kwargs):
-        return Response(status_code=200, json=empty_stats)
-
-    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
-    # Skip the CMR request-size pre-check (and its HTTP call).
-    mocker.patch(
-        "titiler.cmr.timeseries.calculate_time_series_request_size",
-        return_value=1.0,
+    return json.loads(
+        adapter.dump_json(
+            # Raises ValidationError when content does not match the
+            # response_model, an error that FastAPI turns into a 500.
+            adapter.validate_python(content),
+            exclude_none=route.response_model_exclude_none,
+        )
     )
 
-    response = app.post(
-        "/rasterio/timeseries/statistics",
-        params={
-            "collection_concept_id": "C2021957657-LPCLOUD",
-            "assets_regex": "Fmask",
-            "assets": "Fmask",
-            "temporal": "2024-01-01T00:00:00Z/2024-03-01T00:00:00Z",
-            "step": "P1M",
-        },
-        json=mn_geojson,
+
+def test_timeseries_statistics_response_model_preserves_empty_interval(mn_geojson):
+    """/timeseries/statistics passes each interval's /statistics result through
+    unchanged, even for an interval with no valid pixels.
+
+    For such an interval, /statistics sends null for min, max, mean, and the
+    other summary statistics, even though its BandStatistics type declares them
+    as numbers. The /timeseries/statistics response_model declares each result
+    as a plain dict instead, because reusing BandStatistics would reject the
+    nulls and fail the whole series with a 500.
+
+    The test applies the route's response settings with _post_response instead
+    of calling the endpoint, so it does not need mocks. That is sufficient
+    because the handler stores each interval's result exactly as /statistics
+    returns it, which leaves the response settings as the only place a result
+    can be rejected or altered. A handler that altered results would not fail
+    this test.
+    """
+    # A band with every pixel masked, i.e., with no valid pixels.
+    empty = ImageData(numpy.ma.array(numpy.zeros((1, 4, 4)), mask=True))
+
+    # What /statistics sends for that band, as the handler receives it. The
+    # summary statistics are nan, which BandStatistics accepts and writes as
+    # null, so they arrive in sub_response as None.
+    sub_response = _post_response(
+        "/statistics",
+        {**mn_geojson, "properties": {"statistics": empty.statistics()}},
+    )["properties"]["statistics"]
+
+    # The handler's result for a series with that single interval. If the
+    # response_model reused BandStatistics, this call would raise, because
+    # BandStatistics rejects the None its own null became.
+    interval = "2024-01-01T00:00:00+00:00/2024-01-31T23:59:59+00:00"
+    output = _post_response(
+        "/timeseries/statistics",
+        {**mn_geojson, "properties": {"statistics": {interval: sub_response}}},
     )
 
-    assert response.status_code == 200
-    stats = response.json()["properties"]["statistics"]
-    # Both monthly intervals are present despite their null statistics.
-    assert len(stats) == 2
-    for interval_stats in stats.values():
-        assert interval_stats["b1"]["valid_pixels"] == 0.0
+    assert output["properties"]["statistics"][interval] == sub_response

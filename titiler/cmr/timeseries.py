@@ -30,7 +30,7 @@ from attrs import define
 from fastapi import APIRouter, Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
-from geojson_pydantic import Feature, FeatureCollection
+from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry
 from httpx2 import AsyncClient, HTTPStatusError
 from httpx2 import Response as HttpxResponse
@@ -91,14 +91,10 @@ class TimeseriesImageType(str, Enum):
         return TimeseriesMediaType[self._name_].value
 
 
-# Per-interval statistics, keyed by interval then by band name:
-# ``{interval: {band: {stat: value}}}``. The per-band stats are taken verbatim
-# from the ``/statistics`` sub-responses, which report ``null`` for the numeric
-# fields (min/max/mean/...) of an interval that has no valid pixels. rio-tiler's
-# ``BandStatistics`` model requires those fields to be numbers, so re-validating
-# the sub-responses against it would raise a 500 for the *whole* series whenever
-# a single interval is empty. Keep the per-band leaf permissive so empty
-# intervals pass through unchanged.
+# {interval: {band: stats}}. Each stats dict is a /statistics result passed
+# through unvalidated, because /statistics already validated it and
+# BandStatistics would reject the null it sends for the numeric fields of an
+# interval with no valid pixels.
 TimeseriesStatistics = Dict[str, Dict[str, Dict[str, Any]]]
 
 
@@ -110,10 +106,7 @@ class TimeseriesStatisticsInGeoJSON(BaseModel):
     model_config = {"extra": "allow"}
 
 
-TimeseriesStatisticsGeoJSON = Union[
-    FeatureCollection[Feature[Geometry, TimeseriesStatisticsInGeoJSON]],
-    Feature[Geometry, TimeseriesStatisticsInGeoJSON],
-]
+TimeseriesStatisticsGeoJSON = Feature[Geometry, TimeseriesStatisticsInGeoJSON]
 
 TimeseriesTileJSON = Dict[str, TileJSON]
 
@@ -330,7 +323,7 @@ async def _timestep_request(
 async def _fetch_statistics(
     client: AsyncClient,
     url: str,
-    geojson: Union[FeatureCollection, Feature],
+    geojson: Feature,
 ) -> HttpxResponse:
     """Fetch a statistics sub-request and return the parsed response dict."""
     return await _timestep_request(
