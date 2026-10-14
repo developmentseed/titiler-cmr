@@ -15,7 +15,7 @@ from titiler.xarray.dependencies import XarrayIOParams
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
-from titiler.cmr.models import GranuleSearch
+from titiler.cmr.models import GranuleSearch, GranuleUr
 from titiler.cmr.query import get_collection, get_granules
 from titiler.cmr.reader import (
     X_DIM_NAMES,
@@ -67,13 +67,16 @@ class CompatibilityResponse(BaseModel):
     dimensions: dict[str, int] | None = None
     coordinates: dict[str, CoordinateInfo] | None = None
     compatible_groups: list[str] | None = None
+    granule_ur: str | None = None
     example_assets: dict[str, str] | str | None = None
     sample_asset_raster_info: Info | None = None
     links: list[TemplateLink] | None = None
 
 
 def extract_xarray_metadata(
-    ds: Any, max_sample_size: float = 100_000.0
+    ds: Any,
+    max_sample_size: float = 100_000.0,
+    skip_variable_statistics: bool = False,
 ) -> dict[str, Any]:
     """Extract comprehensive metadata from an xarray Dataset.
 
@@ -82,7 +85,9 @@ def extract_xarray_metadata(
     Args:
         ds: xarray Dataset instance
         max_sample_size: Maximum number of elements to sample for statistics.
-            Arrays larger than this will be sampled. Default: 1,000,000
+            Arrays larger than this will be sampled. Default: 100,000.
+        skip_variable_statistics: Whether to skip numeric variable statistics
+            such as min, max, mean, and percentiles.
 
     Returns:
         Dictionary containing variables, dimensions, and coordinates metadata
@@ -94,7 +99,7 @@ def extract_xarray_metadata(
             "dtype": str(ds[var].dtype),
         }
 
-        if ds[var].dtype.kind in {"i", "f", "u"}:
+        if not skip_variable_statistics and ds[var].dtype.kind in {"i", "f", "u"}:
             try:
                 var_data = ds[var]
                 total_size = var_data.size
@@ -318,11 +323,18 @@ def _compatible_groups(
         return []
 
 
-def _sample_granule(concept_id: str, request: Request) -> Any:
-    """Return the first granule for a collection concept."""
+def _sample_granule(
+    concept_id: str,
+    request: Request,
+    granule_ur: str | None = None,
+) -> Any:
+    """Return a sample granule for a collection concept."""
     return next(
         get_granules(
-            search_params=GranuleSearch(collection_concept_id=concept_id),
+            search_params=GranuleSearch(
+                collection_concept_id=concept_id,
+                granule_ur=granule_ur,
+            ),
             client=request.app.state.client,
             page_size=1,
             limit=1,
@@ -341,12 +353,18 @@ def evaluate_xarray_compatibility(
     concept_id: str,
     request: Request,
     group: str | None = None,
+    granule_ur: str | None = None,
+    skip_variable_statistics: bool = False,
 ) -> dict[str, Any]:
     """Test XarrayReader compatibility with a concept.
 
     Args:
         concept_id: CMR concept ID to test
         request: FastAPI request object
+        group: Optional xarray group to inspect
+        granule_ur: Optional granule UR to sample
+        skip_variable_statistics: Whether to skip numeric variable statistics
+            such as min, max, mean, and percentiles.
 
     Returns:
         Dictionary with xarray compatibility information
@@ -361,7 +379,7 @@ def evaluate_xarray_compatibility(
 
     s3_access = request.app.state.s3_access
     auth_token = _get_auth_token(request)
-    granule = _sample_granule(concept_id, request)
+    granule = _sample_granule(concept_id, request, granule_ur=granule_ur)
 
     if granule is None:
         raise ValueError("No assets found for XarrayReader")
@@ -378,7 +396,10 @@ def evaluate_xarray_compatibility(
         credential_provider=credential_provider,
         auth_token=auth_token,
     )
-    result = extract_xarray_metadata(ds)
+    result = extract_xarray_metadata(
+        ds,
+        skip_variable_statistics=skip_variable_statistics,
+    )
 
     if not group and not result["variables"]:
         result["compatible_groups"] = _compatible_groups(
@@ -387,6 +408,7 @@ def evaluate_xarray_compatibility(
             credential_provider=credential_provider,
         )
 
+    result["granule_ur"] = granule.granule_ur
     result["example_assets"] = href
     return result
 
@@ -394,12 +416,14 @@ def evaluate_xarray_compatibility(
 def evaluate_rasterio_compatibility(
     concept_id: str,
     request: Request,
+    granule_ur: str | None = None,
 ) -> dict[str, Any]:
     """Test MultiBaseGranuleReader compatibility with a concept.
 
     Args:
         concept_id: CMR concept ID to test
         request: FastAPI request object
+        granule_ur: Optional granule UR to sample
 
     Returns:
         Dictionary with rasterio compatibility information
@@ -415,7 +439,7 @@ def evaluate_rasterio_compatibility(
     s3_access = request.app.state.s3_access
     auth_token = _get_auth_token(request)
     get_s3_credentials = request.app.state.get_s3_credentials
-    granule = _sample_granule(concept_id, request)
+    granule = _sample_granule(concept_id, request, granule_ur=granule_ur)
 
     if granule is None:
         raise ValueError("No assets found for MultiBaseGranuleReader")
@@ -436,6 +460,7 @@ def evaluate_rasterio_compatibility(
 
     return {
         "example_assets": example_assets,
+        "granule_ur": granule.granule_ur,
         "sample_asset_raster_info": info,
         "backend": "rasterio",
     }
@@ -493,6 +518,8 @@ def evaluate_concept_compatibility(
     concept_id: str,
     request: Request,
     group: str | None = None,
+    granule_ur: str | None = None,
+    skip_variable_statistics: bool = False,
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
@@ -502,6 +529,10 @@ def evaluate_concept_compatibility(
     Args:
         concept_id: CMR concept ID to test
         request: FastAPI request object
+        group: Optional xarray group to inspect
+        granule_ur: Optional granule UR to sample
+        skip_variable_statistics: Whether to skip numeric variable statistics
+            such as min, max, mean, and percentiles.
 
     Returns:
         CompatibilityResponse with backend info, temporal extent, and metadata
@@ -519,7 +550,13 @@ def evaluate_concept_compatibility(
     # Try xarray first
     xarray_error: Exception | None = None
     try:
-        result = evaluate_xarray_compatibility(concept_id, request, group=group)
+        result = evaluate_xarray_compatibility(
+            concept_id,
+            request,
+            group=group,
+            granule_ur=granule_ur,
+            skip_variable_statistics=skip_variable_statistics,
+        )
         first_var = next(iter(result.get("variables") or {}), None)
         links = _build_links(
             base_url,
@@ -541,7 +578,11 @@ def evaluate_concept_compatibility(
     # Fall back to rasterio
     rasterio_error: Exception | None = None
     try:
-        result = evaluate_rasterio_compatibility(concept_id, request)
+        result = evaluate_rasterio_compatibility(
+            concept_id,
+            request,
+            granule_ur=granule_ur,
+        )
         links = _build_links(base_url, concept_id, "rasterio")
         return CompatibilityResponse(
             concept_id=concept_id,
@@ -581,8 +622,22 @@ def compatibility_check(
     request: Request,
     concept_id: str | None = Depends(_concept_id_param),
     group: XarrayGroupParam = None,
+    granule_ur: GranuleUr = None,
+    skip_variable_statistics: bool = Query(
+        default=False,
+        description=(
+            "Skip numeric variable statistics such as min, max, mean, and "
+            "percentiles in xarray compatibility responses."
+        ),
+    ),
 ) -> CompatibilityResponse:
     """Check which backend is compatible with a CMR collection concept."""
     if concept_id is None:
         raise HTTPException(status_code=400, detail="concept_id is required")
-    return evaluate_concept_compatibility(concept_id, request, group=group)
+    return evaluate_concept_compatibility(
+        concept_id,
+        request,
+        group=group,
+        granule_ur=granule_ur,
+        skip_variable_statistics=skip_variable_statistics,
+    )

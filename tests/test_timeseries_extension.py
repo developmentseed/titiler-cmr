@@ -22,6 +22,6 @@ def test_timeseries_extension() -> None:
     timeseries_app = FastAPI()
     timeseries_app.include_router(tiler_plus_timeseries.router)
 
-    assert any(
-        "/timeseries/statistics" in str(route) for route in timeseries_app.router.routes
+    assert str(timeseries_app.url_path_for("timeseries_geojson_statistics")) == (
+        "/timeseries/statistics"
     )

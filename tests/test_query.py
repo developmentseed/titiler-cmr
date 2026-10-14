@@ -178,14 +178,17 @@ def _make_umm_item_no_geometry(granule_id: str) -> dict:
 
 
 def _mock_client(items: list[dict]) -> mock.MagicMock:
-    """Return a mock httpx Client whose .get() returns a single-page CMR response."""
+    """Return a mock httpx Client whose granules request returns one CMR page."""
     response = mock.MagicMock()
     response.json.return_value = {"hits": len(items), "items": items}
     response.headers.get.return_value = None  # no cmr-search-after → single page
-    response.url = "https://cmr.earthdata.nasa.gov/search/granules.umm_json"
+
+    request = mock.MagicMock()
+    request.url = "https://cmr.earthdata.nasa.gov/search/granules.umm_json"
 
     client = mock.MagicMock()
-    client.get.return_value = response
+    client.build_request.return_value = request
+    client.send.return_value = response
     return client
 
 
@@ -250,15 +253,21 @@ class TestCMRQueryTimeout:
     def test_get_granules_raises_on_timeout(self):
         """get_granules raises CMRQueryTimeout when the CMR request times out."""
         client = mock.MagicMock()
-        client.get.side_effect = ReadTimeout("timed out")
+        client.timeout = 30
+        client.send.side_effect = ReadTimeout("timed out")
 
-        with pytest.raises(CMRQueryTimeout):
+        with pytest.raises(
+            CMRQueryTimeout, match="CMR granule search timed out after 30 seconds"
+        ):
             list(get_granules(GranuleSearch(), client))
 
     def test_get_collection_raises_on_timeout(self):
         """get_collection raises CMRQueryTimeout when the CMR request times out."""
         client = mock.MagicMock()
+        client.timeout = 30
         client.get.side_effect = ReadTimeout("timed out")
 
-        with pytest.raises(CMRQueryTimeout):
+        with pytest.raises(
+            CMRQueryTimeout, match="CMR collection search timed out after 30 seconds"
+        ):
             get_collection("C1234-PROVIDER", client)

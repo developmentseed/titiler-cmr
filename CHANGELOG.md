@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.3](https://github.com/developmentseed/titiler-cmr/compare/v1.1.2...v1.1.3) (2026-09-22)
+
+
+### Bug Fixes
+
+* add granule_ur to compatibility params and response ([#205](https://github.com/developmentseed/titiler-cmr/issues/205)) ([988f356](https://github.com/developmentseed/titiler-cmr/commit/988f3566882ecfd05f9a2aaf38ad4a00331c4dd0))
+* **deps:** upgrade otel instrumentation packages ([#217](https://github.com/developmentseed/titiler-cmr/issues/217)) ([be16dd0](https://github.com/developmentseed/titiler-cmr/commit/be16dd0c32173647e06b5f242fa7a6a4d2500980))
+
+
+### Documentation
+
+* add categorical statistics examples ([#215](https://github.com/developmentseed/titiler-cmr/issues/215)) ([07c0414](https://github.com/developmentseed/titiler-cmr/commit/07c0414c26109106e7eb7561b5bf1bb71f5106b3)), closes [#213](https://github.com/developmentseed/titiler-cmr/issues/213)
+
+## [1.1.2](https://github.com/developmentseed/titiler-cmr/compare/v1.1.1...v1.1.2) (2026-06-18)
+
+
+### Bug Fixes
+
+* install titiler 2.0.5 to avoid missing httpx dependency ([#202](https://github.com/developmentseed/titiler-cmr/issues/202)) ([d037522](https://github.com/developmentseed/titiler-cmr/commit/d0375220595941551e780ec399d2acdd8ce52488))
+
+## [1.1.1](https://github.com/developmentseed/titiler-cmr/compare/v1.1.0...v1.1.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* improve CMR query logging and error response, increase default timeout to 20s ([#201](https://github.com/developmentseed/titiler-cmr/issues/201)) ([4533a1c](https://github.com/developmentseed/titiler-cmr/commit/4533a1c46bd82731a97d6a2f404cc341221b98c2))
+* upgrade dependencies for security patches ([#198](https://github.com/developmentseed/titiler-cmr/issues/198)) ([e6e44f1](https://github.com/developmentseed/titiler-cmr/commit/e6e44f19781ae4db56eb81a8cedd39ac3ec0d9a5))
+
 ## [1.1.0](https://github.com/developmentseed/titiler-cmr/compare/v1.0.4...v1.1.0) (2026-06-10)
 
 

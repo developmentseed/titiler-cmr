@@ -15,7 +15,7 @@ import rasterio
 from mangum import Mangum
 
 from titiler.cmr.logger import configure_logging
-from titiler.cmr.main import app, startup
+from titiler.cmr.main import app, settings, startup
 
 configure_logging()
 
@@ -23,9 +23,9 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.getLogger("numexpr").setLevel(logging.WARNING)
 
-# Configure OTEL with X-Ray when running in Lambda.
-# Skipped outside Lambda so local dev/testing is unaffected.
-if "AWS_EXECUTION_ENV" in os.environ:
+# Configure OTEL with X-Ray only when enabled for a Lambda deployment.
+_otel_enabled = settings.telemetry_enabled and "AWS_EXECUTION_ENV" in os.environ
+if _otel_enabled:
     import hashlib
     from urllib.parse import urlparse
 
@@ -36,7 +36,7 @@ if "AWS_EXECUTION_ENV" in os.environ:
     from opentelemetry import propagate, trace
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-    from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+    from opentelemetry.instrumentation.httpx import HTTPX2ClientInstrumentor
     from opentelemetry.instrumentation.logging import LoggingInstrumentor
     from opentelemetry.propagators.aws import AwsXRayPropagator
     from opentelemetry.sdk.extension.aws.trace import AwsXRayIdGenerator
@@ -165,13 +165,13 @@ if "AWS_EXECUTION_ENV" in os.environ:
     trace.set_tracer_provider(_provider)
     propagate.set_global_textmap(_LambdaXRayPropagator())
 
-    # Instrument before startup() creates the httpx client so it is captured.
     # set_logging_format=True is required to inject otelTraceID/otelSpanID into
     # log records. Despite the name, it does NOT override the XRayJsonFormatter —
     # it calls logging.basicConfig() internally, which is a no-op when handlers
     # already exist (configure_logging() has already run).
+    #
     LoggingInstrumentor().instrument(set_logging_format=True)
-    HTTPXClientInstrumentor().instrument()
+    HTTPX2ClientInstrumentor().instrument()
     FastAPIInstrumentor.instrument_app(app)
 
 startup(app)
@@ -221,5 +221,6 @@ def lambda_handler(event: dict, context: object) -> dict:
     the function's configured limit.
     """
     result = _mangum(event, context)
-    _provider.force_flush(timeout_millis=5_000)
+    if _otel_enabled:
+        _provider.force_flush(timeout_millis=5_000)
     return result

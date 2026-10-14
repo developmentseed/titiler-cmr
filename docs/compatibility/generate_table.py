@@ -1,47 +1,128 @@
 #!/usr/bin/env python3
-"""Generate HTML table from parquet file for mkdocs site."""
+"""Generate an HTML table from compatibility assessment parquet results."""
 
+from __future__ import annotations
+
+import importlib
 import json
-import pandas as pd
+import logging
 from pathlib import Path
+from typing import Any
+
+import pandas as pd
+
+try:
+    reporting = importlib.import_module("docs.compatibility.reporting")
+except (
+    ModuleNotFoundError
+):  # pragma: no cover - supports running from docs/compatibility
+    reporting = importlib.import_module("reporting")
+
+DEFAULT_ASSESSMENT_PATH = reporting.DEFAULT_ASSESSMENT_PATH
+classify_assessment = reporting.classify_assessment
+
+LOGGER = logging.getLogger(__name__)
+
+DISPLAY_COLUMNS = [
+    "collection_short_name_and_version",
+    "data_center",
+    "backend",
+    "format",
+    "extension",
+    "tiling_compatible",
+    "assessment_status",
+    "report_status",
+    "report_category",
+    "report_reason",
+    "report_reason_detail",
+    "error_code",
+    "failure_stage",
+    "failure_category",
+    "failure_subcategory",
+    "failure_http_status_code",
+    "processing_level",
+    "num_granules",
+]
+
+FILTER_COLUMNS = [
+    "report_category",
+    "report_reason",
+    "assessment_status",
+    "data_center",
+    "backend",
+    "tiling_compatible",
+]
 
 
-def generate_searchable_table():
-    """Convert parquet to JSON and generate HTML with DataTables."""
+def generate_searchable_table(
+    input_path: str | Path = DEFAULT_ASSESSMENT_PATH,
+    output_path: str | Path | None = None,
+    *,
+    dataframe: pd.DataFrame | None = None,
+) -> Path:
+    """Convert assessment results to a searchable DataTables HTML page."""
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
 
-    # Read the parquet file
-    df = pd.read_parquet("tiling_results-11-24-2025.parquet")
+    if dataframe is None:
+        LOGGER.info("Reading compatibility assessment from %s", input_path)
+        df = pd.read_parquet(input_path)
+    else:
+        df = dataframe.copy()
 
-    # Filter out rows with n/a collection short name and version
-    df = df[df["collection_short_name_and_version"].notna()]
+    df = classify_assessment(df)
 
-    # Select key columns for display
-    display_columns = [
-        "collection_short_name_and_version",
-        "data_center",
-        "format",
-        "extension",
-        "tiling_compatible",
-        "incompatible_reason",
-        "processing_level",
-        "num_granules",
-    ]
+    if "collection_short_name_and_version" in df.columns:
+        df = df[df["collection_short_name_and_version"].notna()]
 
-    # Filter to only include columns that exist
-    available_columns = [col for col in display_columns if col in df.columns]
-    display_df = df[available_columns]
-
-    # Convert to records for JSON serialization
-    records = display_df.to_dict("records")
-
-    # Create column definitions for DataTables
+    available_columns = [col for col in DISPLAY_COLUMNS if col in df.columns]
+    display_df = df[available_columns].copy()
+    records = _json_records(display_df)
     columns = [
         {"data": col, "title": col.replace("_", " ").title()}
         for col in available_columns
     ]
+    counts = _status_counts(df)
 
-    # Generate HTML
-    html_content = f"""<!DOCTYPE html>
+    output = (
+        Path(output_path)
+        if output_path is not None
+        else Path(__file__).with_name("results_table.html")
+    )
+    output.write_text(_render_html(records, columns, counts), encoding="utf-8")
+    LOGGER.info("Generated %s", output)
+    return output
+
+
+def _status_counts(df: pd.DataFrame) -> dict[str, Any]:
+    total = len(df)
+    compatible = int(df["tiling_compatible"].fillna(False).sum()) if total else 0
+    status_counts = df.get(
+        "assessment_status", pd.Series(dtype="object")
+    ).value_counts()
+    inconclusive = int(status_counts.get("inconclusive", 0))
+    incompatible = int(status_counts.get("incompatible", 0))
+    rate = compatible / total * 100 if total else 0
+    return {
+        "total": total,
+        "compatible": compatible,
+        "incompatible": incompatible,
+        "inconclusive": inconclusive,
+        "rate": rate,
+    }
+
+
+def _json_records(df: pd.DataFrame) -> list[dict[str, Any]]:
+    sanitized = df.astype(object).where(pd.notna(df), None)
+    return sanitized.to_dict("records")
+
+
+def _render_html(
+    records: list[dict[str, Any]],
+    columns: list[dict[str, str]],
+    counts: dict[str, Any],
+) -> str:
+    filter_columns = json.dumps(FILTER_COLUMNS)
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -55,7 +136,7 @@ def generate_searchable_table():
             background-color: #f5f5f5;
         }}
         .container {{
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -76,17 +157,21 @@ def generate_searchable_table():
         }}
         table.dataTable {{
             width: 100% !important;
-            font-size: 14px;
+            font-size: 13px;
         }}
         .dataTables_wrapper {{
             margin-top: 20px;
         }}
         .compatible-true {{
-            color: #4caf50;
+            color: #2e7d32;
             font-weight: bold;
         }}
         .compatible-false {{
-            color: #f44336;
+            color: #c62828;
+            font-weight: bold;
+        }}
+        .status-inconclusive {{
+            color: #ef6c00;
             font-weight: bold;
         }}
         .back-link {{
@@ -99,6 +184,11 @@ def generate_searchable_table():
         .back-link:hover {{
             text-decoration: underline;
         }}
+        select {{
+            display: block;
+            max-width: 180px;
+            margin-top: 4px;
+        }}
     </style>
 </head>
 <body>
@@ -108,13 +198,16 @@ def generate_searchable_table():
         <h1>TiTiler-CMR Dataset Compatibility Results</h1>
 
         <div class="info-box">
-            <strong>Total datasets:</strong> {len(df)}<br>
-            <strong>Compatible datasets:</strong> {len(df[df.tiling_compatible])}<br>
-            <strong>Compatibility rate:</strong> {len(df[df.tiling_compatible]) / len(df) * 100:.2f}%
+            <strong>Total datasets:</strong> {counts["total"]}<br>
+            <strong>Compatible datasets:</strong> {counts["compatible"]}<br>
+            <strong>Incompatible datasets:</strong> {counts["incompatible"]}<br>
+            <strong>Inconclusive datasets:</strong> {counts["inconclusive"]}<br>
+            <strong>Compatibility rate:</strong> {counts["rate"]:.2f}%
         </div>
 
         <p>Use the search box and column filters below to explore the dataset compatibility results.
-        Click on column headers to sort.</p>
+        The table includes raw assessment fields and normalized report category fields derived from
+        the 2026-07-01 assessment schema.</p>
 
         <table id="resultsTable" class="display" style="width:100%">
         </table>
@@ -123,8 +216,9 @@ def generate_searchable_table():
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script>
-        const data = {json.dumps(records, default=str)};
+        const data = {json.dumps(records, default=str, allow_nan=False)};
         const columns = {json.dumps(columns)};
+        const filterColumns = {filter_columns};
 
         $(document).ready(function() {{
             $('#resultsTable').DataTable({{
@@ -145,10 +239,18 @@ def generate_searchable_table():
                         }}
                     }},
                     {{
-                        // Handle null values for all columns
+                        targets: columns.findIndex(col => col.data === 'assessment_status'),
+                        render: function(data, type, row) {{
+                            if (type === 'display' && data === 'inconclusive') {{
+                                return '<span class="status-inconclusive">' + data + '</span>';
+                            }}
+                            return data;
+                        }}
+                    }},
+                    {{
                         targets: '_all',
                         render: function(data, type, row) {{
-                            if (data === null || data === undefined) {{
+                            if (data === null || data === undefined || data === '') {{
                                 return type === 'display' ? '<em style="color: #999;">N/A</em>' : '';
                             }}
                             return data;
@@ -156,13 +258,8 @@ def generate_searchable_table():
                     }}
                 ],
                 initComplete: function() {{
-                    // Add column filters
                     this.api().columns().every(function() {{
                         const column = this;
-                        const header = $(column.header());
-
-                        // Add filter for specific columns
-                        const filterColumns = ['data_center', 'format', 'tiling_compatible', 'incompatible_reason'];
                         if (filterColumns.includes(column.dataSrc())) {{
                             const select = $('<select><option value="">All</option></select>')
                                 .appendTo($(column.header()))
@@ -184,11 +281,6 @@ def generate_searchable_table():
     </script>
 </body>
 </html>"""
-
-    # Write the HTML file
-    output_path = Path("results_table.html")
-    output_path.write_text(html_content)
-    print(f"Generated {output_path}")
 
 
 if __name__ == "__main__":
