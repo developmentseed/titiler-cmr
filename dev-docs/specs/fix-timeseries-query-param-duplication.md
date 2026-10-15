@@ -62,8 +62,7 @@ def build_request_urls(
     base_url: str,
     request: Request,
     param_list: List[BaseModel],
-) -> List[str]:
-    ...
+) -> List[str]: ...
 ```
 
 ## Data Model
@@ -129,10 +128,10 @@ param_list = [
 urls = build_request_urls("http://testserver/bbox/...png", request, param_list)
 parsed = parse_qs(urlparse(urls[0]).query)
 
-assert parsed["assets"] == ["B04", "B05"]          # both values preserved
-assert parsed["max_size"] == ["512"]               # scalar pass-through OK
-assert "step" not in parsed                        # timeseries param stripped
-assert parsed["collection_concept_id"] == ["C123"] # deduplicated to model value
+assert parsed["assets"] == ["B04", "B05"]  # both values preserved
+assert parsed["max_size"] == ["512"]  # scalar pass-through OK
+assert "step" not in parsed  # timeseries param stripped
+assert parsed["collection_concept_id"] == ["C123"]  # deduplicated to model value
 ```
 
 ### Example test scenario
@@ -157,9 +156,9 @@ param_list = [
 urls = build_request_urls("http://testserver/stats", request, param_list)
 parsed = parse_qs(urlparse(urls[0]).query)
 
-assert parsed["collection_concept_id"] == ["C123"]         # once, from model
+assert parsed["collection_concept_id"] == ["C123"]  # once, from model
 assert "sort_key" not in parsed or parsed["sort_key"] == ["cloud_cover"]  # once
-assert parsed["max_size"] == ["256"]                    # pass-through preserved
+assert parsed["max_size"] == ["256"]  # pass-through preserved
 ```
 
 ## Decision Log
