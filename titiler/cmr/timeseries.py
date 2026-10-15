@@ -30,7 +30,7 @@ from attrs import define
 from fastapi import APIRouter, Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
-from geojson_pydantic import Feature, FeatureCollection
+from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry
 from httpx2 import AsyncClient, HTTPStatusError
 from httpx2 import Response as HttpxResponse
@@ -41,7 +41,6 @@ from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import BaseFactory, FactoryExtension
 from titiler.core.models.mapbox import TileJSON
-from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
 
@@ -92,7 +91,11 @@ class TimeseriesImageType(str, Enum):
         return TimeseriesMediaType[self._name_].value
 
 
-TimeseriesStatistics = Dict[str, Statistics]
+# {interval: {band: stats}}. Each stats dict is a /statistics result passed
+# through unvalidated, because /statistics already validated it and
+# BandStatistics would reject the null it sends for the numeric fields of an
+# interval with no valid pixels.
+TimeseriesStatistics = Dict[str, Dict[str, Dict[str, Any]]]
 
 
 class TimeseriesStatisticsInGeoJSON(BaseModel):
@@ -103,10 +106,7 @@ class TimeseriesStatisticsInGeoJSON(BaseModel):
     model_config = {"extra": "allow"}
 
 
-TimeseriesStatisticsGeoJSON = Union[
-    FeatureCollection[Feature[Geometry, TimeseriesStatisticsInGeoJSON]],
-    Feature[Geometry, TimeseriesStatisticsInGeoJSON],
-]
+TimeseriesStatisticsGeoJSON = Feature[Geometry, TimeseriesStatisticsInGeoJSON]
 
 TimeseriesTileJSON = Dict[str, TileJSON]
 
@@ -323,7 +323,7 @@ async def _timestep_request(
 async def _fetch_statistics(
     client: AsyncClient,
     url: str,
-    geojson: Union[FeatureCollection, Feature],
+    geojson: Feature,
 ) -> HttpxResponse:
     """Fetch a statistics sub-request and return the parsed response dict."""
     return await _timestep_request(
@@ -547,8 +547,8 @@ class TimeseriesExtension(FactoryExtension):
         async def timeseries_geojson_statistics(
             request: Request,
             geojson: Annotated[
-                Union[FeatureCollection, Feature],
-                Body(description="GeoJSON Feature or FeatureCollection.", embed=False),
+                Feature,
+                Body(description="GeoJSON Feature.", embed=False),
             ],
             query=Depends(timeseries_cmr_query_no_bbox),
             coord_crs=Depends(CoordCRSParams),
@@ -628,10 +628,6 @@ class TimeseriesExtension(FactoryExtension):
             )
             combine_start = time()
             datetime_strs = [d.temporal for d in query]
-            if not isinstance(geojson, Feature):
-                raise HTTPException(
-                    status_code=400, detail="Expected a GeoJSON Feature"
-                )
             if geojson.properties is None:
                 geojson.properties = {}
             geojson.properties["statistics"] = {}
