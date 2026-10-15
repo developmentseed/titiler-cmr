@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.4](https://github.com/developmentseed/titiler-cmr/compare/v1.1.3...v1.1.4) (2026-10-15)
+
+
+### Bug Fixes
+
+* **timeseries:** tolerate intervals with no valid pixels in /timeseries/statistics ([#196](https://github.com/developmentseed/titiler-cmr/issues/196)) ([de18d95](https://github.com/developmentseed/titiler-cmr/commit/de18d95c3ed3f212c559bcdd4e1d254f629263cc)), closes [#195](https://github.com/developmentseed/titiler-cmr/issues/195)
+
 ## [1.1.3](https://github.com/developmentseed/titiler-cmr/compare/v1.1.2...v1.1.3) (2026-09-22)
 
 
