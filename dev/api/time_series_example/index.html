@@ -2851,8 +2851,8 @@ display(Image(request.content))</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
-<img alt="No description has been provided for this image" class="" src="data:image/png;base64,eyJkZXRhaWwiOiJ7XCJkZXRhaWxcIjpcIjxodG1sPlxcclxcbjxoZWFkPjx0aXRsZT41MDIgQmFkIEdhdGV3YXk8L3RpdGxlPjwvaGVhZD5cXHJcXG48Ym9keT5cXHJcXG48Y2VudGVyPjxoMT41MDIgQmFkIEdhdGV3YXk8L2gxPjwvY2VudGVyPlxcclxcbjwvYm9keT5cXHJcXG48L2h0bWw+XFxyXFxuXCJ9In0="/>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;IPython.core.display.Image object&gt;</pre>
 </div>
 </div>
 </div>
@@ -3027,8 +3027,8 @@ response = request.json()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>CPU times: user 24.8 ms, sys: 120 μs, total: 24.9 ms
-Wall time: 11.8 s
+<pre>CPU times: user 28.2 ms, sys: 449 μs, total: 28.7 ms
+Wall time: 30.2 s
 </pre>
 </div>
 </div>
@@ -3048,8 +3048,8 @@ Wall time: 11.8 s
 <span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
 <span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
 
-<span class="ansi-red-fg">HTTPStatusError</span>: Server error '502 Bad Gateway' for url 'https://openveda.cloud/api/titiler-cmr/xarray/timeseries/statistics?collection_concept_id=C2036881735-POCLOUD&amp;temporal=2023-03-01T00%3A00%3A01Z%2F2024-10-30T23%3A59%3A59Z&amp;step=P1D&amp;temporal_mode=point&amp;variables=analysed_sst'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502</pre>
+<span class="ansi-red-fg">HTTPStatusError</span>: Server error '504 Gateway Timeout' for url 'https://openveda.cloud/api/titiler-cmr/xarray/timeseries/statistics?collection_concept_id=C2036881735-POCLOUD&amp;temporal=2023-03-01T00%3A00%3A01Z%2F2024-10-30T23%3A59%3A59Z&amp;step=P1D&amp;temporal_mode=point&amp;variables=analysed_sst'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504</pre>
 </div>
 </div>
 </div>
@@ -3830,7 +3830,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_74b457453ed59b602ba7b685c312f4e5 {
+                #map_fa0bc2220c8878e5710d4479088ca194 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3867,14 +3867,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_74b457453ed59b602ba7b685c312f4e5" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_fa0bc2220c8878e5710d4479088ca194" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_74b457453ed59b602ba7b685c312f4e5 = L.map(
-                "map_74b457453ed59b602ba7b685c312f4e5",
+            var map_fa0bc2220c8878e5710d4479088ca194 = L.map(
+                "map_fa0bc2220c8878e5710d4479088ca194",
                 {
                     center: [0.0, 0.0],
                     crs: L.CRS.EPSG3857,
@@ -3891,7 +3891,7 @@ m</div>
 
         
     
-            var tile_layer_31d73d1dd6785df328a8f06468da52e8 = L.tileLayer(
+            var tile_layer_6f3568e3fa35ac58e1d887c47e9cd45a = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 1,
@@ -3908,10 +3908,10 @@ m</div>
             );
         
     
-            tile_layer_31d73d1dd6785df328a8f06468da52e8.addTo(map_74b457453ed59b602ba7b685c312f4e5);
+            tile_layer_6f3568e3fa35ac58e1d887c47e9cd45a.addTo(map_fa0bc2220c8878e5710d4479088ca194);
         
     
-            var tile_layer_b954689234909662e7605cf33c76d700 = L.tileLayer(
+            var tile_layer_85ee76655e494a5b3e6cbb20ed8aa6b6 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2023-11-01T00%3A00%3A01%2B00%3A00%2F2023-11-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3928,7 +3928,7 @@ m</div>
             );
         
     
-            var tile_layer_2feae9ca861564b15e8d07e3e9f63e9c = L.tileLayer(
+            var tile_layer_d41c546619b6be08f621dfa88dc5c318 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2023-12-01T00%3A00%3A01%2B00%3A00%2F2023-12-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3945,7 +3945,7 @@ m</div>
             );
         
     
-            var tile_layer_f3e2a7fd1c0401cd0e9f8a578e5b9b26 = L.tileLayer(
+            var tile_layer_38e9c449628a5a1c30f7bed40cc1135b = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-01-01T00%3A00%3A01%2B00%3A00%2F2024-01-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3962,7 +3962,7 @@ m</div>
             );
         
     
-            var tile_layer_3d7bf40dc9a0eb1bc3154b5db29668cb = L.tileLayer(
+            var tile_layer_b878556b0428894a2cafd96f6fee4b95 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-02-01T00%3A00%3A01%2B00%3A00%2F2024-02-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3979,7 +3979,7 @@ m</div>
             );
         
     
-            var tile_layer_abbc5e09b84f6e17db174f18b0f27cef = L.tileLayer(
+            var tile_layer_2fd8fd29ef3f2678efd7b242b044f17f = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-03-01T00%3A00%3A01%2B00%3A00%2F2024-03-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3996,7 +3996,7 @@ m</div>
             );
         
     
-            var tile_layer_84731dc83192a13a17850671a422e396 = L.tileLayer(
+            var tile_layer_21cecd3ffb2cc65d68c71c40904dd489 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-04-01T00%3A00%3A01%2B00%3A00%2F2024-04-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4013,7 +4013,7 @@ m</div>
             );
         
     
-            var tile_layer_9f72d6693bbfb29db9f81e9b832bbfca = L.tileLayer(
+            var tile_layer_5270e889f6feb867f5a1ff524ce1ca04 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-05-01T00%3A00%3A01%2B00%3A00%2F2024-05-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4030,7 +4030,7 @@ m</div>
             );
         
     
-            var tile_layer_810c3316fd0fb972e06d196923df372f = L.tileLayer(
+            var tile_layer_278feeea9a561aeea35979e7d03e9db8 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-06-01T00%3A00%3A01%2B00%3A00%2F2024-06-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4047,7 +4047,7 @@ m</div>
             );
         
     
-            var tile_layer_d20277deae8a8f7f70e8d5dec2b773a6 = L.tileLayer(
+            var tile_layer_ed1a5784466d2ec50334b050aac96f54 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-07-01T00%3A00%3A01%2B00%3A00%2F2024-07-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4064,7 +4064,7 @@ m</div>
             );
         
     
-            var tile_layer_851ef597e3e7df971237b1d62250b609 = L.tileLayer(
+            var tile_layer_183f4e7d262f4b740ad19be124d8fcbb = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-08-01T00%3A00%3A01%2B00%3A00%2F2024-08-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4081,7 +4081,7 @@ m</div>
             );
         
     
-            var tile_layer_562af77577f2cd03f0130612df6350f9 = L.tileLayer(
+            var tile_layer_ba57e4477cabe7c76dde78e402610af6 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-09-01T00%3A00%3A01%2B00%3A00%2F2024-09-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4098,7 +4098,7 @@ m</div>
             );
         
     
-            var tile_layer_0df6ddc038f36435d074c2a1373267cd = L.tileLayer(
+            var tile_layer_e9e669a00d9b739c6fbed19c0c1e6ec1 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?variables=sea_ice_fraction\u0026colormap_name=blues_r\u0026rescale=%5B0%2C+1%5D\u0026collection_concept_id=C2036881735-POCLOUD\u0026temporal=2024-10-01T00%3A00%3A01%2B00%3A00%2F2024-10-01T00%3A00%3A01%2B00%3A00\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4115,34 +4115,34 @@ m</div>
             );
         
     
-            var layer_control_6a5bb61232281f5f85cbcd2877ccea33_layers = {
+            var layer_control_b8b3c912398a804c12c1007775dc51e2_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_31d73d1dd6785df328a8f06468da52e8,
+                    "openstreetmap" : tile_layer_6f3568e3fa35ac58e1d887c47e9cd45a,
                 },
                 overlays :  {
-                    "2023-11" : tile_layer_b954689234909662e7605cf33c76d700,
-                    "2023-12" : tile_layer_2feae9ca861564b15e8d07e3e9f63e9c,
-                    "2024-01" : tile_layer_f3e2a7fd1c0401cd0e9f8a578e5b9b26,
-                    "2024-02" : tile_layer_3d7bf40dc9a0eb1bc3154b5db29668cb,
-                    "2024-03" : tile_layer_abbc5e09b84f6e17db174f18b0f27cef,
-                    "2024-04" : tile_layer_84731dc83192a13a17850671a422e396,
-                    "2024-05" : tile_layer_9f72d6693bbfb29db9f81e9b832bbfca,
-                    "2024-06" : tile_layer_810c3316fd0fb972e06d196923df372f,
-                    "2024-07" : tile_layer_d20277deae8a8f7f70e8d5dec2b773a6,
-                    "2024-08" : tile_layer_851ef597e3e7df971237b1d62250b609,
-                    "2024-09" : tile_layer_562af77577f2cd03f0130612df6350f9,
-                    "2024-10" : tile_layer_0df6ddc038f36435d074c2a1373267cd,
+                    "2023-11" : tile_layer_85ee76655e494a5b3e6cbb20ed8aa6b6,
+                    "2023-12" : tile_layer_d41c546619b6be08f621dfa88dc5c318,
+                    "2024-01" : tile_layer_38e9c449628a5a1c30f7bed40cc1135b,
+                    "2024-02" : tile_layer_b878556b0428894a2cafd96f6fee4b95,
+                    "2024-03" : tile_layer_2fd8fd29ef3f2678efd7b242b044f17f,
+                    "2024-04" : tile_layer_21cecd3ffb2cc65d68c71c40904dd489,
+                    "2024-05" : tile_layer_5270e889f6feb867f5a1ff524ce1ca04,
+                    "2024-06" : tile_layer_278feeea9a561aeea35979e7d03e9db8,
+                    "2024-07" : tile_layer_ed1a5784466d2ec50334b050aac96f54,
+                    "2024-08" : tile_layer_183f4e7d262f4b740ad19be124d8fcbb,
+                    "2024-09" : tile_layer_ba57e4477cabe7c76dde78e402610af6,
+                    "2024-10" : tile_layer_e9e669a00d9b739c6fbed19c0c1e6ec1,
                 },
             };
-            let layer_control_6a5bb61232281f5f85cbcd2877ccea33 = L.control.layers(
-                layer_control_6a5bb61232281f5f85cbcd2877ccea33_layers.base_layers,
-                layer_control_6a5bb61232281f5f85cbcd2877ccea33_layers.overlays,
+            let layer_control_b8b3c912398a804c12c1007775dc51e2 = L.control.layers(
+                layer_control_b8b3c912398a804c12c1007775dc51e2_layers.base_layers,
+                layer_control_b8b3c912398a804c12c1007775dc51e2_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_74b457453ed59b602ba7b685c312f4e5);
+            ).addTo(map_fa0bc2220c8878e5710d4479088ca194);
 
         
 &lt;/script&gt;
