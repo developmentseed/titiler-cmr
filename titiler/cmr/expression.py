@@ -112,6 +112,12 @@ _ARRAY_TRUTH_HINT = (
     "`where((b2 < 0.15) & (b3 < 0.5), b1, nan)`"
 )
 
+_LOGIC_OPERATOR_HINT = (
+    "`&`, `|`, and `~` combine true/false conditions, so wrap each comparison "
+    "in parentheses, e.g., `(b2 < 0.15) & (b3 < 0.5)`. To test whether a band "
+    "has a flag code set, use `(bN // code) % 2 == 1`"
+)
+
 
 def _compile_expression_block(block: str, allowed_names: frozenset[str]) -> CodeType:
     """Validate one expression block against the AST whitelist and compile it.
@@ -195,10 +201,13 @@ def apply_expression(
     for block, code in zip(expression_blocks, codes, strict=True):
         try:
             result = eval(code, {"__builtins__": {}}, namespace)
-        except (TypeError, ValueError) as e:
-            # Compiling checks syntax, not types, e.g., `&` on a float band, so
-            # these errors are revealed only by eval.
-            raise InvalidExpression(f"Invalid expression '{block}': {e}") from e
+        except (ArithmeticError, NotImplementedError, TypeError, ValueError) as e:
+            # Compiling checks syntax, not types or values, e.g., `&` on a float
+            # band or `1 / 0`, so these errors are revealed only by eval.
+            hint = (
+                f". {_LOGIC_OPERATOR_HINT}" if any(op in block for op in "&|~") else ""
+            )
+            raise InvalidExpression(f"Invalid expression '{block}': {e}{hint}") from e
 
         if not isinstance(result, xr.DataArray):
             raise InvalidExpression(

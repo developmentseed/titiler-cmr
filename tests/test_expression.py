@@ -199,6 +199,12 @@ class TestApplyExpressionErrors:
             "(b1 & 8) == 0",  # bit test on a float band
             "~b1",  # ~ on a non-boolean band
             "where(b1 > 0, b1)",  # missing argument
+            pytest.param(
+                "maximum(b1, b1, b1)",  # a third argument is numpy's `out`
+                marks=pytest.mark.filterwarnings("ignore::DeprecationWarning"),
+            ),
+            "b1 + 1 / 0",  # division by zero in constants
+            "b1 * 10.0**400",  # float overflow in constants
         ],
     )
     def test_evaluation_errors_raise(self, expression: str) -> None:
@@ -209,7 +215,28 @@ class TestApplyExpressionErrors:
             apply_expression(da, expression)
 
         # the chained cause shows evaluation failed, not validation
-        assert isinstance(excinfo.value.__cause__, (TypeError, ValueError))
+        assert isinstance(
+            excinfo.value.__cause__,
+            (ArithmeticError, NotImplementedError, TypeError, ValueError),
+        )
+
+    @pytest.mark.parametrize(
+        "expression",
+        [
+            "where((b1 > 0) & b1 == 1, b1, nan)",  # one comparison unparenthesized
+            "(b1 & 8) == 0",  # bit test on a float band
+            "~b1",  # ~ on a non-boolean band
+        ],
+    )
+    def test_logic_operator_errors_include_hint(self, expression: str) -> None:
+        """A failed expression that uses &, |, or ~ explains how to use them."""
+        da = _make_da([np.ones((2, 2))]).chunk()
+
+        with pytest.raises(InvalidExpression) as excinfo:
+            apply_expression(da, expression)
+
+        assert "wrap each comparison in parentheses" in str(excinfo.value)
+        assert "use `(bN // code) % 2 == 1`" in str(excinfo.value)
 
     def test_expression_without_band_raises(self) -> None:
         """A block that references no band cannot produce an image."""
