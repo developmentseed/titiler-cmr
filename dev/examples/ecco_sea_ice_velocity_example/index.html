@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2330,11 +2330,11 @@ print(json.dumps(compatibility_response, indent=2))</div>
       "dtype": "float32",
       "min": -0.4000000059604645,
       "max": 0.4000000059604645,
-      "mean": 0.013148893602192402,
-      "p01": -0.3566712826490402,
-      "p05": -0.22948664724826812,
-      "p95": 0.26073470562696455,
-      "p99": 0.32712718576192845
+      "mean": 0.014109008945524693,
+      "p01": -0.3595464846491814,
+      "p05": -0.24067509174346924,
+      "p95": 0.26273422241210936,
+      "p99": 0.3269044610857962
     },
     "SInice": {
       "shape": [
@@ -2343,13 +2343,13 @@ print(json.dumps(compatibility_response, indent=2))</div>
         720
       ],
       "dtype": "float32",
-      "min": -0.3943014144897461,
+      "min": -0.39989039301872253,
       "max": 0.35976916551589966,
-      "mean": -4.576140781864524e-05,
-      "p01": -0.19281239807605743,
-      "p05": -0.10606268048286438,
-      "p95": 0.10270837917923928,
-      "p99": 0.16766606271266937
+      "mean": 0.00038237537955865264,
+      "p01": -0.18204531222581863,
+      "p05": -0.10236617922782898,
+      "p95": 0.09887207299470901,
+      "p99": 0.16801030933856964
     }
   },
   "dimensions": {
@@ -2563,7 +2563,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_d588f62eb866e0ceb0cfd0301fed9a17 {
+                #map_4a32417316598fd126d31104eef5045b {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2600,14 +2600,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_d588f62eb866e0ceb0cfd0301fed9a17" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_4a32417316598fd126d31104eef5045b" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_d588f62eb866e0ceb0cfd0301fed9a17 = L.map(
-                "map_d588f62eb866e0ceb0cfd0301fed9a17",
+            var map_4a32417316598fd126d31104eef5045b = L.map(
+                "map_4a32417316598fd126d31104eef5045b",
                 {
                     center: [72.0, -57.0],
                     crs: L.CRS.EPSG3857,
@@ -2624,7 +2624,7 @@ m</div>
 
         
     
-            var tile_layer_51ef96f34185016ac4db1a606fa67490 = L.tileLayer(
+            var tile_layer_a1748e32975b987ee34fe4ce06cf9418 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2641,10 +2641,10 @@ m</div>
             );
         
     
-            tile_layer_51ef96f34185016ac4db1a606fa67490.addTo(map_d588f62eb866e0ceb0cfd0301fed9a17);
+            tile_layer_a1748e32975b987ee34fe4ce06cf9418.addTo(map_4a32417316598fd126d31104eef5045b);
         
     
-            var tile_layer_7aa05f5b17f8567dc9dbcf673e3ea0ad = L.tileLayer(
+            var tile_layer_440d073c7de5705765be5017b01f58b9 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1990404790-POCLOUD\u0026temporal=1992-01-16T18%3A00%3A00Z\u0026variables=SIeice\u0026rescale=-0.4%2C0.4\u0026colormap_name=rdbu\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2661,26 +2661,26 @@ m</div>
             );
         
     
-            tile_layer_7aa05f5b17f8567dc9dbcf673e3ea0ad.addTo(map_d588f62eb866e0ceb0cfd0301fed9a17);
+            tile_layer_440d073c7de5705765be5017b01f58b9.addTo(map_4a32417316598fd126d31104eef5045b);
         
     
-            var layer_control_05bd8e5f9000da9ce35da7c5d8733682_layers = {
+            var layer_control_9c498d62f1d9292cf4a8ad4623e2b0d7_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_51ef96f34185016ac4db1a606fa67490,
+                    "openstreetmap" : tile_layer_a1748e32975b987ee34fe4ce06cf9418,
                 },
                 overlays :  {
-                    "SIeice eastward velocity" : tile_layer_7aa05f5b17f8567dc9dbcf673e3ea0ad,
+                    "SIeice eastward velocity" : tile_layer_440d073c7de5705765be5017b01f58b9,
                 },
             };
-            let layer_control_05bd8e5f9000da9ce35da7c5d8733682 = L.control.layers(
-                layer_control_05bd8e5f9000da9ce35da7c5d8733682_layers.base_layers,
-                layer_control_05bd8e5f9000da9ce35da7c5d8733682_layers.overlays,
+            let layer_control_9c498d62f1d9292cf4a8ad4623e2b0d7 = L.control.layers(
+                layer_control_9c498d62f1d9292cf4a8ad4623e2b0d7_layers.base_layers,
+                layer_control_9c498d62f1d9292cf4a8ad4623e2b0d7_layers.overlays,
                 {
   "position": "topright",
   "collapsed": true,
   "autoZIndex": true,
 }
-            ).addTo(map_d588f62eb866e0ceb0cfd0301fed9a17);
+            ).addTo(map_4a32417316598fd126d31104eef5045b);
 
         
 &lt;/script&gt;
@@ -3019,7 +3019,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_008cd426eb6e852533ab844379e96379 {
+                #map_a7827f33e36301b6b5c9a99bd0156d10 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3056,14 +3056,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_008cd426eb6e852533ab844379e96379" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_a7827f33e36301b6b5c9a99bd0156d10" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_008cd426eb6e852533ab844379e96379 = L.map(
-                "map_008cd426eb6e852533ab844379e96379",
+            var map_a7827f33e36301b6b5c9a99bd0156d10 = L.map(
+                "map_a7827f33e36301b6b5c9a99bd0156d10",
                 {
                     center: [72.0, -57.0],
                     crs: L.CRS.EPSG3857,
@@ -3080,7 +3080,7 @@ m</div>
 
         
     
-            var tile_layer_ef6830b9d79b110580662ae44325e518 = L.tileLayer(
+            var tile_layer_ebda226cd356e6c1f0a664bb4ee941da = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3097,10 +3097,10 @@ m</div>
             );
         
     
-            tile_layer_ef6830b9d79b110580662ae44325e518.addTo(map_008cd426eb6e852533ab844379e96379);
+            tile_layer_ebda226cd356e6c1f0a664bb4ee941da.addTo(map_a7827f33e36301b6b5c9a99bd0156d10);
         
     
-            var tile_layer_c4d749d68466bac9d2abeb8e48a4eb95 = L.tileLayer(
+            var tile_layer_45fe4002cb6006b1e6a8a5c0e02c5f15 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1990404790-POCLOUD\u0026temporal=1992-01-16T18%3A00%3A00Z\u0026variables=SInice\u0026rescale=-0.4%2C0.4\u0026colormap_name=rdbu\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3117,26 +3117,26 @@ m</div>
             );
         
     
-            tile_layer_c4d749d68466bac9d2abeb8e48a4eb95.addTo(map_008cd426eb6e852533ab844379e96379);
+            tile_layer_45fe4002cb6006b1e6a8a5c0e02c5f15.addTo(map_a7827f33e36301b6b5c9a99bd0156d10);
         
     
-            var layer_control_a3361cd97f201eeeb4a05a49e9c8e0ee_layers = {
+            var layer_control_f0ee768c4a37935d6740270861a49ad0_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_ef6830b9d79b110580662ae44325e518,
+                    "openstreetmap" : tile_layer_ebda226cd356e6c1f0a664bb4ee941da,
                 },
                 overlays :  {
-                    "SInice northward velocity" : tile_layer_c4d749d68466bac9d2abeb8e48a4eb95,
+                    "SInice northward velocity" : tile_layer_45fe4002cb6006b1e6a8a5c0e02c5f15,
                 },
             };
-            let layer_control_a3361cd97f201eeeb4a05a49e9c8e0ee = L.control.layers(
-                layer_control_a3361cd97f201eeeb4a05a49e9c8e0ee_layers.base_layers,
-                layer_control_a3361cd97f201eeeb4a05a49e9c8e0ee_layers.overlays,
+            let layer_control_f0ee768c4a37935d6740270861a49ad0 = L.control.layers(
+                layer_control_f0ee768c4a37935d6740270861a49ad0_layers.base_layers,
+                layer_control_f0ee768c4a37935d6740270861a49ad0_layers.overlays,
                 {
   "position": "topright",
   "collapsed": true,
   "autoZIndex": true,
 }
-            ).addTo(map_008cd426eb6e852533ab844379e96379);
+            ).addTo(map_a7827f33e36301b6b5c9a99bd0156d10);
 
         
 &lt;/script&gt;
@@ -3734,7 +3734,7 @@ The source code is available in its <a href="https://github.com/hanzila1/sea-ice
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "navigation.indexes", "navigation.instant", "navigation.tracking", "search.suggest", "search.share"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

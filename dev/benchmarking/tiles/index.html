@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2235,14 +2235,6 @@ print(f"Found {len(results)} granules between {time_range[0]} and {time_range[1]
 </pre>
 </div>
 </div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>/home/runner/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/results.py:348: FutureWarning: As of version 1.0, `DataGranule.size` will be accessed as an attribute; e.g. use `DataCollection.size` **not** `DataCollection.size()`
-  self["size"] = self.size()
-</pre>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -2465,67 +2457,58 @@ Body:
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> df_viewport <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmark_viewport(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     endpoint<span style="color: rgb(98,98,98)">=</span>endpoint,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     dataset<span style="color: rgb(98,98,98)">=</span>ds_xarray,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     lng<span style="color: rgb(98,98,98)">=</span>lng,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     lat<span style="color: rgb(98,98,98)">=</span>lat,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     viewport_width<span style="color: rgb(98,98,98)">=</span>viewport_width,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     viewport_height<span style="color: rgb(98,98,98)">=</span>viewport_height,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     min_zoom<span style="color: rgb(98,98,98)">=</span>min_zoom,
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     max_zoom<span style="color: rgb(98,98,98)">=</span>max_zoom,
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     timeout_s<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">60.0</span>,
-<span class="ansi-green-intense-fg ansi-bold">     11</span> )
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> df_viewport = await benchmark_viewport(
+<span class="ansi-green-fg">      2</span>     endpoint=endpoint,
+<span class="ansi-green-fg">      3</span>     dataset=ds_xarray,
+<span class="ansi-green-fg">      4</span>     lng=lng,
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:189</span>, in <span class="ansi-cyan-fg">benchmark_viewport</span><span class="ansi-blue-fg">(endpoint, dataset, lng, lat, viewport_width, viewport_height, tms_id, tile_format, tile_scale, min_zoom, max_zoom, timeout_s, max_connections, max_connections_per_host, max_concurrent, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    180</span>     center <span style="color: rgb(98,98,98)">=</span> tms<span style="color: rgb(98,98,98)">.</span>tile(lng<span style="color: rgb(98,98,98)">=</span>lng, lat<span style="color: rgb(98,98,98)">=</span>lat, zoom<span style="color: rgb(98,98,98)">=</span>zoom)
-<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> get_surrounding_tiles(
-<span class="ansi-green-intense-fg ansi-bold">    182</span>         center_x<span style="color: rgb(98,98,98)">=</span>center<span style="color: rgb(98,98,98)">.</span>x,
-<span class="ansi-green-intense-fg ansi-bold">    183</span>         center_y<span style="color: rgb(98,98,98)">=</span>center<span style="color: rgb(98,98,98)">.</span>y,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    186</span>         height<span style="color: rgb(98,98,98)">=</span>viewport_height,
-<span class="ansi-green-intense-fg ansi-bold">    187</span>     )
-<span class="ansi-green-fg">--&gt; 189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmarker<span style="color: rgb(98,98,98)">.</span>benchmark_tiles(
-<span class="ansi-green-intense-fg ansi-bold">    190</span>     dataset, viewport_strategy, warmup_per_zoom<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs
-<span class="ansi-green-intense-fg ansi-bold">    191</span> )
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:189</span>, in <span class="ansi-cyan-fg">benchmark_viewport</span><span class="ansi-blue-fg">(endpoint, dataset, lng, lat, viewport_width, viewport_height, tms_id, tile_format, tile_scale, min_zoom, max_zoom, timeout_s, max_connections, max_connections_per_host, max_concurrent, **kwargs)</span>
+<span class="ansi-green-fg">    180</span>     center = tms.tile(lng=lng, lat=lat, zoom=zoom)
+<span class="ansi-green-fg">    181</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> get_surrounding_tiles(
+<span class="ansi-green-fg">    182</span>         center_x=center.x,
+<span class="ansi-green-fg">    183</span>         center_y=center.y,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    186</span>         height=viewport_height,
+<span class="ansi-green-fg">    187</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmarker.benchmark_tiles(
+<span class="ansi-green-fg">    190</span>     dataset, viewport_strategy, warmup_per_zoom=<span class="ansi-green-fg">1</span>, **kwargs
+<span class="ansi-green-fg">    191</span> )
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:399</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker.benchmark_tiles</span><span class="ansi-blue-fg">(self, dataset, tiling_strategy, warmup_per_zoom, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    396</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">  </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>k<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>v<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    398</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_create_http_client() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
-<span class="ansi-green-fg">--&gt; 399</span>     tilejson_info <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_get_tilejson_info(client, tile_params)
-<span class="ansi-green-intense-fg ansi-bold">    400</span>     tiles_endpoints <span style="color: rgb(98,98,98)">=</span> tilejson_info[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles_endpoints</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">    401</span>     tms <span style="color: rgb(98,98,98)">=</span> morecantile<span style="color: rgb(98,98,98)">.</span>tms<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>tms_id)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:399</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker.benchmark_tiles</span><span class="ansi-blue-fg">(self, dataset, tiling_strategy, warmup_per_zoom, **kwargs)</span>
+<span class="ansi-green-fg">    396</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">  </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>k<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>v<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    398</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._create_http_client() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">399</span>     tilejson_info = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._get_tilejson_info(client, tile_params)
+<span class="ansi-green-fg">    400</span>     tiles_endpoints = tilejson_info[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tiles_endpoints</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">    401</span>     tms = morecantile.tms.get(<span style="color: rgb(0,135,0)">self</span>.tms_id)
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:725</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._get_tilejson_info</span><span class="ansi-blue-fg">(self, client, params)</span>
-<span class="ansi-green-intense-fg ansi-bold">    709</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    710</span> <span style="color: rgb(175,0,0)">Query TiTiler-CMR TileJSON and return parsed tiles endpoints, and bounds.</span>
-<span class="ansi-green-intense-fg ansi-bold">    711</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    722</span> <span style="color: rgb(175,0,0)">    Dictionary with entries, tilejson, tile endpoints, and bounds.</span>
-<span class="ansi-green-intense-fg ansi-bold">    723</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    724</span> url <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>endpoint<span style="color: rgb(98,98,98)">.</span>rstrip(<span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">/</span><span style="color: rgb(175,0,0)">'</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>tms_id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/tilejson.json</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">--&gt; 725</span> ts_json, _, _ <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request_json(
-<span class="ansi-green-intense-fg ansi-bold">    726</span>     client,
-<span class="ansi-green-intense-fg ansi-bold">    727</span>     method<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GET</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    728</span>     url<span style="color: rgb(98,98,98)">=</span>url,
-<span class="ansi-green-intense-fg ansi-bold">    729</span>     params<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">dict</span>(params),
-<span class="ansi-green-intense-fg ansi-bold">    730</span>     timeout_s<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>timeout_s,
-<span class="ansi-green-intense-fg ansi-bold">    731</span> )
-<span class="ansi-green-intense-fg ansi-bold">    732</span> tiles_endpoints <span style="color: rgb(98,98,98)">=</span> ts_json<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles</span><span style="color: rgb(175,0,0)">"</span>, [])
-<span class="ansi-green-intense-fg ansi-bold">    734</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tiles_endpoints:
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:725</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._get_tilejson_info</span><span class="ansi-blue-fg">(self, client, params)</span>
+<span class="ansi-green-fg">    709</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    710</span> <span class="ansi-yellow-fg">Query TiTiler-CMR TileJSON and return parsed tiles endpoints, and bounds.</span>
+<span class="ansi-green-fg">    711</span> 
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    722</span> <span class="ansi-yellow-fg">    Dictionary with entries, tilejson, tile endpoints, and bounds.</span>
+<span class="ansi-green-fg">    723</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    724</span> url = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span>.endpoint.rstrip(<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">/</span><span class="ansi-yellow-fg">'</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span>.tms_id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/tilejson.json</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">725</span> ts_json, _, _ = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._request_json(
+<span class="ansi-green-fg">    726</span>     client,
+<span class="ansi-green-fg">    727</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GET</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    728</span>     url=url,
+<span class="ansi-green-fg">    729</span>     params=<span style="color: rgb(0,135,0)">dict</span>(params),
+<span class="ansi-green-fg">    730</span>     timeout_s=<span style="color: rgb(0,135,0)">self</span>.timeout_s,
+<span class="ansi-green-fg">    731</span> )
+<span class="ansi-green-fg">    732</span> tiles_endpoints = ts_json.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tiles</span><span class="ansi-yellow-fg">"</span>, [])
+<span class="ansi-green-fg">    734</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tiles_endpoints:
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:770</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._request_json</span><span class="ansi-blue-fg">(self, client, method, url, timeout_s, params, json_payload)</span>
-<span class="ansi-green-intense-fg ansi-bold">    768</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    769</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Unsupported HTTP method: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>method<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-fg">--&gt; 770</span> <span class="ansi-yellow-bg">response</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">raise_for_status</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    771</span> elapsed <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>perf_counter() <span style="color: rgb(98,98,98)">-</span> t0
-<span class="ansi-green-intense-fg ansi-bold">    772</span> data <span style="color: rgb(98,98,98)">=</span> response<span style="color: rgb(98,98,98)">.</span>json()
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:770</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._request_json</span><span class="ansi-blue-fg">(self, client, method, url, timeout_s, params, json_payload)</span>
+<span class="ansi-green-fg">    768</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    769</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Unsupported HTTP method: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>method<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">770</span> <span class="ansi-black-fg ansi-yellow-bg">response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">raise_for_status</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    771</span> elapsed = time.perf_counter() - t0
+<span class="ansi-green-fg">    772</span> data = response.json()
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:797</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">    795</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    796</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
-<span class="ansi-green-fg">--&gt; 797</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
 
 <span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2723754864-GES_DISC&amp;backend=xarray&amp;datetime=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variable=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 Redirect location: 'https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C2723754864-GES_DISC&amp;temporal=2022-04-01T00%3A00%3A01Z%2F2022-04-02T23%3A59%3A59Z&amp;variables=precipitation&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
@@ -2571,8 +2554,8 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">df_viewport</span><span style="color: rgb(98,98,98)">.</span>head()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> df_viewport.head()
 
 <span class="ansi-red-fg">NameError</span>: name 'df_viewport' is not defined</pre>
 </div>
@@ -2637,9 +2620,9 @@ df_summary.head()</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> df_summary <span style="color: rgb(98,98,98)">=</span> tiling_benchmark_summary(<span class="ansi-yellow-bg">df_viewport</span>)
-<span class="ansi-green-intense-fg ansi-bold">      2</span> df_summary<span style="color: rgb(98,98,98)">.</span>head()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> df_summary = tiling_benchmark_summary(df_viewport)
+<span class="ansi-green-fg">      2</span> df_summary.head()
 
 <span class="ansi-red-fg">NameError</span>: name 'df_viewport' is not defined</pre>
 </div>
@@ -2855,17 +2838,15 @@ plt.show()</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 75</span>
-<span class="ansi-green-intense-fg ansi-bold">     69</span>     plt<span style="color: rgb(98,98,98)">.</span>tight_layout()
-<span class="ansi-green-intense-fg ansi-bold">     71</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> summary, (fig, ax)
-<span class="ansi-green-intense-fg ansi-bold">     74</span> summary, (fig, ax) <span style="color: rgb(98,98,98)">=</span> summarize_and_plot_tiles_from_df(
-<span class="ansi-green-fg">---&gt; 75</span>     <span class="ansi-yellow-bg">df_viewport</span>,
-<span class="ansi-green-intense-fg ansi-bold">     76</span>     title_lines<span style="color: rgb(98,98,98)">=</span>[
-<span class="ansi-green-intense-fg ansi-bold">     77</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">concept_id: C2723754864-GES_DISC</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     78</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     79</span>     ],
-<span class="ansi-green-intense-fg ansi-bold">     80</span> )
-<span class="ansi-green-intense-fg ansi-bold">     81</span> plt<span style="color: rgb(98,98,98)">.</span>show()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 75</span>
+<span class="ansi-green-fg">     71</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> summary, (fig, ax)
+<span class="ansi-green-fg">     72</span> 
+<span class="ansi-green-fg">     73</span> 
+<span class="ansi-green-fg">     74</span> summary, (fig, ax) = summarize_and_plot_tiles_from_df(
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">75</span>     df_viewport,
+<span class="ansi-green-fg">     76</span>     title_lines=[
+<span class="ansi-green-fg">     77</span>         <span class="ansi-yellow-fg">"concept_id: C2723754864-GES_DISC"</span>,
+<span class="ansi-green-fg">     78</span>         <span class="ansi-yellow-fg">"endpoint: https://openveda.cloud/api/titiler-cmr"</span>,
 
 <span class="ansi-red-fg">NameError</span>: name 'df_viewport' is not defined</pre>
 </div>
@@ -3033,13 +3014,7 @@ Query params: 11 parameters
   temporal_mode: point
   tile_format: png
   tile_scale: 1
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
 Error: 301 Moved Permanently
 Body: 
@@ -3052,69 +3027,58 @@ Body:
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[10], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> df_viewport_day <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmark_viewport(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     endpoint<span style="color: rgb(98,98,98)">=</span>endpoint,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     dataset<span style="color: rgb(98,98,98)">=</span>ds_hls_day,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     lng<span style="color: rgb(98,98,98)">=</span>lng,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     lat<span style="color: rgb(98,98,98)">=</span>lat,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     viewport_width<span style="color: rgb(98,98,98)">=</span>viewport_width,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     viewport_height<span style="color: rgb(98,98,98)">=</span>viewport_height,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     min_zoom<span style="color: rgb(98,98,98)">=</span>min_zoom,
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     max_zoom<span style="color: rgb(98,98,98)">=</span>max_zoom,
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     timeout_s<span style="color: rgb(98,98,98)">=</span>timeout_s,
-<span class="ansi-green-intense-fg ansi-bold">     11</span> )
-<span class="ansi-green-intense-fg ansi-bold">     13</span> df_viewport_day_summary <span style="color: rgb(98,98,98)">=</span> tiling_benchmark_summary(df_viewport_day)
-<span class="ansi-green-intense-fg ansi-bold">     14</span> df_viewport_day_summary<span style="color: rgb(98,98,98)">.</span>head()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> df_viewport_day = await benchmark_viewport(
+<span class="ansi-green-fg">      2</span>     endpoint=endpoint,
+<span class="ansi-green-fg">      3</span>     dataset=ds_hls_day,
+<span class="ansi-green-fg">      4</span>     lng=lng,
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:189</span>, in <span class="ansi-cyan-fg">benchmark_viewport</span><span class="ansi-blue-fg">(endpoint, dataset, lng, lat, viewport_width, viewport_height, tms_id, tile_format, tile_scale, min_zoom, max_zoom, timeout_s, max_connections, max_connections_per_host, max_concurrent, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    180</span>     center <span style="color: rgb(98,98,98)">=</span> tms<span style="color: rgb(98,98,98)">.</span>tile(lng<span style="color: rgb(98,98,98)">=</span>lng, lat<span style="color: rgb(98,98,98)">=</span>lat, zoom<span style="color: rgb(98,98,98)">=</span>zoom)
-<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> get_surrounding_tiles(
-<span class="ansi-green-intense-fg ansi-bold">    182</span>         center_x<span style="color: rgb(98,98,98)">=</span>center<span style="color: rgb(98,98,98)">.</span>x,
-<span class="ansi-green-intense-fg ansi-bold">    183</span>         center_y<span style="color: rgb(98,98,98)">=</span>center<span style="color: rgb(98,98,98)">.</span>y,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    186</span>         height<span style="color: rgb(98,98,98)">=</span>viewport_height,
-<span class="ansi-green-intense-fg ansi-bold">    187</span>     )
-<span class="ansi-green-fg">--&gt; 189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmarker<span style="color: rgb(98,98,98)">.</span>benchmark_tiles(
-<span class="ansi-green-intense-fg ansi-bold">    190</span>     dataset, viewport_strategy, warmup_per_zoom<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs
-<span class="ansi-green-intense-fg ansi-bold">    191</span> )
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:189</span>, in <span class="ansi-cyan-fg">benchmark_viewport</span><span class="ansi-blue-fg">(endpoint, dataset, lng, lat, viewport_width, viewport_height, tms_id, tile_format, tile_scale, min_zoom, max_zoom, timeout_s, max_connections, max_connections_per_host, max_concurrent, **kwargs)</span>
+<span class="ansi-green-fg">    180</span>     center = tms.tile(lng=lng, lat=lat, zoom=zoom)
+<span class="ansi-green-fg">    181</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> get_surrounding_tiles(
+<span class="ansi-green-fg">    182</span>         center_x=center.x,
+<span class="ansi-green-fg">    183</span>         center_y=center.y,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    186</span>         height=viewport_height,
+<span class="ansi-green-fg">    187</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmarker.benchmark_tiles(
+<span class="ansi-green-fg">    190</span>     dataset, viewport_strategy, warmup_per_zoom=<span class="ansi-green-fg">1</span>, **kwargs
+<span class="ansi-green-fg">    191</span> )
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:399</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker.benchmark_tiles</span><span class="ansi-blue-fg">(self, dataset, tiling_strategy, warmup_per_zoom, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    396</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">  </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>k<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>v<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    398</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_create_http_client() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
-<span class="ansi-green-fg">--&gt; 399</span>     tilejson_info <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_get_tilejson_info(client, tile_params)
-<span class="ansi-green-intense-fg ansi-bold">    400</span>     tiles_endpoints <span style="color: rgb(98,98,98)">=</span> tilejson_info[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles_endpoints</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">    401</span>     tms <span style="color: rgb(98,98,98)">=</span> morecantile<span style="color: rgb(98,98,98)">.</span>tms<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>tms_id)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:399</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker.benchmark_tiles</span><span class="ansi-blue-fg">(self, dataset, tiling_strategy, warmup_per_zoom, **kwargs)</span>
+<span class="ansi-green-fg">    396</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">  </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>k<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>v<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    398</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._create_http_client() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">399</span>     tilejson_info = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._get_tilejson_info(client, tile_params)
+<span class="ansi-green-fg">    400</span>     tiles_endpoints = tilejson_info[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tiles_endpoints</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">    401</span>     tms = morecantile.tms.get(<span style="color: rgb(0,135,0)">self</span>.tms_id)
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:725</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._get_tilejson_info</span><span class="ansi-blue-fg">(self, client, params)</span>
-<span class="ansi-green-intense-fg ansi-bold">    709</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    710</span> <span style="color: rgb(175,0,0)">Query TiTiler-CMR TileJSON and return parsed tiles endpoints, and bounds.</span>
-<span class="ansi-green-intense-fg ansi-bold">    711</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    722</span> <span style="color: rgb(175,0,0)">    Dictionary with entries, tilejson, tile endpoints, and bounds.</span>
-<span class="ansi-green-intense-fg ansi-bold">    723</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    724</span> url <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>endpoint<span style="color: rgb(98,98,98)">.</span>rstrip(<span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">/</span><span style="color: rgb(175,0,0)">'</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>tms_id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/tilejson.json</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">--&gt; 725</span> ts_json, _, _ <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request_json(
-<span class="ansi-green-intense-fg ansi-bold">    726</span>     client,
-<span class="ansi-green-intense-fg ansi-bold">    727</span>     method<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GET</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    728</span>     url<span style="color: rgb(98,98,98)">=</span>url,
-<span class="ansi-green-intense-fg ansi-bold">    729</span>     params<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">dict</span>(params),
-<span class="ansi-green-intense-fg ansi-bold">    730</span>     timeout_s<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>timeout_s,
-<span class="ansi-green-intense-fg ansi-bold">    731</span> )
-<span class="ansi-green-intense-fg ansi-bold">    732</span> tiles_endpoints <span style="color: rgb(98,98,98)">=</span> ts_json<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles</span><span style="color: rgb(175,0,0)">"</span>, [])
-<span class="ansi-green-intense-fg ansi-bold">    734</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tiles_endpoints:
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:725</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._get_tilejson_info</span><span class="ansi-blue-fg">(self, client, params)</span>
+<span class="ansi-green-fg">    709</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    710</span> <span class="ansi-yellow-fg">Query TiTiler-CMR TileJSON and return parsed tiles endpoints, and bounds.</span>
+<span class="ansi-green-fg">    711</span> 
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    722</span> <span class="ansi-yellow-fg">    Dictionary with entries, tilejson, tile endpoints, and bounds.</span>
+<span class="ansi-green-fg">    723</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    724</span> url = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span>.endpoint.rstrip(<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">/</span><span class="ansi-yellow-fg">'</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span>.tms_id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/tilejson.json</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">725</span> ts_json, _, _ = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._request_json(
+<span class="ansi-green-fg">    726</span>     client,
+<span class="ansi-green-fg">    727</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GET</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    728</span>     url=url,
+<span class="ansi-green-fg">    729</span>     params=<span style="color: rgb(0,135,0)">dict</span>(params),
+<span class="ansi-green-fg">    730</span>     timeout_s=<span style="color: rgb(0,135,0)">self</span>.timeout_s,
+<span class="ansi-green-fg">    731</span> )
+<span class="ansi-green-fg">    732</span> tiles_endpoints = ts_json.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tiles</span><span class="ansi-yellow-fg">"</span>, [])
+<span class="ansi-green-fg">    734</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tiles_endpoints:
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:770</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._request_json</span><span class="ansi-blue-fg">(self, client, method, url, timeout_s, params, json_payload)</span>
-<span class="ansi-green-intense-fg ansi-bold">    768</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    769</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Unsupported HTTP method: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>method<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-fg">--&gt; 770</span> <span class="ansi-yellow-bg">response</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">raise_for_status</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    771</span> elapsed <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>perf_counter() <span style="color: rgb(98,98,98)">-</span> t0
-<span class="ansi-green-intense-fg ansi-bold">    772</span> data <span style="color: rgb(98,98,98)">=</span> response<span style="color: rgb(98,98,98)">.</span>json()
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:770</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._request_json</span><span class="ansi-blue-fg">(self, client, method, url, timeout_s, params, json_payload)</span>
+<span class="ansi-green-fg">    768</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    769</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Unsupported HTTP method: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>method<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">770</span> <span class="ansi-black-fg ansi-yellow-bg">response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">raise_for_status</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    771</span> elapsed = time.perf_counter() - t0
+<span class="ansi-green-fg">    772</span> data = response.json()
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:797</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">    795</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    796</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
-<span class="ansi-green-fg">--&gt; 797</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
 
 <span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 Redirect location: 'https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957295-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-07T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
@@ -3198,13 +3162,7 @@ Query params: 11 parameters
   temporal_mode: point
   tile_format: png
   tile_scale: 1
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1
 Error: 301 Moved Permanently
 Body: 
@@ -3217,69 +3175,58 @@ Body:
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[11], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> df_viewport_week <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmark_viewport(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     endpoint<span style="color: rgb(98,98,98)">=</span>endpoint,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     dataset<span style="color: rgb(98,98,98)">=</span>ds_hls_week,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     lng<span style="color: rgb(98,98,98)">=</span>lng,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     lat<span style="color: rgb(98,98,98)">=</span>lat,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     viewport_width<span style="color: rgb(98,98,98)">=</span>viewport_width,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     viewport_height<span style="color: rgb(98,98,98)">=</span>viewport_height,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     min_zoom<span style="color: rgb(98,98,98)">=</span>min_zoom,
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     max_zoom<span style="color: rgb(98,98,98)">=</span>max_zoom,
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     timeout_s<span style="color: rgb(98,98,98)">=</span>timeout_s,
-<span class="ansi-green-intense-fg ansi-bold">     11</span> )
-<span class="ansi-green-intense-fg ansi-bold">     13</span> df_viewport_week_summary <span style="color: rgb(98,98,98)">=</span> tiling_benchmark_summary(df_viewport_week)
-<span class="ansi-green-intense-fg ansi-bold">     14</span> df_viewport_week_summary<span style="color: rgb(98,98,98)">.</span>head()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> df_viewport_week = await benchmark_viewport(
+<span class="ansi-green-fg">      2</span>     endpoint=endpoint,
+<span class="ansi-green-fg">      3</span>     dataset=ds_hls_week,
+<span class="ansi-green-fg">      4</span>     lng=lng,
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:189</span>, in <span class="ansi-cyan-fg">benchmark_viewport</span><span class="ansi-blue-fg">(endpoint, dataset, lng, lat, viewport_width, viewport_height, tms_id, tile_format, tile_scale, min_zoom, max_zoom, timeout_s, max_connections, max_connections_per_host, max_concurrent, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    180</span>     center <span style="color: rgb(98,98,98)">=</span> tms<span style="color: rgb(98,98,98)">.</span>tile(lng<span style="color: rgb(98,98,98)">=</span>lng, lat<span style="color: rgb(98,98,98)">=</span>lat, zoom<span style="color: rgb(98,98,98)">=</span>zoom)
-<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> get_surrounding_tiles(
-<span class="ansi-green-intense-fg ansi-bold">    182</span>         center_x<span style="color: rgb(98,98,98)">=</span>center<span style="color: rgb(98,98,98)">.</span>x,
-<span class="ansi-green-intense-fg ansi-bold">    183</span>         center_y<span style="color: rgb(98,98,98)">=</span>center<span style="color: rgb(98,98,98)">.</span>y,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    186</span>         height<span style="color: rgb(98,98,98)">=</span>viewport_height,
-<span class="ansi-green-intense-fg ansi-bold">    187</span>     )
-<span class="ansi-green-fg">--&gt; 189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmarker<span style="color: rgb(98,98,98)">.</span>benchmark_tiles(
-<span class="ansi-green-intense-fg ansi-bold">    190</span>     dataset, viewport_strategy, warmup_per_zoom<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs
-<span class="ansi-green-intense-fg ansi-bold">    191</span> )
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:189</span>, in <span class="ansi-cyan-fg">benchmark_viewport</span><span class="ansi-blue-fg">(endpoint, dataset, lng, lat, viewport_width, viewport_height, tms_id, tile_format, tile_scale, min_zoom, max_zoom, timeout_s, max_connections, max_connections_per_host, max_concurrent, **kwargs)</span>
+<span class="ansi-green-fg">    180</span>     center = tms.tile(lng=lng, lat=lat, zoom=zoom)
+<span class="ansi-green-fg">    181</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> get_surrounding_tiles(
+<span class="ansi-green-fg">    182</span>         center_x=center.x,
+<span class="ansi-green-fg">    183</span>         center_y=center.y,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    186</span>         height=viewport_height,
+<span class="ansi-green-fg">    187</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> benchmarker.benchmark_tiles(
+<span class="ansi-green-fg">    190</span>     dataset, viewport_strategy, warmup_per_zoom=<span class="ansi-green-fg">1</span>, **kwargs
+<span class="ansi-green-fg">    191</span> )
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:399</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker.benchmark_tiles</span><span class="ansi-blue-fg">(self, dataset, tiling_strategy, warmup_per_zoom, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    396</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">  </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>k<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>v<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    398</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_create_http_client() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
-<span class="ansi-green-fg">--&gt; 399</span>     tilejson_info <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_get_tilejson_info(client, tile_params)
-<span class="ansi-green-intense-fg ansi-bold">    400</span>     tiles_endpoints <span style="color: rgb(98,98,98)">=</span> tilejson_info[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles_endpoints</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">    401</span>     tms <span style="color: rgb(98,98,98)">=</span> morecantile<span style="color: rgb(98,98,98)">.</span>tms<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>tms_id)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:399</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker.benchmark_tiles</span><span class="ansi-blue-fg">(self, dataset, tiling_strategy, warmup_per_zoom, **kwargs)</span>
+<span class="ansi-green-fg">    396</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">  </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>k<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>v<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    398</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._create_http_client() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> client:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">399</span>     tilejson_info = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._get_tilejson_info(client, tile_params)
+<span class="ansi-green-fg">    400</span>     tiles_endpoints = tilejson_info[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tiles_endpoints</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">    401</span>     tms = morecantile.tms.get(<span style="color: rgb(0,135,0)">self</span>.tms_id)
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:725</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._get_tilejson_info</span><span class="ansi-blue-fg">(self, client, params)</span>
-<span class="ansi-green-intense-fg ansi-bold">    709</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    710</span> <span style="color: rgb(175,0,0)">Query TiTiler-CMR TileJSON and return parsed tiles endpoints, and bounds.</span>
-<span class="ansi-green-intense-fg ansi-bold">    711</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    722</span> <span style="color: rgb(175,0,0)">    Dictionary with entries, tilejson, tile endpoints, and bounds.</span>
-<span class="ansi-green-intense-fg ansi-bold">    723</span> <span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">    724</span> url <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>endpoint<span style="color: rgb(98,98,98)">.</span>rstrip(<span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">/</span><span style="color: rgb(175,0,0)">'</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>tms_id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/tilejson.json</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">--&gt; 725</span> ts_json, _, _ <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request_json(
-<span class="ansi-green-intense-fg ansi-bold">    726</span>     client,
-<span class="ansi-green-intense-fg ansi-bold">    727</span>     method<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GET</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    728</span>     url<span style="color: rgb(98,98,98)">=</span>url,
-<span class="ansi-green-intense-fg ansi-bold">    729</span>     params<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">dict</span>(params),
-<span class="ansi-green-intense-fg ansi-bold">    730</span>     timeout_s<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>timeout_s,
-<span class="ansi-green-intense-fg ansi-bold">    731</span> )
-<span class="ansi-green-intense-fg ansi-bold">    732</span> tiles_endpoints <span style="color: rgb(98,98,98)">=</span> ts_json<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tiles</span><span style="color: rgb(175,0,0)">"</span>, [])
-<span class="ansi-green-intense-fg ansi-bold">    734</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tiles_endpoints:
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:725</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._get_tilejson_info</span><span class="ansi-blue-fg">(self, client, params)</span>
+<span class="ansi-green-fg">    709</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    710</span> <span class="ansi-yellow-fg">Query TiTiler-CMR TileJSON and return parsed tiles endpoints, and bounds.</span>
+<span class="ansi-green-fg">    711</span> 
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    722</span> <span class="ansi-yellow-fg">    Dictionary with entries, tilejson, tile endpoints, and bounds.</span>
+<span class="ansi-green-fg">    723</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    724</span> url = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span>.endpoint.rstrip(<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">/</span><span class="ansi-yellow-fg">'</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">self</span>.tms_id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/tilejson.json</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">725</span> ts_json, _, _ = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._request_json(
+<span class="ansi-green-fg">    726</span>     client,
+<span class="ansi-green-fg">    727</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GET</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    728</span>     url=url,
+<span class="ansi-green-fg">    729</span>     params=<span style="color: rgb(0,135,0)">dict</span>(params),
+<span class="ansi-green-fg">    730</span>     timeout_s=<span style="color: rgb(0,135,0)">self</span>.timeout_s,
+<span class="ansi-green-fg">    731</span> )
+<span class="ansi-green-fg">    732</span> tiles_endpoints = ts_json.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tiles</span><span class="ansi-yellow-fg">"</span>, [])
+<span class="ansi-green-fg">    734</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tiles_endpoints:
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:770</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._request_json</span><span class="ansi-blue-fg">(self, client, method, url, timeout_s, params, json_payload)</span>
-<span class="ansi-green-intense-fg ansi-bold">    768</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    769</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Unsupported HTTP method: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>method<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-fg">--&gt; 770</span> <span class="ansi-yellow-bg">response</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">raise_for_status</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    771</span> elapsed <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>perf_counter() <span style="color: rgb(98,98,98)">-</span> t0
-<span class="ansi-green-intense-fg ansi-bold">    772</span> data <span style="color: rgb(98,98,98)">=</span> response<span style="color: rgb(98,98,98)">.</span>json()
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/docs/packages/datacube_benchmark/src/datacube_benchmark/cmr/benchmark.py:770</span>, in <span class="ansi-cyan-fg">TiTilerCMRBenchmarker._request_json</span><span class="ansi-blue-fg">(self, client, method, url, timeout_s, params, json_payload)</span>
+<span class="ansi-green-fg">    768</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    769</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Unsupported HTTP method: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>method<span class="ansi-bold" style="color: rgb(175,95,135)">!r}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">770</span> <span class="ansi-black-fg ansi-yellow-bg">response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">raise_for_status</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    771</span> elapsed = time.perf_counter() - t0
+<span class="ansi-green-fg">    772</span> data = response.json()
 
-File <span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:797</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">    795</span> error_type <span style="color: rgb(98,98,98)">=</span> error_types<span style="color: rgb(98,98,98)">.</span>get(status_class, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid status code</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    796</span> message <span style="color: rgb(98,98,98)">=</span> message<span style="color: rgb(98,98,98)">.</span>format(<span style="color: rgb(0,135,0)">self</span>, error_type<span style="color: rgb(98,98,98)">=</span>error_type)
-<span class="ansi-green-fg">--&gt; 797</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request<span style="color: rgb(98,98,98)">=</span>request, response<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span>)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
 
 <span class="ansi-red-fg">HTTPStatusError</span>: Redirect response '301 Moved Permanently' for url 'https://openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957657-LPCLOUD&amp;backend=rasterio&amp;datetime=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;bands=B02&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
 Redirect location: 'https://openveda.cloud/api/titiler-cmr/rasterio/WebMercatorQuad/tilejson.json?collection_concept_id=C2021957657-LPCLOUD&amp;temporal=2023-10-01T00%3A00%3A01Z%2F2023-10-20T00%3A00%3A01Z&amp;assets=B02&amp;assets_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1W&amp;temporal_mode=point&amp;tile_format=png&amp;tile_scale=1'
@@ -3343,16 +3290,12 @@ plt.show()</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[12], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> summary, (fig, ax) <span style="color: rgb(98,98,98)">=</span> summarize_and_plot_tiles_from_df(
-<span class="ansi-green-fg">----&gt; 2</span>     <span class="ansi-yellow-bg">df_viewport_day</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     title_lines<span style="color: rgb(98,98,98)">=</span>[
-<span class="ansi-green-intense-fg ansi-bold">      4</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">concept_id: C2036881735-POCLOUD</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Viewport: 3x3 tiles -- daily</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     ],
-<span class="ansi-green-intense-fg ansi-bold">      8</span> )
-<span class="ansi-green-intense-fg ansi-bold">     10</span> plt<span style="color: rgb(98,98,98)">.</span>show()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> summary, (fig, ax) = summarize_and_plot_tiles_from_df(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     df_viewport_day,
+<span class="ansi-green-fg">      3</span>     title_lines=[
+<span class="ansi-green-fg">      4</span>         <span class="ansi-yellow-fg">"concept_id: C2036881735-POCLOUD"</span>,
+<span class="ansi-green-fg">      5</span>         <span class="ansi-yellow-fg">"Viewport: 3x3 tiles -- daily"</span>,
 
 <span class="ansi-red-fg">NameError</span>: name 'df_viewport_day' is not defined</pre>
 </div>
@@ -3414,16 +3357,12 @@ plt.show()</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[13], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> summary, (fig, ax) <span style="color: rgb(98,98,98)">=</span> summarize_and_plot_tiles_from_df(
-<span class="ansi-green-fg">----&gt; 2</span>     <span class="ansi-yellow-bg">df_viewport_week</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     title_lines<span style="color: rgb(98,98,98)">=</span>[
-<span class="ansi-green-intense-fg ansi-bold">      4</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">concept_id: C2036881735-POCLOUD</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Viewport: 3x3 tiles -- weekly</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">endpoint: https://openveda.cloud/api/titiler-cmr</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     ],
-<span class="ansi-green-intense-fg ansi-bold">      8</span> )
-<span class="ansi-green-intense-fg ansi-bold">     10</span> plt<span style="color: rgb(98,98,98)">.</span>show()
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> summary, (fig, ax) = summarize_and_plot_tiles_from_df(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     df_viewport_week,
+<span class="ansi-green-fg">      3</span>     title_lines=[
+<span class="ansi-green-fg">      4</span>         <span class="ansi-yellow-fg">"concept_id: C2036881735-POCLOUD"</span>,
+<span class="ansi-green-fg">      5</span>         <span class="ansi-yellow-fg">"Viewport: 3x3 tiles -- weekly"</span>,
 
 <span class="ansi-red-fg">NameError</span>: name 'df_viewport_week' is not defined</pre>
 </div>
@@ -3575,7 +3514,7 @@ Cell <span class="ansi-green-fg">In[13], line 2</span>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "navigation.indexes", "navigation.instant", "navigation.tracking", "search.suggest", "search.share"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
