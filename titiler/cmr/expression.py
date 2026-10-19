@@ -4,9 +4,9 @@ Expressions are evaluated using Python's ``eval()`` with an empty builtins dict 
 restricted namespace containing only named band variables (b1, b2, ...), a whitelist of
 NumPy math functions, ``where``, and ``nan``. Because the band variables are
 ``xr.DataArray`` objects, Python arithmetic operators and the whitelisted NumPy ufuncs
-produce new DataArrays rather than triggering computation — the underlying array data is
-never loaded into memory during expression evaluation. ``where`` is ``xr.where`` because
-``np.where`` is not a ufunc, so it would load the data and return a bare ndarray.
+produce new DataArrays rather than triggering computation, so the underlying array data
+is never loaded into memory during expression evaluation. ``where`` is ``xr.where``
+because ``np.where`` is not a ufunc, so it would load the data and return a bare ndarray.
 
 This design rules out ``numexpr`` as an alternative: ``numexpr.evaluate()`` operates on
 in-memory NumPy arrays and would force an immediate ``.compute()`` call on any dask-backed
@@ -174,6 +174,8 @@ def apply_expression(
     prevent arbitrary code execution. A block that fails to evaluate, or that does not
     reference a band, raises InvalidExpression.
 
+    A pixel where any band is nan is nan in every block's result.
+
     Args:
         da: Input DataArray with a "band" dimension.
         expression: Band-math expression string (e.g. ``"log10(b1)/sqrt(b2)"``).
@@ -217,6 +219,13 @@ def apply_expression(
         results.append(result)
 
     result = results[0] if len(results) == 1 else xr.concat(results, dim="band")
+
+    if da.dtype.kind == "f":
+        # As in rio-tiler's expressions, a pixel where any band is nan (no data) is
+        # nan in the result. Otherwise `where(b2 != 0.5, b1, nan)` keeps b1 where b2
+        # is nan, so statistics count a pixel the condition was meant to exclude.
+        # Integer bands cannot hold nan, and `where` would convert them to float.
+        result = result.where(da.notnull().all("band"))
 
     if pre_expression_crs is not None:
         result = result.rio.write_crs(pre_expression_crs)

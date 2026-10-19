@@ -143,9 +143,20 @@ class TestApplyExpressionMath:
         )
 
         np.testing.assert_array_equal(result.values, [[1.0, 2.0, 3.0, np.nan]])
-        # the fill pixel passes != (numpy semantics, documented for users)
+
+    def test_no_data_in_any_band_is_no_data_in_result(self) -> None:
+        """A pixel where any band is nan is nan in the result, even if the test passes."""
+        b1 = np.array([[1.0, 2.0, 3.0]])
+        b2 = np.array([[0.0, 0.5, np.nan]])
+        da = _make_da([b1, b2])
         result = apply_expression(da, "where(b2 != 0.5, b1, nan)")
-        np.testing.assert_array_equal(result.values, [[1.0, np.nan, 3.0, 4.0]])
+        np.testing.assert_array_equal(result.values, [[1.0, np.nan, np.nan]])
+
+    def test_integer_bands_keep_their_type(self) -> None:
+        """Integer bands cannot hold nan, so the result keeps their integer type."""
+        da = _make_da([np.array([[1, 2]]), np.array([[3, 4]])])
+        result = apply_expression(da, "b1 + b2")
+        assert result.dtype == np.int64
 
     def test_numeric_literal_in_expression(self) -> None:
         """Constant numeric literals should be usable in expressions."""
