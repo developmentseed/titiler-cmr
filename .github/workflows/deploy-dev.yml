@@ -55,7 +55,11 @@ jobs:
           aws-region: us-west-2
 
       - name: Run titiler-cmr deployment
-        uses: "./.github/actions/cdk-deploy"
+        # zizmor prefers $/ to ./ because ./ runs whatever copy of the action
+        # is on disk, which an earlier step could swap out. We want that here,
+        # because Checkout puts the copy from "Branch to deploy" on disk. $/
+        # would run the copy from "Use workflow from" (main by default).
+        uses: "./.github/actions/cdk-deploy" # zizmor: ignore[self-repository]
         with:
           dir: "./infrastructure/aws"
           env_aws_secret_name: ""
