@@ -201,6 +201,16 @@ def test_cmr_xarray_expr_params_with_math_functions():
     assert params.expression == "log10(b1)/sqrt(b2)"
 
 
+def test_cmr_xarray_expr_params_variable_names_with_nan():
+    """A name-based masking expression translates its variables and keeps nan."""
+    params = CMRXarrayExprParams(
+        variables=["analysed_sst", "sea_ice_fraction"],
+        expression="where(sea_ice_fraction < 0.15, analysed_sst, nan)",
+    )
+
+    assert params.expression == "where(b2 < 0.15, b1, nan)"
+
+
 def test_cmr_xarray_expr_params_no_expression():
     """No expression: no error, variables unchanged."""
     params = CMRXarrayExprParams(variables=["nir"], expression=None)
