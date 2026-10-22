@@ -2917,32 +2917,55 @@ print(json.dumps(r["properties"]["statistics"], indent=2))</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> r = opera_statistics(
-<span class="ansi-green-fg">      2</span>     aoi_bay_area, opera_year, assets_regex=<span class="ansi-yellow-fg">"VEG-DIST-STATUS"</span>, assets=<span class="ansi-yellow-fg">"VEG-DIST-STATUS"</span>
-<span class="ansi-green-fg">      3</span> )
-<span class="ansi-green-fg">      4</span> 
-
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 37</span>, in <span class="ansi-cyan-fg">opera_statistics</span><span class="ansi-blue-fg">(feature, temporal, endpoint, **params)</span>
-<span class="ansi-green-fg">     33</span>         },
-<span class="ansi-green-fg">     34</span>         json=feature,
-<span class="ansi-green-fg">     35</span>         timeout=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">     36</span>     )
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">37</span>     r.raise_for_status()
-<span class="ansi-green-fg">     38</span> 
-<span class="ansi-green-fg">     39</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> r.json()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
-
-<span class="ansi-red-fg">HTTPStatusError</span>: Server error '504 Gateway Timeout' for url 'https://openveda.cloud/api/titiler-cmr/rasterio/statistics?collection_concept_id=C2519119034-LPCLOUD&amp;temporal=2024-01-01T00%3A00%3A00Z%2F2024-12-31T23%3A59%3A59Z&amp;assets_regex=VEG-DIST-STATUS&amp;assets=VEG-DIST-STATUS'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{
+  "b1": {
+    "min": 0.0,
+    "max": 10.0,
+    "mean": 0.05040227249264717,
+    "count": 319888.375,
+    "sum": 16123.1005859375,
+    "std": 0.5926251466974075,
+    "median": 0.0,
+    "majority": 0.0,
+    "minority": 10.0,
+    "unique": 7.0,
+    "histogram": [
+      [
+        318114,
+        0,
+        0,
+        120,
+        0,
+        0,
+        35,
+        2049,
+        67,
+        75
+      ],
+      [
+        0.0,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0
+      ]
+    ],
+    "valid_percent": 100.0,
+    "masked_pixels": 0.0,
+    "valid_pixels": 320460.0,
+    "description": "VEG-DIST-STATUS_Vegetation_disturbance_status",
+    "percentile_2": 0.0,
+    "percentile_98": 0.0
+  }
+}
+</pre>
 </div>
 </div>
 </div>
@@ -4183,14 +4206,14 @@ for max_size in [None, 1024]:
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>max_size=None    28.5 s   array=  10,578,756 px  ~ 10.6 MB at 1 byte/px
+<pre>max_size=None    11.4 s   array=  10,578,756 px  ~ 10.6 MB at 1 byte/px
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>max_size=1024     6.6 s   array=   1,048,576 px  ~  1.0 MB at 1 byte/px
+<pre>max_size=1024     1.6 s   array=   1,048,576 px  ~  1.0 MB at 1 byte/px
 </pre>
 </div>
 </div>
