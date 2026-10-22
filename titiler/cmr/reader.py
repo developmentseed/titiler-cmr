@@ -29,6 +29,7 @@ from rio_tiler.io.base import MultiBaseReader
 from rio_tiler.io.rasterio import Reader
 from rio_tiler.io.xarray import Options, XarrayReader
 from rio_tiler.types import AssetInfo, AssetWithOptions
+from titiler.core.errors import BadRequestError
 from titiler.xarray.io import _parse_dsl
 from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
@@ -135,10 +136,22 @@ def get_variables(
     Returns:
         xarray.DataArray: 2D or 3D DataArray with dimensions (band, y, x) or (y, x).
 
+    Raises:
+        BadRequestError: for an unknown variable, for variables that do not share
+            one grid, or when sel leaves a dimension other than y and x.
+
     """
-    da = xr.concat([ds[variable] for variable in variables], dim="band")
-    squeeze_dims = [d for d in da.dims if d != "band" and da.sizes[d] == 1]
-    if squeeze_dims:
+    try:
+        arrays = [ds[variable] for variable in variables]
+    except KeyError as e:
+        raise BadRequestError(e.args[0]) from e
+
+    try:
+        da = xr.concat(arrays, dim="band", join="exact")
+    except xr.AlignmentError as e:
+        raise BadRequestError(f"Variables {variables} must share a grid; {e}") from e
+
+    if squeeze_dims := [d for d in da.dims if d != "band" and da.sizes[d] == 1]:
         da = da.squeeze(squeeze_dims)
 
     for selector in _parse_dsl(sel):
@@ -158,6 +171,16 @@ def get_variables(
 
     da = _arrange_dims(da, x_dim_names=x_dim_names, y_dim_names=y_dim_names)
 
+    # Check before the expression, which removes `band`. After that, a leftover
+    # dimension such as time would take band's place and be read as bands.
+    if da.dims != ("band", "y", "x"):
+        variable_dims = ", ".join(f"{v} {ds[v].dims}" for v in variables)
+
+        raise BadRequestError(
+            "Variables must share one 2-D grid, and `sel` must select one value "
+            f"along every other dimension; got {variable_dims}"
+        )
+
     if expression:
         da = apply_expression(da, expression)
 
@@ -171,8 +194,6 @@ def get_variables(
 
         # Sort the dataset by the updated longitude coordinates
         da = da.sortby(da.x)
-
-    assert len(da.dims) in [2, 3], "titiler.xarray can only work with 2D or 3D dataset"
 
     return da
 
