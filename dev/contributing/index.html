@@ -1288,10 +1288,12 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/devel
 uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 </code></pre></div>
 <h2 id="linting">Linting<a class="headerlink" href="#linting" title="Permanent link">&para;</a></h2>
-<p>This repo is set to use <code>pre-commit</code> to run <em>validate-pyproject</em>, <em>ruff</em> (lint
-and format), and <em>mypy</em> when committing new code.</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
+<p>This repo is set to use <code>prek</code> to run <em>validate-pyproject</em>, <em>ruff</em> (lint and
+format), and <em>mypy</em> when committing new code.</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>prek<span class="w"> </span>install
 </code></pre></div>
+<p>If commits fail with <code>No module named pre_commit</code>, a hook installed by
+<code>pre-commit</code> is still in place. Replace it with <code>uv run prek install --force</code>.</p>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <p>You can then run the tests with the following command:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest
