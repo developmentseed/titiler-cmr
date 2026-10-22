@@ -22,7 +22,7 @@ repos:
         require_serial: true
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.3.1
+    rev: v2.4.0
     hooks:
       - id: mypy
         language_version: python
@@ -32,4 +32,4 @@ repos:
           - types-attrs
           - types-python-dateutil
           - types-requests
-          - pydantic>=2.4
+          - pydantic>=2.14.1

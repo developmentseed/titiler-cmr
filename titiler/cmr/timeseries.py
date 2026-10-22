@@ -659,8 +659,8 @@ class TimeseriesExtension(FactoryExtension):
         )
         async def timeseries_tilejson(
             request: Request,
-            tileMatrixSetId: Annotated[  # type: ignore
-                Literal[tuple(factory.supported_tms.list())],
+            tileMatrixSetId: Annotated[
+                Literal[tuple(factory.supported_tms.list())],  # type: ignore[valid-type]
                 Path(description="Identifier for a supported TileMatrixSet"),
             ],
             query=Depends(timeseries_cmr_query),
