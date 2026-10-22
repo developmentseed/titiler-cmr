@@ -106,6 +106,41 @@ def test_xarray_statistics(
         assert round(stats["mean"], 2) == 0.52
 
 
+@pytest.mark.vcr("test_xarray_statistics[arctic_geojson].yaml")
+def test_xarray_statistics_expression_mask(
+    app, mock_cmr_get_assets, xarray_query_params, arctic_geojson
+):
+    """A where() expression keeps masked pixels out of /statistics."""
+    response = app.post(
+        "/xarray/statistics",
+        params={
+            **xarray_query_params(),
+            "variables": ["analysed_sst", "sea_ice_fraction"],
+            "expression": "where(b2 < 0.15, b1, nan)",
+        },
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 200
+    stats = response.json()["properties"]["statistics"]["b1"]
+    assert stats["count"] == 1723  # 4542 for analysed_sst without the mask
+
+
+@pytest.mark.vcr("test_xarray_statistics[arctic_geojson].yaml")
+def test_xarray_statistics_unknown_variable(
+    app, mock_cmr_get_assets, xarray_query_params, arctic_geojson
+):
+    """An unknown variable reaches the client as a 400 with xarray's message."""
+    response = app.post(
+        "/xarray/statistics",
+        params={**xarray_query_params(), "variables": ["analysed_sst", "wieght"]},
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 400
+    assert "No variable named 'wieght'" in response.json()["detail"]
+
+
 @pytest.mark.vcr
 def test_xarray_feature(
     app, mock_cmr_get_assets, xarray_query_params, arctic_geojson
