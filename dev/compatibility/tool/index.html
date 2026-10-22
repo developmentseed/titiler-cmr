@@ -2114,8 +2114,8 @@ endpoint = "https://staging.openveda.cloud/api/titiler-cmr"</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5712df15">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5712df15">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2144,6 +2144,241 @@ try:
     auth = earthaccess.login(strategy="environment")
 except Exception:
     auth = earthaccess.login(strategy="interactive")</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">OSError</span>                                   Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connection.py:239</span>, in <span class="ansi-cyan-fg">HTTPConnection._new_conn</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    238</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">239</span>     sock = <span class="ansi-black-fg ansi-yellow-bg">connection</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">create_connection</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    240</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_dns_host</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">port</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    241</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    242</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">source_address</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">source_address</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    243</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">socket_options</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">socket_options</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    244</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    245</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> socket.gaierror <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/util/connection.py:85</span>, in <span class="ansi-cyan-fg">create_connection</span><span class="ansi-blue-fg">(address, timeout, source_address, socket_options)</span>
+<span class="ansi-green-fg">     84</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">85</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> err
+<span class="ansi-green-fg">     86</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">     87</span>     <span style="color: rgb(95,135,135)"># Break explicitly a reference cycle</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/util/connection.py:73</span>, in <span class="ansi-cyan-fg">create_connection</span><span class="ansi-blue-fg">(address, timeout, source_address, socket_options)</span>
+<span class="ansi-green-fg">     72</span>     sock.bind(source_address)
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">73</span> <span class="ansi-black-fg ansi-yellow-bg">sock</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">connect</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">sa</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     74</span> <span style="color: rgb(95,135,135)"># Break explicitly a reference cycle</span>
+
+<span class="ansi-red-fg">OSError</span>: [Errno 101] Network is unreachable
+
+The above exception was the direct cause of the following exception:
+
+<span class="ansi-red-fg">NewConnectionError</span>                        Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py:793</span>, in <span class="ansi-cyan-fg">HTTPConnectionPool.urlopen</span><span class="ansi-blue-fg">(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, preload_content, decode_content, **response_kw)</span>
+<span class="ansi-green-fg">    792</span> <span style="color: rgb(95,135,135)"># Make the request on the HTTPConnection object</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">793</span> response = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_make_request</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    794</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">conn</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    795</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">method</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    796</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">url</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    797</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout_obj</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    798</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    799</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">headers</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">headers</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    800</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">chunked</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">chunked</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    801</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">retries</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">retries</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    802</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">response_conn</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">response_conn</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    803</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">preload_content</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">preload_content</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    804</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">decode_content</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">decode_content</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    805</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">response_kw</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    806</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    808</span> <span style="color: rgb(95,135,135)"># Everything went great!</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py:494</span>, in <span class="ansi-cyan-fg">HTTPConnectionPool._make_request</span><span class="ansi-blue-fg">(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)</span>
+<span class="ansi-green-fg">    493</span>         new_e = _wrap_proxy_error(new_e, conn.proxy.scheme)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">494</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> new_e
+<span class="ansi-green-fg">    496</span> <span style="color: rgb(95,135,135)"># conn.request() calls http.client.*.request, not the method in</span>
+<span class="ansi-green-fg">    497</span> <span style="color: rgb(95,135,135)"># urllib3.request. It also calls makefile (recv) on the socket.</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py:470</span>, in <span class="ansi-cyan-fg">HTTPConnectionPool._make_request</span><span class="ansi-blue-fg">(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)</span>
+<span class="ansi-green-fg">    469</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">470</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_validate_conn</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">conn</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    471</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> (SocketTimeout, BaseSSLError) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py:1125</span>, in <span class="ansi-cyan-fg">HTTPSConnectionPool._validate_conn</span><span class="ansi-blue-fg">(self, conn)</span>
+<span class="ansi-green-fg">   1124</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> conn.is_closed:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1125</span>     <span class="ansi-black-fg ansi-yellow-bg">conn</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">connect</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1127</span> <span style="color: rgb(95,135,135)"># TODO revise this, see https://github.com/urllib3/urllib3/issues/2791</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connection.py:827</span>, in <span class="ansi-cyan-fg">HTTPSConnection.connect</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    826</span> sock: socket.socket | ssl.SSLSocket
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span style="color: rgb(0,135,0)">self</span>.sock = sock = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_new_conn</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    828</span> server_hostname: <span style="color: rgb(0,135,0)">str</span> = <span style="color: rgb(0,135,0)">self</span>.host
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connection.py:254</span>, in <span class="ansi-cyan-fg">HTTPConnection._new_conn</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    253</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">OSError</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">254</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> NewConnectionError(
+<span class="ansi-green-fg">    255</span>         <span style="color: rgb(0,135,0)">self</span>, <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Failed to establish a new connection: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>e<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">    256</span>     ) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">e</span>
+<span class="ansi-green-fg">    258</span> sys.audit(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">http.client.connect</span><span class="ansi-yellow-fg">"</span>, <span style="color: rgb(0,135,0)">self</span>, <span style="color: rgb(0,135,0)">self</span>.host, <span style="color: rgb(0,135,0)">self</span>.port)
+
+<span class="ansi-red-fg">NewConnectionError</span>: HTTPSConnection(host='urs.earthdata.nasa.gov', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable
+
+The above exception was the direct cause of the following exception:
+
+<span class="ansi-red-fg">MaxRetryError</span>                             Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/requests/adapters.py:696</span>, in <span class="ansi-cyan-fg">HTTPAdapter.send</span><span class="ansi-blue-fg">(self, request, stream, timeout, verify, cert, proxies)</span>
+<span class="ansi-green-fg">    695</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">696</span>     resp = <span class="ansi-black-fg ansi-yellow-bg">conn</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">urlopen</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    697</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">method</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">method</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    698</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">url</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">url</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    699</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg">  </span><span class="ansi-black-fg ansi-yellow-bg"># type: ignore[arg-type]  # urllib3 stubs don't accept Iterable[bytes | str]</span>
+<span class="ansi-green-fg">    700</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">headers</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">headers</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg">  </span><span class="ansi-black-fg ansi-yellow-bg"># type: ignore[arg-type]  # urllib3#3072</span>
+<span class="ansi-green-fg">    701</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">redirect</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">False</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    702</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">assert_same_host</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">False</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    703</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">preload_content</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">False</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    704</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">decode_content</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">False</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    705</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">retries</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    706</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">resolved_timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    707</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">chunked</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">chunked</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    708</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    710</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> (ProtocolError, <span class="ansi-bold" style="color: rgb(215,95,95)">OSError</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> err:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py:847</span>, in <span class="ansi-cyan-fg">HTTPConnectionPool.urlopen</span><span class="ansi-blue-fg">(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, preload_content, decode_content, **response_kw)</span>
+<span class="ansi-green-fg">    845</span>     new_e = ProtocolError(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Connection aborted.</span><span class="ansi-yellow-fg">"</span>, new_e)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">847</span> retries = <span class="ansi-black-fg ansi-yellow-bg">retries</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">increment</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    848</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">method</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">url</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">error</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">new_e</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">_pool</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">_stacktrace</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">sys</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">exc_info</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">[</span><span class="ansi-black-fg ansi-yellow-bg">2</span><span class="ansi-black-fg ansi-yellow-bg">]</span>
+<span class="ansi-green-fg">    849</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    850</span> retries.sleep()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/urllib3/util/retry.py:555</span>, in <span class="ansi-cyan-fg">Retry.increment</span><span class="ansi-blue-fg">(self, method, url, response, error, _pool, _stacktrace)</span>
+<span class="ansi-green-fg">    554</span>     reason = error <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> ResponseError(cause)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">555</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> MaxRetryError(_pool, url, reason) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">reason</span>  <span style="color: rgb(95,135,135)"># type: ignore[arg-type]</span>
+<span class="ansi-green-fg">    557</span> log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Incremented Retry for (url=</span><span class="ansi-yellow-fg">'</span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">): </span><span class="ansi-bold" style="color: rgb(175,95,135)">%r</span><span class="ansi-yellow-fg">"</span>, url, new_retry)
+
+<span class="ansi-red-fg">MaxRetryError</span>: HTTPSConnectionPool(host='urs.earthdata.nasa.gov', port=443): Max retries exceeded with url: /api/users/find_or_create_token (Caused by NewConnectionError("HTTPSConnection(host='urs.earthdata.nasa.gov', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">ConnectionError</span>                           Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      3</span>     auth = earthaccess.login(strategy=<span class="ansi-yellow-fg">"environment"</span>)
+<span class="ansi-green-fg">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> Exception:
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span>     auth = earthaccess.login(strategy=<span class="ansi-yellow-fg">"interactive"</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/api.py:369</span>, in <span class="ansi-cyan-fg">login</span><span class="ansi-blue-fg">(strategy, persist, system)</span>
+<span class="ansi-green-fg">    368</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">369</span>     <span class="ansi-black-fg ansi-yellow-bg">earthaccess</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">__auth__</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">login</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    370</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">strategy</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">strategy</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    371</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">persist</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">persist</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    372</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">system</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">system</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    373</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    374</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> earthaccess.__auth__.authenticated:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/auth.py:152</span>, in <span class="ansi-cyan-fg">Auth.login</span><span class="ansi-blue-fg">(self, strategy, persist, system)</span>
+<span class="ansi-green-fg">    151</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> strategy == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">environment</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">152</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_environment</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/auth.py:305</span>, in <span class="ansi-cyan-fg">Auth._environment</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    304</span> logger.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Using environment variables for EDL</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">305</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_get_credentials</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">username</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">password</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">token</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/auth.py:319</span>, in <span class="ansi-cyan-fg">Auth._get_credentials</span><span class="ansi-blue-fg">(self, username, password, user_token)</span>
+<span class="ansi-green-fg">    318</span> <span style="color: rgb(0,135,0)">self</span>.password = password
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">319</span> token_resp = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_find_or_create_token</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    321</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> (token_resp.ok):
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/auth.py:337</span>, in <span class="ansi-cyan-fg">Auth._find_or_create_token</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    336</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>.get_session() <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> session:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">337</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">session</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">post</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    338</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">EDL_FIND_OR_CREATE_TOKEN_URL</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    339</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">headers</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">{</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">Accept</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">:</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">application/json</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">}</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    340</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">10</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    341</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/requests/sessions.py:712</span>, in <span class="ansi-cyan-fg">Session.post</span><span class="ansi-blue-fg">(self, url, data, json, **kwargs)</span>
+<span class="ansi-green-fg">    702</span> <span class="ansi-yellow-fg">r</span><span class="ansi-yellow-fg">"""Sends a POST request. Returns :class:`Response` object.</span>
+<span class="ansi-green-fg">    703</span> 
+<span class="ansi-green-fg">    704</span> <span class="ansi-yellow-fg">:param url: URL for the new :class:`Request` object.</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    709</span> <span class="ansi-yellow-fg">:rtype: requests.Response</span>
+<span class="ansi-green-fg">    710</span> <span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">712</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">POST</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">url</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">json</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">json</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/requests/sessions.py:651</span>, in <span class="ansi-cyan-fg">Session.request</span><span class="ansi-blue-fg">(self, method, url, params, data, headers, cookies, files, auth, timeout, allow_redirects, proxies, hooks, stream, verify, cert, json)</span>
+<span class="ansi-green-fg">    650</span> send_kwargs.update(settings)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">651</span> resp = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">send</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">prep</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">send_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    653</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> resp
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/requests/sessions.py:784</span>, in <span class="ansi-cyan-fg">Session.send</span><span class="ansi-blue-fg">(self, request, **kwargs)</span>
+<span class="ansi-green-fg">    783</span> <span style="color: rgb(95,135,135)"># Send the request</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">784</span> r = <span class="ansi-black-fg ansi-yellow-bg">adapter</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">send</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    786</span> <span style="color: rgb(95,135,135)"># Total elapsed time of the request (approximately)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/requests/adapters.py:729</span>, in <span class="ansi-cyan-fg">HTTPAdapter.send</span><span class="ansi-blue-fg">(self, request, stream, timeout, verify, cert, proxies)</span>
+<span class="ansi-green-fg">    727</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> SSLError(e, request=request)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">729</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ConnectionError</span>(e, request=request)
+<span class="ansi-green-fg">    731</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> ClosedPoolError <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+
+<span class="ansi-red-fg">ConnectionError</span>: HTTPSConnectionPool(host='urs.earthdata.nasa.gov', port=443): Max retries exceeded with url: /api/users/find_or_create_token (Caused by NewConnectionError("HTTPSConnection(host='urs.earthdata.nasa.gov', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># Authenticate to Earthdata</span>
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">      3</span>     auth = earthaccess.login(strategy=<span class="ansi-yellow-fg">"environment"</span>)
+<span class="ansi-green-fg">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> Exception:
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span>     auth = earthaccess.login(strategy=<span class="ansi-yellow-fg">"interactive"</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/api.py:369</span>, in <span class="ansi-cyan-fg">login</span><span class="ansi-blue-fg">(strategy, persist, system)</span>
+<span class="ansi-green-fg">    367</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
+<span class="ansi-green-fg">    368</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">369</span>     <span class="ansi-black-fg ansi-yellow-bg">earthaccess</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">__auth__</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">login</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    370</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">strategy</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">strategy</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    371</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">persist</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">persist</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    372</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">system</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">system</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    373</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    374</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> earthaccess.__auth__.authenticated:
+<span class="ansi-green-fg">    375</span>         earthaccess.__store__ = Store(earthaccess.__auth__)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/auth.py:148</span>, in <span class="ansi-cyan-fg">Auth.login</span><span class="ansi-blue-fg">(self, strategy, persist, system)</span>
+<span class="ansi-green-fg">    145</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>
+<span class="ansi-green-fg">    147</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> strategy == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">interactive</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">148</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_interactive</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">persist</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    149</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> strategy == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">netrc</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">    150</span>     <span style="color: rgb(0,135,0)">self</span>._netrc()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/auth.py:246</span>, in <span class="ansi-cyan-fg">Auth._interactive</span><span class="ansi-blue-fg">(self, persist_credentials)</span>
+<span class="ansi-green-fg">    242</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">_interactive</span>(
+<span class="ansi-green-fg">    243</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">    244</span>     persist_credentials: <span style="color: rgb(0,135,0)">bool</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,  <span style="color: rgb(95,135,135)"># noqa: FBT001, FBT002</span>
+<span class="ansi-green-fg">    245</span> ) -&gt; <span style="color: rgb(0,135,0)">bool</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">246</span>     username = <span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">Enter your Earthdata Login username: </span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    247</span>     password = getpass.getpass(prompt=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Enter your Earthdata password: </span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    248</span>     authenticated = <span style="color: rgb(0,135,0)">self</span>._get_credentials(username, password, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/ipykernel/kernelbase.py:1402</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-fg">   1400</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span>._allow_stdin:
+<span class="ansi-green-fg">   1401</span>     msg = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">raw_input was called, but this frontend does not support input requests.</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1402</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-fg">   1403</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>._input_request(
+<span class="ansi-green-fg">   1404</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-fg">   1405</span>     <span style="color: rgb(0,135,0)">self</span>._get_shell_context_var(<span style="color: rgb(0,135,0)">self</span>._shell_parent_ident),
+<span class="ansi-green-fg">   1406</span>     <span style="color: rgb(0,135,0)">self</span>.get_parent(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">shell</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">   1407</span>     password=<span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-fg">   1408</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.</pre>
 </div>
 </div>
 </div>
@@ -2354,16 +2589,28 @@ data_vars</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>Data variables:
-    analysed_sst      (time, lat, lon) float64 5GB ...
-    analysis_error    (time, lat, lon) float64 5GB ...
-    mask              (time, lat, lon) float32 3GB ...
-    sea_ice_fraction  (time, lat, lon) float64 5GB ...
-    dt_1km_data       (time, lat, lon) timedelta64[ns] 5GB ...
-    sst_anomaly       (time, lat, lon) float64 5GB ...</pre>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> fs = earthaccess.get_fsspec_https_session()
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> ds = xr.open_dataset(
+<span class="ansi-green-fg">      4</span>     fs.open(results[<span class="ansi-green-fg">0</span>].data_links(access=<span class="ansi-yellow-fg">"external"</span>)[<span class="ansi-green-fg">0</span>]),
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/api.py:553</span>, in <span class="ansi-cyan-fg">get_fsspec_https_session</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">    537</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">get_fsspec_https_session</span>() -&gt; AbstractFileSystem:
+<span class="ansi-green-fg">    538</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Returns a fsspec session that can be used to access datafiles across many different DAACs.</span>
+<span class="ansi-green-fg">    539</span> 
+<span class="ansi-green-fg">    540</span> <span class="ansi-yellow-fg">    Returns:</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    551</span> <span class="ansi-yellow-fg">        ```</span>
+<span class="ansi-green-fg">    552</span> <span class="ansi-yellow-fg">    """</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">553</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">earthaccess</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">__store__</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">get_fsspec_session</span>()
+
+<span class="ansi-red-fg">AttributeError</span>: 'NoneType' object has no attribute 'get_fsspec_session'</pre>
 </div>
 </div>
 </div>
@@ -2635,23 +2882,11 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <pre>=== TiTiler-CMR Compatibility Check ===
 Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2024-07-01T00%3A00%3A00Z%2F2024-07-10T23%3A59%3A59Z&amp;bands=B04&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point
 Error: 301 Moved Permanently
 Body: 
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>HTTP 301 error during compatibility check
+HTTP 301 error during compatibility check
 Statistics request failed: HTTP 301: 
 Compatibility: issues_detected
 </pre>
