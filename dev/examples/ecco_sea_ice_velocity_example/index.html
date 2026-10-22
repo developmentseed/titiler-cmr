@@ -2307,119 +2307,7 @@ print(json.dumps(compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "concept_id": "C1990404790-POCLOUD",
-  "backend": "xarray",
-  "datetime": [
-    {
-      "EndsAtPresentFlag": false,
-      "RangeDateTimes": [
-        {
-          "BeginningDateTime": "1992-01-01T00:00:00.000Z",
-          "EndingDateTime": "2018-01-01T00:00:00.000Z"
-        }
-      ]
-    }
-  ],
-  "variables": {
-    "SIeice": {
-      "shape": [
-        1,
-        360,
-        720
-      ],
-      "dtype": "float32",
-      "min": -0.4000000059604645,
-      "max": 0.4000000059604645,
-      "mean": 0.014050387777388096,
-      "p01": -0.36184433102607727,
-      "p05": -0.23625349700450898,
-      "p95": 0.26273366808891296,
-      "p99": 0.3255477851629257
-    },
-    "SInice": {
-      "shape": [
-        1,
-        360,
-        720
-      ],
-      "dtype": "float32",
-      "min": -0.39989039301872253,
-      "max": 0.3591545820236206,
-      "mean": -0.0013574041659012437,
-      "p01": -0.1925621922314167,
-      "p05": -0.10541211515665054,
-      "p95": 0.09319071248173713,
-      "p99": 0.1548469364643097
-    }
-  },
-  "dimensions": {
-    "time": 1,
-    "latitude": 360,
-    "longitude": 720,
-    "nv": 2
-  },
-  "coordinates": {
-    "time": {
-      "size": 1,
-      "dtype": "datetime64[ns]",
-      "min": null,
-      "max": null
-    },
-    "latitude": {
-      "size": 360,
-      "dtype": "float32",
-      "min": -89.75,
-      "max": 89.75
-    },
-    "longitude": {
-      "size": 720,
-      "dtype": "float32",
-      "min": -179.75,
-      "max": 179.75
-    },
-    "time_bnds": {
-      "size": 2,
-      "dtype": "datetime64[ns]",
-      "min": null,
-      "max": null
-    },
-    "latitude_bnds": {
-      "size": 720,
-      "dtype": "float32",
-      "min": -90.0,
-      "max": 90.0
-    },
-    "longitude_bnds": {
-      "size": 1440,
-      "dtype": "float32",
-      "min": -180.0,
-      "max": 180.0
-    }
-  },
-  "compatible_groups": null,
-  "granule_ur": "SEA_ICE_VELOCITY_mon_mean_1992-01_ECCO_V4r4_latlon_0p50deg",
-  "example_assets": "s3://podaac-ops-cumulus-protected/ECCO_L4_SEA_ICE_VELOCITY_05DEG_MONTHLY_V4R4/SEA_ICE_VELOCITY_mon_mean_1992-01_ECCO_V4r4_latlon_0p50deg.nc",
-  "sample_asset_raster_info": null,
-  "links": [
-    {
-      "rel": "tilejson",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C1990404790-POCLOUD&amp;variables=SIeice&amp;temporal={temporal}",
-      "title": "TileJSON",
-      "type": "application/json"
-    },
-    {
-      "rel": "map",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/map.html?collection_concept_id=C1990404790-POCLOUD&amp;variables=SIeice&amp;temporal={temporal}",
-      "title": "Map viewer",
-      "type": "text/html"
-    },
-    {
-      "rel": "tile",
-      "href": "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1990404790-POCLOUD&amp;variables=SIeice&amp;temporal={temporal}",
-      "title": "Map tile",
-      "type": "image/png"
-    }
-  ]
+  "detail": "CMR collection search timed out after Timeout(timeout=20.0) seconds"
 }
 </pre>
 </div>
@@ -2563,7 +2451,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_edfeb494333dd6fcdc5bb9ad380550ff {
+                #map_d6c6df28b2937651d4d9dcdd618c6171 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -2600,14 +2488,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_edfeb494333dd6fcdc5bb9ad380550ff" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_d6c6df28b2937651d4d9dcdd618c6171" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_edfeb494333dd6fcdc5bb9ad380550ff = L.map(
-                "map_edfeb494333dd6fcdc5bb9ad380550ff",
+            var map_d6c6df28b2937651d4d9dcdd618c6171 = L.map(
+                "map_d6c6df28b2937651d4d9dcdd618c6171",
                 {
                     center: [72.0, -57.0],
                     crs: L.CRS.EPSG3857,
@@ -2624,7 +2512,7 @@ m</div>
 
         
     
-            var tile_layer_1401b74c70426b20a049423087997fd1 = L.tileLayer(
+            var tile_layer_22aefad6d246ff16057c8242e1390fef = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -2641,10 +2529,10 @@ m</div>
             );
         
     
-            tile_layer_1401b74c70426b20a049423087997fd1.addTo(map_edfeb494333dd6fcdc5bb9ad380550ff);
+            tile_layer_22aefad6d246ff16057c8242e1390fef.addTo(map_d6c6df28b2937651d4d9dcdd618c6171);
         
     
-            var tile_layer_d70feb585d960ccdd213e8f87dd65c38 = L.tileLayer(
+            var tile_layer_3a981ebb6c0658c0b49f10eaa3d9a60d = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1990404790-POCLOUD\u0026temporal=1992-01-16T18%3A00%3A00Z\u0026variables=SIeice\u0026rescale=-0.4%2C0.4\u0026colormap_name=rdbu\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -2661,26 +2549,26 @@ m</div>
             );
         
     
-            tile_layer_d70feb585d960ccdd213e8f87dd65c38.addTo(map_edfeb494333dd6fcdc5bb9ad380550ff);
+            tile_layer_3a981ebb6c0658c0b49f10eaa3d9a60d.addTo(map_d6c6df28b2937651d4d9dcdd618c6171);
         
     
-            var layer_control_8a2d6bbfd25849c3fbbb88714e22ec40_layers = {
+            var layer_control_643161fae8e4d2284d240ccd32e2c1f0_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_1401b74c70426b20a049423087997fd1,
+                    "openstreetmap" : tile_layer_22aefad6d246ff16057c8242e1390fef,
                 },
                 overlays :  {
-                    "SIeice eastward velocity" : tile_layer_d70feb585d960ccdd213e8f87dd65c38,
+                    "SIeice eastward velocity" : tile_layer_3a981ebb6c0658c0b49f10eaa3d9a60d,
                 },
             };
-            let layer_control_8a2d6bbfd25849c3fbbb88714e22ec40 = L.control.layers(
-                layer_control_8a2d6bbfd25849c3fbbb88714e22ec40_layers.base_layers,
-                layer_control_8a2d6bbfd25849c3fbbb88714e22ec40_layers.overlays,
+            let layer_control_643161fae8e4d2284d240ccd32e2c1f0 = L.control.layers(
+                layer_control_643161fae8e4d2284d240ccd32e2c1f0_layers.base_layers,
+                layer_control_643161fae8e4d2284d240ccd32e2c1f0_layers.overlays,
                 {
   "position": "topright",
   "collapsed": true,
   "autoZIndex": true,
 }
-            ).addTo(map_edfeb494333dd6fcdc5bb9ad380550ff);
+            ).addTo(map_d6c6df28b2937651d4d9dcdd618c6171);
 
         
 &lt;/script&gt;
@@ -2796,86 +2684,7 @@ print(json.dumps(stats_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "type": "Feature",
-  "geometry": {
-    "type": "Polygon",
-    "coordinates": [
-      [
-        [
-          -60.0,
-          70.0
-        ],
-        [
-          -60.0,
-          75.0
-        ],
-        [
-          -55.0,
-          75.0
-        ],
-        [
-          -55.0,
-          70.0
-        ],
-        [
-          -60.0,
-          70.0
-        ]
-      ]
-    ]
-  },
-  "properties": {
-    "statistics": {
-      "b1": {
-        "min": -0.004872002638876438,
-        "max": 0.02276342175900936,
-        "mean": 0.009062288329005241,
-        "count": 78.0,
-        "sum": 0.7068585157394409,
-        "std": 0.007456335439217724,
-        "median": 0.00937563180923462,
-        "majority": 0.0017839688807725906,
-        "minority": -0.0030098063871264458,
-        "unique": 40.0,
-        "histogram": [
-          [
-            6,
-            7,
-            8,
-            11,
-            3,
-            10,
-            11,
-            8,
-            13,
-            1
-          ],
-          [
-            -0.004872002638876438,
-            -0.002108460059389472,
-            0.0006550825200974941,
-            0.003418625332415104,
-            0.006182167679071426,
-            0.008945710025727749,
-            0.011709253303706646,
-            0.014472794719040394,
-            0.017236337065696716,
-            0.019999880343675613,
-            0.02276342175900936
-          ]
-        ],
-        "valid_percent": 78.0,
-        "masked_pixels": 22.0,
-        "valid_pixels": 78.0,
-        "description": "0",
-        "percentile_2": -0.004872002638876438,
-        "percentile_98": 0.019531458616256714
-      }
-    },
-    "used_assets": [
-      "SEA_ICE_VELOCITY_mon_mean_1992-01_ECCO_V4r4_latlon_0p50deg"
-    ]
-  }
+  "detail": "CMR granule search timed out after Timeout(timeout=20.0) seconds"
 }
 </pre>
 </div>
@@ -3019,7 +2828,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_4973f6c6236a6404d7a1a0de1bae0b26 {
+                #map_9f5f6953c4e1ae933e67eca99361a13d {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3056,14 +2865,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_4973f6c6236a6404d7a1a0de1bae0b26" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_9f5f6953c4e1ae933e67eca99361a13d" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_4973f6c6236a6404d7a1a0de1bae0b26 = L.map(
-                "map_4973f6c6236a6404d7a1a0de1bae0b26",
+            var map_9f5f6953c4e1ae933e67eca99361a13d = L.map(
+                "map_9f5f6953c4e1ae933e67eca99361a13d",
                 {
                     center: [72.0, -57.0],
                     crs: L.CRS.EPSG3857,
@@ -3080,7 +2889,7 @@ m</div>
 
         
     
-            var tile_layer_a3cd9267b963d1a096f6265c5cd609d8 = L.tileLayer(
+            var tile_layer_5d0cd6e16263cdab9ce7a124e6f6ee2d = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3097,10 +2906,10 @@ m</div>
             );
         
     
-            tile_layer_a3cd9267b963d1a096f6265c5cd609d8.addTo(map_4973f6c6236a6404d7a1a0de1bae0b26);
+            tile_layer_5d0cd6e16263cdab9ce7a124e6f6ee2d.addTo(map_9f5f6953c4e1ae933e67eca99361a13d);
         
     
-            var tile_layer_d3fa7bc0a078aa0e6ac6c4550de27039 = L.tileLayer(
+            var tile_layer_32e5deb5e29aab153a1353db954421d0 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C1990404790-POCLOUD\u0026temporal=1992-01-16T18%3A00%3A00Z\u0026variables=SInice\u0026rescale=-0.4%2C0.4\u0026colormap_name=rdbu\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3117,26 +2926,26 @@ m</div>
             );
         
     
-            tile_layer_d3fa7bc0a078aa0e6ac6c4550de27039.addTo(map_4973f6c6236a6404d7a1a0de1bae0b26);
+            tile_layer_32e5deb5e29aab153a1353db954421d0.addTo(map_9f5f6953c4e1ae933e67eca99361a13d);
         
     
-            var layer_control_e698c258cd053cbc1dcbaf503860f119_layers = {
+            var layer_control_10d02a9dd1cf22545c9295ceba6d4583_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_a3cd9267b963d1a096f6265c5cd609d8,
+                    "openstreetmap" : tile_layer_5d0cd6e16263cdab9ce7a124e6f6ee2d,
                 },
                 overlays :  {
-                    "SInice northward velocity" : tile_layer_d3fa7bc0a078aa0e6ac6c4550de27039,
+                    "SInice northward velocity" : tile_layer_32e5deb5e29aab153a1353db954421d0,
                 },
             };
-            let layer_control_e698c258cd053cbc1dcbaf503860f119 = L.control.layers(
-                layer_control_e698c258cd053cbc1dcbaf503860f119_layers.base_layers,
-                layer_control_e698c258cd053cbc1dcbaf503860f119_layers.overlays,
+            let layer_control_10d02a9dd1cf22545c9295ceba6d4583 = L.control.layers(
+                layer_control_10d02a9dd1cf22545c9295ceba6d4583_layers.base_layers,
+                layer_control_10d02a9dd1cf22545c9295ceba6d4583_layers.overlays,
                 {
   "position": "topright",
   "collapsed": true,
   "autoZIndex": true,
 }
-            ).addTo(map_4973f6c6236a6404d7a1a0de1bae0b26);
+            ).addTo(map_9f5f6953c4e1ae933e67eca99361a13d);
 
         
 &lt;/script&gt;
