@@ -3038,26 +3038,9 @@ print("found", len(opera_disp_assets_geojson["features"]), "granules")</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 41</span>
-<span class="ansi-green-fg">     37</span>     },
-<span class="ansi-green-fg">     38</span>     timeout=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">     39</span> )
-<span class="ansi-green-fg">     40</span> 
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">41</span> opera_disp_assets_req.raise_for_status()
-<span class="ansi-green-fg">     42</span> opera_disp_assets_geojson = opera_disp_assets_req.json()
-<span class="ansi-green-fg">     43</span> print(<span class="ansi-yellow-fg">"found"</span>, len(opera_disp_assets_geojson[<span class="ansi-yellow-fg">"features"</span>]), <span class="ansi-yellow-fg">"granules"</span>)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
-
-<span class="ansi-red-fg">HTTPStatusError</span>: Server error '504 Gateway Timeout' for url 'https://openveda.cloud/api/titiler-cmr/bbox/-127,31,-113,42/granules?skipcovered=false&amp;limit=500&amp;f=geojson&amp;collection_concept_id=C3294057315-ASF&amp;attribute=string%2CREFERENCE_ZERO_DOPPLER_START_TIME%2C2016-07-05T00%3A00%3A00Z%2C2016-07-05T23%3A59%3A59Z&amp;attribute=string%2CSECONDARY_ZERO_DOPPLER_END_TIME%2C2017-01-25T00%3A00%3A00Z%2C2017-01-25T23%3A59%3A59Z&amp;sortkey=-start_date'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>found 2 granules
+</pre>
 </div>
 </div>
 </div>
@@ -3108,15 +3091,10 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> granule <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> opera_disp_assets_geojson[<span class="ansi-yellow-fg">"features"</span>]:
-<span class="ansi-green-fg">      2</span>     print(granule[<span class="ansi-yellow-fg">"properties"</span>][<span class="ansi-yellow-fg">"granule_ur"</span>])
-
-<span class="ansi-red-fg">NameError</span>: name 'opera_disp_assets_geojson' is not defined</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z
+OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z
+</pre>
 </div>
 </div>
 </div>
@@ -3175,19 +3153,76 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 3</span>
-<span class="ansi-green-fg">      1</span> print(
-<span class="ansi-green-fg">      2</span>     json.dumps(
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>         opera_disp_assets_geojson[<span class="ansi-yellow-fg">"features"</span>][<span class="ansi-green-fg">0</span>][<span class="ansi-yellow-fg">"properties"</span>][<span class="ansi-yellow-fg">"additional_attributes"</span>],
-<span class="ansi-green-fg">      4</span>         indent=<span class="ansi-green-fg">2</span>,
-<span class="ansi-green-fg">      5</span>     )
-<span class="ansi-green-fg">      6</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'opera_disp_assets_geojson' is not defined</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>[
+  {
+    "name": "ASCENDING_DESCENDING",
+    "values": [
+      "ASCENDING"
+    ]
+  },
+  {
+    "name": "FRAME_NUMBER",
+    "values": [
+      "9154"
+    ]
+  },
+  {
+    "name": "PATH_NUMBER",
+    "values": [
+      "35"
+    ]
+  },
+  {
+    "name": "POLARIZATION",
+    "values": [
+      "VV"
+    ]
+  },
+  {
+    "name": "PROCESSING_TYPE",
+    "values": [
+      "DISP-S1"
+    ]
+  },
+  {
+    "name": "PRODUCT_VERSION",
+    "values": [
+      "1.0"
+    ]
+  },
+  {
+    "name": "REFERENCE_ZERO_DOPPLER_END_TIME",
+    "values": [
+      "2016-07-05T02:06:48Z"
+    ]
+  },
+  {
+    "name": "REFERENCE_ZERO_DOPPLER_START_TIME",
+    "values": [
+      "2016-07-05T02:06:26Z"
+    ]
+  },
+  {
+    "name": "SECONDARY_ZERO_DOPPLER_END_TIME",
+    "values": [
+      "2017-01-25T02:06:49Z"
+    ]
+  },
+  {
+    "name": "SECONDARY_ZERO_DOPPLER_START_TIME",
+    "values": [
+      "2017-01-25T02:06:26Z"
+    ]
+  },
+  {
+    "name": "STACK_ID",
+    "values": [
+      "IW_F09154_VV"
+    ]
+  }
+]
+</pre>
 </div>
 </div>
 </div>
@@ -3368,20 +3403,232 @@ m</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> aoi = shapely.union_all(
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     [box(*feature[<span class="ansi-yellow-fg">"bbox"</span>]) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> feature <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> opera_disp_assets_geojson[<span class="ansi-yellow-fg">"features"</span>]]
-<span class="ansi-green-fg">      3</span> )
-<span class="ansi-green-fg">      4</span> 
-<span class="ansi-green-fg">      5</span> m = Map(
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -&gt; Trust Notebook</span><iframe allowfullscreen="" mozallowfullscreen="" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.7.1.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;
+    
+            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
+            &lt;style&gt;
+                #map_42fea7825df373bc4919cfa20c6478bc {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
 
-<span class="ansi-red-fg">NameError</span>: name 'opera_disp_assets_geojson' is not defined</pre>
+            &lt;style&gt;html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            &lt;/style&gt;
+
+            &lt;style&gt;#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            &lt;/style&gt;
+
+            &lt;script&gt;
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            &lt;/script&gt;
+
+        
+    
+                    &lt;style&gt;
+                        .foliumpopup {
+                            margin: auto;
+                        }
+                       .foliumpopup table{
+                            margin: auto;
+                        }
+                        .foliumpopup tr{
+                            text-align: left;
+                        }
+                        .foliumpopup th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    &lt;/style&gt;
+            
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class=&quot;folium-map&quot; id=&quot;map_42fea7825df373bc4919cfa20c6478bc&quot; &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_42fea7825df373bc4919cfa20c6478bc = L.map(
+                &quot;map_42fea7825df373bc4919cfa20c6478bc&quot;,
+                {
+                    center: [35.37311, -121.39555999999999],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  &quot;zoom&quot;: 8,
+  &quot;zoomControl&quot;: true,
+  &quot;preferCanvas&quot;: false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_466c818b500c216864fd27f3d5f13d82 = L.tileLayer(
+                &quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
+                {
+  &quot;minZoom&quot;: 0,
+  &quot;maxZoom&quot;: 19,
+  &quot;maxNativeZoom&quot;: 19,
+  &quot;noWrap&quot;: false,
+  &quot;attribution&quot;: &quot;\u0026copy; \u003ca href=\&quot;https://www.openstreetmap.org/copyright\&quot;\u003eOpenStreetMap\u003c/a\u003e contributors&quot;,
+  &quot;subdomains&quot;: &quot;abc&quot;,
+  &quot;detectRetina&quot;: false,
+  &quot;tms&quot;: false,
+  &quot;opacity&quot;: 1,
+}
+
+            );
+        
+    
+            tile_layer_466c818b500c216864fd27f3d5f13d82.addTo(map_42fea7825df373bc4919cfa20c6478bc);
+        
+    
+        function geo_json_73b873fc470330e8394d9a94eb58b7f9_styler(feature) {
+            switch(feature.properties.id) {
+                default:
+                    return {&quot;color&quot;: &quot;magenta&quot;, &quot;fillOpacity&quot;: 0, &quot;weight&quot;: 2};
+            }
+        }
+
+        function geo_json_73b873fc470330e8394d9a94eb58b7f9_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_73b873fc470330e8394d9a94eb58b7f9 = L.geoJson(null, {
+                onEachFeature: geo_json_73b873fc470330e8394d9a94eb58b7f9_onEachFeature,
+            
+                style: geo_json_73b873fc470330e8394d9a94eb58b7f9_styler,
+            ...{
+}
+        });
+
+        function geo_json_73b873fc470330e8394d9a94eb58b7f9_add (data) {
+            geo_json_73b873fc470330e8394d9a94eb58b7f9
+                .addData(data);
+        }
+            geo_json_73b873fc470330e8394d9a94eb58b7f9_add({&quot;features&quot;: [{&quot;bbox&quot;: [-121.2919, 34.22926, -120.26544, 35.18985], &quot;geometry&quot;: {&quot;coordinates&quot;: [[[-120.43088, 35.18985], [-121.2919, 35.0709], [-121.11661, 34.22926], [-120.26544, 34.34844], [-120.43088, 35.18985]]], &quot;type&quot;: &quot;Polygon&quot;}, &quot;properties&quot;: {&quot;additional_attributes&quot;: [{&quot;name&quot;: &quot;ASCENDING_DESCENDING&quot;, &quot;values&quot;: [&quot;ASCENDING&quot;]}, {&quot;name&quot;: &quot;FRAME_NUMBER&quot;, &quot;values&quot;: [&quot;9154&quot;]}, {&quot;name&quot;: &quot;PATH_NUMBER&quot;, &quot;values&quot;: [&quot;35&quot;]}, {&quot;name&quot;: &quot;POLARIZATION&quot;, &quot;values&quot;: [&quot;VV&quot;]}, {&quot;name&quot;: &quot;PROCESSING_TYPE&quot;, &quot;values&quot;: [&quot;DISP-S1&quot;]}, {&quot;name&quot;: &quot;PRODUCT_VERSION&quot;, &quot;values&quot;: [&quot;1.0&quot;]}, {&quot;name&quot;: &quot;REFERENCE_ZERO_DOPPLER_END_TIME&quot;, &quot;values&quot;: [&quot;2016-07-05T02:06:48Z&quot;]}, {&quot;name&quot;: &quot;REFERENCE_ZERO_DOPPLER_START_TIME&quot;, &quot;values&quot;: [&quot;2016-07-05T02:06:26Z&quot;]}, {&quot;name&quot;: &quot;SECONDARY_ZERO_DOPPLER_END_TIME&quot;, &quot;values&quot;: [&quot;2017-01-25T02:06:49Z&quot;]}, {&quot;name&quot;: &quot;SECONDARY_ZERO_DOPPLER_START_TIME&quot;, &quot;values&quot;: [&quot;2017-01-25T02:06:26Z&quot;]}, {&quot;name&quot;: &quot;STACK_ID&quot;, &quot;values&quot;: [&quot;IW_F09154_VV&quot;]}], &quot;collection_concept_id&quot;: &quot;C3294057315-ASF&quot;, &quot;data_granule&quot;: {&quot;archive_and_distribution_information&quot;: [{&quot;name&quot;: &quot;OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc&quot;, &quot;size_in_bytes&quot;: 121634816}, {&quot;name&quot;: &quot;OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml&quot;, &quot;size_in_bytes&quot;: 342478}]}, &quot;granule_ur&quot;: &quot;OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z&quot;, &quot;id&quot;: &quot;G3486201708-ASF&quot;, &quot;related_urls&quot;: [{&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc&quot;, &quot;type&quot;: &quot;GET DATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc&quot;, &quot;type&quot;: &quot;GET DATA VIA DIRECT ACCESS&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA VIA DIRECT ACCESS&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_short_wavelength_displacement.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_short_wavelength_displacement.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_short_wavelength_displacement.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA VIA DIRECT ACCESS&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_STACK_V1/OPERA_L3_DISP-S1_IW_F09154_VV_V1/OPERA_L3_DISP-S1_IW_F09154_VV_short_wavelength_displacement.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.iso.xml.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z.nc.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE.png.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_low-res.png.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z/OPERA_L3_DISP-S1_IW_F09154_VV_20160705T020626Z_20170125T020626Z_v1.0_20250408T162732Z_BROWSE_thumbnail.png.md5&quot;}, {&quot;description&quot;: &quot;S3 credentials endpoint for direct in-region bucket access&quot;, &quot;type&quot;: &quot;VIEW RELATED INFORMATION&quot;, &quot;url&quot;: &quot;https://cumulus.asf.earthdatacloud.nasa.gov/s3credentials&quot;}], &quot;spatial_extent&quot;: {&quot;horizontal_spatial_domain&quot;: {&quot;geometry&quot;: {&quot;bounding_rectangles&quot;: null, &quot;g_polygons&quot;: [{&quot;boundary&quot;: {&quot;points&quot;: [{&quot;latitude&quot;: 35.18985, &quot;longitude&quot;: -120.43088}, {&quot;latitude&quot;: 35.0709, &quot;longitude&quot;: -121.2919}, {&quot;latitude&quot;: 34.22926, &quot;longitude&quot;: -121.11661}, {&quot;latitude&quot;: 34.34844, &quot;longitude&quot;: -120.26544}, {&quot;latitude&quot;: 35.18985, &quot;longitude&quot;: -120.43088}]}}]}}}, &quot;temporal_extent&quot;: {&quot;range_date_time&quot;: {&quot;beginning_date_time&quot;: &quot;2016-07-05T02:06:26Z&quot;, &quot;ending_date_time&quot;: &quot;2017-01-25T02:06:26Z&quot;}}}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [-122.52568, 34.89266, -120.39473, 36.51696], &quot;geometry&quot;: {&quot;coordinates&quot;: [[[-120.69552, 36.51696], [-122.52568, 36.20265], [-122.41035, 35.69256], [-121.45078, 35.83089], [-121.25424, 34.89266], [-120.39473, 35.0114], [-120.69552, 36.51696]]], &quot;type&quot;: &quot;Polygon&quot;}, &quot;properties&quot;: {&quot;additional_attributes&quot;: [{&quot;name&quot;: &quot;ASCENDING_DESCENDING&quot;, &quot;values&quot;: [&quot;ASCENDING&quot;]}, {&quot;name&quot;: &quot;FRAME_NUMBER&quot;, &quot;values&quot;: [&quot;9155&quot;]}, {&quot;name&quot;: &quot;PATH_NUMBER&quot;, &quot;values&quot;: [&quot;35&quot;]}, {&quot;name&quot;: &quot;POLARIZATION&quot;, &quot;values&quot;: [&quot;VV&quot;]}, {&quot;name&quot;: &quot;PROCESSING_TYPE&quot;, &quot;values&quot;: [&quot;DISP-S1&quot;]}, {&quot;name&quot;: &quot;PRODUCT_VERSION&quot;, &quot;values&quot;: [&quot;1.0&quot;]}, {&quot;name&quot;: &quot;REFERENCE_ZERO_DOPPLER_END_TIME&quot;, &quot;values&quot;: [&quot;2016-07-05T02:07:10Z&quot;]}, {&quot;name&quot;: &quot;REFERENCE_ZERO_DOPPLER_START_TIME&quot;, &quot;values&quot;: [&quot;2016-07-05T02:06:45Z&quot;]}, {&quot;name&quot;: &quot;SECONDARY_ZERO_DOPPLER_END_TIME&quot;, &quot;values&quot;: [&quot;2017-01-25T02:07:11Z&quot;]}, {&quot;name&quot;: &quot;SECONDARY_ZERO_DOPPLER_START_TIME&quot;, &quot;values&quot;: [&quot;2017-01-25T02:06:46Z&quot;]}, {&quot;name&quot;: &quot;STACK_ID&quot;, &quot;values&quot;: [&quot;IW_F09155_VV&quot;]}], &quot;collection_concept_id&quot;: &quot;C3294057315-ASF&quot;, &quot;data_granule&quot;: {&quot;archive_and_distribution_information&quot;: [{&quot;name&quot;: &quot;OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc&quot;, &quot;size_in_bytes&quot;: 205520896}, {&quot;name&quot;: &quot;OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml&quot;, &quot;size_in_bytes&quot;: 427615}]}, &quot;granule_ur&quot;: &quot;OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z&quot;, &quot;id&quot;: &quot;G3486321533-ASF&quot;, &quot;related_urls&quot;: [{&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc&quot;, &quot;type&quot;: &quot;GET DATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc&quot;, &quot;type&quot;: &quot;GET DATA VIA DIRECT ACCESS&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA VIA DIRECT ACCESS&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_short_wavelength_displacement.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_short_wavelength_displacement.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_short_wavelength_displacement.zarr.json.gz&quot;, &quot;type&quot;: &quot;GET DATA VIA DIRECT ACCESS&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_STACK_V1/OPERA_L3_DISP-S1_IW_F09155_VV_V1/OPERA_L3_DISP-S1_IW_F09155_VV_short_wavelength_displacement.zarr.json.gz&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png&quot;, &quot;type&quot;: &quot;GET RELATED VISUALIZATION&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.iso.xml.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/DISP/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-products/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z.nc.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE.png.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_low-res.png.md5&quot;}, {&quot;description&quot;: &quot;Download OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;https://datapool.asf.alaska.edu/BROWSE/OPERA-S1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png.md5&quot;}, {&quot;description&quot;: &quot;This link provides direct download access via S3 to OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png.md5&quot;, &quot;type&quot;: &quot;EXTENDED METADATA&quot;, &quot;url&quot;: &quot;s3://asf-cumulus-prod-opera-browse/OPERA_L3_DISP-S1_V1/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z/OPERA_L3_DISP-S1_IW_F09155_VV_20160705T020645Z_20170125T020646Z_v1.0_20250408T163031Z_BROWSE_thumbnail.png.md5&quot;}, {&quot;description&quot;: &quot;S3 credentials endpoint for direct in-region bucket access&quot;, &quot;type&quot;: &quot;VIEW RELATED INFORMATION&quot;, &quot;url&quot;: &quot;https://cumulus.asf.earthdatacloud.nasa.gov/s3credentials&quot;}], &quot;spatial_extent&quot;: {&quot;horizontal_spatial_domain&quot;: {&quot;geometry&quot;: {&quot;bounding_rectangles&quot;: null, &quot;g_polygons&quot;: [{&quot;boundary&quot;: {&quot;points&quot;: [{&quot;latitude&quot;: 36.51696, &quot;longitude&quot;: -120.69552}, {&quot;latitude&quot;: 36.20265, &quot;longitude&quot;: -122.52568}, {&quot;latitude&quot;: 35.69256, &quot;longitude&quot;: -122.41035}, {&quot;latitude&quot;: 35.83089, &quot;longitude&quot;: -121.45078}, {&quot;latitude&quot;: 34.89266, &quot;longitude&quot;: -121.25424}, {&quot;latitude&quot;: 35.0114, &quot;longitude&quot;: -120.39473}, {&quot;latitude&quot;: 36.51696, &quot;longitude&quot;: -120.69552}]}}]}}}, &quot;temporal_extent&quot;: {&quot;range_date_time&quot;: {&quot;beginning_date_time&quot;: &quot;2016-07-05T02:06:45Z&quot;, &quot;ending_date_time&quot;: &quot;2017-01-25T02:06:46Z&quot;}}}, &quot;type&quot;: &quot;Feature&quot;}], &quot;type&quot;: &quot;FeatureCollection&quot;});
+
+        
+    
+    geo_json_73b873fc470330e8394d9a94eb58b7f9.bindPopup(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature =&gt; {
+        if (feature === null) {
+            return '';
+        } else if (typeof(feature)=='object') {
+            return JSON.stringify(feature);
+        } else {
+            return feature;
+        }
+    }
+    let fields = [&quot;granule_ur&quot;];
+    let aliases = [&quot;granule_ur&quot;];
+    let table = '&lt;table&gt;' +
+        String(
+        fields.map(
+        (v,i)=&gt;
+        `&lt;tr&gt;
+            &lt;th&gt;${aliases[i].toLocaleString()}&lt;/th&gt;
+            
+            &lt;td&gt;${handleObject(layer.feature.properties[v]).toLocaleString()}&lt;/td&gt;
+        &lt;/tr&gt;`).join(''))
+    +'&lt;/table&gt;';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{
+  &quot;className&quot;: &quot;foliumpopup&quot;,
+});
+                     
+    
+            geo_json_73b873fc470330e8394d9a94eb58b7f9.addTo(map_42fea7825df373bc4919cfa20c6478bc);
+        
+    
+            var tile_layer_6326174d6fa5eed214560b1635e9a920 = L.tileLayer(
+                &quot;https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C3294057315-ASF\u0026attribute=string%2CREFERENCE_ZERO_DOPPLER_START_TIME%2C2016-07-05T00%3A00%3A00Z%2C2016-07-05T23%3A59%3A59Z\u0026attribute=string%2CSECONDARY_ZERO_DOPPLER_END_TIME%2C2017-01-25T00%3A00%3A00Z%2C2017-01-25T23%3A59%3A59Z\u0026sortkey=-start_date\u0026bounding_box=-127%2C31%2C-113%2C42\u0026exitwhenfull=true\u0026variables=displacement\u0026rescale=%5B-0.05%2C+0.05%5D\u0026colormap_name=rainbow\u0026tilesize=512&quot;,
+                {
+  &quot;minZoom&quot;: 6,
+  &quot;maxZoom&quot;: 18,
+  &quot;maxNativeZoom&quot;: 18,
+  &quot;noWrap&quot;: false,
+  &quot;attribution&quot;: &quot;NASA&quot;,
+  &quot;subdomains&quot;: &quot;abc&quot;,
+  &quot;detectRetina&quot;: false,
+  &quot;tms&quot;: false,
+  &quot;opacity&quot;: 1,
+}
+
+            );
+        
+    
+            tile_layer_6326174d6fa5eed214560b1635e9a920.addTo(map_42fea7825df373bc4919cfa20c6478bc);
+        
+    
+            var layer_control_2ab8c5cf0ada6928092d462be3155b5c_layers = {
+                base_layers : {
+                    &quot;openstreetmap&quot; : tile_layer_466c818b500c216864fd27f3d5f13d82,
+                    &quot;OPERA-DISP&quot; : tile_layer_6326174d6fa5eed214560b1635e9a920,
+                },
+                overlays :  {
+                    &quot;granule footprints&quot; : geo_json_73b873fc470330e8394d9a94eb58b7f9,
+                },
+            };
+            let layer_control_2ab8c5cf0ada6928092d462be3155b5c = L.control.layers(
+                layer_control_2ab8c5cf0ada6928092d462be3155b5c_layers.base_layers,
+                layer_control_2ab8c5cf0ada6928092d462be3155b5c_layers.overlays,
+                {
+  &quot;position&quot;: &quot;topright&quot;,
+  &quot;collapsed&quot;: true,
+  &quot;autoZIndex&quot;: true,
+}
+            ).addTo(map_42fea7825df373bc4919cfa20c6478bc);
+
+        
+&lt;/script&gt;
+&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" webkitallowfullscreen=""></iframe></div></div>
 </div>
 </div>
 </div>
@@ -3560,7 +3807,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_11d685a2e85f05580777c0015cadfb8c {
+                #map_05b4e082e20b031a81188452879f651f {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3597,14 +3844,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_11d685a2e85f05580777c0015cadfb8c" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_05b4e082e20b031a81188452879f651f" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_11d685a2e85f05580777c0015cadfb8c = L.map(
-                "map_11d685a2e85f05580777c0015cadfb8c",
+            var map_05b4e082e20b031a81188452879f651f = L.map(
+                "map_05b4e082e20b031a81188452879f651f",
                 {
                     center: [47.0, -91.0],
                     crs: L.CRS.EPSG3857,
@@ -3621,7 +3868,7 @@ m</div>
 
         
     
-            var tile_layer_ed759c3c7e84c32c56df73f03af0d123 = L.tileLayer(
+            var tile_layer_33472d785edebffd75bd132672a5ff9d = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3638,41 +3885,41 @@ m</div>
             );
         
     
-            tile_layer_ed759c3c7e84c32c56df73f03af0d123.addTo(map_11d685a2e85f05580777c0015cadfb8c);
+            tile_layer_33472d785edebffd75bd132672a5ff9d.addTo(map_05b4e082e20b031a81188452879f651f);
         
     
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_styler(feature) {
+        function geo_json_9b5926aaef08813142542db4068194b6_styler(feature) {
             switch(feature.id) {
                 default:
                     return {"color": "orange", "fillOpacity": 0, "weight": 1};
             }
         }
 
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_onEachFeature(feature, layer) {
+        function geo_json_9b5926aaef08813142542db4068194b6_onEachFeature(feature, layer) {
 
             layer.on({
             });
         };
-        var geo_json_5ea12b27ec76ea184fe2a124d7daa5eb = L.geoJson(null, {
-                onEachFeature: geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_onEachFeature,
+        var geo_json_9b5926aaef08813142542db4068194b6 = L.geoJson(null, {
+                onEachFeature: geo_json_9b5926aaef08813142542db4068194b6_onEachFeature,
             
-                style: geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_styler,
+                style: geo_json_9b5926aaef08813142542db4068194b6_styler,
             ...{
 }
         });
 
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_add (data) {
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb
+        function geo_json_9b5926aaef08813142542db4068194b6_add (data) {
+            geo_json_9b5926aaef08813142542db4068194b6
                 .addData(data);
         }
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_add({"features": [{"geometry": {"coordinates": [[[-89.0, 45.0], [-89.0, 49.0], [-93.0, 49.0], [-93.0, 45.0], [-89.0, 45.0]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+            geo_json_9b5926aaef08813142542db4068194b6_add({"features": [{"geometry": {"coordinates": [[[-89.0, 45.0], [-89.0, 49.0], [-93.0, 49.0], [-93.0, 45.0], [-89.0, 45.0]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
 
         
     
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb.addTo(map_11d685a2e85f05580777c0015cadfb8c);
+            geo_json_9b5926aaef08813142542db4068194b6.addTo(map_05b4e082e20b031a81188452879f651f);
         
     
-            var tile_layer_5102dc3fe81da7f9eb90b8a275fedb6f = L.tileLayer(
+            var tile_layer_bb448f2c2cc0d83a1166ce7cac8e1226 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026bounding_box=-93%2C45%2C-89%2C49\u0026temporal=2025-07-01T00%3A00%3A00Z%2F2025-07-30T23%3A59%3A59Z\u0026sort_key=cloud_cover\u0026exitwhenfull=true\u0026skipcovered=true\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3689,27 +3936,27 @@ m</div>
             );
         
     
-            tile_layer_5102dc3fe81da7f9eb90b8a275fedb6f.addTo(map_11d685a2e85f05580777c0015cadfb8c);
+            tile_layer_bb448f2c2cc0d83a1166ce7cac8e1226.addTo(map_05b4e082e20b031a81188452879f651f);
         
     
-            var layer_control_895a7096ec863e5f884a2c15a7578822_layers = {
+            var layer_control_b71282af9f9b1c0a75711eec64f61275_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_ed759c3c7e84c32c56df73f03af0d123,
+                    "openstreetmap" : tile_layer_33472d785edebffd75bd132672a5ff9d,
                 },
                 overlays :  {
-                    "AOI" : geo_json_5ea12b27ec76ea184fe2a124d7daa5eb,
-                    "HLSS30 true color" : tile_layer_5102dc3fe81da7f9eb90b8a275fedb6f,
+                    "AOI" : geo_json_9b5926aaef08813142542db4068194b6,
+                    "HLSS30 true color" : tile_layer_bb448f2c2cc0d83a1166ce7cac8e1226,
                 },
             };
-            let layer_control_895a7096ec863e5f884a2c15a7578822 = L.control.layers(
-                layer_control_895a7096ec863e5f884a2c15a7578822_layers.base_layers,
-                layer_control_895a7096ec863e5f884a2c15a7578822_layers.overlays,
+            let layer_control_b71282af9f9b1c0a75711eec64f61275 = L.control.layers(
+                layer_control_b71282af9f9b1c0a75711eec64f61275_layers.base_layers,
+                layer_control_b71282af9f9b1c0a75711eec64f61275_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_11d685a2e85f05580777c0015cadfb8c);
+            ).addTo(map_05b4e082e20b031a81188452879f651f);
 
         
 &lt;/script&gt;
@@ -3860,7 +4107,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_b461689f1f7210f14b117237a07d45a9 {
+                #map_3fbb9f837b08c87a8ab85ef9a7efad6c {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -3897,14 +4144,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_b461689f1f7210f14b117237a07d45a9" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_3fbb9f837b08c87a8ab85ef9a7efad6c" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_b461689f1f7210f14b117237a07d45a9 = L.map(
-                "map_b461689f1f7210f14b117237a07d45a9",
+            var map_3fbb9f837b08c87a8ab85ef9a7efad6c = L.map(
+                "map_3fbb9f837b08c87a8ab85ef9a7efad6c",
                 {
                     center: [47.0, -91.0],
                     crs: L.CRS.EPSG3857,
@@ -3921,7 +4168,7 @@ m</div>
 
         
     
-            var tile_layer_9afe09c8e402c7f343daf715bd6d11df = L.tileLayer(
+            var tile_layer_df70fa4eed18589eb8dbf52f33fc9aa6 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -3938,41 +4185,41 @@ m</div>
             );
         
     
-            tile_layer_9afe09c8e402c7f343daf715bd6d11df.addTo(map_b461689f1f7210f14b117237a07d45a9);
+            tile_layer_df70fa4eed18589eb8dbf52f33fc9aa6.addTo(map_3fbb9f837b08c87a8ab85ef9a7efad6c);
         
     
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_styler(feature) {
+        function geo_json_9b5926aaef08813142542db4068194b6_styler(feature) {
             switch(feature.id) {
                 default:
                     return {"color": "orange", "fillOpacity": 0, "weight": 1};
             }
         }
 
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_onEachFeature(feature, layer) {
+        function geo_json_9b5926aaef08813142542db4068194b6_onEachFeature(feature, layer) {
 
             layer.on({
             });
         };
-        var geo_json_5ea12b27ec76ea184fe2a124d7daa5eb = L.geoJson(null, {
-                onEachFeature: geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_onEachFeature,
+        var geo_json_9b5926aaef08813142542db4068194b6 = L.geoJson(null, {
+                onEachFeature: geo_json_9b5926aaef08813142542db4068194b6_onEachFeature,
             
-                style: geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_styler,
+                style: geo_json_9b5926aaef08813142542db4068194b6_styler,
             ...{
 }
         });
 
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_add (data) {
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb
+        function geo_json_9b5926aaef08813142542db4068194b6_add (data) {
+            geo_json_9b5926aaef08813142542db4068194b6
                 .addData(data);
         }
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_add({"features": [{"geometry": {"coordinates": [[[-89.0, 45.0], [-89.0, 49.0], [-93.0, 49.0], [-93.0, 45.0], [-89.0, 45.0]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+            geo_json_9b5926aaef08813142542db4068194b6_add({"features": [{"geometry": {"coordinates": [[[-89.0, 45.0], [-89.0, 49.0], [-93.0, 49.0], [-93.0, 45.0], [-89.0, 45.0]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
 
         
     
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb.addTo(map_b461689f1f7210f14b117237a07d45a9);
+            geo_json_9b5926aaef08813142542db4068194b6.addTo(map_3fbb9f837b08c87a8ab85ef9a7efad6c);
         
     
-            var tile_layer_d38be94986ec3cbf48bf0390ef0338a2 = L.tileLayer(
+            var tile_layer_59d7fff6628cc7335953e2107dd9b92e = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026bounding_box=-93%2C45%2C-89%2C49\u0026temporal=2025-07-01T00%3A00%3A00Z%2F2025-07-30T23%3A59%3A59Z\u0026exitwhenfull=true\u0026skipcovered=true\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -3989,27 +4236,27 @@ m</div>
             );
         
     
-            tile_layer_d38be94986ec3cbf48bf0390ef0338a2.addTo(map_b461689f1f7210f14b117237a07d45a9);
+            tile_layer_59d7fff6628cc7335953e2107dd9b92e.addTo(map_3fbb9f837b08c87a8ab85ef9a7efad6c);
         
     
-            var layer_control_d0cbf96e8feda684d5a36205fbf235f6_layers = {
+            var layer_control_f51165ac5be5eb0b3155da6b4efbc7f1_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_9afe09c8e402c7f343daf715bd6d11df,
+                    "openstreetmap" : tile_layer_df70fa4eed18589eb8dbf52f33fc9aa6,
                 },
                 overlays :  {
-                    "AOI" : geo_json_5ea12b27ec76ea184fe2a124d7daa5eb,
-                    "HLSS30 true color" : tile_layer_d38be94986ec3cbf48bf0390ef0338a2,
+                    "AOI" : geo_json_9b5926aaef08813142542db4068194b6,
+                    "HLSS30 true color" : tile_layer_59d7fff6628cc7335953e2107dd9b92e,
                 },
             };
-            let layer_control_d0cbf96e8feda684d5a36205fbf235f6 = L.control.layers(
-                layer_control_d0cbf96e8feda684d5a36205fbf235f6_layers.base_layers,
-                layer_control_d0cbf96e8feda684d5a36205fbf235f6_layers.overlays,
+            let layer_control_f51165ac5be5eb0b3155da6b4efbc7f1 = L.control.layers(
+                layer_control_f51165ac5be5eb0b3155da6b4efbc7f1_layers.base_layers,
+                layer_control_f51165ac5be5eb0b3155da6b4efbc7f1_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_b461689f1f7210f14b117237a07d45a9);
+            ).addTo(map_3fbb9f837b08c87a8ab85ef9a7efad6c);
 
         
 &lt;/script&gt;
@@ -4162,7 +4409,7 @@ m</div>
             &lt;meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /&gt;
             &lt;style&gt;
-                #map_76448382f31051d1d67abd36594be6cf {
+                #map_f8eb8b47e82050b10b5e4b32e3d12668 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -4199,14 +4446,14 @@ m</div>
 &lt;body&gt;
     
     
-            &lt;div class="folium-map" id="map_76448382f31051d1d67abd36594be6cf" &gt;&lt;/div&gt;
+            &lt;div class="folium-map" id="map_f8eb8b47e82050b10b5e4b32e3d12668" &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_76448382f31051d1d67abd36594be6cf = L.map(
-                "map_76448382f31051d1d67abd36594be6cf",
+            var map_f8eb8b47e82050b10b5e4b32e3d12668 = L.map(
+                "map_f8eb8b47e82050b10b5e4b32e3d12668",
                 {
                     center: [47.0, -91.0],
                     crs: L.CRS.EPSG3857,
@@ -4223,7 +4470,7 @@ m</div>
 
         
     
-            var tile_layer_1ce23888c11d11b90457c5688a96674c = L.tileLayer(
+            var tile_layer_6789228ed4db7690b553eef8a4db1407 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -4240,41 +4487,41 @@ m</div>
             );
         
     
-            tile_layer_1ce23888c11d11b90457c5688a96674c.addTo(map_76448382f31051d1d67abd36594be6cf);
+            tile_layer_6789228ed4db7690b553eef8a4db1407.addTo(map_f8eb8b47e82050b10b5e4b32e3d12668);
         
     
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_styler(feature) {
+        function geo_json_9b5926aaef08813142542db4068194b6_styler(feature) {
             switch(feature.id) {
                 default:
                     return {"color": "orange", "fillOpacity": 0, "weight": 1};
             }
         }
 
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_onEachFeature(feature, layer) {
+        function geo_json_9b5926aaef08813142542db4068194b6_onEachFeature(feature, layer) {
 
             layer.on({
             });
         };
-        var geo_json_5ea12b27ec76ea184fe2a124d7daa5eb = L.geoJson(null, {
-                onEachFeature: geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_onEachFeature,
+        var geo_json_9b5926aaef08813142542db4068194b6 = L.geoJson(null, {
+                onEachFeature: geo_json_9b5926aaef08813142542db4068194b6_onEachFeature,
             
-                style: geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_styler,
+                style: geo_json_9b5926aaef08813142542db4068194b6_styler,
             ...{
 }
         });
 
-        function geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_add (data) {
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb
+        function geo_json_9b5926aaef08813142542db4068194b6_add (data) {
+            geo_json_9b5926aaef08813142542db4068194b6
                 .addData(data);
         }
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb_add({"features": [{"geometry": {"coordinates": [[[-89.0, 45.0], [-89.0, 49.0], [-93.0, 49.0], [-93.0, 45.0], [-89.0, 45.0]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+            geo_json_9b5926aaef08813142542db4068194b6_add({"features": [{"geometry": {"coordinates": [[[-89.0, 45.0], [-89.0, 49.0], [-93.0, 49.0], [-93.0, 45.0], [-89.0, 45.0]]], "type": "Polygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
 
         
     
-            geo_json_5ea12b27ec76ea184fe2a124d7daa5eb.addTo(map_76448382f31051d1d67abd36594be6cf);
+            geo_json_9b5926aaef08813142542db4068194b6.addTo(map_f8eb8b47e82050b10b5e4b32e3d12668);
         
     
-            var tile_layer_86b8cfbd8ac798fecb0b64f1c53aa1c7 = L.tileLayer(
+            var tile_layer_43a092497d6c0855c141bd3784528a18 = L.tileLayer(
                 "https://openveda.cloud/api/titiler-cmr/rasterio/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C2021957295-LPCLOUD\u0026bounding_box=-93%2C45%2C-89%2C49\u0026temporal=2025-07-01T00%3A00%3A00Z%2F2025-07-30T23%3A59%3A59Z\u0026cloud_cover=0%2C20\u0026exitwhenfull=true\u0026skipcovered=true\u0026assets_regex=B%5B0-9%5D%5B0-9A-Za-z%5D\u0026assets=B04\u0026assets=B03\u0026assets=B02\u0026color_formula=Gamma+RGB+3.5+Saturation+1.2+Sigmoidal+RGB+15+0.35\u0026tilesize=512",
                 {
   "minZoom": 0,
@@ -4291,27 +4538,27 @@ m</div>
             );
         
     
-            tile_layer_86b8cfbd8ac798fecb0b64f1c53aa1c7.addTo(map_76448382f31051d1d67abd36594be6cf);
+            tile_layer_43a092497d6c0855c141bd3784528a18.addTo(map_f8eb8b47e82050b10b5e4b32e3d12668);
         
     
-            var layer_control_8f7850fdbef7cc037400c237bf822c2d_layers = {
+            var layer_control_5448578f6596ed3bd681fcd2962cc354_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_1ce23888c11d11b90457c5688a96674c,
+                    "openstreetmap" : tile_layer_6789228ed4db7690b553eef8a4db1407,
                 },
                 overlays :  {
-                    "AOI" : geo_json_5ea12b27ec76ea184fe2a124d7daa5eb,
-                    "HLSS30 true color" : tile_layer_86b8cfbd8ac798fecb0b64f1c53aa1c7,
+                    "AOI" : geo_json_9b5926aaef08813142542db4068194b6,
+                    "HLSS30 true color" : tile_layer_43a092497d6c0855c141bd3784528a18,
                 },
             };
-            let layer_control_8f7850fdbef7cc037400c237bf822c2d = L.control.layers(
-                layer_control_8f7850fdbef7cc037400c237bf822c2d_layers.base_layers,
-                layer_control_8f7850fdbef7cc037400c237bf822c2d_layers.overlays,
+            let layer_control_5448578f6596ed3bd681fcd2962cc354 = L.control.layers(
+                layer_control_5448578f6596ed3bd681fcd2962cc354_layers.base_layers,
+                layer_control_5448578f6596ed3bd681fcd2962cc354_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_76448382f31051d1d67abd36594be6cf);
+            ).addTo(map_f8eb8b47e82050b10b5e4b32e3d12668);
 
         
 &lt;/script&gt;
