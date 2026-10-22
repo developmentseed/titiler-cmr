@@ -103,14 +103,12 @@ if _otel_enabled:
                     r.headers[key] = aws_req.headers[key]
             return r
 
-    _exporter = OTLPSpanExporter(
-        endpoint=f"https://xray.{_region}.amazonaws.com/v1/traces",
-    )
-    _exporter._session.auth = _SigV4Auth("xray", _region)
+    _otlp_session = requests.Session()
+    _otlp_session.auth = _SigV4Auth("xray", _region)
     # After SnapStart restore the session's connection pool contains stale TCP
     # connections. requests does not retry POSTs by default, so a stale
     # connection causes the first post-restore export to fail silently.
-    _exporter._session.mount(
+    _otlp_session.mount(
         "https://",
         HTTPAdapter(max_retries=Retry(total=2, allowed_methods={"POST"})),
     )
@@ -125,7 +123,12 @@ if _otel_enabled:
                 r.request.headers.get("Authorization", "")[:200],
             )
 
-    _exporter._session.hooks["response"].append(_log_otlp_response)
+    _otlp_session.hooks["response"].append(_log_otlp_response)
+
+    _exporter = OTLPSpanExporter(
+        endpoint=f"https://xray.{_region}.amazonaws.com/v1/traces",
+        session=_otlp_session,
+    )
 
     class _LambdaXRayPropagator(AwsXRayPropagator):
         """AwsXRayPropagator that falls back to the Lambda _X_AMZN_TRACE_ID env var.
