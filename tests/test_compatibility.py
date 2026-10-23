@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 import xarray as xr
 from fastapi import HTTPException
+from rio_tiler.errors import MissingAssets
 
 from titiler.cmr.compatibility import (
     CompatibilityResponse,
@@ -632,22 +633,30 @@ class TestConceptCompatibility:
         mock_xarray.assert_called_once()
         mock_rasterio.assert_called_once()
 
+    @pytest.mark.parametrize(
+        "rasterio_error",
+        [OSError("Rasterio failed"), MissingAssets("Rasterio failed")],
+    )
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
     @patch("titiler.cmr.compatibility.get_collection")
-    def test_both_fail(self, mock_get_collection, mock_xarray, mock_rasterio):
-        """Test when both readers fail."""
+    def test_both_fail(
+        self, mock_get_collection, mock_xarray, mock_rasterio, rasterio_error
+    ):
+        """Test when both readers fail, the 400 reports both errors."""
         request = _make_request()
 
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.side_effect = ValueError("Xarray failed")
-        mock_rasterio.side_effect = OSError("Rasterio failed")
+        mock_rasterio.side_effect = rasterio_error
 
         with pytest.raises(HTTPException) as exc_info:
             evaluate_concept_compatibility("C1234-TEST", request)
 
         assert exc_info.value.status_code == 400
         assert "Could not open a sample granule" in exc_info.value.detail
+        assert "Xarray failed" in exc_info.value.detail
+        assert "Rasterio failed" in exc_info.value.detail
 
 
 class TestCompatibilityEndpoint:

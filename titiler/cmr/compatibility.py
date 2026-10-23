@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from obspec_utils.readers import BlockStoreReader
 from obstore import store
 from pydantic import BaseModel
+from rio_tiler.errors import MissingAssets
 from rio_tiler.models import Info
 from starlette.requests import Request
 from titiler.xarray.dependencies import XarrayIOParams
@@ -547,8 +548,6 @@ def evaluate_concept_compatibility(
     temporal_extent = collection.temporal_extents
     base_url = str(request.base_url).rstrip("/")
 
-    # Try xarray first
-    xarray_error: Exception | None = None
     try:
         result = evaluate_xarray_compatibility(
             concept_id,
@@ -571,36 +570,35 @@ def evaluate_concept_compatibility(
             links=links,
             **result,
         )
-    except (ValueError, HTTPException, OSError, KeyError) as e:
-        xarray_error = e
-        logger.warning(f"XarrayReader failed: {e}")
-
-    # Fall back to rasterio
-    rasterio_error: Exception | None = None
-    try:
-        result = evaluate_rasterio_compatibility(
-            concept_id,
-            request,
-            granule_ur=granule_ur,
-        )
-        links = _build_links(base_url, concept_id, "rasterio")
-        return CompatibilityResponse(
-            concept_id=concept_id,
-            datetime=temporal_extent,
-            links=links,
-            **result,
-        )
-    except (ValueError, HTTPException, OSError, KeyError) as e:
-        rasterio_error = e
-        logger.warning(f"MultiBaseGranuleReader failed: {e}")
-
-    # Both failed
-    raise HTTPException(
-        400,
-        f"Could not open a sample granule for concept_id {concept_id} "
-        "with either the rasterio or xarray backends.\n\n "
-        f"xarray error: {xarray_error} \n\n rasterio_error: {rasterio_error}",
-    )
+    except (ValueError, HTTPException, OSError, KeyError) as xarray_error:
+        logger.warning(f"XarrayReader failed: {xarray_error}")
+        try:
+            result = evaluate_rasterio_compatibility(
+                concept_id,
+                request,
+                granule_ur=granule_ur,
+            )
+            links = _build_links(base_url, concept_id, "rasterio")
+            return CompatibilityResponse(
+                concept_id=concept_id,
+                datetime=temporal_extent,
+                links=links,
+                **result,
+            )
+        except (
+            ValueError,
+            HTTPException,
+            OSError,
+            KeyError,
+            MissingAssets,
+        ) as rasterio_error:
+            logger.warning(f"MultiBaseGranuleReader failed: {rasterio_error}")
+            raise HTTPException(
+                400,
+                f"Could not open a sample granule for concept_id {concept_id} "
+                "with either the rasterio or xarray backends.\n\n "
+                f"xarray error: {xarray_error} \n\n rasterio_error: {rasterio_error}",
+            ) from rasterio_error
 
 
 def _concept_id_param(
