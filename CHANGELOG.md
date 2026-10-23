@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.4](https://github.com/developmentseed/titiler-cmr/compare/v1.1.3...v1.1.4) (2026-10-23)
+
+
+### Bug Fixes
+
+* **compatibility:** report both readers' errors ([ac911aa](https://github.com/developmentseed/titiler-cmr/commit/ac911aa3b26b4af0ac6f2f879c0e4ef2b8f57ad7))
+* **compatibility:** report both readers' errors ([c823ecf](https://github.com/developmentseed/titiler-cmr/commit/c823ecf8c2a8d8829ccb622f0e11d4211b34804a)), closes [#261](https://github.com/developmentseed/titiler-cmr/issues/261)
+* **lambda:** pass the OTLP session to the exporter ([377ad6f](https://github.com/developmentseed/titiler-cmr/commit/377ad6f95f76b6ca43305020bc342e4c93ad5908))
+* return 400 for unknown or misaligned variables ([de588ac](https://github.com/developmentseed/titiler-cmr/commit/de588ac56f1cb2286b756842119779dbebcd99bf))
+* return 400 with hint for more expression errors ([5465099](https://github.com/developmentseed/titiler-cmr/commit/546509935e288b983659784304f70580b3c18751))
+* **timeseries:** tolerate intervals with no valid pixels in /timeseries/statistics ([#196](https://github.com/developmentseed/titiler-cmr/issues/196)) ([de18d95](https://github.com/developmentseed/titiler-cmr/commit/de18d95c3ed3f212c559bcdd4e1d254f629263cc)), closes [#195](https://github.com/developmentseed/titiler-cmr/issues/195)
+* **xarray:** make where() masking work in expressions ([3abe551](https://github.com/developmentseed/titiler-cmr/commit/3abe55139efa6107f073aad7404e8b78ac08c7ba))
+* **xarray:** mask pixels where any variable is nan ([124b37e](https://github.com/developmentseed/titiler-cmr/commit/124b37e55c833ecd75b91373551ce9dd053c2a51))
+
 ## [1.1.3](https://github.com/developmentseed/titiler-cmr/compare/v1.1.2...v1.1.3) (2026-09-22)
 
 
