@@ -1,5 +1,6 @@
 """titiler.cmr models."""
 
+import math
 import os
 import re
 from collections import defaultdict
@@ -9,6 +10,7 @@ from fastapi import Query
 from geojson_pydantic import Feature, FeatureCollection
 from geojson_pydantic.geometries import Geometry
 from pydantic import (
+    AfterValidator,
     AliasChoices,
     BaseModel,
     ConfigDict,
@@ -64,8 +66,30 @@ CloudCover = Annotated[
     ),
 ]
 
+
+def _validate_bbox(value: str | None) -> str | None:
+    """Check that bounding_box is four comma-separated finite numbers."""
+    if not value:
+        return value
+
+    parts = value.split(",")
+    if len(parts) != 4:
+        raise ValueError("bounding_box must be four comma-separated numbers")
+
+    try:
+        numbers = [float(part) for part in parts]
+    except ValueError:
+        raise ValueError("bounding_box values must be numbers") from None
+
+    if not all(math.isfinite(n) for n in numbers):
+        raise ValueError("bounding_box must be finite numbers")
+
+    return value
+
+
 BBox = Annotated[
     str | None,
+    AfterValidator(_validate_bbox),
     Query(
         description="bounding box coordinates",
         openapi_examples={
