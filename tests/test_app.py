@@ -88,9 +88,12 @@ def test_conformance(app):
     assert "Conformance" in response.text
 
 
-@pytest.mark.parametrize("bbox", ["a,b,c,d", "1,2,3", "1,2,3,4,5", "1,2,3,nan"])
+@pytest.mark.parametrize(
+    "bbox",
+    ["a,b,c,d", "1,2,3", "1,2,3,4,5", "1,2,3,nan", "1_0,0,20,10", "-100, 40, -90, 50"],
+)
 def test_bounding_box_malformed_returns_422(app, bbox):
-    """Malformed bounding_box values are rejected with 422 instead of crashing."""
+    """Malformed bounding_box values are rejected with 422."""
     response = app.get(
         "/xarray/info",
         params={
@@ -116,3 +119,19 @@ def test_bounding_box_valid_returns_200(app, bbox):
         },
     )
     assert response.status_code == 200
+
+
+def test_timeseries_non_finite_bounds_returns_422(app):
+    """A timeseries request with minx=nan is rejected with 422."""
+    response = app.get(
+        "/timeseries",
+        params={
+            "collection_concept_id": "C1-X",
+            "temporal": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z",
+            "minx": "nan",
+            "miny": "0",
+            "maxx": "1",
+            "maxy": "1",
+        },
+    )
+    assert response.status_code == 422

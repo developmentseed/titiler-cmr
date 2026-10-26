@@ -1,6 +1,5 @@
 """titiler.cmr models."""
 
-import math
 import os
 import re
 from collections import defaultdict
@@ -68,22 +67,13 @@ CloudCover = Annotated[
 
 
 def _validate_bbox(value: str | None) -> str | None:
-    """Check that bounding_box is four comma-separated finite numbers."""
+    """Return bounding_box if it is four comma-separated numbers, or None if empty."""
     if not value:
-        return value
-
-    parts = value.split(",")
-    if len(parts) != 4:
-        raise ValueError("bounding_box must be four comma-separated numbers")
-
-    try:
-        numbers = [float(part) for part in parts]
-    except ValueError:
-        raise ValueError("bounding_box values must be numbers") from None
-
-    if not all(math.isfinite(n) for n in numbers):
-        raise ValueError("bounding_box must be finite numbers")
-
+        return None
+    if not re.fullmatch(r"[-+]?[0-9]+(\.[0-9]+)?(,[-+]?[0-9]+(\.[0-9]+)?){3}", value):
+        raise ValueError(
+            "bounding_box must be four comma-separated numbers (minx,miny,maxx,maxy)"
+        )
     return value
 
 
