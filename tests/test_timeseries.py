@@ -17,6 +17,7 @@ from pydantic import TypeAdapter
 from rio_tiler.models import ImageData
 from starlette.requests import Request
 
+from titiler.cmr import timeseries as timeseries_module
 from titiler.cmr.main import rasterio as rasterio_factory
 from titiler.cmr.models import GranuleSearch
 from titiler.cmr.query import CMR_GRANULE_SEARCH_API
@@ -217,6 +218,26 @@ def test_timeseries_query(
         ),
     )
     assert len(query) == 3
+
+
+def test_timeseries_query_formats_bbox_for_cmr(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The no-step timeseries CMR search uses plain decimal bbox coordinates."""
+    search = MagicMock(return_value=[])
+    monkeypatch.setattr(timeseries_module, "get_granules", search)
+    timeseries_cmr_query(
+        request=MagicMock(),
+        granule_search=GranuleSearch(collection_concept_id="C123"),
+        timeseries_params=TimeseriesParams(
+            temporal="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z"
+        ),
+        minx=0.00001,
+        miny=-0.00001,
+        maxx=1,
+        maxy=1,
+    )
+    cmr_search = search.call_args.args[0]
+    assert cmr_search.bounding_box == "0.00001,-0.00001,1,1"
+    assert "e" not in cmr_search.bounding_box.lower()
 
 
 @pytest.mark.vcr
