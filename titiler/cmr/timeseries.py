@@ -36,7 +36,7 @@ from httpx2 import AsyncClient
 from httpx2 import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
-from pydantic import BaseModel
+from pydantic import BaseModel, FiniteFloat
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import BaseFactory, FactoryExtension
@@ -367,10 +367,10 @@ def timeseries_cmr_query(  # noqa: C901
     request: Request,
     granule_search: GranuleSearch = Depends(GranuleSearchParams),
     timeseries_params: TimeseriesParams = Depends(TimeseriesParams),
-    minx: Optional[float] = None,
-    miny: Optional[float] = None,
-    maxx: Optional[float] = None,
-    maxy: Optional[float] = None,
+    minx: Optional[FiniteFloat] = None,
+    miny: Optional[FiniteFloat] = None,
+    maxx: Optional[FiniteFloat] = None,
+    maxy: Optional[FiniteFloat] = None,
 ) -> TimeseriesCMRQueryParameters:
     """Convert a timeseries query into a set of CMR query parameters.
 

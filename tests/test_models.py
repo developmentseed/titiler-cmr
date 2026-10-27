@@ -1,6 +1,6 @@
 """Tests for CMR Pydantic models."""
 
-from titiler.cmr.models import CollectionSearchResponse
+from titiler.cmr.models import CollectionSearchResponse, GranuleSearch
 
 
 def test_collection_resolution_allows_partial_generic_resolution() -> None:
@@ -29,3 +29,8 @@ def test_collection_resolution_allows_partial_generic_resolution() -> None:
     )
 
     assert response.items[0].umm.resolution_degrees == (None, None)
+
+
+def test_granule_search_empty_bounding_box_is_none() -> None:
+    """An empty bounding_box is the same as an omitted one."""
+    assert GranuleSearch(bounding_box="").bounding_box is None
