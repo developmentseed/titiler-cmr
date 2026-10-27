@@ -32,7 +32,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry
-from httpx2 import AsyncClient, HTTPStatusError
+from httpx2 import AsyncClient
 from httpx2 import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
@@ -300,6 +300,10 @@ async def _timestep_request(
 
     Raises:
         ValueError: If ``method`` is not ``"GET"`` or ``"POST"``.
+        HTTPException: The sub-request failed. The status is kept, and the
+            detail is the sub-request's own detail, or API Gateway's message
+            when the gateway failed the sub-request, or otherwise the body as
+            is.
     """
     _method: Any
     if method == "POST":
@@ -310,14 +314,17 @@ async def _timestep_request(
         raise ValueError(f"{method} must be one of GET or POST")
 
     response = await _method(url, **kwargs)
-    try:
-        response.raise_for_status()
-    except HTTPStatusError:
-        raise HTTPException(
-            status_code=response.status_code, detail=response.text
-        ) from None
 
-    return response
+    if response.is_success:
+        return response
+
+    try:
+        body = response.json()
+        detail = body["detail"] if "detail" in body else body["message"]
+    except (ValueError, KeyError, TypeError):
+        detail = response.text
+
+    raise HTTPException(status_code=response.status_code, detail=detail)
 
 
 async def _fetch_statistics(

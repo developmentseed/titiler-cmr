@@ -22,4 +22,12 @@ class InvalidDatetime(Exception):
 
 
 class CMRQueryTimeout(Exception):
-    """CMR granule search request timed out."""
+    """CMR search request timed out."""
+
+
+class CMROutage(Exception):
+    """CMR search request failed on CMR's side.
+
+    CMR could not be reached, did not answer with a search result, or answered
+    with a 3xx or 5xx.
+    """

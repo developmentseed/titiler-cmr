@@ -372,7 +372,9 @@ def evaluate_xarray_compatibility(
 
     Raises:
         ValueError: If no assets found or reader incompatible
-        HTTPException: If CMR query fails
+        CMRQueryTimeout: If CMR does not answer in time
+        CMROutage: If CMR fails on its side
+        HTTPException: If CMR rejects the search
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -431,7 +433,9 @@ def evaluate_rasterio_compatibility(
 
     Raises:
         ValueError: If no assets found or reader incompatible
-        HTTPException: If CMR query fails
+        CMRQueryTimeout: If CMR does not answer in time
+        CMROutage: If CMR fails on its side
+        HTTPException: If CMR rejects the search
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -539,7 +543,10 @@ def evaluate_concept_compatibility(
         CompatibilityResponse with backend info, temporal extent, and metadata
 
     Raises:
-        HTTPException: If neither reader is compatible or metadata cannot be fetched
+        HTTPException: If neither reader is compatible, the collection is not
+            found, or CMR rejects a search
+        CMRQueryTimeout: If CMR does not answer in time
+        CMROutage: If CMR fails on its side
     """
     if not concept_id:
         raise HTTPException(400, "concept_id is required")
@@ -570,7 +577,7 @@ def evaluate_concept_compatibility(
             links=links,
             **result,
         )
-    except (ValueError, HTTPException, OSError, KeyError) as xarray_error:
+    except (ValueError, OSError, KeyError) as xarray_error:
         logger.warning(f"XarrayReader failed: {xarray_error}")
         try:
             result = evaluate_rasterio_compatibility(
@@ -587,7 +594,6 @@ def evaluate_concept_compatibility(
             )
         except (
             ValueError,
-            HTTPException,
             OSError,
             KeyError,
             MissingAssets,

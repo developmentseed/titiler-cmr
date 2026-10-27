@@ -1,14 +1,25 @@
 """CMR granule and collection search functions."""
 
-from typing import Any, Generator
+from typing import Any, Generator, Literal
 
 import shapely
 from fastapi import HTTPException
 from geojson_pydantic.geometries import Geometry, Point
-from httpx2 import Client, HTTPStatusError, ReadTimeout
+from httpx2 import (
+    Client,
+    ConnectTimeout,
+    DecodingError,
+    NetworkError,
+    ReadTimeout,
+    RemoteProtocolError,
+    Request,
+    Response,
+    WriteTimeout,
+)
+from pydantic import BaseModel, ValidationError
 from shapely.geometry import shape
 
-from titiler.cmr.errors import CMRQueryTimeout
+from titiler.cmr.errors import CMROutage, CMRQueryTimeout
 from titiler.cmr.logger import logger
 from titiler.cmr.models import (
     Collection,
@@ -19,6 +30,8 @@ from titiler.cmr.models import (
 )
 
 CMR_GRANULE_SEARCH_API = "https://cmr.earthdata.nasa.gov/search"
+
+SearchKind = Literal["collection", "granule"]
 
 
 def _combine_bbox_and_geometry(bounding_box: str, geometry: Geometry) -> str:
@@ -55,6 +68,68 @@ def _geometry_to_cmr_params(geometry: Geometry) -> dict[str, str]:
 
     minx, miny, maxx, maxy = shape(geometry.model_dump()).bounds
     return {"bounding_box": f"{minx},{miny},{maxx},{maxy}"}
+
+
+def _send_cmr_search(client: Client, request: Request, kind: SearchKind) -> Response:
+    """Send a CMR search request and return its successful response.
+
+    Only failures on CMR's side become CMRQueryTimeout or CMROutage. Any other
+    httpx error (a full connection pool, a malformed header, a proxy setting)
+    is titiler-cmr's own fault, so it propagates and becomes a 500.
+
+    Raises:
+        CMRQueryTimeout: CMR did not answer in time.
+        CMROutage: CMR could not be reached, sent a body that could not be
+            decoded, or answered with a 3xx or 5xx, so the failure is CMR's,
+            not the request's.
+        HTTPException: CMR answered with a 4xx. The status is kept, and the
+            detail is CMR's error messages as plain text, or the body as is
+            when it does not carry CMR's messages.
+    """
+    try:
+        response = client.send(request)
+    except (ConnectTimeout, ReadTimeout, WriteTimeout) as e:
+        raise CMRQueryTimeout(
+            f"CMR {kind} search timed out after {client.timeout.read} seconds"
+        ) from e
+    except (NetworkError, RemoteProtocolError, DecodingError) as e:
+        raise CMROutage(
+            f"CMR {kind} search failed: {str(e) or type(e).__name__}"
+        ) from e
+
+    if response.is_success:
+        return response
+
+    if not response.is_client_error:
+        raise CMROutage(
+            f"CMR {kind} search failed with {response.status_code} "
+            f"({response.reason_phrase})"
+        )
+
+    try:
+        errors = response.json()["errors"]
+        detail = (
+            "; ".join(errors) if isinstance(errors, list) and errors else response.text
+        )
+    except (ValueError, KeyError, TypeError):
+        detail = response.text
+
+    raise HTTPException(response.status_code, detail)
+
+
+def _parse_cmr_response[M: BaseModel](
+    response: Response, model: type[M], kind: SearchKind
+) -> M:
+    """Parse a successful CMR search response into its model.
+
+    Raises:
+        CMROutage: the body is not JSON, or not the shape of a search result,
+            so CMR answered with something other than a search result.
+    """
+    try:
+        return model.model_validate_json(response.content)
+    except ValidationError as e:
+        raise CMROutage(f"CMR {kind} search returned an unreadable response") from e
 
 
 def _build_granule_params(
@@ -140,6 +215,15 @@ def get_granules(
             by imprecise CMR polygon edges.
         skipcovered: Skip any granule whose geometry equals a geometry already
             yielded in this search.
+
+    Any httpx error on titiler-cmr's side (e.g., a full connection pool)
+    propagates as is.
+
+    Raises:
+        CMRQueryTimeout: CMR did not answer in time.
+        CMROutage: CMR could not be reached, did not answer with a search
+            result, or answered with a 3xx or 5xx.
+        HTTPException: CMR answered with a 4xx, with its status and messages.
     """
     params = _build_granule_params(search_params, geometry, page_size)
     search_shape = (
@@ -153,23 +237,12 @@ def get_granules(
     headers: dict[str, str] = {}
     count = 0
     while count < limit:
-        try:
-            request = client.build_request(
-                method="GET", url="granules.umm_json", params=params, headers=headers
-            )
-            logger.info("Querying CMR: %s with headers %s", request.url, headers)
-            response = client.send(request)
-        except ReadTimeout as e:
-            msg = f"CMR granule search timed out after {client.timeout} seconds"
-            logger.exception(msg)
-            raise CMRQueryTimeout(msg) from e
-
-        try:
-            response.raise_for_status()
-        except HTTPStatusError as e:
-            raise HTTPException(response.status_code, response.text) from e
-
-        result = GranuleSearchResponse(**response.json())
+        request = client.build_request(
+            method="GET", url="granules.umm_json", params=params, headers=headers
+        )
+        logger.info("Querying CMR: %s with headers %s", request.url, headers)
+        response = _send_cmr_search(client, request, "granule")
+        result = _parse_cmr_response(response, GranuleSearchResponse, "granule")
         logger.debug("Found %d granules", len(result.items))
 
         for granule in result.items:
@@ -202,26 +275,22 @@ def get_granules(
 def get_collection(concept_id: str, client: Client) -> Collection:
     """Fetch UMM metadata for a CMR collection by concept_id.
 
+    Any httpx error on titiler-cmr's side (e.g., a full connection pool)
+    propagates as is.
+
     Raises:
-        HTTPException: 404 if the collection is not found; otherwise the CMR
-            HTTP status code.
+        CMRQueryTimeout: CMR did not answer in time.
+        CMROutage: CMR could not be reached, did not answer with a search
+            result, or answered with a 3xx or 5xx.
+        HTTPException: 404 if the collection is not found, otherwise CMR's 4xx
+            status and messages.
     """
-    try:
-        response = client.get(
-            "collections.umm_json",
-            params={"concept_id": concept_id},
-        )
-    except ReadTimeout as e:
-        msg = f"CMR collection search timed out after {client.timeout} seconds"
-        logger.exception(msg)
-        raise CMRQueryTimeout(msg) from e
+    request = client.build_request(
+        method="GET", url="collections.umm_json", params={"concept_id": concept_id}
+    )
+    response = _send_cmr_search(client, request, "collection")
+    result = _parse_cmr_response(response, CollectionSearchResponse, "collection")
 
-    try:
-        response.raise_for_status()
-    except HTTPStatusError as e:
-        raise HTTPException(response.status_code, response.text) from e
-
-    result = CollectionSearchResponse(**response.json())
     if not result.items:
         raise HTTPException(404, f"concept_id {concept_id} not found")
 

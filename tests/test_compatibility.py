@@ -9,7 +9,9 @@ import numpy as np
 import pytest
 import xarray as xr
 from fastapi import HTTPException
+from httpx2 import Client, MockTransport, Response
 from rio_tiler.errors import MissingAssets
+from starlette.requests import Request
 
 from titiler.cmr.compatibility import (
     CompatibilityResponse,
@@ -21,6 +23,7 @@ from titiler.cmr.compatibility import (
     evaluate_xarray_compatibility,
     extract_xarray_metadata,
 )
+from titiler.cmr.errors import CMROutage
 from titiler.cmr.models import (
     Granule,
     GranuleSpatialExtent,
@@ -66,20 +69,32 @@ class _FakeRasterReaderContext:
         return False
 
 
-def _make_request(s3_access=False, auth_token=None, get_s3_credentials=None):
-    """Build a lightweight Request-like object with app.state fields set."""
-    return SimpleNamespace(
-        app=SimpleNamespace(
-            state=SimpleNamespace(
-                client=object(),
-                s3_access=s3_access,
-                earthdata_token_provider=(
-                    (lambda: auth_token) if auth_token is not None else None
-                ),
-                get_s3_credentials=get_s3_credentials,
-            )
-        ),
-        base_url="http://testserver/",
+def _make_request(
+    s3_access=False, auth_token=None, get_s3_credentials=None, client=None
+) -> Request:
+    """Build a Request for http://testserver/ whose app has only the state fields set."""
+    app = SimpleNamespace(
+        state=SimpleNamespace(
+            client=client or object(),
+            s3_access=s3_access,
+            earthdata_token_provider=(
+                (lambda: auth_token) if auth_token is not None else None
+            ),
+            get_s3_credentials=get_s3_credentials,
+        )
+    )
+
+    return Request(
+        {
+            "type": "http",
+            "app": app,
+            "scheme": "http",
+            "server": ("testserver", 80),
+            "path": "/",
+            "root_path": "",
+            "query_string": b"",
+            "headers": [],
+        }
     )
 
 
@@ -657,6 +672,52 @@ class TestConceptCompatibility:
         assert "Could not open a sample granule" in exc_info.value.detail
         assert "Xarray failed" in exc_info.value.detail
         assert "Rasterio failed" in exc_info.value.detail
+
+    def test_cmr_outage_while_sampling_a_granule_is_not_masked(self):
+        """A CMR outage while sampling a granule escapes, not the both-readers 400."""
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(503),
+        }
+        request = _make_request(
+            client=Client(
+                transport=MockTransport(
+                    lambda cmr_request: responses[cmr_request.url.path]
+                )
+            )
+        )
+
+        with pytest.raises(
+            CMROutage,
+            match=r"CMR granule search failed with 503 \(Service Unavailable\)",
+        ):
+            evaluate_concept_compatibility("C1234-TEST", request)
+
+    def test_cmr_rejection_while_sampling_a_granule_is_not_masked(self):
+        """A CMR 4xx while sampling a granule escapes with CMR's status and message."""
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                400, json={"errors": ["Parameter [foo] was not recognized."]}
+            ),
+        }
+        request = _make_request(
+            client=Client(
+                transport=MockTransport(
+                    lambda cmr_request: responses[cmr_request.url.path]
+                )
+            )
+        )
+
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_concept_compatibility("C1234-TEST", request)
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail == "Parameter [foo] was not recognized."
 
 
 class TestCompatibilityEndpoint:
