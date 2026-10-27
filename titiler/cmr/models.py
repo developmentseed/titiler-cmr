@@ -9,6 +9,7 @@ from fastapi import Query
 from geojson_pydantic import Feature, FeatureCollection
 from geojson_pydantic.geometries import Geometry
 from pydantic import (
+    AfterValidator,
     AliasChoices,
     BaseModel,
     ConfigDict,
@@ -64,8 +65,21 @@ CloudCover = Annotated[
     ),
 ]
 
+
+def _validate_bbox(value: str | None) -> str | None:
+    """Return bounding_box if it is four comma-separated numbers, or None if empty."""
+    if not value:
+        return None
+    if not re.fullmatch(r"[-+]?[0-9]+(\.[0-9]+)?(,[-+]?[0-9]+(\.[0-9]+)?){3}", value):
+        raise ValueError(
+            "bounding_box must be four comma-separated numbers (minx,miny,maxx,maxy)"
+        )
+    return value
+
+
 BBox = Annotated[
     str | None,
+    AfterValidator(_validate_bbox),
     Query(
         description="bounding box coordinates",
         openapi_examples={
