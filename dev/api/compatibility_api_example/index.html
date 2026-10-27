@@ -2340,7 +2340,198 @@ print(json.dumps(grouped_compatibility_response, indent=2))</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>{
-  "detail": "CMR collection search timed out after Timeout(timeout=20.0) seconds"
+  "concept_id": "C3622214170-ASF",
+  "backend": "xarray",
+  "datetime": [
+    {
+      "RangeDateTimes": [
+        {
+          "BeginningDateTime": "2025-10-01T00:00:00.000Z"
+        }
+      ],
+      "EndsAtPresentFlag": true
+    }
+  ],
+  "variables": {
+    "HHHH": {
+      "shape": [
+        4590,
+        4635
+      ],
+      "dtype": "float32",
+      "min": 1.0176728166763627e-15,
+      "max": 29.39111328125,
+      "mean": 0.2571849524974823,
+      "p01": 5.349995620129722e-15,
+      "p05": 1.3066370901926305e-14,
+      "p95": 0.60009765625,
+      "p99": 1.1632080078125
+    },
+    "HVHV": {
+      "shape": [
+        4590,
+        4635
+      ],
+      "dtype": "float32",
+      "min": 3.028007261162563e-16,
+      "max": 1.8312530517578125,
+      "mean": 0.0505811832845211,
+      "p01": 1.034873142041759e-15,
+      "p05": 2.3818620686899553e-15,
+      "p95": 0.1281547546386718,
+      "p99": 0.19366760253906265
+    },
+    "listOfCovarianceTerms": {
+      "shape": [
+        2
+      ],
+      "dtype": "|S4",
+      "min": null,
+      "max": null,
+      "mean": null,
+      "p01": null,
+      "p05": null,
+      "p95": null,
+      "p99": null
+    },
+    "listOfPolarizations": {
+      "shape": [
+        2
+      ],
+      "dtype": "|S2",
+      "min": null,
+      "max": null,
+      "mean": null,
+      "p01": null,
+      "p05": null,
+      "p95": null,
+      "p99": null
+    },
+    "mask": {
+      "shape": [
+        4590,
+        4635
+      ],
+      "dtype": "float32",
+      "min": 0.0,
+      "max": 3.0,
+      "mean": 1.6929574012756348,
+      "p01": 0.0,
+      "p05": 0.0,
+      "p95": 3.0,
+      "p99": 3.0
+    },
+    "numberOfLooks": {
+      "shape": [
+        4590,
+        4635
+      ],
+      "dtype": "float32",
+      "min": 0.0045042443089187145,
+      "max": 67.97248077392578,
+      "mean": 37.336551666259766,
+      "p01": 21.554586944580077,
+      "p05": 28.387264060974122,
+      "p95": 45.35958633422852,
+      "p99": 50.709129562377925
+    },
+    "numberOfSubSwaths": {
+      "shape": [],
+      "dtype": "uint8",
+      "min": 3.0,
+      "max": 3.0,
+      "mean": 3.0,
+      "p01": 3.0,
+      "p05": 3.0,
+      "p95": 3.0,
+      "p99": 3.0
+    },
+    "rtcGammaToSigmaFactor": {
+      "shape": [
+        4590,
+        4635
+      ],
+      "dtype": "float32",
+      "min": 0.12039945274591446,
+      "max": 0.9868261218070984,
+      "mean": 0.7441885471343994,
+      "p01": 0.5182501530647278,
+      "p05": 0.6133549332618713,
+      "p95": 0.8572220802307129,
+      "p99": 0.9109321808815
+    },
+    "xCoordinateSpacing": {
+      "shape": [],
+      "dtype": "float64",
+      "min": 80.0,
+      "max": 80.0,
+      "mean": 80.0,
+      "p01": 80.0,
+      "p05": 80.0,
+      "p95": 80.0,
+      "p99": 80.0
+    },
+    "yCoordinateSpacing": {
+      "shape": [],
+      "dtype": "float64",
+      "min": -80.0,
+      "max": -80.0,
+      "mean": -80.0,
+      "p01": -80.0,
+      "p05": -80.0,
+      "p95": -80.0,
+      "p99": -80.0
+    }
+  },
+  "dimensions": {
+    "yCoordinates": 4590,
+    "xCoordinates": 4635,
+    "phony_dim_5": 2
+  },
+  "coordinates": {
+    "projection": {
+      "size": 1,
+      "dtype": "uint32",
+      "min": 32633.0,
+      "max": 32633.0
+    },
+    "xCoordinates": {
+      "size": 4635,
+      "dtype": "float64",
+      "min": 148360.0,
+      "max": 519080.0
+    },
+    "yCoordinates": {
+      "size": 4590,
+      "dtype": "float64",
+      "min": 5392840.0,
+      "max": 5759960.0
+    }
+  },
+  "compatible_groups": null,
+  "granule_ur": "NISAR_L2_PR_GCOV_002_109_D_063_4005_DHDH_A_20251012T182508_20251012T182531_X05010_N_P_J_001",
+  "example_assets": "s3://sds-n-cumulus-prod-nisar-products/NISAR_L2_GCOV_BETA_V1/NISAR_L2_PR_GCOV_002_109_D_063_4005_DHDH_A_20251012T182508_20251012T182531_X05010_N_P_J_001/NISAR_L2_PR_GCOV_002_109_D_063_4005_DHDH_A_20251012T182508_20251012T182531_X05010_N_P_J_001.h5",
+  "sample_asset_raster_info": null,
+  "links": [
+    {
+      "rel": "tilejson",
+      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C3622214170-ASF&amp;variables=HHHH&amp;group=science/LSAR/GCOV/grids/frequencyB&amp;temporal={temporal}",
+      "title": "TileJSON",
+      "type": "application/json"
+    },
+    {
+      "rel": "map",
+      "href": "https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/map.html?collection_concept_id=C3622214170-ASF&amp;variables=HHHH&amp;group=science/LSAR/GCOV/grids/frequencyB&amp;temporal={temporal}",
+      "title": "Map viewer",
+      "type": "text/html"
+    },
+    {
+      "rel": "tile",
+      "href": "https://openveda.cloud/api/titiler-cmr/xarray/tiles/WebMercatorQuad/{z}/{x}/{y}?collection_concept_id=C3622214170-ASF&amp;variables=HHHH&amp;group=science/LSAR/GCOV/grids/frequencyB&amp;temporal={temporal}",
+      "title": "Map tile",
+      "type": "image/png"
+    }
+  ]
 }
 </pre>
 </div>
@@ -2398,18 +2589,11 @@ print("tilejson link for selected group:", group_tilejson_link)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">StopIteration</span>                             Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> group_variables = list((grouped_compatibility_response.get(<span class="ansi-yellow-fg">"variables"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">or</span> {}).keys())
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> group_tilejson_link = next(
-<span class="ansi-green-fg">      3</span>     link[<span class="ansi-yellow-fg">"href"</span>]
-<span class="ansi-green-fg">      4</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> link <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> grouped_compatibility_response.get(<span class="ansi-yellow-fg">"links"</span>, [])
-<span class="ansi-green-fg">      5</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> link[<span class="ansi-yellow-fg">"rel"</span>] == <span class="ansi-yellow-fg">"tilejson"</span>
-
-<span class="ansi-red-fg">StopIteration</span>: </pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>selected group: science/LSAR/GCOV/grids/frequencyB
+variables in selected group (first 10): ['HHHH', 'HVHV', 'listOfCovarianceTerms', 'listOfPolarizations', 'mask', 'numberOfLooks', 'numberOfSubSwaths', 'rtcGammaToSigmaFactor', 'xCoordinateSpacing', 'yCoordinateSpacing']
+tilejson link for selected group: https://openveda.cloud/api/titiler-cmr/xarray/WebMercatorQuad/tilejson.json?collection_concept_id=C3622214170-ASF&amp;variables=HHHH&amp;group=science/LSAR/GCOV/grids/frequencyB&amp;temporal={temporal}
+</pre>
 </div>
 </div>
 </div>

@@ -3742,36 +3742,12 @@ for interval, stats in ragged["properties"]["statistics"].items():
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># The full span of the collection, sampled one calendar year at a time.</span>
-<span class="ansi-green-fg">      2</span> opera_timespan = <span class="ansi-yellow-fg">"2023-01-01T00:00:00Z/2025-12-31T23:59:59Z"</span>
-<span class="ansi-green-fg">      3</span> annual_steps = {<span class="ansi-yellow-fg">"step"</span>: <span class="ansi-yellow-fg">"P1Y"</span>, <span class="ansi-yellow-fg">"temporal_mode"</span>: <span class="ansi-yellow-fg">"interval"</span>}
-<span class="ansi-green-fg">      4</span> 
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> ragged = opera_statistics(
-<span class="ansi-green-fg">      6</span>     aoi_bay_area,
-<span class="ansi-green-fg">      7</span>     opera_timespan,
-<span class="ansi-green-fg">      8</span>     endpoint=<span class="ansi-yellow-fg">"/rasterio/timeseries/statistics"</span>,
-
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 37</span>, in <span class="ansi-cyan-fg">opera_statistics</span><span class="ansi-blue-fg">(feature, temporal, endpoint, **params)</span>
-<span class="ansi-green-fg">     33</span>         },
-<span class="ansi-green-fg">     34</span>         json=feature,
-<span class="ansi-green-fg">     35</span>         timeout=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">     36</span>     )
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">37</span>     r.raise_for_status()
-<span class="ansi-green-fg">     38</span> 
-<span class="ansi-green-fg">     39</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> r.json()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
-
-<span class="ansi-red-fg">HTTPStatusError</span>: Server error '504 Gateway Timeout' for url 'https://openveda.cloud/api/titiler-cmr/rasterio/timeseries/statistics?collection_concept_id=C2519119034-LPCLOUD&amp;temporal=2023-01-01T00%3A00%3A00Z%2F2025-12-31T23%3A59%3A59Z&amp;assets_regex=VEG-DIST-STATUS&amp;assets=VEG-DIST-STATUS&amp;categorical=true&amp;step=P1Y&amp;temporal_mode=interval'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>without `c`, the bin sets differ per year:
+  2023-01-01  bins=[0, 3, 6, 7, 8]
+  2024-01-01  bins=[0, 3, 6, 7, 8, 9, 10]
+  2025-01-01  bins=[0, 3, 6, 7, 8, 9, 10]
+</pre>
 </div>
 </div>
 </div>
@@ -3860,36 +3836,12 @@ for interval, stats in aligned["properties"]["statistics"].items():
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 7</span>
-<span class="ansi-green-fg">      3</span> <span style="color: rgb(95,135,135)"># asking for it with `c` would only ever yield an empty bin.</span>
-<span class="ansi-green-fg">      4</span> DIST_ANN_CLASS_VALUES = [v <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> v <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> DIST_ANN_CLASSES <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> v != DIST_ANN_NODATA]
-<span class="ansi-green-fg">      5</span> print(<span class="ansi-yellow-fg">"requesting classes:"</span>, DIST_ANN_CLASS_VALUES)
-<span class="ansi-green-fg">      6</span> 
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">7</span> aligned = opera_statistics(
-<span class="ansi-green-fg">      8</span>     aoi_bay_area,
-<span class="ansi-green-fg">      9</span>     opera_timespan,
-<span class="ansi-green-fg">     10</span>     endpoint=<span class="ansi-yellow-fg">"/rasterio/timeseries/statistics"</span>,
-
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 37</span>, in <span class="ansi-cyan-fg">opera_statistics</span><span class="ansi-blue-fg">(feature, temporal, endpoint, **params)</span>
-<span class="ansi-green-fg">     33</span>         },
-<span class="ansi-green-fg">     34</span>         json=feature,
-<span class="ansi-green-fg">     35</span>         timeout=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">     36</span>     )
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">37</span>     r.raise_for_status()
-<span class="ansi-green-fg">     38</span> 
-<span class="ansi-green-fg">     39</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> r.json()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
-
-<span class="ansi-red-fg">HTTPStatusError</span>: Server error '504 Gateway Timeout' for url 'https://openveda.cloud/api/titiler-cmr/rasterio/timeseries/statistics?collection_concept_id=C2519119034-LPCLOUD&amp;temporal=2023-01-01T00%3A00%3A00Z%2F2025-12-31T23%3A59%3A59Z&amp;assets_regex=VEG-DIST-STATUS&amp;assets=VEG-DIST-STATUS&amp;categorical=true&amp;c=0&amp;c=3&amp;c=6&amp;c=7&amp;c=8&amp;c=9&amp;c=10&amp;step=P1Y&amp;temporal_mode=interval'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>interval          0        3        6        7        8        9       10
+2023-01-01  313,251       74       39    3,055      293        0        0
+2024-01-01  318,114      120       35    2,049       67       70        5
+2025-01-01  312,933       85       34    2,405       34      972      249
+</pre>
 </div>
 </div>
 </div>
@@ -4007,36 +3959,16 @@ for label, feature in [("land", aoi_bay_area), ("ocean", aoi_ocean)]:
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">HTTPStatusError</span>                           Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 20</span>
-<span class="ansi-green-fg">     16</span>     },
-<span class="ansi-green-fg">     17</span> }
-<span class="ansi-green-fg">     18</span> 
-<span class="ansi-green-fg">     19</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> label, feature <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> [(<span class="ansi-yellow-fg">"land"</span>, aoi_bay_area), (<span class="ansi-yellow-fg">"ocean"</span>, aoi_ocean)]:
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">20</span>     response = opera_statistics(
-<span class="ansi-green-fg">     21</span>         feature, opera_year, **dist_status_asset, categorical=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>
-<span class="ansi-green-fg">     22</span>     )
-<span class="ansi-green-fg">     23</span>     band = response[<span class="ansi-yellow-fg">"properties"</span>][<span class="ansi-yellow-fg">"statistics"</span>][<span class="ansi-yellow-fg">"b1"</span>]
-
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 37</span>, in <span class="ansi-cyan-fg">opera_statistics</span><span class="ansi-blue-fg">(feature, temporal, endpoint, **params)</span>
-<span class="ansi-green-fg">     33</span>         },
-<span class="ansi-green-fg">     34</span>         json=feature,
-<span class="ansi-green-fg">     35</span>         timeout=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">     36</span>     )
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">37</span>     r.raise_for_status()
-<span class="ansi-green-fg">     38</span> 
-<span class="ansi-green-fg">     39</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> r.json()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/httpx2/_models.py:827</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    825</span> error_type = error_types.get(status_class, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid status code</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    826</span> message = message.format(<span style="color: rgb(0,135,0)">self</span>, error_type=error_type)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">827</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPStatusError(message, request=request, response=<span style="color: rgb(0,135,0)">self</span>)
-
-<span class="ansi-red-fg">HTTPStatusError</span>: Server error '504 Gateway Timeout' for url 'https://openveda.cloud/api/titiler-cmr/rasterio/statistics?collection_concept_id=C2519119034-LPCLOUD&amp;temporal=2024-01-01T00%3A00%3A00Z%2F2024-12-31T23%3A59%3A59Z&amp;assets_regex=VEG-DIST-STATUS&amp;assets=VEG-DIST-STATUS&amp;categorical=true'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>land    valid_pixels=   320,460  masked_pixels=         0  bins=[0, 3, 6, 7, 8, 9, 10]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>ocean   valid_pixels=         8  masked_pixels=   289,191  bins=[0]
+</pre>
 </div>
 </div>
 </div>
@@ -4274,14 +4206,14 @@ for max_size in [None, 1024]:
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>max_size=None    11.4 s   array=  10,578,756 px  ~ 10.6 MB at 1 byte/px
+<pre>max_size=None    17.6 s   array=  10,578,756 px  ~ 10.6 MB at 1 byte/px
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>max_size=1024     3.1 s   array=   1,048,576 px  ~  1.0 MB at 1 byte/px
+<pre>max_size=1024     6.1 s   array=   1,048,576 px  ~  1.0 MB at 1 byte/px
 </pre>
 </div>
 </div>
