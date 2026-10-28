@@ -15,6 +15,7 @@ from freezegun import freeze_time
 from httpx2 import AsyncClient, Client, MockTransport, Response
 from pydantic import TypeAdapter
 from rio_tiler.models import ImageData
+from starlette.applications import Starlette
 from starlette.requests import Request
 
 from titiler.cmr.main import rasterio as rasterio_factory
@@ -218,6 +219,32 @@ def test_timeseries_query(
         ),
     )
     assert len(query) == 3
+
+
+def test_timeseries_query_formats_bbox_for_cmr() -> None:
+    """The no-step timeseries CMR search uses plain decimal bbox coordinates."""
+    sent: list[str] = []
+
+    def cmr(request):
+        sent.append(request.url.params["bounding_box"])
+        return Response(200, json={"hits": 0, "items": []})
+
+    app = Starlette()
+    app.state.client = Client(transport=MockTransport(cmr))
+
+    timeseries_cmr_query(
+        request=Request({"type": "http", "app": app}),
+        granule_search=GranuleSearch(collection_concept_id="C123"),
+        timeseries_params=TimeseriesParams(
+            temporal="2024-01-01T00:00:00Z/2024-01-02T00:00:00Z"
+        ),
+        minx=0.00001,
+        miny=-0.00001,
+        maxx=1.0,
+        maxy=1.0,
+    )
+
+    assert sent == ["0.00001,-0.00001,1.0,1.0"]
 
 
 @pytest.mark.vcr

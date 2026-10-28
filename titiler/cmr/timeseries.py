@@ -48,7 +48,7 @@ from titiler.cmr.dependencies import GranuleSearch, GranuleSearchParams
 from titiler.cmr.errors import InvalidDatetime
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.logger import logger
-from titiler.cmr.query import get_granules
+from titiler.cmr.query import _cmr_numbers, get_granules
 from titiler.cmr.reader import XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import (
@@ -418,7 +418,7 @@ def timeseries_cmr_query(  # noqa: C901
         elif start and not timeseries_params.step:
             search_end = end or datetime.now(tz=timezone.utc)
             bbox_str = (
-                f"{minx},{miny},{maxx},{maxy}"
+                _cmr_numbers(minx, miny, maxx, maxy)
                 if (
                     minx is not None
                     and miny is not None

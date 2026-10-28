@@ -1,5 +1,6 @@
 """CMR granule and collection search functions."""
 
+from decimal import Decimal
 from typing import Any, Generator, Literal
 
 import shapely
@@ -34,6 +35,11 @@ CMR_GRANULE_SEARCH_API = "https://cmr.earthdata.nasa.gov/search"
 SearchKind = Literal["collection", "granule"]
 
 
+def _cmr_numbers(*values: float) -> str:
+    """Join values as plain decimals because CMR rejects exponent notation."""
+    return ",".join(format(Decimal(str(value)), "f") for value in values)
+
+
 def _combine_bbox_and_geometry(bounding_box: str, geometry: Geometry) -> str:
     """Intersect a bounding_box string with a geometry.
 
@@ -52,7 +58,7 @@ def _combine_bbox_and_geometry(bounding_box: str, geometry: Geometry) -> str:
         raise NoAssetFoundError("Provided bounding_box and geometry do not overlap")
 
     ix_minx, ix_miny, ix_maxx, ix_maxy = intersection.bounds
-    return f"{ix_minx},{ix_miny},{ix_maxx},{ix_maxy}"
+    return _cmr_numbers(ix_minx, ix_miny, ix_maxx, ix_maxy)
 
 
 def _geometry_to_cmr_params(geometry: Geometry) -> dict[str, str]:
@@ -64,10 +70,10 @@ def _geometry_to_cmr_params(geometry: Geometry) -> dict[str, str]:
     """
     if isinstance(geometry, Point):
         lon, lat, *_ = geometry.coordinates
-        return {"point": f"{lon},{lat}"}
+        return {"point": _cmr_numbers(lon, lat)}
 
     minx, miny, maxx, maxy = shape(geometry.model_dump()).bounds
-    return {"bounding_box": f"{minx},{miny},{maxx},{maxy}"}
+    return {"bounding_box": _cmr_numbers(minx, miny, maxx, maxy)}
 
 
 def _send_cmr_search(client: Client, request: Request, kind: SearchKind) -> Response:

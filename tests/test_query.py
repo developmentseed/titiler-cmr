@@ -4,6 +4,7 @@ import pytest
 import shapely
 import shapely.geometry
 from fastapi import HTTPException
+from geojson_pydantic.geometries import Point, Polygon
 from httpx2 import (
     Client,
     ConnectError,
@@ -20,7 +21,66 @@ from httpx2 import (
 
 from titiler.cmr.errors import CMROutage, CMRQueryTimeout
 from titiler.cmr.models import Granule, GranuleSearch, GranuleSpatialExtent
-from titiler.cmr.query import _is_fully_covered, get_collection, get_granules
+from titiler.cmr.query import (
+    _cmr_numbers,
+    _combine_bbox_and_geometry,
+    _geometry_to_cmr_params,
+    _is_fully_covered,
+    get_collection,
+    get_granules,
+)
+
+
+@pytest.mark.parametrize(
+    ("values", "expected"),
+    [
+        ((0.00001,), "0.00001"),
+        ((-0.00001,), "-0.00001"),
+        ((12.345, -67.89), "12.345,-67.89"),
+        ((12, -67), "12,-67"),
+        ((0,), "0"),
+        ((0.0,), "0.0"),
+    ],
+)
+def test_cmr_numbers_uses_plain_decimal(values, expected):
+    """Format integer and decimal values without exponent notation."""
+    result = _cmr_numbers(*values)
+    assert result == expected
+    assert "e" not in result.lower()
+
+
+def test_geometry_to_cmr_point_formats_coordinates():
+    """Format point coordinates as plain decimals for CMR."""
+    point = Point(type="Point", coordinates=(0.00001, -0.00001))
+    assert _geometry_to_cmr_params(point) == {"point": "0.00001,-0.00001"}
+
+
+def test_geometry_to_cmr_bbox_formats_bounds():
+    """Format geometry bounds as plain decimals for CMR."""
+    polygon = Polygon(
+        type="Polygon",
+        coordinates=[
+            [
+                [0.00001, -0.00001],
+                [1, -0.00001],
+                [1, 1],
+                [0.00001, 1],
+                [0.00001, -0.00001],
+            ]
+        ],
+    )
+    assert _geometry_to_cmr_params(polygon) == {
+        "bounding_box": "0.00001,-0.00001,1.0,1.0"
+    }
+
+
+def test_combine_bbox_and_geometry_formats_intersection():
+    """Format the intersected bounding box as plain decimals."""
+    polygon = Polygon(
+        type="Polygon",
+        coordinates=[[[0.00001, 0], [1, 0], [1, 1], [0.00001, 1], [0.00001, 0]]],
+    )
+    assert _combine_bbox_and_geometry("0,0,1,1", polygon) == "0.00001,0.0,1.0,1.0"
 
 
 def _make_granule(minx: float, miny: float, maxx: float, maxy: float) -> Granule:
