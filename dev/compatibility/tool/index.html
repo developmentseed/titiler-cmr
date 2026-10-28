@@ -2202,70 +2202,9 @@ print("Abstract:", ds["umm"]["Abstract"])</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">HTTPError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/utils/_search.py:43</span>, in <span class="ansi-cyan-fg">get_results</span><span class="ansi-blue-fg">(session, query, limit)</span>
-<span class="ansi-green-fg">     42</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">43</span>     <span class="ansi-black-fg ansi-yellow-bg">response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">raise_for_status</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     44</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> requests.exceptions.HTTPError <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> ex:
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/requests/models.py:1167</span>, in <span class="ansi-cyan-fg">Response.raise_for_status</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">   1166</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> http_error_msg:
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1167</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> HTTPError(http_error_msg, response=<span style="color: rgb(0,135,0)">self</span>)
-
-<span class="ansi-red-fg">HTTPError</span>: 502 Server Error: Bad Gateway for url: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id%5B%5D=C1996881146-POCLOUD&amp;page_size=1
-
-The above exception was the direct cause of the following exception:
-
-<span class="ansi-red-fg">RuntimeError</span>                              Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> datasets = earthaccess.search_datasets(concept_id=<span class="ansi-yellow-fg">"C1996881146-POCLOUD"</span>)
-<span class="ansi-green-fg">      2</span> ds = datasets[<span class="ansi-green-fg">0</span>]
-<span class="ansi-green-fg">      3</span> 
-<span class="ansi-green-fg">      4</span> concept_id = ds[<span class="ansi-yellow-fg">"meta"</span>][<span class="ansi-yellow-fg">"concept-id"</span>]
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/api.py:186</span>, in <span class="ansi-cyan-fg">search_datasets</span><span class="ansi-blue-fg">(count, **kwargs)</span>
-<span class="ansi-green-fg">    184</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> count &gt; <span class="ansi-green-fg">0</span>:
-<span class="ansi-green-fg">    185</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> query.get(count)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">186</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">query</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">get_all</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/cmr/queries.py:127</span>, in <span class="ansi-cyan-fg">Query.get_all</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    118</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">get_all</span>(<span style="color: rgb(0,135,0)">self</span>) -&gt; Sequence[Any]:
-<span class="ansi-green-fg">    119</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    120</span> <span class="ansi-yellow-fg">    Returns all of the results for the query. This will call hits() first to determine how many</span>
-<span class="ansi-green-fg">    121</span> <span class="ansi-yellow-fg">    results their are, and then calls get() with that number. This method could take quite</span>
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    124</span> <span class="ansi-yellow-fg">    :returns: query results as a list</span>
-<span class="ansi-green-fg">    125</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">127</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">get</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">hits</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/search.py:105</span>, in <span class="ansi-cyan-fg">DataCollections.get</span><span class="ansi-blue-fg">(self, limit)</span>
-<span class="ansi-green-fg">     83</span> <span style="color: rgb(175,0,255)">@override</span>
-<span class="ansi-green-fg">     84</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">get</span>(<span style="color: rgb(0,135,0)">self</span>, limit: <span style="color: rgb(0,135,0)">int</span> = <span class="ansi-green-fg">2000</span>) -&gt; <span style="color: rgb(0,135,0)">list</span>[DataCollection]:
-<span class="ansi-green-fg">     85</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Get all the collections (datasets) that match with our current parameters</span>
-<span class="ansi-green-fg">     86</span> <span class="ansi-yellow-fg">    up to some limit, even if spanning multiple pages.</span>
-<span class="ansi-green-fg">     87</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    101</span> <span class="ansi-yellow-fg">        RuntimeError: The CMR query failed.</span>
-<span class="ansi-green-fg">    102</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">    103</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> [
-<span class="ansi-green-fg">    104</span>         DataCollection(collection, <span style="color: rgb(0,135,0)">self</span>._fields)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">105</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> collection <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-black-fg ansi-yellow-bg">get_results</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">session</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">limit</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    106</span>     ]
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/titiler-cmr/titiler-cmr/.venv/lib/python3.12/site-packages/earthaccess/utils/_search.py:45</span>, in <span class="ansi-cyan-fg">get_results</span><span class="ansi-blue-fg">(session, query, limit)</span>
-<span class="ansi-green-fg">     43</span>     response.raise_for_status()
-<span class="ansi-green-fg">     44</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> requests.exceptions.HTTPError <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> ex:
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">45</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">RuntimeError</span>(ex.response.text) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">ex</span>
-<span class="ansi-green-fg">     47</span> latest = response.json()[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">items</span><span class="ansi-yellow-fg">"</span>]
-<span class="ansi-green-fg">     49</span> results.extend(latest)
-
-<span class="ansi-red-fg">RuntimeError</span>: &lt;html&gt;
-&lt;head&gt;&lt;title&gt;502 Bad Gateway&lt;/title&gt;&lt;/head&gt;
-&lt;body&gt;
-&lt;center&gt;&lt;h1&gt;502 Bad Gateway&lt;/h1&gt;&lt;/center&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Concept-Id:  C1996881146-POCLOUD
+Abstract: A Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface temperature analysis produced as a retrospective dataset (four day latency) and near-real-time dataset (one day latency) at the JPL Physical Oceanography DAAC using wavelets as basis functions in an optimal interpolation approach on a global 0.01 degree grid. The version 4 Multiscale Ultrahigh Resolution (MUR) L4 analysis is based upon nighttime GHRSST L2P skin and subskin SST observations from several instruments including the NASA Advanced Microwave Scanning Radiometer-EOS (AMSR-E), the JAXA Advanced Microwave Scanning Radiometer 2 on GCOM-W1, the Moderate Resolution Imaging Spectroradiometers (MODIS) on the NASA Aqua and Terra platforms, the US Navy microwave WindSat radiometer, the Advanced Very High Resolution Radiometer (AVHRR) on several NOAA satellites, and in situ SST observations from the NOAA iQuam project. The ice concentration data are from the archives at the EUMETSAT Ocean and Sea Ice Satellite Application Facility (OSI SAF) High Latitude Processing Center and are also used for an improved SST parameterization for the high-latitudes.  The dataset also contains additional variables for some granules including the SST anomaly (variable sst_anomaly) derived from a MUR climatology, and the temporal distance in hours to the nearest IR measurement for each pixel (variable dt_1km_data). Variable dt_1km_data first appears in the time series on October 4, 2015,  while sst_anomaly starts July 23, 2019.  This dataset was originally funded by the NASA MEaSUREs program (http://earthdata.nasa.gov/our-community/community-data-system-programs/measures-projects), and created by a team led by Dr. Toshio M. Chin from JPL. It adheres to the GHRSST Data Processing Specification (GDS) version 2 format specifications. Use the file global metadata "history:" attribute to determine if a granule is near-realtime or retrospective.
 </pre>
 </div>
 </div>
@@ -2347,21 +2286,12 @@ for g in results:
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      1</span> time_range = (<span class="ansi-yellow-fg">"2024-10-12"</span>, <span class="ansi-yellow-fg">"2024-10-13"</span>)
-<span class="ansi-green-fg">      2</span> 
-<span class="ansi-green-fg">      3</span> results = earthaccess.search_data(
-<span class="ansi-green-fg">      4</span>     count=<span class="ansi-green-fg">1</span>,
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span>     concept_id=concept_id,
-<span class="ansi-green-fg">      6</span>     temporal=(<span class="ansi-yellow-fg">"2024-10-12"</span>, <span class="ansi-yellow-fg">"2024-10-13"</span>),
-<span class="ansi-green-fg">      7</span> )
-<span class="ansi-green-fg">      8</span> print(f"Found {len(results)} granules between {time_range[<span class="ansi-green-fg">0</span>]} and {time_range[<span class="ansi-green-fg">1</span>]}")
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Found 1 granules between 2024-10-12 and 2024-10-13
 
-<span class="ansi-red-fg">NameError</span>: name 'concept_id' is not defined</pre>
+2024-10-11T21:00:00.000Z → 707.34 MB
+  https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20241012090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc
+</pre>
 </div>
 </div>
 </div>
@@ -2424,22 +2354,16 @@ data_vars</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 4</span>
-<span class="ansi-green-fg">      1</span> fs = earthaccess.get_fsspec_https_session()
-<span class="ansi-green-fg">      2</span> 
-<span class="ansi-green-fg">      3</span> ds = xr.open_dataset(
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span>     fs.open(results[<span class="ansi-green-fg">0</span>].data_links(access=<span class="ansi-yellow-fg">"external"</span>)[<span class="ansi-green-fg">0</span>]),
-<span class="ansi-green-fg">      5</span>     engine=<span class="ansi-yellow-fg">"h5netcdf"</span>,
-<span class="ansi-green-fg">      6</span>     decode_timedelta=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
-<span class="ansi-green-fg">      7</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'results' is not defined</pre>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>Data variables:
+    analysed_sst      (time, lat, lon) float64 5GB ...
+    analysis_error    (time, lat, lon) float64 5GB ...
+    mask              (time, lat, lon) float32 3GB ...
+    sea_ice_fraction  (time, lat, lon) float64 5GB ...
+    dt_1km_data       (time, lat, lon) timedelta64[ns] 5GB ...
+    sst_anomaly       (time, lat, lon) float64 5GB ...</pre>
 </div>
 </div>
 </div>
@@ -2711,13 +2635,7 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <pre>=== TiTiler-CMR Compatibility Check ===
 Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2024-07-01T00%3A00%3A00Z%2F2024-07-10T23%3A59%3A59Z&amp;bands=B04&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point
 Error: 301 Moved Permanently
 Body: 
@@ -2873,13 +2791,7 @@ print(f"Compatibility: {compat['compatibility']}")</div>
 <pre>=== TiTiler-CMR Compatibility Check ===
 Client: 2 physical / 4 logical cores | RAM: 15.61 GiB
 Dataset: C2021957295-LPCLOUD (rasterio)
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~ ERROR JSON REQUEST ~~~~~~~~~~~~~~~~
 URL: https://staging.openveda.cloud/api/titiler-cmr/WebMercatorQuad/tilejson.json?concept_id=C2021957295-LPCLOUD&amp;backend=rasterio&amp;datetime=2024-07-01T00%3A00%3A00Z%2F2024-07-10T23%3A59%3A59Z&amp;bands=B04&amp;bands_regex=B%5B0-9%5D%5B0-9%5D&amp;step=P1D&amp;temporal_mode=point
 Error: 301 Moved Permanently
 Body: 
