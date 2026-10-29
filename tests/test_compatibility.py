@@ -691,7 +691,7 @@ class TestConceptCompatibility:
 
         with pytest.raises(
             CMROutage,
-            match=r"CMR granule search failed with 503 \(Service Unavailable\)",
+            match=r"CMR search failed with 503 \(Service Unavailable\)",
         ):
             evaluate_concept_compatibility("C1234-TEST", request)
 

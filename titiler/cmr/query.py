@@ -1,7 +1,7 @@
 """CMR granule and collection search functions."""
 
 from decimal import Decimal
-from typing import Any, Generator, Literal
+from typing import Any, Generator
 
 import shapely
 from fastapi import HTTPException
@@ -31,8 +31,6 @@ from titiler.cmr.models import (
 )
 
 CMR_GRANULE_SEARCH_API = "https://cmr.earthdata.nasa.gov/search"
-
-SearchKind = Literal["collection", "granule"]
 
 
 def _cmr_numbers(*values: float) -> str:
@@ -76,7 +74,7 @@ def _geometry_to_cmr_params(geometry: Geometry) -> dict[str, str]:
     return {"bounding_box": _cmr_numbers(minx, miny, maxx, maxy)}
 
 
-def _send_cmr_search(client: Client, request: Request, kind: SearchKind) -> Response:
+def _send_cmr_search(client: Client, request: Request) -> Response:
     """Send a CMR search request and return its successful response.
 
     Only failures on CMR's side become CMRQueryTimeout or CMROutage. Any other
@@ -96,11 +94,12 @@ def _send_cmr_search(client: Client, request: Request, kind: SearchKind) -> Resp
         response = client.send(request)
     except (ConnectTimeout, ReadTimeout, WriteTimeout) as e:
         raise CMRQueryTimeout(
-            f"CMR {kind} search timed out after {client.timeout.read} seconds"
+            f"CMR search timed out after {client.timeout.read} seconds"
+            f" for {request.url}"
         ) from e
     except (NetworkError, RemoteProtocolError, DecodingError) as e:
         raise CMROutage(
-            f"CMR {kind} search failed: {str(e) or type(e).__name__}"
+            f"CMR search failed: {str(e) or type(e).__name__} for {request.url}"
         ) from e
 
     if response.is_success:
@@ -108,8 +107,8 @@ def _send_cmr_search(client: Client, request: Request, kind: SearchKind) -> Resp
 
     if not response.is_client_error:
         raise CMROutage(
-            f"CMR {kind} search failed with {response.status_code} "
-            f"({response.reason_phrase})"
+            f"CMR search failed with {response.status_code} ({response.reason_phrase})"
+            f" for {request.url}"
         )
 
     try:
@@ -123,9 +122,7 @@ def _send_cmr_search(client: Client, request: Request, kind: SearchKind) -> Resp
     raise HTTPException(response.status_code, detail)
 
 
-def _parse_cmr_response[M: BaseModel](
-    response: Response, model: type[M], kind: SearchKind
-) -> M:
+def _parse_cmr_response[M: BaseModel](response: Response, model: type[M]) -> M:
     """Parse a successful CMR search response into its model.
 
     Raises:
@@ -135,7 +132,9 @@ def _parse_cmr_response[M: BaseModel](
     try:
         return model.model_validate_json(response.content)
     except ValidationError as e:
-        raise CMROutage(f"CMR {kind} search returned an unreadable response") from e
+        raise CMROutage(
+            f"CMR search returned an unreadable response for {response.request.url}"
+        ) from e
 
 
 def _build_granule_params(
@@ -247,8 +246,8 @@ def get_granules(
             method="GET", url="granules.umm_json", params=params, headers=headers
         )
         logger.info("Querying CMR: %s with headers %s", request.url, headers)
-        response = _send_cmr_search(client, request, "granule")
-        result = _parse_cmr_response(response, GranuleSearchResponse, "granule")
+        response = _send_cmr_search(client, request)
+        result = _parse_cmr_response(response, GranuleSearchResponse)
         logger.debug("Found %d granules", len(result.items))
 
         for granule in result.items:
@@ -294,8 +293,8 @@ def get_collection(concept_id: str, client: Client) -> Collection:
     request = client.build_request(
         method="GET", url="collections.umm_json", params={"concept_id": concept_id}
     )
-    response = _send_cmr_search(client, request, "collection")
-    result = _parse_cmr_response(response, CollectionSearchResponse, "collection")
+    response = _send_cmr_search(client, request)
+    result = _parse_cmr_response(response, CollectionSearchResponse)
 
     if not result.items:
         raise HTTPException(404, f"concept_id {concept_id} not found")

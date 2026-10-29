@@ -328,7 +328,8 @@ class TestCMRQueryTimeout:
         client = Client(transport=MockTransport(handler), timeout=20.0)
 
         with pytest.raises(
-            CMRQueryTimeout, match=r"CMR granule search timed out after 20\.0 seconds"
+            CMRQueryTimeout,
+            match=r"CMR search timed out after 20\.0 seconds for /granules",
         ):
             list(get_granules(GranuleSearch(), client))
 
@@ -359,7 +360,7 @@ class TestCMRErrorResponses:
 
         with pytest.raises(
             CMROutage,
-            match=r"CMR granule search failed with 301 \(Moved Permanently\)",
+            match=r"CMR search failed with 301 \(Moved Permanently\) for /granules",
         ):
             list(get_granules(GranuleSearch(), client))
 
@@ -372,7 +373,7 @@ class TestCMRErrorResponses:
         )
 
         with pytest.raises(
-            CMROutage, match="CMR granule search returned an unreadable response"
+            CMROutage, match="CMR search returned an unreadable response for /granules"
         ):
             list(get_granules(GranuleSearch(), client))
 
@@ -383,7 +384,8 @@ class TestCMRErrorResponses:
         )
 
         with pytest.raises(
-            CMROutage, match="CMR collection search returned an unreadable response"
+            CMROutage,
+            match="CMR search returned an unreadable response for /collections",
         ):
             get_collection("C1234-PROVIDER", client)
 
@@ -414,7 +416,7 @@ class TestCMRErrorResponses:
         client = Client(transport=MockTransport(handler))
 
         with pytest.raises(
-            CMROutage, match="CMR granule search failed: connection failed"
+            CMROutage, match="CMR search failed: connection failed for /granules"
         ):
             list(get_granules(GranuleSearch(), client))
 
@@ -426,7 +428,9 @@ class TestCMRErrorResponses:
 
         client = Client(transport=MockTransport(handler))
 
-        with pytest.raises(CMROutage, match="CMR granule search failed: ReadError$"):
+        with pytest.raises(
+            CMROutage, match="CMR search failed: ReadError for /granules"
+        ):
             list(get_granules(GranuleSearch(), client))
 
     def test_get_granules_raises_on_corrupt_response_body(self):
@@ -439,7 +443,7 @@ class TestCMRErrorResponses:
             )
         )
 
-        with pytest.raises(CMROutage, match="CMR granule search failed: "):
+        with pytest.raises(CMROutage, match="CMR search failed: .+ for /granules"):
             list(get_granules(GranuleSearch(), client))
 
     def test_get_granules_raises_on_server_error(self):
@@ -448,7 +452,7 @@ class TestCMRErrorResponses:
 
         with pytest.raises(
             CMROutage,
-            match=r"CMR granule search failed with 503 \(Service Unavailable\)",
+            match=r"CMR search failed with 503 \(Service Unavailable\) for /granules",
         ):
             list(get_granules(GranuleSearch(), client))
 
@@ -458,7 +462,7 @@ class TestCMRErrorResponses:
 
         with pytest.raises(
             CMROutage,
-            match=r"CMR collection search failed with 503 \(Service Unavailable\)",
+            match=r"CMR search failed with 503 \(Service Unavailable\) for /collections",
         ):
             get_collection("C1234-PROVIDER", client)
 
