@@ -35,7 +35,7 @@ from titiler.cmr.dependencies import (
     RasterioGranuleSearchBackendParams,
     interpolated_xarray_ds_params,
 )
-from titiler.cmr.errors import CMRQueryTimeout
+from titiler.cmr.errors import CMROutage, CMRQueryTimeout
 from titiler.cmr.factory import CMRTilerFactory, granules_router
 from titiler.cmr.legacy import legacy_router
 from titiler.cmr.logger import configure_logging, logger
@@ -224,7 +224,7 @@ app = FastAPI(
 
 add_exception_handlers(app, DEFAULT_STATUS_CODES)
 add_exception_handlers(app, MOSAIC_STATUS_CODES)
-add_exception_handlers(app, {CMRQueryTimeout: 504})
+add_exception_handlers(app, {CMRQueryTimeout: 504, CMROutage: 502})
 
 # Set all CORS enabled origins
 if settings.cors_origins:

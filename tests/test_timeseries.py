@@ -12,7 +12,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.routing import APIRoute
 from freezegun import freeze_time
-from httpx2 import Client, MockTransport, Response
+from httpx2 import AsyncClient, Client, MockTransport, Response
 from pydantic import TypeAdapter
 from rio_tiler.models import ImageData
 from starlette.applications import Starlette
@@ -24,6 +24,7 @@ from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.timeseries import (
     TemporalMode,
     TimeseriesParams,
+    _timestep_request,
     build_request_urls,
     generate_datetime_ranges,
     timeseries_cmr_query,
@@ -528,3 +529,58 @@ def test_timeseries_statistics_response_model_preserves_empty_interval(mn_geojso
     )
 
     assert output["properties"]["statistics"][interval] == sub_response
+
+
+@pytest.mark.asyncio
+async def test_timestep_request_reports_sub_request_detail_as_is():
+    """A failed sub-request's detail reaches the client as is, not as JSON text."""
+    client = AsyncClient(
+        transport=MockTransport(
+            lambda request: Response(
+                502,
+                json={
+                    "detail": "CMR granule search failed with 503 (Service Unavailable)"
+                },
+            )
+        )
+    )
+
+    with pytest.raises(HTTPException) as exc_info:
+        await _timestep_request(client, "http://testserver/statistics", method="GET")
+
+    assert exc_info.value.status_code == 502
+    assert exc_info.value.detail == (
+        "CMR granule search failed with 503 (Service Unavailable)"
+    )
+
+
+@pytest.mark.asyncio
+async def test_timestep_request_reports_non_json_body_as_is():
+    """A failed sub-request whose body is not JSON keeps that body as the detail."""
+    client = AsyncClient(
+        transport=MockTransport(
+            lambda request: Response(504, text="<html>Gateway Timeout</html>")
+        )
+    )
+
+    with pytest.raises(HTTPException) as exc_info:
+        await _timestep_request(client, "http://testserver/statistics", method="GET")
+
+    assert exc_info.value.status_code == 504
+    assert exc_info.value.detail == "<html>Gateway Timeout</html>"
+
+
+@pytest.mark.asyncio
+async def test_timestep_request_reports_gateway_message_as_is():
+    """A sub-request that API Gateway fails reports the gateway's message as is."""
+    client = AsyncClient(
+        transport=MockTransport(
+            lambda request: Response(503, json={"message": "Service Unavailable"})
+        )
+    )
+
+    with pytest.raises(HTTPException) as exc_info:
+        await _timestep_request(client, "http://testserver/statistics", method="GET")
+
+    assert exc_info.value.status_code == 503
+    assert exc_info.value.detail == "Service Unavailable"
