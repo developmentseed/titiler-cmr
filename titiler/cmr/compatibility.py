@@ -31,6 +31,8 @@ class VariableInfo(BaseModel):
     """Metadata for a single xarray variable."""
 
     shape: list[int]
+    dims: list[str]
+    tileable: bool
     dtype: str
     min: float | None = None
     max: float | None = None
@@ -69,8 +71,6 @@ class CompatibilityResponse(BaseModel):
     dimensions: dict[str, int] | None = None
     coordinates: dict[str, CoordinateInfo] | None = None
     compatible_groups: list[str] | None = None
-    tileable_variables: list[str] | None = None
-    incompatible_variables: dict[str, dict[str, Any]] | None = None
     granule_ur: str | None = None
     example_assets: dict[str, str] | str | None = None
     sample_asset_raster_info: Info | None = None
@@ -100,6 +100,8 @@ def extract_xarray_metadata(
     for var in ds.data_vars:
         var_info: dict[str, Any] = {
             "shape": list(ds[var].shape),
+            "dims": list(ds[var].dims),
+            "tileable": _is_tileable(ds[var]),
             "dtype": str(ds[var].dtype),
         }
 
@@ -183,37 +185,25 @@ def extract_xarray_metadata(
     }
 
 
-def validate_tileable_variables(ds: Any) -> dict[str, Any]:
-    """Return variables with recognized x/y dimensions for xarray tiling.
+def _is_tileable(da: Any) -> bool:
+    """Return whether a variable has the x/y dimensions that xarray tiling needs.
 
     Compatibility cannot prove every required selector for extra dimensions, but
-    it can reject groups that cannot satisfy the basic spatial-dimension contract
-    used by ``XarrayGranuleReader``. Each variable goes through the same check
-    that reader applies, so this report and the tiles cannot disagree.
+    it can reject variables that cannot satisfy the basic spatial-dimension
+    contract used by ``XarrayGranuleReader``. The check is the one that reader
+    applies, so this report and the tiles cannot disagree.
     """
-    tileable_variables = []
-    incompatible_variables: dict[str, dict[str, Any]] = {}
+    try:
+        _arrange_dims(da, X_DIM_NAMES, Y_DIM_NAMES)
+    except ValueError:
+        return False
 
-    for variable in ds.data_vars:
-        try:
-            _arrange_dims(ds[variable], X_DIM_NAMES, Y_DIM_NAMES)
-        except ValueError:
-            incompatible_variables[variable] = {
-                "dims": list(ds[variable].dims),
-                "reason": "missing recognized x/y dimensions",
-            }
-        else:
-            tileable_variables.append(variable)
-
-    return {
-        "tileable_variables": tileable_variables,
-        "incompatible_variables": incompatible_variables,
-    }
+    return True
 
 
 def _xarray_group_incompatibility_detail(
     group: str | None,
-    validation: dict[str, Any],
+    variables: dict[str, Any],
 ) -> dict[str, Any]:
     """Build a structured incompatibility detail for an xarray group or granule."""
     return {
@@ -226,7 +216,7 @@ def _xarray_group_incompatibility_detail(
         "reason": "No data variables contain recognized X and Y spatial dimensions.",
         "x_dimension_aliases": X_DIM_NAMES,
         "y_dimension_aliases": Y_DIM_NAMES,
-        "variables": validation["incompatible_variables"],
+        "variables": {name: info["dims"] for name, info in variables.items()},
     }
 
 
@@ -453,10 +443,9 @@ def evaluate_xarray_compatibility(
         ds,
         skip_variable_statistics=skip_variable_statistics,
     )
-    validation = validate_tileable_variables(ds)
-    result.update(validation)
+    variables = result["variables"]
 
-    if not validation["tileable_variables"]:
+    if not any(info["tileable"] for info in variables.values()):
         compatible_groups = (
             []
             if group
@@ -469,7 +458,7 @@ def evaluate_xarray_compatibility(
         if not compatible_groups:
             raise HTTPException(
                 status_code=400,
-                detail=_xarray_group_incompatibility_detail(group, validation),
+                detail=_xarray_group_incompatibility_detail(group, variables),
             )
         result["compatible_groups"] = compatible_groups
 
@@ -625,12 +614,19 @@ def evaluate_concept_compatibility(
             granule_ur=granule_ur,
             skip_variable_statistics=skip_variable_statistics,
         )
-        first_var = next(iter(result.get("variables") or {}), None)
+        first_tileable_var = next(
+            (
+                name
+                for name, info in (result.get("variables") or {}).items()
+                if info["tileable"]
+            ),
+            None,
+        )
         links = _build_links(
             base_url,
             concept_id,
             "xarray",
-            first_var,
+            first_tileable_var,
             group,
         )
         return CompatibilityResponse(

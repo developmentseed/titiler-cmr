@@ -23,7 +23,6 @@ from titiler.cmr.compatibility import (
     evaluate_rasterio_compatibility,
     evaluate_xarray_compatibility,
     extract_xarray_metadata,
-    validate_tileable_variables,
 )
 from titiler.cmr.errors import CMROutage
 from titiler.cmr.models import (
@@ -244,9 +243,65 @@ class TestExtractXarrayMetadata:
         )
 
         variable = result["variables"]["temperature"]
-        assert variable == {"shape": [10], "dtype": "float32"}
+        assert variable == {
+            "shape": [10],
+            "dims": ["x"],
+            "tileable": False,
+            "dtype": "float32",
+        }
         assert result["coordinates"]["x"]["min"] == 0.0
         assert result["coordinates"]["x"]["max"] == 9.0
+
+    def test_variables_without_x_and_y_dimensions_are_not_tileable(self):
+        """Test a variable without recognized x/y dimensions is marked not tileable."""
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["radiance"]["dims"] == ["atrack", "xtrack"]
+        assert result["variables"]["radiance"]["tileable"] is False
+
+    def test_variables_on_lat_and_lon_are_tileable(self):
+        """Test a variable on lat and lon dimensions is marked tileable."""
+        ds = xr.Dataset(
+            {"temperature": (("lat", "lon"), np.zeros((2, 3), dtype=np.float32))}
+        )
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["temperature"]["tileable"] is True
+
+    def test_variables_with_extra_dimensions_are_tileable(self):
+        """Test a spatial variable with an extra dimension is marked tileable."""
+        ds = xr.Dataset(
+            {
+                "temperature": (
+                    ("time", "lat", "lon"),
+                    np.zeros((4, 2, 3), dtype=np.float32),
+                )
+            }
+        )
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["temperature"]["tileable"] is True
+
+    def test_variables_on_x_and_y_dimensions_are_tileable(self):
+        """Test a variable already on x and y dimensions is marked tileable."""
+        ds = xr.Dataset(
+            {
+                "N07_ICECON": (
+                    ("time", "y", "x"),
+                    np.zeros((1, 2, 3), dtype=np.float32),
+                )
+            }
+        )
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["N07_ICECON"]["tileable"] is True
 
 
 class TestGroupPruningHelpers:
@@ -468,68 +523,12 @@ class TestXarrayCompatibility:
             skip_variable_statistics=True,
         )
 
-        assert result["variables"]["temp"] == {"shape": [2, 5], "dtype": "float32"}
-
-    def test_validate_tileable_variables_reports_non_spatial_variables(self):
-        """Test tileability validation explains variables without x/y dimensions."""
-        ds = xr.Dataset(
-            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
-        )
-
-        result = validate_tileable_variables(ds)
-
-        assert result["tileable_variables"] == []
-        assert result["incompatible_variables"]["radiance"]["dims"] == [
-            "atrack",
-            "xtrack",
-        ]
-        assert (
-            result["incompatible_variables"]["radiance"]["reason"]
-            == "missing recognized x/y dimensions"
-        )
-
-    def test_validate_tileable_variables_identifies_spatial_variables(self):
-        """Test tileability validation accepts variables with x/y dimensions."""
-        ds = xr.Dataset(
-            {"temperature": (("lat", "lon"), np.zeros((2, 3), dtype=np.float32))}
-        )
-
-        result = validate_tileable_variables(ds)
-
-        assert result["tileable_variables"] == ["temperature"]
-        assert result["incompatible_variables"] == {}
-
-    def test_validate_tileable_variables_allows_extra_dimensions(self):
-        """Test tileability validation allows spatial variables with extra dimensions."""
-        ds = xr.Dataset(
-            {
-                "temperature": (
-                    ("time", "lat", "lon"),
-                    np.zeros((4, 2, 3), dtype=np.float32),
-                )
-            }
-        )
-
-        result = validate_tileable_variables(ds)
-
-        assert result["tileable_variables"] == ["temperature"]
-        assert result["incompatible_variables"] == {}
-
-    def test_validate_tileable_variables_accepts_dimensions_named_x_and_y(self):
-        """Test tileability validation accepts variables already on x and y dimensions."""
-        ds = xr.Dataset(
-            {
-                "N07_ICECON": (
-                    ("time", "y", "x"),
-                    np.zeros((1, 2, 3), dtype=np.float32),
-                )
-            }
-        )
-
-        result = validate_tileable_variables(ds)
-
-        assert result["tileable_variables"] == ["N07_ICECON"]
-        assert result["incompatible_variables"] == {}
+        assert result["variables"]["temp"] == {
+            "shape": [2, 5],
+            "dims": ["y", "x"],
+            "tileable": True,
+            "dtype": "float32",
+        }
 
     def test_xarray_explicit_group_fails_when_no_variables_are_tileable(
         self, tmp_path: Path
@@ -575,7 +574,7 @@ class TestXarrayCompatibility:
 
         assert exc_info.value.status_code == 400
         assert detail["group"] == "AIRS/Radiances"
-        assert detail["variables"]["radiance"]["dims"] == ["atrack", "xtrack"]
+        assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
 
 
 class TestRasterioCompatibility:
@@ -624,7 +623,14 @@ class TestConceptCompatibility:
         )
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"temp": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "temp": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {"x": 10},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -654,7 +660,14 @@ class TestConceptCompatibility:
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"temp": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "temp": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -677,13 +690,20 @@ class TestConceptCompatibility:
     def test_xarray_links_contain_variable(
         self, mock_get_collection, mock_xarray, mock_rasterio
     ):
-        """Test that xarray links include the first variable name."""
+        """Test that xarray links include the first tileable variable name."""
         request = _make_request()
 
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"sea_ice": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "sea_ice": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -709,7 +729,14 @@ class TestConceptCompatibility:
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"backscatter": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "backscatter": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -942,7 +969,60 @@ class TestConceptCompatibility:
         detail = cast(dict, exc_info.value.detail)
 
         assert exc_info.value.status_code == 400
-        assert detail["variables"]["radiance"]["dims"] == ["atrack", "xtrack"]
+        assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
+
+    def test_xarray_links_use_the_first_tileable_variable(self, tmp_path: Path):
+        """Test example links skip variables that cannot be tiled."""
+        granule_path = tmp_path / "sst.nc"
+        ds = xr.Dataset(
+            {
+                "crs": ((), np.int32(0)),
+                "sst": (("lat", "lon"), np.zeros((2, 3), dtype=np.float32)),
+            }
+        )
+        ds.to_netcdf(granule_path, engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "sst.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/sst.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+        result = evaluate_concept_compatibility("C1234-TEST", request)
+        tilejson_link = next(link for link in result.links if link.rel == "tilejson")
+
+        assert "variables=sst" in tilejson_link.href
 
     @pytest.mark.parametrize(
         "rasterio_error",
@@ -1026,7 +1106,14 @@ class TestCompatibilityEndpoint:
             concept_id="C1234-TEST",
             backend="xarray",
             datetime=[],
-            variables={"temp": {"shape": [10], "dtype": "float32"}},
+            variables={
+                "temp": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             dimensions={"x": 10},
             coordinates={},
             example_assets="https://example.com/file.nc",
@@ -1091,7 +1178,14 @@ class TestCompatibilityEndpoint:
             concept_id="C1234-TEST",
             backend="xarray",
             datetime=[],
-            variables={"temp": {"shape": [10], "dtype": "float32"}},
+            variables={
+                "temp": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             links=[],
         )
 
