@@ -8,6 +8,7 @@ import numpy as np
 from fastapi import APIRouter, Depends, HTTPException, Query
 from obspec_utils.readers import BlockStoreReader
 from obstore import store
+from obstore.exceptions import BaseError as ObstoreError
 from pydantic import BaseModel
 from rio_tiler.errors import MissingAssets
 from rio_tiler.models import Info
@@ -335,6 +336,10 @@ def _compatible_groups(
 
     This stays intentionally lightweight. It only scans HDF5 groups for datasets
     with spatial dimension aliases and does not open each candidate with xarray.
+
+    Raises:
+        HTTPException: A 502 (Bad Gateway) when the granule cannot be read. An
+            empty list would instead claim that no group is compatible.
     """
     try:
         return _candidate_group_paths(
@@ -342,9 +347,11 @@ def _compatible_groups(
             auth_token=auth_token,
             credential_provider=credential_provider,
         )
-    except Exception as exc:
-        logger.info("Skipping group inspection for %s: %s", src_path, exc)
-        return []
+    except (OSError, ObstoreError) as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Could not inspect the granule's groups: {exc}",
+        ) from exc
 
 
 def _sample_granule(
@@ -397,7 +404,9 @@ def evaluate_xarray_compatibility(
         ValueError: If no assets found or reader incompatible
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
-        HTTPException: If CMR rejects the search
+        HTTPException: If CMR rejects the search, a 400 if nothing in the
+            requested group or the granule is tileable, or a 502 if the group
+            scan cannot read the granule
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -578,7 +587,8 @@ def evaluate_concept_compatibility(
 
     Raises:
         HTTPException: If neither reader is compatible, the collection is not
-            found, or CMR rejects a search
+            found, CMR rejects a search, or the group scan cannot read the
+            granule
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
     """

@@ -18,6 +18,7 @@ from titiler.cmr.compatibility import (
     CompatibilityResponse,
     VariableInfo,
     _candidate_group_paths,
+    _compatible_groups,
     _dataset_dim_scale_names,
     _group_has_spatial_dims,
     evaluate_concept_compatibility,
@@ -388,6 +389,18 @@ class TestGroupPruningHelpers:
         result = _candidate_group_paths("https://example.com/file.h5")
 
         assert result == ["science/LSAR/GCOV/grids/frequencyA"]
+
+    def test_compatible_groups_unreadable_granule_is_a_bad_gateway(
+        self, tmp_path: Path
+    ):
+        """Test a granule the group scan cannot read is a 502, not an empty list."""
+        granule_path = tmp_path / "granule.nc"
+        granule_path.write_bytes(b"not HDF5")
+
+        with pytest.raises(HTTPException) as exc_info:
+            _compatible_groups(f"file://{granule_path}")
+
+        assert exc_info.value.status_code == 502
 
 
 class TestXarrayCompatibility:
