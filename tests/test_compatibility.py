@@ -938,6 +938,9 @@ class TestConceptCompatibility:
         detail = cast(dict, exc_info.value.detail)
 
         assert exc_info.value.status_code == 400
+        assert detail["message"] == (
+            "No group in the granule has variables with recognized x and y dimensions."
+        )
         assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
 
     def test_explicit_group_without_tileable_variables_is_rejected(
@@ -996,6 +999,10 @@ class TestConceptCompatibility:
         detail = cast(dict, exc_info.value.detail)
 
         assert exc_info.value.status_code == 400
+        assert detail["message"] == (
+            "Group 'AIRS/Radiances' has no variables with recognized x and y "
+            "dimensions."
+        )
         assert detail["group"] == "AIRS/Radiances"
         assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
 

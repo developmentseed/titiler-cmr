@@ -192,12 +192,12 @@ def _xarray_group_incompatibility_detail(
     """Build a structured incompatibility detail for an xarray group or granule."""
     return {
         "message": (
-            "Requested xarray group is not compatible with TiTiler-CMR tiling."
+            f"Group {group!r} has no variables with recognized x and y dimensions."
             if group
-            else "No group in the granule is compatible with TiTiler-CMR tiling."
+            else "No group in the granule has variables with recognized x and y "
+            "dimensions."
         ),
         "group": group,
-        "reason": "No data variables contain recognized X and Y spatial dimensions.",
         "x_dimension_aliases": X_DIM_NAMES,
         "y_dimension_aliases": Y_DIM_NAMES,
         "variables": {name: info["dims"] for name, info in variables.items()},
