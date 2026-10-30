@@ -9,7 +9,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Bug Fixes
 
-* **compatibility:** report both readers' errors ([ac911aa](https://github.com/developmentseed/titiler-cmr/commit/ac911aa3b26b4af0ac6f2f879c0e4ef2b8f57ad7))
 * **compatibility:** report both readers' errors ([c823ecf](https://github.com/developmentseed/titiler-cmr/commit/c823ecf8c2a8d8829ccb622f0e11d4211b34804a)), closes [#261](https://github.com/developmentseed/titiler-cmr/issues/261)
 * format CMR coordinates without scientific notation ([#266](https://github.com/developmentseed/titiler-cmr/issues/266)) ([78bdf2a](https://github.com/developmentseed/titiler-cmr/commit/78bdf2ad6871ef495f9e24d0b52a83a8a93c9757)), closes [#265](https://github.com/developmentseed/titiler-cmr/issues/265)
 * **lambda:** pass the OTLP session to the exporter ([377ad6f](https://github.com/developmentseed/titiler-cmr/commit/377ad6f95f76b6ca43305020bc342e4c93ad5908))
