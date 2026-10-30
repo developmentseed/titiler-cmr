@@ -306,6 +306,20 @@ class TestGroupPruningHelpers:
 
         assert result == []
 
+    def test_candidate_group_paths_includes_groups_on_x_and_y_dimensions(
+        self, tmp_path: Path
+    ):
+        """Test group discovery lists a group whose dimensions are named x and y."""
+        hdf5_path = tmp_path / "xy.h5"
+        ds = xr.Dataset(
+            {"N07_ICECON": (("y", "x"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        ds.to_netcdf(hdf5_path, group="grid", engine="h5netcdf")
+
+        result = _candidate_group_paths(f"file://{hdf5_path}")
+
+        assert result == ["grid"]
+
     @patch("titiler.cmr.compatibility._make_blockstore_reader")
     def test_candidate_group_paths_prefers_non_metadata_spatial_groups(
         self, mock_reader, tmp_path: Path

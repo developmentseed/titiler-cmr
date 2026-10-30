@@ -56,6 +56,7 @@ MEDIA_TYPES = {
 DEFAULT_VALID_TYPES = set(MEDIA_TYPES.keys())
 
 X_DIM_NAMES = [
+    "x",  # already conformed
     "lon",
     "longitude",
     "LON",
@@ -65,6 +66,7 @@ X_DIM_NAMES = [
     "xCoordinates",  # for NISAR :|
 ]
 Y_DIM_NAMES = [
+    "y",  # already conformed
     "lat",
     "latitude",
     "LAT",
