@@ -496,6 +496,22 @@ class TestXarrayCompatibility:
         assert result["tileable_variables"] == ["temperature"]
         assert result["incompatible_variables"] == {}
 
+    def test_validate_tileable_variables_accepts_dimensions_named_x_and_y(self):
+        """Test tileability validation accepts variables already on x and y dimensions."""
+        ds = xr.Dataset(
+            {
+                "N07_ICECON": (
+                    ("time", "y", "x"),
+                    np.zeros((1, 2, 3), dtype=np.float32),
+                )
+            }
+        )
+
+        result = validate_tileable_variables(ds)
+
+        assert result["tileable_variables"] == ["N07_ICECON"]
+        assert result["incompatible_variables"] == {}
+
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
     def test_xarray_explicit_group_fails_when_no_variables_are_tileable(

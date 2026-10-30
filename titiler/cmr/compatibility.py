@@ -22,6 +22,7 @@ from titiler.cmr.reader import (
     X_DIM_NAMES,
     Y_DIM_NAMES,
     MultiBaseGranuleReader,
+    _arrange_dims,
     open_dataset,
 )
 
@@ -182,34 +183,27 @@ def extract_xarray_metadata(
     }
 
 
-def _variable_dims(ds: Any, variable: str) -> list[str]:
-    """Return dimension names for a dataset variable."""
-    return list(ds[variable].dims)
-
-
 def validate_tileable_variables(ds: Any) -> dict[str, Any]:
     """Return variables with recognized x/y dimensions for xarray tiling.
 
     Compatibility cannot prove every required selector for extra dimensions, but
     it can reject groups that cannot satisfy the basic spatial-dimension contract
-    used by ``XarrayGranuleReader``.
+    used by ``XarrayGranuleReader``. Each variable goes through the same check
+    that reader applies, so this report and the tiles cannot disagree.
     """
     tileable_variables = []
     incompatible_variables: dict[str, dict[str, Any]] = {}
 
     for variable in ds.data_vars:
-        dims = _variable_dims(ds, variable)
-        has_x_dim = bool(set(dims) & X_DIM_ALIASES)
-        has_y_dim = bool(set(dims) & Y_DIM_ALIASES)
-
-        if has_x_dim and has_y_dim:
+        try:
+            _arrange_dims(ds[variable], X_DIM_NAMES, Y_DIM_NAMES)
+        except ValueError:
+            incompatible_variables[variable] = {
+                "dims": list(ds[variable].dims),
+                "reason": "missing recognized x/y dimensions",
+            }
+        else:
             tileable_variables.append(variable)
-            continue
-
-        incompatible_variables[variable] = {
-            "dims": dims,
-            "reason": "missing recognized x/y dimensions",
-        }
 
     return {
         "tileable_variables": tileable_variables,
