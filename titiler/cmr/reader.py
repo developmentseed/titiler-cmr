@@ -117,6 +117,21 @@ def _arrange_dims(
     return da
 
 
+def is_tileable(da: DataArray) -> bool:
+    """Return whether a variable has the x and y dimensions that tiling needs.
+
+    This is the spatial-dimension check that ``get_variables`` applies before
+    tiling. A variable with extra dimensions also needs a ``sel`` selector for
+    each of them, which this does not check.
+    """
+    try:
+        _arrange_dims(da, X_DIM_NAMES, Y_DIM_NAMES)
+    except ValueError:
+        return False
+
+    return True
+
+
 def get_variables(
     ds: Dataset,
     variables: list[str],

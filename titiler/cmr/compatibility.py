@@ -22,7 +22,7 @@ from titiler.cmr.reader import (
     X_DIM_NAMES,
     Y_DIM_NAMES,
     MultiBaseGranuleReader,
-    _arrange_dims,
+    is_tileable,
     open_dataset,
 )
 
@@ -101,7 +101,7 @@ def extract_xarray_metadata(
         var_info: dict[str, Any] = {
             "shape": list(ds[var].shape),
             "dims": list(ds[var].dims),
-            "tileable": _is_tileable(ds[var]),
+            "tileable": is_tileable(ds[var]),
             "dtype": str(ds[var].dtype),
         }
 
@@ -183,22 +183,6 @@ def extract_xarray_metadata(
         "coordinates": coordinates,
         "backend": "xarray",
     }
-
-
-def _is_tileable(da: Any) -> bool:
-    """Return whether a variable has the x/y dimensions that xarray tiling needs.
-
-    Compatibility cannot prove every required selector for extra dimensions, but
-    it can reject variables that cannot satisfy the basic spatial-dimension
-    contract used by ``XarrayGranuleReader``. The check is the one that reader
-    applies, so this report and the tiles cannot disagree.
-    """
-    try:
-        _arrange_dims(da, X_DIM_NAMES, Y_DIM_NAMES)
-    except ValueError:
-        return False
-
-    return True
 
 
 def _xarray_group_incompatibility_detail(
