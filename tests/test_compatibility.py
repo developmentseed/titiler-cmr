@@ -531,52 +531,6 @@ class TestXarrayCompatibility:
             "dtype": "float32",
         }
 
-    def test_xarray_explicit_group_fails_when_no_variables_are_tileable(
-        self, tmp_path: Path
-    ):
-        """Test explicit group requests reject groups without tileable variables."""
-        granule_path = tmp_path / "swath.nc"
-        ds = xr.Dataset(
-            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
-        )
-        ds.to_netcdf(granule_path, group="AIRS/Radiances", engine="h5netcdf")
-
-        granules = {
-            "hits": 1,
-            "items": [
-                {
-                    "meta": {
-                        "concept-id": "G1234-TEST",
-                        "native-id": "swath.nc",
-                        "collection-concept-id": "C1234-TEST",
-                    },
-                    "umm": {
-                        "RelatedUrls": [
-                            {"URL": f"file://{granule_path}", "Type": "GET DATA"},
-                            # Every asset needs a direct-access URL, though
-                            # this test reads the file:// one.
-                            {
-                                "URL": "s3://bucket/swath.nc",
-                                "Type": "GET DATA VIA DIRECT ACCESS",
-                            },
-                        ]
-                    },
-                }
-            ],
-        }
-
-        client = Client(transport=MockTransport(lambda _: Response(200, json=granules)))
-        request = _make_request(client=client)
-
-        with pytest.raises(HTTPException) as exc_info:
-            evaluate_xarray_compatibility("C1234-TEST", request, group="AIRS/Radiances")
-
-        detail = cast(dict, exc_info.value.detail)
-
-        assert exc_info.value.status_code == 400
-        assert detail["group"] == "AIRS/Radiances"
-        assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
-
 
 class TestRasterioCompatibility:
     """Test evaluate_rasterio_compatibility function."""
@@ -971,6 +925,65 @@ class TestConceptCompatibility:
         detail = cast(dict, exc_info.value.detail)
 
         assert exc_info.value.status_code == 400
+        assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
+
+    def test_explicit_group_without_tileable_variables_is_rejected(
+        self, tmp_path: Path
+    ):
+        """Test an explicit group with nothing tileable is rejected with its detail."""
+        granule_path = tmp_path / "swath.nc"
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        ds.to_netcdf(granule_path, group="AIRS/Radiances", engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "swath.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/swath.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_concept_compatibility(
+                "C1234-TEST", request, group="AIRS/Radiances"
+            )
+
+        detail = cast(dict, exc_info.value.detail)
+
+        assert exc_info.value.status_code == 400
+        assert detail["group"] == "AIRS/Radiances"
         assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
 
     def test_xarray_links_use_the_first_tileable_variable(self, tmp_path: Path):
