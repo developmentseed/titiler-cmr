@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from types import SimpleNamespace
+from typing import cast
 from unittest.mock import patch
 
 import h5py
@@ -526,34 +527,51 @@ class TestXarrayCompatibility:
         assert result["tileable_variables"] == ["N07_ICECON"]
         assert result["incompatible_variables"] == {}
 
-    @patch("titiler.cmr.compatibility.open_dataset")
-    @patch("titiler.cmr.compatibility.get_granules")
     def test_xarray_explicit_group_fails_when_no_variables_are_tileable(
-        self,
-        mock_get_granules,
-        mock_open_dataset,
+        self, tmp_path: Path
     ):
         """Test explicit group requests reject groups without tileable variables."""
-        request = _make_request()
-        granule = _make_granule()
-        mock_get_granules.return_value = iter([granule])
-        mock_open_dataset.return_value = xr.Dataset(
+        granule_path = tmp_path / "swath.nc"
+        ds = xr.Dataset(
             {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
         )
+        ds.to_netcdf(granule_path, group="AIRS/Radiances", engine="h5netcdf")
+
+        granules = {
+            "hits": 1,
+            "items": [
+                {
+                    "meta": {
+                        "concept-id": "G1234-TEST",
+                        "native-id": "swath.nc",
+                        "collection-concept-id": "C1234-TEST",
+                    },
+                    "umm": {
+                        "RelatedUrls": [
+                            {"URL": f"file://{granule_path}", "Type": "GET DATA"},
+                            # Every asset needs a direct-access URL, though
+                            # this test reads the file:// one.
+                            {
+                                "URL": "s3://bucket/swath.nc",
+                                "Type": "GET DATA VIA DIRECT ACCESS",
+                            },
+                        ]
+                    },
+                }
+            ],
+        }
+
+        client = Client(transport=MockTransport(lambda _: Response(200, json=granules)))
+        request = _make_request(client=client)
 
         with pytest.raises(HTTPException) as exc_info:
-            evaluate_xarray_compatibility(
-                "C1234-TEST",
-                request,
-                group="AIRS/Radiances",
-            )
+            evaluate_xarray_compatibility("C1234-TEST", request, group="AIRS/Radiances")
+
+        detail = cast(dict, exc_info.value.detail)
 
         assert exc_info.value.status_code == 400
-        assert exc_info.value.detail["group"] == "AIRS/Radiances"
-        assert exc_info.value.detail["variables"]["radiance"]["dims"] == [
-            "atrack",
-            "xtrack",
-        ]
+        assert detail["group"] == "AIRS/Radiances"
+        assert detail["variables"]["radiance"]["dims"] == ["atrack", "xtrack"]
 
 
 class TestRasterioCompatibility:
@@ -753,31 +771,64 @@ class TestConceptCompatibility:
         mock_xarray.assert_called_once()
         mock_rasterio.assert_called_once()
 
-    @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
-    @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
-    @patch("titiler.cmr.compatibility.get_collection")
     def test_explicit_group_xarray_failure_does_not_fallback_to_rasterio(
-        self, mock_get_collection, mock_xarray, mock_rasterio
+        self, tmp_path: Path
     ):
         """Test explicit xarray group failures are returned instead of falling back."""
-        request = _make_request()
-
-        mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
-        mock_xarray.side_effect = HTTPException(
-            status_code=400,
-            detail={"message": "not tileable", "group": "AIRS/Radiances"},
+        granule_path = tmp_path / "swath.nc"
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
         )
+        ds.to_netcdf(granule_path, engine="h5netcdf")
 
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "swath.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/swath.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        # The file has no AIRS/Radiances group, so xarray cannot open it.
         with pytest.raises(HTTPException) as exc_info:
             evaluate_concept_compatibility(
-                "C1234-TEST",
-                request,
-                group="AIRS/Radiances",
+                "C1234-TEST", request, group="AIRS/Radiances"
             )
 
         assert exc_info.value.status_code == 400
-        assert exc_info.value.detail["group"] == "AIRS/Radiances"
-        mock_rasterio.assert_not_called()
+        assert "group not found" in exc_info.value.detail
+        # The 400 for both readers failing would report a rasterio error too.
+        assert "rasterio" not in exc_info.value.detail
 
     @pytest.mark.parametrize(
         "rasterio_error",
