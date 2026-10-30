@@ -171,8 +171,8 @@ def assets_for_point(
     responses={200: {"description": "Return granules for a tile"}},
 )
 def assets_for_tile(
-    tileMatrixSetId: Annotated[  # type: ignore[valid-type]
-        Literal[tuple(morecantile.tms.list())],
+    tileMatrixSetId: Annotated[
+        Literal[tuple(morecantile.tms.list())],  # type: ignore[valid-type]
         Path(description="Identifier selecting one of the TileMatrixSetId supported."),
     ],
     z: Annotated[

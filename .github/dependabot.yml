@@ -8,6 +8,11 @@ updates:
       interval: monthly
     groups:
       all:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      security:
+        applies-to: security-updates
         patterns:
           - "*"
     commit-message:
@@ -21,7 +26,25 @@ updates:
       interval: monthly
     groups:
       all:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      security:
+        applies-to: security-updates
         patterns:
           - "*"
     commit-message:
       prefix: "ci(deps):"
+
+  - package-ecosystem: pre-commit
+    directory: "/"
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: monthly
+    groups:
+      all:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "chore(deps):"

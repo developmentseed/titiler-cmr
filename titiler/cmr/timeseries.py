@@ -30,18 +30,17 @@ from attrs import define
 from fastapi import APIRouter, Body, Depends, Path, Query, Request, Response
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
-from geojson_pydantic import Feature, FeatureCollection
+from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry
-from httpx2 import AsyncClient, HTTPStatusError
+from httpx2 import AsyncClient
 from httpx2 import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
-from pydantic import BaseModel
+from pydantic import BaseModel, FiniteFloat
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import BaseFactory, FactoryExtension
 from titiler.core.models.mapbox import TileJSON
-from titiler.core.models.responses import Statistics
 from titiler.core.resources.enums import ImageType
 from titiler.core.resources.responses import GeoJSONResponse
 
@@ -49,7 +48,7 @@ from titiler.cmr.dependencies import GranuleSearch, GranuleSearchParams
 from titiler.cmr.errors import InvalidDatetime
 from titiler.cmr.factory import CMRTilerFactory
 from titiler.cmr.logger import logger
-from titiler.cmr.query import get_granules
+from titiler.cmr.query import _cmr_numbers, get_granules
 from titiler.cmr.reader import XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import (
@@ -92,7 +91,11 @@ class TimeseriesImageType(str, Enum):
         return TimeseriesMediaType[self._name_].value
 
 
-TimeseriesStatistics = Dict[str, Statistics]
+# {interval: {band: stats}}. Each stats dict is a /statistics result passed
+# through unvalidated, because /statistics already validated it and
+# BandStatistics would reject the null it sends for the numeric fields of an
+# interval with no valid pixels.
+TimeseriesStatistics = Dict[str, Dict[str, Dict[str, Any]]]
 
 
 class TimeseriesStatisticsInGeoJSON(BaseModel):
@@ -103,10 +106,7 @@ class TimeseriesStatisticsInGeoJSON(BaseModel):
     model_config = {"extra": "allow"}
 
 
-TimeseriesStatisticsGeoJSON = Union[
-    FeatureCollection[Feature[Geometry, TimeseriesStatisticsInGeoJSON]],
-    Feature[Geometry, TimeseriesStatisticsInGeoJSON],
-]
+TimeseriesStatisticsGeoJSON = Feature[Geometry, TimeseriesStatisticsInGeoJSON]
 
 TimeseriesTileJSON = Dict[str, TileJSON]
 
@@ -300,6 +300,10 @@ async def _timestep_request(
 
     Raises:
         ValueError: If ``method`` is not ``"GET"`` or ``"POST"``.
+        HTTPException: The sub-request failed. The status is kept, and the
+            detail is the sub-request's own detail, or API Gateway's message
+            when the gateway failed the sub-request, or otherwise the body as
+            is.
     """
     _method: Any
     if method == "POST":
@@ -310,20 +314,23 @@ async def _timestep_request(
         raise ValueError(f"{method} must be one of GET or POST")
 
     response = await _method(url, **kwargs)
-    try:
-        response.raise_for_status()
-    except HTTPStatusError:
-        raise HTTPException(
-            status_code=response.status_code, detail=response.text
-        ) from None
 
-    return response
+    if response.is_success:
+        return response
+
+    try:
+        body = response.json()
+        detail = body["detail"] if "detail" in body else body["message"]
+    except (ValueError, KeyError, TypeError):
+        detail = response.text
+
+    raise HTTPException(status_code=response.status_code, detail=detail)
 
 
 async def _fetch_statistics(
     client: AsyncClient,
     url: str,
-    geojson: Union[FeatureCollection, Feature],
+    geojson: Feature,
 ) -> HttpxResponse:
     """Fetch a statistics sub-request and return the parsed response dict."""
     return await _timestep_request(
@@ -360,10 +367,10 @@ def timeseries_cmr_query(  # noqa: C901
     request: Request,
     granule_search: GranuleSearch = Depends(GranuleSearchParams),
     timeseries_params: TimeseriesParams = Depends(TimeseriesParams),
-    minx: Optional[float] = None,
-    miny: Optional[float] = None,
-    maxx: Optional[float] = None,
-    maxy: Optional[float] = None,
+    minx: Optional[FiniteFloat] = None,
+    miny: Optional[FiniteFloat] = None,
+    maxx: Optional[FiniteFloat] = None,
+    maxy: Optional[FiniteFloat] = None,
 ) -> TimeseriesCMRQueryParameters:
     """Convert a timeseries query into a set of CMR query parameters.
 
@@ -411,7 +418,7 @@ def timeseries_cmr_query(  # noqa: C901
         elif start and not timeseries_params.step:
             search_end = end or datetime.now(tz=timezone.utc)
             bbox_str = (
-                f"{minx},{miny},{maxx},{maxy}"
+                _cmr_numbers(minx, miny, maxx, maxy)
                 if (
                     minx is not None
                     and miny is not None
@@ -547,8 +554,8 @@ class TimeseriesExtension(FactoryExtension):
         async def timeseries_geojson_statistics(
             request: Request,
             geojson: Annotated[
-                Union[FeatureCollection, Feature],
-                Body(description="GeoJSON Feature or FeatureCollection.", embed=False),
+                Feature,
+                Body(description="GeoJSON Feature.", embed=False),
             ],
             query=Depends(timeseries_cmr_query_no_bbox),
             coord_crs=Depends(CoordCRSParams),
@@ -628,10 +635,6 @@ class TimeseriesExtension(FactoryExtension):
             )
             combine_start = time()
             datetime_strs = [d.temporal for d in query]
-            if not isinstance(geojson, Feature):
-                raise HTTPException(
-                    status_code=400, detail="Expected a GeoJSON Feature"
-                )
             if geojson.properties is None:
                 geojson.properties = {}
             geojson.properties["statistics"] = {}
@@ -663,8 +666,8 @@ class TimeseriesExtension(FactoryExtension):
         )
         async def timeseries_tilejson(
             request: Request,
-            tileMatrixSetId: Annotated[  # type: ignore
-                Literal[tuple(factory.supported_tms.list())],
+            tileMatrixSetId: Annotated[
+                Literal[tuple(factory.supported_tms.list())],  # type: ignore[valid-type]
                 Path(description="Identifier for a supported TileMatrixSet"),
             ],
             query=Depends(timeseries_cmr_query),
