@@ -631,7 +631,10 @@ def evaluate_concept_compatibility(
     except (ValueError, OSError, KeyError) as xarray_error:
         logger.warning(f"XarrayReader failed: {xarray_error}")
         if group:
-            raise HTTPException(400, str(xarray_error)) from xarray_error
+            raise HTTPException(
+                400,
+                f"Could not open group {group!r} in the sample granule: {xarray_error}",
+            ) from xarray_error
         try:
             result = evaluate_rasterio_compatibility(
                 concept_id,

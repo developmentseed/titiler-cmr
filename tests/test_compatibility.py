@@ -826,6 +826,9 @@ class TestConceptCompatibility:
             )
 
         assert exc_info.value.status_code == 400
+        assert exc_info.value.detail.startswith(
+            "Could not open group 'AIRS/Radiances' in the sample granule: "
+        )
         assert "group not found" in exc_info.value.detail
         # The 400 for both readers failing would report a rasterio error too.
         assert "rasterio" not in exc_info.value.detail
