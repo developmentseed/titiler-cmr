@@ -215,9 +215,13 @@ def _xarray_group_incompatibility_detail(
     group: str | None,
     validation: dict[str, Any],
 ) -> dict[str, Any]:
-    """Build a structured incompatibility detail for an xarray group."""
+    """Build a structured incompatibility detail for an xarray group or granule."""
     return {
-        "message": "Requested xarray group is not compatible with TiTiler-CMR tiling.",
+        "message": (
+            "Requested xarray group is not compatible with TiTiler-CMR tiling."
+            if group
+            else "No group in the granule is compatible with TiTiler-CMR tiling."
+        ),
         "group": group,
         "reason": "No data variables contain recognized X and Y spatial dimensions.",
         "x_dimension_aliases": X_DIM_NAMES,
@@ -452,18 +456,22 @@ def evaluate_xarray_compatibility(
     validation = validate_tileable_variables(ds)
     result.update(validation)
 
-    if group and not validation["tileable_variables"]:
-        raise HTTPException(
-            status_code=400,
-            detail=_xarray_group_incompatibility_detail(group, validation),
+    if not validation["tileable_variables"]:
+        compatible_groups = (
+            []
+            if group
+            else _compatible_groups(
+                href,
+                auth_token=auth_token,
+                credential_provider=credential_provider,
+            )
         )
-
-    if not group and not result["variables"]:
-        result["compatible_groups"] = _compatible_groups(
-            href,
-            auth_token=auth_token,
-            credential_provider=credential_provider,
-        )
+        if not compatible_groups:
+            raise HTTPException(
+                status_code=400,
+                detail=_xarray_group_incompatibility_detail(group, validation),
+            )
+        result["compatible_groups"] = compatible_groups
 
     result["granule_ur"] = granule.granule_ur
     result["example_assets"] = href
