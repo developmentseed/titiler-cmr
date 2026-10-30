@@ -74,7 +74,7 @@ class CompatibilityResponse(BaseModel):
     granule_ur: str | None = None
     example_assets: dict[str, str] | str | None = None
     sample_asset_raster_info: Info | None = None
-    links: list[TemplateLink] | None = None
+    links: list[TemplateLink]
 
 
 def extract_xarray_metadata(

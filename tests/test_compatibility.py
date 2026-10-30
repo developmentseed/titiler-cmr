@@ -16,6 +16,7 @@ from starlette.requests import Request
 
 from titiler.cmr.compatibility import (
     CompatibilityResponse,
+    VariableInfo,
     _candidate_group_paths,
     _dataset_dim_scale_names,
     _group_has_spatial_dims,
@@ -39,7 +40,7 @@ class _PathReader:
     def __enter__(self) -> "_PathReader":
         return self
 
-    def __exit__(self, exc_type, exc, tb) -> bool:
+    def __exit__(self, *_: object) -> bool:
         return False
 
     def __fspath__(self) -> str:
@@ -66,7 +67,7 @@ class _FakeRasterReaderContext:
     def __enter__(self) -> _FakeRasterReader:
         return self._reader
 
-    def __exit__(self, exc_type, exc, tb) -> bool:
+    def __exit__(self, *_: object) -> bool:
         return False
 
 
@@ -111,8 +112,8 @@ def _make_granule(external_href="https://example.com/file.nc") -> Granule:
                 **{"URL": "s3://bucket/file.nc", "Type": "GET DATA VIA DIRECT ACCESS"}
             ),
         ],
-        spatial_extent=GranuleSpatialExtent(
-            **{
+        spatial_extent=GranuleSpatialExtent.model_validate(
+            {
                 "HorizontalSpatialDomain": {
                     "Geometry": {
                         "BoundingRectangles": [
@@ -716,6 +717,7 @@ class TestConceptCompatibility:
         assert "variables=sea_ice" in tilejson_link.href
         assert "{temporal}" in tilejson_link.href
         assert "/xarray/" in tilejson_link.href
+        mock_rasterio.assert_not_called()
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
@@ -1107,12 +1109,12 @@ class TestCompatibilityEndpoint:
             backend="xarray",
             datetime=[],
             variables={
-                "temp": {
-                    "shape": [2, 5],
-                    "dims": ["y", "x"],
-                    "tileable": True,
-                    "dtype": "float32",
-                }
+                "temp": VariableInfo(
+                    shape=[2, 5],
+                    dims=["y", "x"],
+                    tileable=True,
+                    dtype="float32",
+                )
             },
             dimensions={"x": 10},
             coordinates={},
@@ -1179,12 +1181,12 @@ class TestCompatibilityEndpoint:
             backend="xarray",
             datetime=[],
             variables={
-                "temp": {
-                    "shape": [2, 5],
-                    "dims": ["y", "x"],
-                    "tileable": True,
-                    "dtype": "float32",
-                }
+                "temp": VariableInfo(
+                    shape=[2, 5],
+                    dims=["y", "x"],
+                    tileable=True,
+                    dtype="float32",
+                )
             },
             links=[],
         )
