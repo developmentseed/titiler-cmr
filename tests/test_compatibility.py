@@ -1207,8 +1207,7 @@ class TestCompatibilityEndpoint:
         parameters = response.json()["paths"]["/compatibility"]["get"]["parameters"]
         group_param = next(param for param in parameters if param["name"] == "group")
         assert group_param["description"] == (
-            "Select a specific zarr group from a zarr hierarchy. "
-            "Could be associated with a zoom level or dataset."
+            "NetCDF or HDF5 group to inspect. Defaults to the root group."
         )
         granule_ur_param = next(
             param for param in parameters if param["name"] == "granule_ur"

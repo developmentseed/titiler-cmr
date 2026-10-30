@@ -1,7 +1,7 @@
 """titiler.cmr.compatibility: Compatibility testing utilities."""
 
 import urllib.parse
-from typing import Any, Literal, TypeAlias, cast
+from typing import Any, Literal
 
 import h5py
 import numpy as np
@@ -12,7 +12,6 @@ from pydantic import BaseModel
 from rio_tiler.errors import MissingAssets
 from rio_tiler.models import Info
 from starlette.requests import Request
-from titiler.xarray.dependencies import XarrayIOParams
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
@@ -659,9 +658,6 @@ def _concept_id_param(
     return collection_concept_id or concept_id
 
 
-XarrayGroupParam: TypeAlias = cast(Any, XarrayIOParams.__annotations__["group"])
-
-
 router = APIRouter()
 
 
@@ -669,7 +665,10 @@ router = APIRouter()
 def compatibility_check(
     request: Request,
     concept_id: str | None = Depends(_concept_id_param),
-    group: XarrayGroupParam = None,
+    group: str | None = Query(
+        default=None,
+        description="NetCDF or HDF5 group to inspect. Defaults to the root group.",
+    ),
     granule_ur: GranuleUr = None,
     skip_variable_statistics: bool = Query(
         default=False,
