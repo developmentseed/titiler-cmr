@@ -453,9 +453,7 @@ class TestXarrayCompatibility:
         request = _make_request(s3_access=True)
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-        mock_open_dataset.return_value = xr.Dataset(
-            {"temp": (("y", "x"), np.zeros((2, 3), dtype=np.float32))}
-        )
+        mock_open_dataset.return_value = xr.Dataset()
         mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility("C1234-TEST", request)
@@ -496,9 +494,7 @@ class TestXarrayCompatibility:
         request = _make_request()
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
-        mock_open_dataset.return_value = xr.Dataset(
-            {"temp": (("y", "x"), np.zeros((2, 3), dtype=np.float32))}
-        )
+        mock_open_dataset.return_value = xr.Dataset()
         mock_compatible_groups.return_value = []
 
         result = evaluate_xarray_compatibility(
@@ -526,7 +522,7 @@ class TestXarrayCompatibility:
         granule = _make_granule()
         mock_get_granules.return_value = iter([granule])
         mock_open_dataset.return_value = xr.Dataset(
-            {"temp": (("y", "x"), np.zeros((2, 5), dtype=np.float32))}
+            {"temp": (("x",), np.arange(10, dtype=np.float32))}
         )
         mock_compatible_groups.return_value = []
 
@@ -537,9 +533,9 @@ class TestXarrayCompatibility:
         )
 
         assert result["variables"]["temp"] == {
-            "shape": [2, 5],
-            "dims": ["y", "x"],
-            "tileable": True,
+            "shape": [10],
+            "dims": ["x"],
+            "tileable": False,
             "dtype": "float32",
         }
 
