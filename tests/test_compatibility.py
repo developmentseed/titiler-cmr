@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from types import SimpleNamespace
-from typing import cast
 from unittest.mock import patch
 
 import h5py
@@ -887,10 +886,10 @@ class TestConceptCompatibility:
 
         assert result.compatible_groups == ["grid"]
 
-    def test_root_without_tileable_variables_or_groups_is_rejected(
+    def test_root_without_tileable_variables_or_groups_is_not_tileable(
         self, tmp_path: Path
     ):
-        """Test a granule with nothing tileable is rejected, not reported compatible."""
+        """Test a granule with nothing tileable gets a 200 that marks it not tileable."""
         granule_path = tmp_path / "swath.nc"
         ds = xr.Dataset(
             {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
@@ -935,21 +934,25 @@ class TestConceptCompatibility:
         client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
         request = _make_request(client=client)
 
-        with pytest.raises(HTTPException) as exc_info:
-            evaluate_concept_compatibility("C1234-TEST", request)
-
-        detail = cast(dict, exc_info.value.detail)
-
-        assert exc_info.value.status_code == 400
-        assert detail["message"] == (
-            "No group in the granule has variables with recognized x and y dimensions."
+        result = evaluate_concept_compatibility(
+            "C1234-TEST", request, skip_variable_statistics=True
         )
-        assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
 
-    def test_explicit_group_without_tileable_variables_is_rejected(
+        assert result.variables == {
+            "radiance": VariableInfo(
+                shape=[2, 3],
+                dims=["atrack", "xtrack"],
+                tileable=False,
+                dtype="float32",
+            )
+        }
+        assert result.compatible_groups == []
+        assert result.links == []
+
+    def test_explicit_group_without_tileable_variables_is_not_tileable(
         self, tmp_path: Path
     ):
-        """Test an explicit group with nothing tileable is rejected with its detail."""
+        """Test a group with nothing tileable gets a 200 that marks it not tileable."""
         granule_path = tmp_path / "swath.nc"
         ds = xr.Dataset(
             {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
@@ -994,20 +997,22 @@ class TestConceptCompatibility:
         client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
         request = _make_request(client=client)
 
-        with pytest.raises(HTTPException) as exc_info:
-            evaluate_concept_compatibility(
-                "C1234-TEST", request, group="AIRS/Radiances"
-            )
-
-        detail = cast(dict, exc_info.value.detail)
-
-        assert exc_info.value.status_code == 400
-        assert detail["message"] == (
-            "Group 'AIRS/Radiances' has no variables with recognized x and y "
-            "dimensions."
+        result = evaluate_concept_compatibility(
+            "C1234-TEST",
+            request,
+            group="AIRS/Radiances",
+            skip_variable_statistics=True,
         )
-        assert detail["group"] == "AIRS/Radiances"
-        assert detail["variables"]["radiance"] == ["atrack", "xtrack"]
+
+        assert result.variables == {
+            "radiance": VariableInfo(
+                shape=[2, 3],
+                dims=["atrack", "xtrack"],
+                tileable=False,
+                dtype="float32",
+            )
+        }
+        assert result.links == []
 
     def test_xarray_links_use_the_first_tileable_variable(self, tmp_path: Path):
         """Test example links skip variables that cannot be tiled."""

@@ -185,25 +185,6 @@ def extract_xarray_metadata(
     }
 
 
-def _xarray_group_incompatibility_detail(
-    group: str | None,
-    variables: dict[str, Any],
-) -> dict[str, Any]:
-    """Build a structured incompatibility detail for an xarray group or granule."""
-    return {
-        "message": (
-            f"Group {group!r} has no variables with recognized x and y dimensions."
-            if group
-            else "No group in the granule has variables with recognized x and y "
-            "dimensions."
-        ),
-        "group": group,
-        "x_dimension_aliases": X_DIM_NAMES,
-        "y_dimension_aliases": Y_DIM_NAMES,
-        "variables": {name: info["dims"] for name, info in variables.items()},
-    }
-
-
 def _get_credential_provider(granule: Any, request: Request) -> Any:
     """Return a credential provider for a granule when direct S3 access is enabled."""
     if not request.app.state.s3_access:
@@ -404,9 +385,8 @@ def evaluate_xarray_compatibility(
         ValueError: If no assets found or reader incompatible
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
-        HTTPException: If CMR rejects the search, a 400 if nothing in the
-            requested group or the granule is tileable, or a 502 if the group
-            scan cannot read the granule
+        HTTPException: If CMR rejects the search, or a 502 if the group scan
+            cannot read the granule
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -435,24 +415,13 @@ def evaluate_xarray_compatibility(
         ds,
         skip_variable_statistics=skip_variable_statistics,
     )
-    variables = result["variables"]
 
-    if not any(info["tileable"] for info in variables.values()):
-        compatible_groups = (
-            []
-            if group
-            else _compatible_groups(
-                href,
-                auth_token=auth_token,
-                credential_provider=credential_provider,
-            )
+    if not group and not any(info["tileable"] for info in result["variables"].values()):
+        result["compatible_groups"] = _compatible_groups(
+            href,
+            auth_token=auth_token,
+            credential_provider=credential_provider,
         )
-        if not compatible_groups:
-            raise HTTPException(
-                status_code=400,
-                detail=_xarray_group_incompatibility_detail(group, variables),
-            )
-        result["compatible_groups"] = compatible_groups
 
     result["granule_ur"] = granule.granule_ur
     result["example_assets"] = href
