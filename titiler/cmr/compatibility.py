@@ -540,8 +540,9 @@ def evaluate_concept_compatibility(
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
-    Tries XarrayReader first, falls back to MultiBaseGranuleReader.
-    Also fetches and includes CMR metadata in the response.
+    Tries XarrayReader first and, unless a group is requested, falls back to
+    MultiBaseGranuleReader. Also fetches and includes CMR metadata in the
+    response.
 
     Args:
         concept_id: CMR concept ID to test
@@ -555,9 +556,9 @@ def evaluate_concept_compatibility(
         CompatibilityResponse with backend info, temporal extent, and metadata
 
     Raises:
-        HTTPException: If neither reader is compatible, the collection is not
-            found, CMR rejects a search, or the group scan cannot read the
-            granule
+        HTTPException: If the requested group cannot be opened, neither reader
+            is compatible, the collection is not found, CMR rejects a search,
+            or the group scan cannot read the granule
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
     """
