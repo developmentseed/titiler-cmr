@@ -253,56 +253,26 @@ class TestExtractXarrayMetadata:
         assert result["coordinates"]["x"]["min"] == 0.0
         assert result["coordinates"]["x"]["max"] == 9.0
 
-    def test_variables_without_x_and_y_dimensions_are_not_tileable(self):
-        """Test a variable without recognized x/y dimensions is marked not tileable."""
-        ds = xr.Dataset(
-            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
-        )
+    @pytest.mark.parametrize(
+        ("dims", "shape", "tileable"),
+        [
+            (("atrack", "xtrack"), (2, 3), False),
+            (("lat", "lon"), (2, 3), True),
+            (("time", "lat", "lon"), (4, 2, 3), True),
+            (("time", "y", "x"), (1, 2, 3), True),
+        ],
+        ids=["no-x-y", "lat-lon", "extra-dimension", "x-y"],
+    )
+    def test_variables_are_tileable_with_recognized_x_and_y_dimensions(
+        self, dims, shape, tileable
+    ):
+        """Test a variable is tileable exactly when it has recognized x/y dimensions."""
+        ds = xr.Dataset({"var": (dims, np.zeros(shape, dtype=np.float32))})
 
         result = extract_xarray_metadata(ds, skip_variable_statistics=True)
 
-        assert result["variables"]["radiance"]["dims"] == ["atrack", "xtrack"]
-        assert result["variables"]["radiance"]["tileable"] is False
-
-    def test_variables_on_lat_and_lon_are_tileable(self):
-        """Test a variable on lat and lon dimensions is marked tileable."""
-        ds = xr.Dataset(
-            {"temperature": (("lat", "lon"), np.zeros((2, 3), dtype=np.float32))}
-        )
-
-        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
-
-        assert result["variables"]["temperature"]["tileable"] is True
-
-    def test_variables_with_extra_dimensions_are_tileable(self):
-        """Test a spatial variable with an extra dimension is marked tileable."""
-        ds = xr.Dataset(
-            {
-                "temperature": (
-                    ("time", "lat", "lon"),
-                    np.zeros((4, 2, 3), dtype=np.float32),
-                )
-            }
-        )
-
-        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
-
-        assert result["variables"]["temperature"]["tileable"] is True
-
-    def test_variables_on_x_and_y_dimensions_are_tileable(self):
-        """Test a variable already on x and y dimensions is marked tileable."""
-        ds = xr.Dataset(
-            {
-                "N07_ICECON": (
-                    ("time", "y", "x"),
-                    np.zeros((1, 2, 3), dtype=np.float32),
-                )
-            }
-        )
-
-        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
-
-        assert result["variables"]["N07_ICECON"]["tileable"] is True
+        assert result["variables"]["var"]["dims"] == list(dims)
+        assert result["variables"]["var"]["tileable"] is tileable
 
 
 class TestGroupPruningHelpers:

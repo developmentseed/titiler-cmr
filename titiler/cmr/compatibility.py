@@ -273,21 +273,11 @@ def _candidate_group_paths(
     credential_provider: Any = None,
 ) -> list[str]:
     """Return likely xarray group paths, preferring spatial non-metadata groups."""
-    all_group_paths: list[str] = []
     spatial_group_paths: list[str] = []
     spatial_metadata_group_paths: list[str] = []
 
     def visitor(name: str, obj: Any) -> None:
-        if not (
-            name
-            and isinstance(obj, h5py.Group)
-            and any(isinstance(child, h5py.Dataset) for child in obj.values())
-        ):
-            return
-
-        all_group_paths.append(name)
-
-        if not _group_has_spatial_dims(obj):
+        if not (isinstance(obj, h5py.Group) and _group_has_spatial_dims(obj)):
             return
 
         if "/metadata/" in f"/{name.strip('/')}/":
@@ -577,13 +567,9 @@ def evaluate_concept_compatibility(
             granule_ur=granule_ur,
             skip_variable_statistics=skip_variable_statistics,
         )
+        variables = result.get("variables") or {}
         first_tileable_var = next(
-            (
-                name
-                for name, info in (result.get("variables") or {}).items()
-                if info["tileable"]
-            ),
-            None,
+            (name for name, info in variables.items() if info["tileable"]), None
         )
         links = _build_links(
             base_url,
