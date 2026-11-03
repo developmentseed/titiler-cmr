@@ -319,9 +319,11 @@ def _compatible_groups(
             credential_provider=credential_provider,
         )
     except (OSError, ObstoreError) as exc:
+        # obstore follows its first line with a multi-line Rust debug dump.
+        reason = str(exc).partition("\n")[0]
         raise HTTPException(
             status_code=502,
-            detail=f"Could not inspect the granule's groups: {exc}",
+            detail=f"Could not inspect the granule's groups: {reason}",
         ) from exc
 
 
