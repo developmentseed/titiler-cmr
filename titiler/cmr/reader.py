@@ -108,12 +108,6 @@ def _arrange_dims(
     else:
         da = da.transpose("y", "x")
 
-    # If min/max values are stored in `valid_range` we add them in `valid_min/valid_max`
-    vmin, vmax = da.attrs.get("valid_min"), da.attrs.get("valid_max")
-    if "valid_range" in da.attrs and not (vmin is not None and vmax is not None):
-        valid_range = da.attrs.get("valid_range")
-        da.attrs.update({"valid_min": valid_range[0], "valid_max": valid_range[1]})  # type: ignore
-
     return da
 
 
@@ -121,11 +115,11 @@ def is_tileable(da: DataArray) -> bool:
     """Return whether a variable has the x and y dimensions that tiling needs.
 
     This is the spatial-dimension check that ``get_variables`` applies before
-    tiling. A variable with extra dimensions also needs a ``sel`` selector for
-    each of them, which this does not check.
+    tiling, after it drops size-1 dimensions. A variable with extra dimensions
+    also needs a ``sel`` selector for each of them, which this does not check.
     """
     try:
-        _arrange_dims(da, X_DIM_NAMES, Y_DIM_NAMES)
+        _arrange_dims(da.squeeze(), X_DIM_NAMES, Y_DIM_NAMES)
     except ValueError:
         return False
 
@@ -187,6 +181,13 @@ def get_variables(
         )
 
     da = _arrange_dims(da, x_dim_names=x_dim_names, y_dim_names=y_dim_names)
+
+    # If min/max values are stored in `valid_range` we add them in `valid_min/valid_max`
+    vmin, vmax = da.attrs.get("valid_min"), da.attrs.get("valid_max")
+
+    if "valid_range" in da.attrs and (vmin is None or vmax is None):
+        valid_range = da.attrs.get("valid_range")
+        da.attrs.update({"valid_min": valid_range[0], "valid_max": valid_range[1]})  # type: ignore
 
     # Check before the expression, which removes `band`. After that, a leftover
     # dimension such as time would take band's place and be read as bands.

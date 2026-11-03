@@ -260,19 +260,40 @@ class TestExtractXarrayMetadata:
             (("lat", "lon"), (2, 3), True),
             (("time", "lat", "lon"), (4, 2, 3), True),
             (("time", "y", "x"), (1, 2, 3), True),
+            (("lat", "lon"), (1, 3), False),
         ],
-        ids=["no-x-y", "lat-lon", "extra-dimension", "x-y"],
+        ids=["no-x-y", "lat-lon", "extra-dimension", "x-y", "single-row"],
     )
     def test_variables_are_tileable_with_recognized_x_and_y_dimensions(
         self, dims, shape, tileable
     ):
-        """Test a variable is tileable exactly when it has recognized x/y dimensions."""
+        """Test a variable is tileable exactly when it has recognized x/y dimensions.
+
+        A single row is not tileable, because tiling drops size-1 dimensions
+        before it looks for x and y.
+        """
         ds = xr.Dataset({"var": (dims, np.zeros(shape, dtype=np.float32))})
 
         result = extract_xarray_metadata(ds, skip_variable_statistics=True)
 
         assert result["variables"]["var"]["dims"] == list(dims)
         assert result["variables"]["var"]["tileable"] is tileable
+
+    def test_scalar_valid_range_does_not_stop_the_tileability_check(self):
+        """Test a scalar valid_range (not a [min, max] pair) does not affect tileability."""
+        ds = xr.Dataset(
+            {
+                "var": (
+                    ("lat", "lon"),
+                    np.zeros((2, 3), dtype=np.float32),
+                    {"valid_range": np.float32(5.0)},
+                )
+            }
+        )
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["var"]["tileable"] is True
 
 
 class TestGroupPruningHelpers:
@@ -784,7 +805,7 @@ class TestConceptCompatibility:
         client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
         request = _make_request(client=client)
 
-        # The file has no AIRS/Radiances group, so xarray cannot open it.
+        # The file does not have an AIRS/Radiances group, so xarray cannot open it.
         with pytest.raises(HTTPException) as exc_info:
             evaluate_concept_compatibility(
                 "C1234-TEST", request, group="AIRS/Radiances"
