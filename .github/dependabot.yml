@@ -18,6 +18,17 @@ updates:
     commit-message:
       prefix: "chore(deps):"
 
+  # The CDK CLI must be new enough to read what aws-cdk-lib (in uv.lock)
+  # writes. The "CDK CLI reads aws-cdk-lib's output" CI job checks the pair.
+  - package-ecosystem: npm
+    directory: "/infrastructure/aws"
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(deps):"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     cooldown:
