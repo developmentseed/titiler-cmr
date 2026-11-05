@@ -83,7 +83,6 @@ dev = [
     "pytest-benchmark>=5.1.0",
     "pytest-cov>=5.0.0",
     "pytest-httpx>=0.36.0",
-    "pytest-mock>=3.14.0",
     "pytest-recording>=0.13.2",
     "pytest>=9.0.2",
     "ruff>=0.8.0",
@@ -182,12 +181,17 @@ ignore_missing_imports = true
 minversion = "8.0"
 # Address PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
 asyncio_default_fixture_loop_scope = "function"
+# "error" belongs here, not as -Werror in addopts, because -Werror would override
+# every entry in this list, including the NotGeoreferencedWarning ignore.
 filterwarnings = [
+    "error",
+    # rasterio silences this warning in a way that is not thread-safe, so tests
+    # that read granules concurrently (the timeseries steps) can raise it, and
+    # as an error it can fail or even crash the test run.
     "ignore::rasterio.errors.NotGeoreferencedWarning",
 ]
 markers = "vcr: records network activity"
 addopts = [
-    "-Werror",
     "--cov=titiler.cmr",
     "--cov-report=term-missing",
     "--cov-report=xml",

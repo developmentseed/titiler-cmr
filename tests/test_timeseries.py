@@ -463,11 +463,10 @@ def _post_response(path: str, content: Any) -> Any:
     handler returns content.
 
     This lets a test check what a route does with a handler's result without
-    calling the endpoint. Calling it would need CMR searches and granule reads,
-    and, for /timeseries/statistics, HTTP requests to /statistics that cannot
-    reach the app under test. FastAPI processes a handler's result according to
-    the route's response_model and response_model_exclude_none settings, and
-    this helper applies those settings the same way.
+    calling the endpoint. Calling it would need CMR searches and granule reads.
+    FastAPI processes a handler's result according to the route's
+    response_model and response_model_exclude_none settings, and this helper
+    applies those settings the same way.
     """
     route = next(
         route
