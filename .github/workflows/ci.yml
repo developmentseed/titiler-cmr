@@ -87,6 +87,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # The fix instructions read aws-cdk-lib from HEAD^1, which is the
+          # base branch on a pull request (HEAD is the merge commit) and the
+          # previous commit on a push.
+          fetch-depth: 2
 
       # The same Node version as the cdk-deploy action, so the CLI runs here
       # as it does in a deploy.
@@ -111,27 +115,38 @@ jobs:
       # can read what aws-cdk-lib in uv.lock writes.
       - name: Synthesize an empty stack
         run: |
-          if out=$(uv run --locked --only-group deployment npx cdk synth -q \
-              --app "python -c \"import aws_cdk as cdk; app = cdk.App(); cdk.Stack(app, 'Probe'); app.synth()\"" 2>&1); then
-            exit 0
+          empty_stack='import aws_cdk as cdk; cdk.Stack(app := cdk.App(), "Probe"); app.synth()'
+
+          if out=$(
+              uv run --quiet --locked --only-group deployment \
+              npx cdk synth --quiet --app "python -c '${empty_stack}'" 2>&1
+          ); then
+              exit 0
           fi
+
           echo "$out"
+
           if grep -q "schema version mismatch" <<< "$out"; then
-            echo "::error title=aws-cdk-lib needs a newer CDK CLI::This failure is not caused by your code. The log of the \"Synthesize an empty stack\" step shows how to fix it."
-            printf '%s\n' \
-              "" \
-              "The aws-cdk-lib in uv.lock writes a format that the CDK CLI in infrastructure/aws/package-lock.json cannot read, so every deploy would fail. Try these in order until this check passes:" \
-              "" \
-              "1. If Dependabot has an open pull request that updates cdk in /infrastructure/aws, merge it, then bring this branch up to date with main (on a Dependabot pull request, comment \"@dependabot rebase\")." \
-              "" \
-              "2. Update the CLI. Run this from the repository root and commit the two changed files:" \
-              "" \
-              "       npm --prefix infrastructure/aws install cdk@latest" \
-              "" \
-              "3. If no CDK CLI release reads this aws-cdk-lib yet, keep aws-cdk-lib at the version uv.lock had before this change (replace X.Y.Z with it):" \
-              "" \
-              "       uv lock --upgrade-package aws-cdk-lib==X.Y.Z" \
-              "" \
-              "Background: https://github.com/developmentseed/titiler-cmr/issues/283"
+              # The same 7-day cooldown as .github/dependabot.yml.
+              before=$(date -u -d '7 days ago' +%F)
+              prev_lib=$(git show HEAD^1:uv.lock | python3 -c 'import sys, tomllib; print(next(p["version"] for p in tomllib.load(sys.stdin.buffer)["package"] if p["name"] == "aws-cdk-lib"))')
+
+              echo "::error title=aws-cdk-lib needs a newer CDK CLI::This failure is not caused by your code. The log of the \"Synthesize an empty stack\" step shows how to fix it."
+              printf '%s\n' \
+                  "" \
+                  "The aws-cdk-lib in uv.lock writes a format that the CDK CLI in infrastructure/aws/package-lock.json cannot read, so every deploy would fail. Try these in order until this check passes:" \
+                  "" \
+                  "1. If Dependabot has an open pull request that updates cdk in /infrastructure/aws, merge it, then bring this branch up to date with main (on a Dependabot pull request, comment \"@dependabot rebase\")." \
+                  "" \
+                  "2. Update the CLI. Run this from the repository root and commit the two changed files:" \
+                  "" \
+                  "       npm --prefix infrastructure/aws install cdk@latest --before $before" \
+                  "" \
+                  "3. If no CDK CLI release from before $before reads this aws-cdk-lib yet, keep aws-cdk-lib at $prev_lib, the version uv.lock had before this change:" \
+                  "" \
+                  "       uv lock --upgrade-package aws-cdk-lib==$prev_lib" \
+                  "" \
+                  "Background: https://github.com/developmentseed/titiler-cmr/issues/283"
           fi
+
           exit 1
