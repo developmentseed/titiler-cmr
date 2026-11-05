@@ -17,6 +17,7 @@ import asyncio
 import io
 import logging
 import os
+from collections.abc import AsyncIterator
 from dataclasses import dataclass, fields
 from datetime import datetime, timedelta, timezone
 from enum import Enum
@@ -278,6 +279,12 @@ def build_request_urls(
         urls.append(url)
 
     return urls
+
+
+async def timestep_client() -> AsyncIterator[AsyncClient]:
+    """Supply the HTTP client that sends a timeseries request's per-step requests."""
+    async with AsyncClient() as client:
+        yield client
 
 
 async def _timestep_request(
@@ -567,6 +574,7 @@ class TimeseriesExtension(FactoryExtension):
             stats_params=Depends(factory.stats_dependency),
             histogram_params=Depends(factory.histogram_dependency),
             image_params=Depends(factory.img_part_dependency),
+            client: AsyncClient = Depends(timestep_client),
         ):
             """For all points/intervals along a timeseries, calculate summary statistics
             for the pixels that intersect a GeoJSON feature.
@@ -618,10 +626,9 @@ class TimeseriesExtension(FactoryExtension):
                 param_list=query,
             )
 
-            async with AsyncClient() as client:
-                timestep_requests = await asyncio.gather(
-                    *[_fetch_statistics(client, url, geojson) for url in urls]
-                )
+            timestep_requests = await asyncio.gather(
+                *[_fetch_statistics(client, url, geojson) for url in urls]
+            )
 
             logging.info(
                 f"Time to fetch individual statistics: {time() - start_time:.2f}s"
@@ -697,6 +704,7 @@ class TimeseriesExtension(FactoryExtension):
             post_process=Depends(available_algorithms.dependency),
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
+            client: AsyncClient = Depends(timestep_client),
         ) -> TimeseriesTileJSON:
             """Get a set of tilejsons for all points/intervals along a timeseries."""
             urls = build_request_urls(
@@ -709,10 +717,9 @@ class TimeseriesExtension(FactoryExtension):
                 param_list=query,
             )
 
-            async with AsyncClient() as client:
-                results = await asyncio.gather(
-                    *[_fetch_tilejson(client, url) for url in urls]
-                )
+            results = await asyncio.gather(
+                *[_fetch_tilejson(client, url) for url in urls]
+            )
 
             datetime_strs = [d.temporal for d in query]
 
@@ -766,6 +773,7 @@ class TimeseriesExtension(FactoryExtension):
             image_params=Depends(factory.img_part_dependency),
             colormap=Depends(factory.colormap_dependency),
             render_params=Depends(factory.render_dependency),
+            client: AsyncClient = Depends(timestep_client),
         ):
             """Create an animation along a timeseries for a bbox.
 
@@ -835,8 +843,7 @@ class TimeseriesExtension(FactoryExtension):
 
             logger.info(f"generated {len(urls)} request urls")
 
-            async with AsyncClient() as client:
-                pngs = await asyncio.gather(*[_fetch_png(client, url) for url in urls])
+            pngs = await asyncio.gather(*[_fetch_png(client, url) for url in urls])
 
             # Filter out ``None`` values from 204 responses.
             valid_pngs: list[Image.Image] = [img for img in pngs if img is not None]

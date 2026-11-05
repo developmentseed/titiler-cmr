@@ -1,19 +1,15 @@
 """Test titiler-cmr xarray backend."""
 
 import io
-from copy import deepcopy
 from datetime import datetime, timedelta
 from math import ceil
-from pathlib import Path
 from typing import Tuple
 from urllib.parse import urlencode
 
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, Polygon
-from httpx2 import AsyncClient, Response
 from PIL import Image
-from titiler.core.models.mapbox import TileJSON
 
 from titiler.cmr.timeseries import TimeseriesMediaType
 
@@ -196,58 +192,21 @@ def test_xarray_part(
 @pytest.mark.vcr
 def test_timeseries_statistics(
     app: TestClient,
-    mocker,
     mock_cmr_get_assets,
     xarray_query_params,
     arctic_geojson,
 ) -> None:
-    """Test /xarray/timeseries/statistics endpoint
-
-    Since the /timeseries/statistics endpoint sends more requests to internal endpoints
-    we need to catch those requests and mock a response since we can't forward them to
-    the test client.
-    """
-    arctic_stats = deepcopy(arctic_geojson)
-    arctic_stats["properties"]["statistics"] = {
-        "b1": {
-            "min": 0.0,
-            "max": 1.0,
-            "mean": 0.3,
-            "count": 4493.0,
-            "sum": 1463.7,
-            "std": 0.3,
-            "median": 0.0,
-            "majority": 0.0,
-            "minority": 0.28,
-            "unique": 87.0,
-            "histogram": [
-                [2322, 38, 56, 300, 536, 426, 427, 388],
-                [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
-            ],
-            "valid_percent": 93.72,
-            "masked_pixels": 301.0,
-            "valid_pixels": 4493.0,
-            "percentile_2": 0.0,
-            "percentile_98": 0.99,
-            "description": "sea_ice_fraction",
-        }
-    }
-
-    async def mock_timestep_request(
-        client: AsyncClient, url: str, **kwargs
-    ) -> Response:
-        return Response(
-            status_code=200,
-            json=arctic_stats,
-        )
-
-    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
-
+    """Test /xarray/timeseries/statistics endpoint"""
     response = app.post(
         "/xarray/timeseries/statistics",
         params={
             **xarray_query_params(),
-            "temporal": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+            # Each interval stays inside one day, because an interval that
+            # touches midnight also matches the neighboring day's granule.
+            "temporal": (
+                "2024-10-11T06:00:00Z/2024-10-11T18:00:00Z,"
+                "2024-10-12T06:00:00Z/2024-10-12T18:00:00Z"
+            ),
             "step": "P1D",
         },
         json=arctic_geojson,
@@ -256,41 +215,21 @@ def test_timeseries_statistics(
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/geo+json"
 
-    assert set(response.json()["properties"]["statistics"].keys()) == {
-        "2024-10-11T00:00:00+00:00/2024-10-11T23:59:59+00:00",
-        "2024-10-12T00:00:00+00:00/2024-10-12T23:59:59+00:00",
+    statistics = response.json()["properties"]["statistics"]
+    assert set(statistics.keys()) == {
+        "2024-10-11T06:00:00+00:00/2024-10-11T18:00:00+00:00",
+        "2024-10-12T06:00:00+00:00/2024-10-12T18:00:00+00:00",
     }
+    # The steps read different days' granules, so their results differ.
+    first, second = statistics.values()
+    assert first != second
 
 
 def test_timeseries_tilejson(
     app,
-    mocker,
-    mock_cmr_get_assets,
     xarray_query_params,
-    arctic_geojson,
 ) -> None:
-    """Test /xarray/timeseries/tilejson endpoint
-
-    Since the /timeseries/tilejson endpoint sends more requests to internal endpoints
-    we need to catch those requests and mock a response since we can't forward them to
-    the test client.
-    """
-    arctic_tilejson = TileJSON(
-        tiles=["https://testserver/{z}/{x}/{y}"],
-        minzoom=0,
-        maxzoom=1,
-    )
-
-    async def mock_timestep_request(
-        client: AsyncClient, url: str, **kwargs
-    ) -> Response:
-        return Response(
-            status_code=200,
-            json=arctic_tilejson.model_dump(exclude_none=True),
-        )
-
-    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
-
+    """Test /xarray/timeseries/tilejson endpoint"""
     response = app.get(
         "/xarray/timeseries/WebMercatorQuad/tilejson.json",
         params={
@@ -312,41 +251,31 @@ def test_timeseries_tilejson(
 @pytest.mark.vcr
 def test_timeseries_gif(
     app,
-    mocker,
     mock_cmr_get_assets,
     xarray_query_params,
     arctic_bounds,
 ) -> None:
-    """Test /xarray/timeseries/bbox endpoint
-
-    Since the /timeseries/bbox endpoint sends more requests to internal endpoints
-    we need to catch those requests and mock a response since we can't forward them to
-    the test client.
-    """
-    png = Path(__file__).resolve().parent.parent / "titiler-cmr.png"
-    arctic_png_content = png.read_bytes()
-
-    async def mock_timestep_request(
-        client: AsyncClient, url: str, **kwargs
-    ) -> Response:
-        return Response(
-            status_code=200,
-            content=arctic_png_content,
-        )
-
-    mocker.patch("titiler.cmr.timeseries._timestep_request", new=mock_timestep_request)
-
+    """Test /xarray/timeseries/bbox endpoint"""
     response = app.get(
         f"/xarray/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",
         params={
             **xarray_query_params(),
-            "temporal": "2024-10-11T00:00:00Z/2024-10-12T23:59:59Z",
+            # Each interval stays inside one day, because an interval that
+            # touches midnight also matches the neighboring day's granule.
+            "temporal": (
+                "2024-10-11T06:00:00Z/2024-10-11T18:00:00Z,"
+                "2024-10-12T06:00:00Z/2024-10-12T18:00:00Z"
+            ),
             "step": "P1D",
+            "rescale": "0,1",
         },
     )
 
     assert response.status_code == 200
     assert response.headers["content-type"] == TimeseriesMediaType.gif
+    # Identical frames merge into one, so two frames show that the steps
+    # returned different images.
+    assert Image.open(io.BytesIO(response.content)).n_frames == 2
 
 
 def test_unbounded_start(app, xarray_query_params) -> None:
