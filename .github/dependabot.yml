@@ -4,6 +4,9 @@ updates:
     cooldown:
       default-days: 7
     directory: "/"
+    # Include indirect dependencies, which only uv.lock pins.
+    allow:
+      - dependency-type: "all"
     schedule:
       interval: monthly
     groups:

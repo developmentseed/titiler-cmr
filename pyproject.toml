@@ -189,6 +189,11 @@ filterwarnings = [
     # that read granules concurrently (the timeseries steps) can raise it, and
     # as an error it can fail or even crash the test run.
     "ignore::rasterio.errors.NotGeoreferencedWarning",
+    # affine 3 deprecates `*` for multiplying transforms in favor of `@`.
+    # rio-tiler 9.x still uses `*` (its main branch uses `@`), and so does
+    # rioxarray before 0.24, which is the newest release on Python 3.12.
+    'ignore:Use `@` matmul:PendingDeprecationWarning:rio_tiler',
+    'ignore:Use `@` matmul:PendingDeprecationWarning:rioxarray',
 ]
 markers = "vcr: records network activity"
 addopts = [
