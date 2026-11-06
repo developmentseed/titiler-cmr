@@ -176,26 +176,22 @@ def get_bbox_degrees(
     return minx, miny, maxx, maxy
 
 
-def calculate_time_series_request_size(
+def get_aoi_native_shape(
     concept_id: str,
     client: Client,
-    n_time_steps: int,
     minx: float,
     miny: float,
     maxx: float,
     maxy: float,
-    coord_crs: CRS,
-) -> float:
-    """Estimate the total pixel count for a time series request.
+    coord_crs: CRS | None,
+) -> tuple[int, int] | None:
+    """Estimate an AOI's height and width in pixels at a collection's native resolution.
 
-    Fetches the collection's horizontal data resolution from CMR and multiplies
-    the spatial pixel count of the AOI by the number of time steps.  Returns 0
-    if the resolution cannot be determined from collection metadata.
+    Fetches the collection's horizontal data resolution from CMR.
 
     Args:
         concept_id: CMR collection concept ID.
         client: HTTP client used for CMR requests.
-        n_time_steps: Number of time steps in the series.
         minx: Minimum X coordinate of the AOI bounding box.
         miny: Minimum Y coordinate of the AOI bounding box.
         maxx: Maximum X coordinate of the AOI bounding box.
@@ -203,7 +199,8 @@ def calculate_time_series_request_size(
         coord_crs: CRS of the AOI bounding box coordinates.
 
     Returns:
-        Approximate total number of pixels read across all time steps.
+        The AOI's approximate (height, width), each at least 1, or None if the
+        collection metadata does not include a resolution.
     """
     collection = get_collection(concept_id, client)
     xres, yres = collection.resolution_degrees
@@ -211,13 +208,15 @@ def calculate_time_series_request_size(
         logger.warning(
             f"could not find HorizontalDataResolution for concept_id {concept_id}"
         )
-        return 0
+        return None
 
     minx, miny, maxx, maxy = get_bbox_degrees(minx, miny, maxx, maxy, coord_crs)
+    # An AOI is never larger than the globe, and clamping it keeps an absurd
+    # bounding box from overflowing to an infinite size.
+    minx, maxx = max(minx, -180), min(maxx, 180)
+    miny, maxy = max(miny, -90), min(maxy, 90)
 
-    n_pixels_per_request = (maxx - minx) / xres * (maxy - miny) / yres
-
-    return n_pixels_per_request * n_time_steps
+    return max(1, round((maxy - miny) / yres)), max(1, round((maxx - minx) / xres))
 
 
 def get_geojson_bounds(

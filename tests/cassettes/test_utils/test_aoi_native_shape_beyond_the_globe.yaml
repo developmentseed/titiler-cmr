@@ -1,0 +1,185 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2036881735-POCLOUD
+  response:
+    body:
+      string: "{\"hits\":1,\"took\":8,\"items\":[{\"meta\":{\"revision-id\":23,\"deleted\":false,\"format\":\"application/vnd.nasa.cmr.umm+json\",\"provider-id\":\"POCLOUD\",\"has-combine\":false,\"user-id\":\"viviant\",\"has-formats\":false,\"associations\":{\"variables\":[\"V2146304144-POCLOUD\",\"V2146304135-POCLOUD\",\"V2146304146-POCLOUD\",\"V2146304148-POCLOUD\",\"V2146304142-POCLOUD\",\"V2146304137-POCLOUD\",\"V2146304150-POCLOUD\",\"V2146304132-POCLOUD\"],\"services\":[\"S3616918458-LARC_CLOUD\",\"S2874702816-XYZ_PROV\"],\"tools\":[\"TL2108419875-POCLOUD\",\"TL2245207664-POCLOUD\"],\"citations\":[\"CIT3804063757-ESDIS\",\"CIT4106688197-ESDIS\",\"CIT3804173036-ESDIS\",\"CIT3804260516-ESDIS\"],\"visualizations\":[\"VIS4086833841-ESDIS\",\"VIS4086833837-ESDIS\"]},\"s3-links\":[\"podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/\",\"podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/\"],\"has-spatial-subsetting\":false,\"native-id\":\"GHRSST+Level+4+GAMSSA_28km+Global+Foundation+Sea+Surface+Temperature+Analysis+v1.0+dataset+(GDS2)\",\"has-transforms\":true,\"association-details\":{\"variables\":[{\"concept-id\":\"V2146304144-POCLOUD\"},{\"concept-id\":\"V2146304135-POCLOUD\"},{\"concept-id\":\"V2146304146-POCLOUD\"},{\"concept-id\":\"V2146304148-POCLOUD\"},{\"concept-id\":\"V2146304142-POCLOUD\"},{\"concept-id\":\"V2146304137-POCLOUD\"},{\"concept-id\":\"V2146304150-POCLOUD\"},{\"concept-id\":\"V2146304132-POCLOUD\"}],\"services\":[{\"concept-id\":\"S3616918458-LARC_CLOUD\"},{\"concept-id\":\"S2874702816-XYZ_PROV\"}],\"tools\":[{\"concept-id\":\"TL2108419875-POCLOUD\"},{\"concept-id\":\"TL2245207664-POCLOUD\"}],\"citations\":[{\"concept-id\":\"CIT3804063757-ESDIS\"},{\"concept-id\":\"CIT4106688197-ESDIS\"},{\"concept-id\":\"CIT3804173036-ESDIS\"},{\"concept-id\":\"CIT3804260516-ESDIS\"}],\"visualizations\":[{\"concept-id\":\"VIS4086833841-ESDIS\"},{\"concept-id\":\"VIS4086833837-ESDIS\"}]},\"has-variables\":true,\"concept-id\":\"C2036881735-POCLOUD\",\"revision-date\":\"2026-09-28T14:13:37.701Z\",\"has-temporal-subsetting\":false,\"concept-type\":\"collection\"},\"umm\":{\"DataLanguage\":\"eng\",\"AncillaryKeywords\":[\"GAMSSA\",\"ABOM\",\"AUS\",\"GLOB\",\"GHRSST\",\"sea
+        surface temperature\",\"SST\",\"GDS2\"],\"CollectionCitations\":[{\"Version\":\"1.0\",\"Title\":\"GHRSST
+        L4 Australian Global Multi-Sensor SST Analysis (GAMSSA), daily, 1/4 degree
+        resolution\",\"Creator\":\"Australian Bureau of Meteorology\",\"SeriesName\":\"GHRSST
+        Level 4 GAMSSA Global Foundation Sea Surface Temperature Analysis\",\"ReleaseDate\":\"2019-09-18T00:00:00.000Z\",\"ReleasePlace\":\"Australian
+        Bureau of Meteorology, Melbourne, Australia\",\"Publisher\":\"PO.DAAC\",\"OnlineResource\":{\"Linkage\":\"http://www.bom.gov.au/australia/charts/bulletins/apob77.pdf\"}}],\"AdditionalAttributes\":[{\"Name\":\"earliest_granule_start_time\",\"Description\":\"Earliest
+        Granule Start Time for dataset.\",\"Value\":\"2008-07-23T00:00:00.000Z\",\"DataType\":\"DATETIME\"},{\"Name\":\"latest_granule_end_time\",\"Description\":\"Latest
+        Granule Stop/End Time for dataset.\",\"Value\":\"2021-05-21T00:00:00.000Z\",\"DataType\":\"DATETIME\"},{\"Name\":\"data_latency\",\"Description\":\"Dataset
+        Latency\",\"Value\":\"24\",\"DataType\":\"INT\"},{\"Name\":\"Series Name\",\"Description\":\"Dataset
+        citation series name\",\"Value\":\"GHRSST Level 4 GAMSSA Global Foundation
+        Sea Surface Temperature Analysis\",\"DataType\":\"STRING\"},{\"Name\":\"Persistent
+        ID\",\"Description\":\"Dataset Persistent ID\",\"Value\":\"PODAAC-GHGAM-4FA1A\",\"DataType\":\"STRING\"}],\"SpatialExtent\":{\"SpatialCoverageType\":\"HORIZONTAL\",\"HorizontalSpatialDomain\":{\"Geometry\":{\"CoordinateSystem\":\"CARTESIAN\",\"BoundingRectangles\":[{\"NorthBoundingCoordinate\":90.0,\"WestBoundingCoordinate\":-180.0,\"EastBoundingCoordinate\":180.0,\"SouthBoundingCoordinate\":-90.0}]},\"ResolutionAndCoordinateSystem\":{\"Description\":\"Projection
+        Type: Cylindrical Lat-Lon, Projection Detail: Regular 0.25 degree grid\",\"GeodeticModel\":{\"HorizontalDatumName\":\"World
+        Geodetic System 1984\",\"EllipsoidName\":\"WGS 84\",\"SemiMajorAxis\":6378137.0,\"DenominatorOfFlatteningRatio\":298.2572236},\"HorizontalDataResolution\":{\"GenericResolutions\":[{\"XDimension\":0.25,\"YDimension\":0.25,\"Unit\":\"Decimal
+        Degrees\"}]}}},\"GranuleSpatialRepresentation\":\"CARTESIAN\"},\"CollectionProgress\":\"ACTIVE\",\"StandardProduct\":false,\"ScienceKeywords\":[{\"Category\":\"EARTH
+        SCIENCE\",\"Topic\":\"OCEANS\",\"Term\":\"OCEAN TEMPERATURE\",\"VariableLevel1\":\"SEA
+        SURFACE TEMPERATURE\",\"VariableLevel2\":\"SEA SURFACE FOUNDATION TEMPERATURE\"}],\"TemporalExtents\":[{\"RangeDateTimes\":[{\"BeginningDateTime\":\"2008-07-23T00:00:00.000Z\"}]}],\"ProcessingLevel\":{\"Id\":\"4\"},\"DOI\":{\"DOI\":\"10.5067/GHGAM-4FA1A\",\"Authority\":\"https://doi.org\"},\"ShortName\":\"GAMSSA_28km-ABOM-L4-GLOB-v01\",\"EntryTitle\":\"GHRSST
+        Level 4 GAMSSA_28km Global Foundation Sea Surface Temperature Analysis v1.0
+        dataset (GDS2)\",\"PublicationReferences\":[{\"Title\":\"Operational Implementation
+        of Global Australian Multi-Sensor Sea Surface Temperature Analysis\",\"Publisher\":\"Analysis
+        and Prediction Operations Bulletin No. 77\",\"Author\":\"Zhong, Aihong and
+        Helen Beggs\",\"PublicationDate\":\"2008-10-02T00:00:00.000Z\",\"OnlineResource\":{\"Name\":\"Reference
+        URL\",\"Linkage\":\"http://www.bom.gov.au/australia/charts/bulletins/apob77.pdf\"}}],\"DirectDistributionInformation\":{\"Region\":\"us-west-2\",\"S3BucketAndObjectPrefixNames\":[\"podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/\",\"podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/\"],\"S3CredentialsAPIEndpoint\":\"https://archive.podaac.earthdata.nasa.gov/s3credentials\",\"S3CredentialsAPIDocumentationURL\":\"https://archive.podaac.earthdata.nasa.gov/s3credentialsREADME\"},\"MetadataLanguage\":\"eng\",\"RelatedUrls\":[{\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Description\":\"Data Use and Citation Guidelines\",\"URLContentType\":\"PublicationURL\",\"Subtype\":\"DATA
+        CITATION GUIDELINES\",\"URL\":\"https://podaac.jpl.nasa.gov/CitingPODAAC\"},{\"Description\":\"Generic
+        Data Readers\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW RELATED
+        INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/podaac/data-readers
+        \"},{\"Description\":\"GHRSST Project\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"http://www.ghrsst.org\"},{\"Description\":\"Group
+        for High Resolution Sea Surface Temperature Information\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"https://ghrsst.jpl.nasa.gov\"},{\"Description\":\"HTTPS
+        endpoint for data browse and download\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"DATA TREE\",\"URL\":\"https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2036881735-POCLOUD\",\"GetData\":{\"Format\":\"Not
+        provided\",\"MimeType\":\"text/html\",\"Size\":0.0,\"Unit\":\"MB\"}},{\"Description\":\"Browse
+        granule search results in Earthdata Search\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"Earthdata Search\",\"URL\":\"https://search.earthdata.nasa.gov/search/granules?p=C2036881735-POCLOUD\",\"GetData\":{\"Format\":\"Not
+        provided\",\"MimeType\":\"text/html\",\"Size\":0.0,\"Unit\":\"MB\"}},{\"Type\":\"GET
+        RELATED VISUALIZATION\",\"Description\":\"Thumbnail\",\"URLContentType\":\"VisualizationURL\",\"URL\":\"https://podaac.jpl.nasa.gov/Podaac/thumbnails/GAMSSA_28km-ABOM-L4-GLOB-v01.jpg\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"Data Access Tool\",\"URL\":\"https://github.com/podaac/data-subscriber\",\"Description\":\"This
+        dataset can be downloaded using the podaac-data-subscriber (the recommended
+        tool for bulk downloading PO.DAAC data). It is a Python package for downloading
+        one or many files using the command line interface. The URL redirects to the
+        data-subscriber home page with instructions for utilizing the tool\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"USE
+        SERVICE API\",\"Subtype\":\"OPENDAP DATA\",\"URL\":\"https://opendap.earthdata.nasa.gov\",\"Description\":\"This
+        dataset can be accessed with the Open-source Project for a Network Data Access
+        Protocol (OPeNDAP) API framework. This service enables variable and dimensional
+        subsetting. The URL redirects to a page with information about utilizing the
+        service.\"},{\"URLContentType\":\"VisualizationURL\",\"Type\":\"GET RELATED
+        VISUALIZATION\",\"Subtype\":\"WORLDVIEW\",\"URL\":\"https://www.earthdata.nasa.gov/data/tools/worldview\",\"Description\":\"The
+        Worldview tool from NASA's Earth Observing System Data and Information System
+        (EOSDIS) provides the capability to interactively browse and visualize satellite
+        imagery layers and then download the underlying data. Many of the layers are
+        updated within three hours of observation. This link redirects to the Worldview
+        home page - from there, users can launch the tool and search for this dataset.\"}],\"DataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2019-08-23T23:59:16.644Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2019-08-23T23:59:16.644Z\"}],\"Abstract\":\"A
+        Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface
+        temperature analysis, produced daily on an operational basis at the Australian
+        Bureau of Meteorology (BoM) using optimal interpolation (OI) on a global 0.25
+        degree grid. This Global Australian Multi-Sensor SST Analysis (GAMSSA) v1.0
+        system blends satellite SST observations from passive infrared and passive
+        microwave radiometers with in situ data from ships, drifting buoys and moorings
+        from the Global Telecommunications System (GTS). SST observations that have
+        experienced recent surface wind speeds less than 6 m/s during the day or less
+        than 2 m/s during night are rejected from the analysis.  The processing results
+        in daily foundation SST estimates that are largely free of nocturnal cooling
+        and diurnal warming effects.  Sea ice concentrations are supplied by the NOAA/NCEP
+        12.7 km sea ice analysis.  In the absence of observations, the analysis relaxes
+        to the Reynolds and Smith (1994) Monthly 1 degree SST climatology for 1961
+        - 1990.\",\"LocationKeywords\":[{\"Category\":\"GEOGRAPHIC REGION\",\"Type\":\"GLOBAL\"}],\"MetadataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2021-07-26T23:15:00.000Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2021-10-29T21:29:00.000Z\"}],\"Version\":\"1.0\",\"Projects\":[{\"ShortName\":\"GHRSST\",\"LongName\":\"Group
+        for High Resolution Sea Surface Temperature\"}],\"CollectionDataType\":\"SCIENCE_QUALITY\",\"DataCenters\":[{\"Roles\":[\"ARCHIVER\",\"DISTRIBUTOR\"],\"ShortName\":\"NASA/JPL/PODAAC\",\"LongName\":\"Physical
+        Oceanography Distributed Active Archive Center, Jet Propulsion Laboratory,
+        NASA\",\"ContactInformation\":{\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/po-daac\",\"Description\":\"Physical
+        Oceanography Distributed Active Archive Center Page\"}]},\"ContactGroups\":[{\"Roles\":[\"Data
+        Center Contact\"],\"GroupName\":\"Help Desk\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"podaac@podaac.jpl.nasa.gov\"}],\"RelatedUrls\":[{\"URLContentType\":\"DataContactURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/po-daac\",\"Description\":\"Physical
+        Oceanography Distributed Active Archive Center Page\"}]}}]},{\"Roles\":[\"PROCESSOR\"],\"ShortName\":\"AU/BOM\",\"LongName\":\"Bureau
+        of Meteorology, Australia\",\"ContactInformation\":{\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"http://www.bom.gov.au/\"}]}}],\"TemporalKeywords\":[\"Daily
+        - < Weekly\"],\"Platforms\":[{\"Type\":\"Water-based Platforms\",\"ShortName\":\"Buoys\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"-999.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"-999.0\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"DRIFTING
+        BUOYS\",\"LongName\":\"DRIFTING BUOYS\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"-999.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"Suomi-NPP\",\"LongName\":\"Suomi
+        National Polar-orbiting Partnership\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"97.1\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"VIIRS\",\"LongName\":\"Visible-Infrared
+        Imager-Radiometer Suite\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"3040.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"GCOM-W1\",\"LongName\":\"Global Change
+        Observation Mission 1st-Water\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"100.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.19\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AMSR2\",\"LongName\":\"Advanced
+        Microwave Scanning Radiometer 2\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"1450.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"METOP-A\",\"LongName\":\"Meteorological
+        Operational Satellite - A\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.3\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.7\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AVHRR-3\",\"LongName\":\"Advanced
+        Very High Resolution Radiometer-3\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2400.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"NOAA-20\",\"LongName\":\"Joint Polar
+        Satellite System - 1\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"102.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"99.0\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"VIIRS\",\"LongName\":\"Visible-Infrared
+        Imager-Radiometer Suite\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"3040.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"METOP-B\",\"LongName\":\"Meteorological
+        Operational Satellite - B\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.3\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.7\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AVHRR-3\",\"LongName\":\"Advanced
+        Very High Resolution Radiometer-3\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2400.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]}],\"MetadataSpecification\":{\"URL\":\"https://cdn.earthdata.nasa.gov/umm/collection/v1.18.6\",\"Name\":\"UMM-C\",\"Version\":\"1.18.6\"},\"ArchiveAndDistributionInformation\":{\"FileArchiveInformation\":[{\"Format\":\"netCDF-4\",\"FormatType\":\"Native\",\"AverageFileSize\":1.2,\"AverageFileSizeUnit\":\"MB\"}],\"FileDistributionInformation\":[{\"Format\":\"netCDF-4\",\"FormatType\":\"Native\",\"AverageFileSize\":1.2,\"AverageFileSizeUnit\":\"MB\"}]}}}]}"
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '1'
+      cmr-request-id:
+      - 5453490a-b200-4046-a228-13ec5934cc55
+      - 5453490a-b200-4046-a228-13ec5934cc55
+      cmr-search-after:
+      - '["ghrsst level 4 gamssa_28km global foundation sea surface temperature analysis
+        v1.0 dataset (gds2)","POCLOUD","GAMSSA_28km-ABOM-L4-GLOB-v01","1.0",2036881735,23]'
+      cmr-took:
+      - '9'
+      connection:
+      - keep-alive
+      content-length:
+      - '15750'
+      content-md5:
+      - 20950865e8531367620dbaf30617dc32
+      content-sha1:
+      - e9c4662e331d95266b4da3cac98f7c7c2afb5f28
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.6; charset=utf-8
+      date:
+      - Fri, 06 Nov 2026 11:10:18 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 fc69cb6fca5a4c284201ca1c7642db04.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - U2GfxMangwgF_boJ29gO8-69fgJgdK3KGzw0xwC-ttDmLvbAuvD2vg==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - U2GfxMangwgF_boJ29gO8-69fgJgdK3KGzw0xwC-ttDmLvbAuvD2vg==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

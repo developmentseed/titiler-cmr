@@ -1,0 +1,306 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2021957657-LPCLOUD
+  response:
+    body:
+      string: "{\"hits\":1,\"took\":7,\"items\":[{\"meta\":{\"revision-id\":98,\"deleted\":false,\"format\":\"application/vnd.nasa.cmr.umm+json\",\"provider-id\":\"LPCLOUD\",\"has-combine\":false,\"user-id\":\"thouska\",\"has-formats\":false,\"associations\":{\"variables\":[\"V3204003817-LPCLOUD\",\"V3204003920-LPCLOUD\",\"V3204003671-LPCLOUD\",\"V3204003708-LPCLOUD\",\"V3204003748-LPCLOUD\",\"V3204003860-LPCLOUD\",\"V3204003866-LPCLOUD\",\"V3204003840-LPCLOUD\",\"V3204003828-LPCLOUD\",\"V3204003787-LPCLOUD\",\"V3204003886-LPCLOUD\",\"V3204003770-LPCLOUD\",\"V3204003902-LPCLOUD\",\"V3204003723-LPCLOUD\",\"V3204003692-LPCLOUD\"],\"tools\":[\"TL1860232272-LPDAAC_ECS\"],\"citations\":[\"CIT4248444619-ESDIS\",\"CIT4076012390-ESDIS\",\"CIT4201246196-ESDIS\",\"CIT4076049312-ESDIS\",\"CIT3804114490-ESDIS\",\"CIT3963290952-ESDIS\",\"CIT4076009175-ESDIS\",\"CIT3804005559-ESDIS\",\"CIT3857574117-ESDIS\",\"CIT3804031181-ESDIS\",\"CIT3963295249-ESDIS\",\"CIT4076058992-ESDIS\",\"CIT3963290031-ESDIS\",\"CIT3804320425-ESDIS\",\"CIT3804025560-ESDIS\",\"CIT3804194951-ESDIS\",\"CIT4321025248-ESDIS\",\"CIT3804382319-ESDIS\",\"CIT4106707292-ESDIS\",\"CIT4106707459-ESDIS\",\"CIT4106700843-ESDIS\",\"CIT4321023212-ESDIS\",\"CIT3804322315-ESDIS\",\"CIT3804310375-ESDIS\",\"CIT4321021669-ESDIS\",\"CIT4106708824-ESDIS\",\"CIT4321027580-ESDIS\",\"CIT4321026690-ESDIS\",\"CIT3804173179-ESDIS\",\"CIT4201248789-ESDIS\",\"CIT3804322358-ESDIS\",\"CIT4106707273-ESDIS\",\"CIT4076015585-ESDIS\",\"CIT3857563138-ESDIS\",\"CIT4076046823-ESDIS\",\"CIT4321027304-ESDIS\",\"CIT4076011282-ESDIS\",\"CIT4201250414-ESDIS\",\"CIT3857558882-ESDIS\",\"CIT3804195613-ESDIS\",\"CIT4076013901-ESDIS\",\"CIT3804310288-ESDIS\",\"CIT3857575110-ESDIS\",\"CIT3804188927-ESDIS\",\"CIT4076039777-ESDIS\",\"CIT3804322482-ESDIS\",\"CIT4201250307-ESDIS\",\"CIT3963299066-ESDIS\",\"CIT3857575123-ESDIS\",\"CIT4076057940-ESDIS\",\"CIT3857570693-ESDIS\",\"CIT3963297991-ESDIS\",\"CIT4076007246-ESDIS\",\"CIT4106689803-ESDIS\",\"CIT3857575120-ESDIS\",\"CIT3804040033-ESDIS\",\"CIT4076062921-ESDIS\",\"CIT4076049897-ESDIS\",\"CIT3804062214-ESDIS\",\"CIT3804192847-ESDIS\",\"CIT3804322471-ESDIS\",\"CIT4076053218-ESDIS\",\"CIT4106686102-ESDIS\",\"CIT4076043773-ESDIS\",\"CIT4076050745-ESDIS\",\"CIT4201249894-ESDIS\",\"CIT4076035842-ESDIS\",\"CIT3804322416-ESDIS\"],\"visualizations\":[\"VIS3633857851-ESDIS\"]},\"s3-links\":[\"s3://lp-prod-protected/HLSL30.020\",\"s3://lp-prod-public/HLSL30.020\"],\"has-spatial-subsetting\":false,\"native-id\":\"HLSL30V2\",\"has-transforms\":false,\"association-details\":{\"variables\":[{\"concept-id\":\"V3204003817-LPCLOUD\"},{\"concept-id\":\"V3204003920-LPCLOUD\"},{\"concept-id\":\"V3204003671-LPCLOUD\"},{\"concept-id\":\"V3204003708-LPCLOUD\"},{\"concept-id\":\"V3204003748-LPCLOUD\"},{\"concept-id\":\"V3204003860-LPCLOUD\"},{\"concept-id\":\"V3204003866-LPCLOUD\"},{\"concept-id\":\"V3204003840-LPCLOUD\"},{\"concept-id\":\"V3204003828-LPCLOUD\"},{\"concept-id\":\"V3204003787-LPCLOUD\"},{\"concept-id\":\"V3204003886-LPCLOUD\"},{\"concept-id\":\"V3204003770-LPCLOUD\"},{\"concept-id\":\"V3204003902-LPCLOUD\"},{\"concept-id\":\"V3204003723-LPCLOUD\"},{\"concept-id\":\"V3204003692-LPCLOUD\"}],\"tools\":[{\"concept-id\":\"TL1860232272-LPDAAC_ECS\"}],\"citations\":[{\"concept-id\":\"CIT4248444619-ESDIS\"},{\"concept-id\":\"CIT4076012390-ESDIS\"},{\"concept-id\":\"CIT4201246196-ESDIS\"},{\"concept-id\":\"CIT4076049312-ESDIS\"},{\"concept-id\":\"CIT3804114490-ESDIS\"},{\"concept-id\":\"CIT3963290952-ESDIS\"},{\"concept-id\":\"CIT4076009175-ESDIS\"},{\"concept-id\":\"CIT3804005559-ESDIS\"},{\"concept-id\":\"CIT3857574117-ESDIS\"},{\"concept-id\":\"CIT3804031181-ESDIS\"},{\"concept-id\":\"CIT3963295249-ESDIS\"},{\"concept-id\":\"CIT4076058992-ESDIS\"},{\"concept-id\":\"CIT3963290031-ESDIS\"},{\"concept-id\":\"CIT3804320425-ESDIS\"},{\"concept-id\":\"CIT3804025560-ESDIS\"},{\"concept-id\":\"CIT3804194951-ESDIS\"},{\"concept-id\":\"CIT4321025248-ESDIS\"},{\"concept-id\":\"CIT3804382319-ESDIS\"},{\"concept-id\":\"CIT4106707292-ESDIS\"},{\"concept-id\":\"CIT4106707459-ESDIS\"},{\"concept-id\":\"CIT4106700843-ESDIS\"},{\"concept-id\":\"CIT4321023212-ESDIS\"},{\"concept-id\":\"CIT3804322315-ESDIS\"},{\"concept-id\":\"CIT3804310375-ESDIS\"},{\"concept-id\":\"CIT4321021669-ESDIS\"},{\"concept-id\":\"CIT4106708824-ESDIS\"},{\"concept-id\":\"CIT4321027580-ESDIS\"},{\"concept-id\":\"CIT4321026690-ESDIS\"},{\"concept-id\":\"CIT3804173179-ESDIS\"},{\"concept-id\":\"CIT4201248789-ESDIS\"},{\"concept-id\":\"CIT3804322358-ESDIS\"},{\"concept-id\":\"CIT4106707273-ESDIS\"},{\"concept-id\":\"CIT4076015585-ESDIS\"},{\"concept-id\":\"CIT3857563138-ESDIS\"},{\"concept-id\":\"CIT4076046823-ESDIS\"},{\"concept-id\":\"CIT4321027304-ESDIS\"},{\"concept-id\":\"CIT4076011282-ESDIS\"},{\"concept-id\":\"CIT4201250414-ESDIS\"},{\"concept-id\":\"CIT3857558882-ESDIS\"},{\"concept-id\":\"CIT3804195613-ESDIS\"},{\"concept-id\":\"CIT4076013901-ESDIS\"},{\"concept-id\":\"CIT3804310288-ESDIS\"},{\"concept-id\":\"CIT3857575110-ESDIS\"},{\"concept-id\":\"CIT3804188927-ESDIS\"},{\"concept-id\":\"CIT4076039777-ESDIS\"},{\"concept-id\":\"CIT3804322482-ESDIS\"},{\"concept-id\":\"CIT4201250307-ESDIS\"},{\"concept-id\":\"CIT3963299066-ESDIS\"},{\"concept-id\":\"CIT3857575123-ESDIS\"},{\"concept-id\":\"CIT4076057940-ESDIS\"},{\"concept-id\":\"CIT3857570693-ESDIS\"},{\"concept-id\":\"CIT3963297991-ESDIS\"},{\"concept-id\":\"CIT4076007246-ESDIS\"},{\"concept-id\":\"CIT4106689803-ESDIS\"},{\"concept-id\":\"CIT3857575120-ESDIS\"},{\"concept-id\":\"CIT3804040033-ESDIS\"},{\"concept-id\":\"CIT4076062921-ESDIS\"},{\"concept-id\":\"CIT4076049897-ESDIS\"},{\"concept-id\":\"CIT3804062214-ESDIS\"},{\"concept-id\":\"CIT3804192847-ESDIS\"},{\"concept-id\":\"CIT3804322471-ESDIS\"},{\"concept-id\":\"CIT4076053218-ESDIS\"},{\"concept-id\":\"CIT4106686102-ESDIS\"},{\"concept-id\":\"CIT4076043773-ESDIS\"},{\"concept-id\":\"CIT4076050745-ESDIS\"},{\"concept-id\":\"CIT4201249894-ESDIS\"},{\"concept-id\":\"CIT4076035842-ESDIS\"},{\"concept-id\":\"CIT3804322416-ESDIS\"}],\"visualizations\":[{\"concept-id\":\"VIS3633857851-ESDIS\"}]},\"has-variables\":true,\"concept-id\":\"C2021957657-LPCLOUD\",\"revision-date\":\"2026-09-02T16:21:55.488Z\",\"has-temporal-subsetting\":false,\"concept-type\":\"collection\"},\"umm\":{\"TilingIdentificationSystems\":[{\"Coordinate1\":{\"MinimumValue\":\"01\",\"MaximumValue\":\"60\"},\"Coordinate2\":{\"MinimumValue\":\"C\",\"MaximumValue\":\"X\"},\"TilingIdentificationSystemName\":\"Military
+        Grid Reference System\"}],\"CollectionCitations\":[{\"Title\":\"HLS Operational
+        Land Imager Surface Reflectance and TOA Brightness Daily Global 30m v2.0\",\"Creator\":\"Christopher
+        Neigh, Junchang Ju, Jean-Claude Roger, Sergii Skakun, Eric Vermote, Martin
+        Claverie, Jennifer Dungan, Zhangshi Yin, Brian Freitag, Chris Justice\",\"ReleaseDate\":\"2021-08-24T00:00:00.000Z\",\"Publisher\":\"NASA
+        Land Processes Distributed Active Archive Center\",\"OnlineResource\":{\"Name\":\"DOI
+        Landing Page \",\"Linkage\":\"https://doi.org/10.5067/HLS/HLSL30.002\"},\"ReleasePlace\":\"Sioux
+        Falls, South Dakota, USA\"}],\"AdditionalAttributes\":[{\"Name\":\"LANDSAT_PRODUCT_ID\",\"Description\":\"LANDSAT
+        product ID\",\"DataType\":\"STRING\"},{\"Name\":\"CLOUD_COVERAGE\",\"Description\":\"Percentage
+        of cloud cover\",\"DataType\":\"INT\"},{\"Name\":\"SPATIAL_COVERAGE\",\"Description\":\"Spatial
+        Coverage\",\"DataType\":\"INT\"},{\"Name\":\"SPATIAL_RESOLUTION\",\"Description\":\"Spatial
+        resolution\",\"DataType\":\"FLOAT\"},{\"Name\":\"HORIZONTAL_CS_NAME\",\"Description\":\"UTM
+        zone and Coordinate System\",\"DataType\":\"STRING\"},{\"Name\":\"ULX\",\"Description\":\"Longitude\",\"DataType\":\"FLOAT\"},{\"Name\":\"ULY\",\"Description\":\"Latitude\",\"DataType\":\"FLOAT\"},{\"Name\":\"NCOLS\",\"Description\":\"Number
+        of columns\",\"DataType\":\"INT\"},{\"Name\":\"NROWS\",\"Description\":\"Number
+        of rows\",\"DataType\":\"INT\"},{\"Name\":\"MEAN_SUN_AZIMUTH_ANGLE\",\"Description\":\"Mean
+        sun azimuth angle\",\"DataType\":\"FLOAT\"},{\"Name\":\"MEAN_SUN_ZENITH_ANGLE\",\"Description\":\"Mean
+        sun zenith angle\",\"DataType\":\"FLOAT\"},{\"Name\":\"NBAR_Solar_Zenith\",\"Description\":\"NBAR
+        solar zenith\",\"DataType\":\"FLOAT\"},{\"Name\":\"ACCODE\",\"Description\":\"ACCODE\",\"DataType\":\"STRING\"},{\"Name\":\"TIRS_SSM_MODEL\",\"Description\":\"TIRS
+        SSM model\",\"DataType\":\"STRING\"},{\"Name\":\"TIRS_SSM_POSITION_STATUS\",\"Description\":\"TIRS
+        SSM position status\",\"DataType\":\"STRING\"},{\"Name\":\"USGS_SOFTWARE\",\"Description\":\"USGS
+        software version number\",\"DataType\":\"STRING\"},{\"Name\":\"PRODUCT_URI\",\"Description\":\"Product
+        URI\",\"DataType\":\"STRING\"},{\"Name\":\"MGRS_TILE_ID\",\"Description\":\"Sentinel
+        2 Tile ID\",\"DataType\":\"STRING\"},{\"Name\":\"HLS_PROCESSING_TIME\",\"Description\":\"HLS
+        Processing Date and Time\",\"DataType\":\"STRING\"},{\"Name\":\"SENSING_TIME\",\"Description\":\"Image
+        Sensing Date and Time\",\"DataType\":\"STRING\"},{\"Name\":\"ADD_OFFSET\",\"Description\":\"additional
+        offset\",\"DataType\":\"INT\"},{\"Name\":\"REF_SCALE_FACTOR\",\"Description\":\"Scale
+        factor for reflectance bands\",\"DataType\":\"FLOAT\"},{\"Name\":\"THERM_SCALE_FACTOR\",\"Description\":\"Scale
+        factor for thermal bands\",\"DataType\":\"FLOAT\"},{\"Name\":\"FILLVALUE\",\"Description\":\"Band
+        Specific Data Fill Value\",\"DataType\":\"INT\"},{\"Name\":\"QA_FILLVALUE\",\"Description\":\"Quality
+        Assurance Data Fill Value\",\"DataType\":\"INT\"},{\"Name\":\"IDENTIFIER_PRODUCT_DOI\",\"Description\":\"Digital
+        object identifier that uniquely identifies this data product\",\"Value\":\"10.5067/HLS/HLSL30.002\",\"DataType\":\"STRING\"},{\"Name\":\"IDENTIFIER_PRODUCT_DOI_AUTHORITY\",\"Description\":\"URL
+        of the digital object identifier resolving authority\",\"Value\":\"http://doi.org\",\"DataType\":\"STRING\"},{\"Name\":\"SPATIAL_RESAMPLING_ALG\",\"Description\":\"Spatial
+        Re-sampling Algorithm\\r\\n\",\"DataType\":\"STRING\"},{\"Name\":\"MEAN_VIEW_ZENITH_ANGLE\",\"Description\":\"Mean
+        View Zenith Angle\",\"DataType\":\"STRING\"},{\"Name\":\"MEAN_VIEW_AZIMUTH_ANGLE\",\"Description\":\"Mean
+        view azimuth angle\",\"DataType\":\"STRING\"},{\"Name\":\"ANG_SCALE_FACTOR\",\"Description\":\"Scale
+        factor for angle bands\",\"DataType\":\"FLOAT\"},{\"Name\":\"CLOUD_MASKING_CODE\",\"Description\":\"Cloud
+        mask code\",\"DataType\":\"STRING\"}],\"SpatialExtent\":{\"HorizontalSpatialDomain\":{\"Geometry\":{\"BoundingRectangles\":[{\"NorthBoundingCoordinate\":90,\"WestBoundingCoordinate\":-180,\"EastBoundingCoordinate\":180,\"SouthBoundingCoordinate\":-90}],\"CoordinateSystem\":\"CARTESIAN\"},\"ResolutionAndCoordinateSystem\":{\"HorizontalDataResolution\":{\"GenericResolutions\":[{\"XDimension\":30,\"YDimension\":30,\"Unit\":\"Meters\"}]},\"Description\":\"Universal
+        Transverse Mercator (UTM)\",\"GeodeticModel\":{\"HorizontalDatumName\":\"World
+        Geodetic System (WGS84)\"}},\"ZoneIdentifier\":\"UTM\"},\"SpatialCoverageType\":\"HORIZONTAL\",\"GranuleSpatialRepresentation\":\"GEODETIC\"},\"CollectionProgress\":\"ACTIVE\",\"StandardProduct\":true,\"ScienceKeywords\":[{\"Category\":\"EARTH
+        SCIENCE\",\"Topic\":\"LAND SURFACE\",\"Term\":\"SURFACE RADIATIVE PROPERTIES\",\"VariableLevel1\":\"REFLECTANCE\"}],\"TemporalExtents\":[{\"RangeDateTimes\":[{\"BeginningDateTime\":\"2013-04-11T00:00:00.000Z\"}],\"EndsAtPresentFlag\":true,\"PrecisionOfSeconds\":0,\"TemporalResolution\":{\"Value\":1,\"Unit\":\"Day\"}}],\"FileNamingConvention\":{\"Convention\":\"HLS.L30.T17SLU.2020209T155956.v1.5.SAA.tif
+        \",\"Description\":\"The file name begins with the Product Identifier (HLS.L30)
+        followed by T plus the 5-character MGRS Tile Identifier (T17SLU), the Julian
+        Date and Time of Production designated as YYYYDDDTHHMMSS (2020209T155956),
+        the Version of the data collection (v1.5), the Variable/Band (SAA), and the
+        Data Format (tif).   \"},\"ProcessingLevel\":{\"Id\":\"3\",\"ProcessingLevelDescription\":\"Level
+        3 data products are variables mapped on uniform space-time grid scales, usually
+        with some completeness and consistency.\"},\"DOI\":{\"DOI\":\"10.5067/HLS/HLSL30.002\",\"Authority\":\"https://doi.org\"},\"ShortName\":\"HLSL30\",\"EntryTitle\":\"HLS
+        Landsat Operational Land Imager Surface Reflectance and TOA Brightness Daily
+        Global 30m v2.0\",\"Quality\":{\"Summary\":\"For scenes greater than or equal
+        to 80 degrees North, multiple overpasses can be gridded into a single MGRS
+        tile resulting in an L30 granule with data sensed at two different times.
+        In this same area, it is also possible that Landsat overpasses that should
+        be gridded into a single MGRS tile are actually written as separate data files.
+        Finally, for scenes with a latitude greater than or equal to 65 degrees North,
+        ascending Landsat scenes may have a slightly higher error in the BRDF correction
+        because the algorithm is calibrated using descending scenes.\"},\"DirectDistributionInformation\":{\"S3BucketAndObjectPrefixNames\":[\"s3://lp-prod-protected/HLSL30.020\",\"s3://lp-prod-public/HLSL30.020\"],\"Region\":\"us-west-2\",\"S3CredentialsAPIEndpoint\":\"https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials\",\"S3CredentialsAPIDocumentationURL\":\"https://data.lpdaac.earthdatacloud.nasa.gov/s3credentialsREADME\"},\"RelatedUrls\":[{\"Description\":\"Earthdata
+        Search allows users to search, discover, visualize, refine, and access NASA
+        Earth Observation data.\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"URL\":\"https://search.earthdata.nasa.gov/search/granules?p=C2021957657-LPCLOUD\",\"GetData\":{\"Format\":\"COG\",\"Size\":20,\"Unit\":\"MB\",\"MimeType\":\"application/x-geotiff\"},\"Subtype\":\"Earthdata
+        Search\"},{\"Description\":\"The LP DAAC product page provides information
+        on Science Data Set layers and links for user guides, ATBDs, data access,
+        tools, customer support, etc.\",\"URLContentType\":\"CollectionURL\",\"Type\":\"DATA
+        SET LANDING PAGE\",\"URL\":\"https://doi.org/10.5067/HLS/HLSL30.002\"},{\"Description\":\"The
+        LP DAAC website provides detailed information on discovery, distribution,
+        access, and support of land data products.\",\"URLContentType\":\"CollectionURL\",\"Type\":\"PROJECT
+        HOME PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/lp-daac\"},{\"Description\":\"The
+        technical information in the User's Guide enables users to interpret and use
+        the data products.\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"USER'S GUIDE\",\"URL\":\"https://lpdaac.usgs.gov/documents/1698/HLS_User_Guide_V2.pdf\"},{\"Description\":\"The
+        ATBD provides physical theory and mathematical procedures for the calculations
+        used to produce the data products.\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"ALGORITHM THEORETICAL BASIS DOCUMENT (ATBD)\",\"URL\":\"https://lpdaac.usgs.gov/documents/769/HLS_ATBD_V15_provisional.pdf\"},{\"Description\":\"The
+        HLS Quick Guide provides directions for accessing the data in Earthdata Search.\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"https://lpdaac.usgs.gov/documents/1117/HLS_Quick_Guide_v02.pdf\"},{\"Description\":\"Getting
+        Started with Cloud-Native HLS Data in Python is a Jupyter Notebook tutorial.\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/nasa/HLS-Data-Resources/blob/main/python/tutorials/HLS_Tutorial.ipynb\"},{\"Description\":\"HLS
+        Subsetting, Processing and Exporting Reformatted (HLS SuPER) data prep script
+        is a command line executable Python script that finds, accesses, and processes
+        HLS data according to input criteria.\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/nasa/HLS-Data-Resources/tree/main/python/scripts/HLS_SuPER\"},{\"Description\":\"Browse
+        image for Earthdata Search\",\"URLContentType\":\"VisualizationURL\",\"Type\":\"GET
+        RELATED VISUALIZATION\",\"URL\":\"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-public/HLSL30.020/HLS.L30.T03WXN.2024206T221402.v2.0/HLS.L30.T03WXN.2024206T221402.v2.0.jpg\",\"Subtype\":\"Thumbnail
+        Image\"},{\"Description\":\"Download HLS data from LP DAAC Cloud Archive\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/nasa/HLS-Data-Resources/tree/main/bash/hls-bulk-download\"},{\"Description\":\"Getting
+        Started with Cloud-Native Harmonized Landsat Sentinel-2 (HLS) Data in R\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/nasa/HLS-Data-Resources/blob/main/r/HLS_Tutorial.Rmd\"},{\"Description\":\"The
+        Application for Extracting and Exploring Analysis Ready Samples (AppEEARS)
+        offers a simple and efficient way to perform data access and transformation
+        processes.\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET DATA\",\"Subtype\":\"APPEEARS\",\"URL\":\"https://appeears.earthdatacloud.nasa.gov/\"},{\"URL\":\"https://worldview.earthdata.nasa.gov/images/layers/previews/geographic/HLS_L30_Nadir_BRDF_Adjusted_Reflectance.jpg\",\"URLContentType\":\"VisualizationURL\",\"Type\":\"GET
+        RELATED VISUALIZATION\",\"Subtype\":\"WORLDVIEW\",\"Description\":\"The URL
+        for viewing a Worldview visualization. The Worldview tool from NASA's Earth
+        Observing System Data and Information System (EOSDIS) provides the capability
+        to interactively browse over 600 global, full-resolution satellite imagery
+        layers and then download the underlying data.\"},{\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"ANOMALIES\",\"URL\":\"https://lpdaac.usgs.gov/documents/2434/HLS_v2.0_L30_known_issues_April2026.pdf\",\"Description\":\"Listing
+        of known issues as of April 2026 for the HLSL30.002 dataset.\"},{\"Description\":\"CEOS
+        Missions, Instruments, and Measurements (MIM) Database Record (Landsat 8 OLI)\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"REQUIREMENTS AND DESIGN\",\"URL\":\"https://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=897\"},{\"Description\":\"CEOS
+        Missions, Instruments, and Measurements (MIM) Database Record (Landsat 9 OLI-2)\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"REQUIREMENTS AND DESIGN\",\"URL\":\"https://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1769\"}],\"DataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2021-08-24T00:00:00.000Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2021-08-24T00:00:00.000Z\"}],\"Abstract\":\"The
+        Harmonized Landsat Sentinel-2 (HLS) project provides consistent surface reflectance
+        (SR) and top of atmosphere (TOA) brightness data from a virtual constellation
+        of satellite sensors. The Operational Land Imager (OLI) is housed aboard the
+        joint NASA/USGS Landsat 8 and Landsat 9 satellites, while the Multi-Spectral
+        Instrument (MSI) is mounted aboard Europe\u2019s Copernicus Sentinel-2A, Sentinel-2B,
+        and Sentinel-2C satellites. The combined measurement enables global observations
+        of the land every 1.6 days at 30-meter (m) spatial resolution. The HLS project
+        uses a set of algorithms to obtain seamless products from OLI and MSI that
+        include atmospheric correction, cloud and cloud-shadow masking, spatial co-registration
+        and common gridding, illumination and view angle normalization, and spectral
+        bandpass adjustment.\\n\\nThe HLSL30 product provides 30-m Nadir Bidirectional
+        Reflectance Distribution Function (BRDF)-Adjusted Reflectance (NBAR) and is
+        derived from Landsat 8/9 OLI data products. The [HLSS30](https://doi.org/10.5067/HLS/HLSS30.002)
+        and HLSL30 products are gridded to the same resolution and Military Grid Reference
+        System ([MGRS](https://hls.gsfc.nasa.gov/products-description/tiling-system/))
+        tiling system and thus are \u201Cstackable\u201D for time series analysis.\\n\\nThe
+        HLSL30 product is provided in Cloud Optimized GeoTIFF (COG) format, and each
+        band is distributed as a separate file. There are 11 bands included in the
+        HLSL30 product along with one quality assessment (QA) band and four angle
+        bands. See the User Guide for a more detailed description of the individual
+        bands provided in the HLSL30 product.\\n\\nThe HLS project is funded by NASA\u2019s
+        Satellite Needs Working Group (SNWG) which provides data products developed
+        to meet the needs of stakeholders from US government agencies.\\n\\nFor information
+        on [known issues](https://lpdaac.usgs.gov/documents/2434/HLS_v2.0_L30_known_issues_April2026.pdf)
+        see the anomalies link under the Documents and Resources tab.\",\"LocationKeywords\":[{\"Category\":\"GEOGRAPHIC
+        REGION\",\"Type\":\"GLOBAL LAND\"}],\"MetadataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2021-07-19T16:38:00.000Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2026-01-14T00:00:00.000Z\"}],\"VersionDescription\":\"The
+        following improvement was implemented for the HLS surface reflectance Version
+        2 data products: Aerosol QA bits from the USGS Land Surface Reflectance Code
+        (LaSRC) model output have been added into the Function of Mask (Fmask) data
+        layer. The two added bits indicate the aerosol levels: high, medium, low,
+        and climatology aerosol.\",\"Version\":\"2.0\",\"Projects\":[{\"ShortName\":\"HLS\",\"LongName\":\"Harmonized
+        Landsat Sentinel-2\"},{\"ShortName\":\"SNWG\",\"LongName\":\"Satellite Needs
+        Working Group\"}],\"UseConstraints\":{\"LicenseURL\":{\"Name\":\"Data Use
+        Policy\",\"Linkage\":\"https://earthdata.nasa.gov/earth-observation-data/data-use-policy\",\"Description\":\"License
+        URL for data use policy\",\"MimeType\":\"text/html\"}},\"ContactPersons\":[{\"Roles\":[\"Investigator\"],\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"jeffrey.g.masek@nasa.gov\"}]},\"FirstName\":\"Jeffrey\",\"MiddleName\":\"G.\",\"LastName\":\"Masek\",\"NonDataCenterAffiliation\":\"HLS
+        Science Team\"},{\"Roles\":[\"Investigator\"],\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"junchang.ju@nasa.gov\"}]},\"FirstName\":\"Junchang\",\"LastName\":\"Ju\",\"NonDataCenterAffiliation\":\"HLS
+        Science Team\"}],\"CollectionDataType\":\"SCIENCE_QUALITY\",\"DataCenters\":[{\"Roles\":[\"ARCHIVER\",\"DISTRIBUTOR\"],\"ContactGroups\":[{\"Roles\":[\"User
+        Services\"],\"ContactInformation\":{\"RelatedUrls\":[{\"Description\":\"The
+        LP DAAC website provides detailed information on discovery, distribution,
+        access, and support of land data products.\",\"URLContentType\":\"DataContactURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://lpdaac.usgs.gov/\"}],\"ContactMechanisms\":[{\"Type\":\"Telephone\",\"Value\":\"605-594-6116\"},{\"Type\":\"U.S.
+        toll free\",\"Value\":\"866-573-3222\"},{\"Type\":\"Email\",\"Value\":\"lpdaac@usgs.gov\"}],\"Addresses\":[{\"StreetAddresses\":[\"U.S.
+        Geological Survey, Earth Resources Observation and Science (EROS) Center\"],\"Country\":\"United
+        States\",\"City\":\"Sioux Falls\",\"PostalCode\":\"57198\"}],\"ServiceHours\":\"M-F,
+        8 a.m. to 4 p.m. Central Time\",\"ContactInstruction\":\"LP DAAC User Services
+        is the point of contact for answering questions concerning data products,
+        data access, and online applications.\"},\"GroupName\":\"User Services\"}],\"ContactInformation\":{\"RelatedUrls\":[{\"Description\":\"The
+        LP DAAC website provides detailed information on discovery, distribution,
+        access, and support of land data products.\",\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://lpdaac.usgs.gov/\"}],\"ContactMechanisms\":[{\"Type\":\"Telephone\",\"Value\":\"605-594-6116\"},{\"Type\":\"U.S.
+        toll free\",\"Value\":\"866-573-3222\"},{\"Type\":\"Email\",\"Value\":\"lpdaac@usgs.gov\"}],\"Addresses\":[{\"StreetAddresses\":[\"U.S.
+        Geological Survey, Earth Resources Observation and Science (EROS) Center\"],\"Country\":\"United
+        States\",\"City\":\"Sioux Falls\",\"StateProvince\":\"South Dakota\",\"PostalCode\":\"57198\"}],\"ServiceHours\":\"M-F,
+        8 a.m. to 4 p.m. Central Time\",\"ContactInstruction\":\"LP DAAC User Services
+        is the point of contact for answering questions concerning data products,
+        data access, and online applications.\"},\"ShortName\":\"LP DAAC\",\"LongName\":\"Land
+        Processes Distributed Active Archive Center\"},{\"Roles\":[\"PROCESSOR\"],\"ContactInformation\":{\"RelatedUrls\":[{\"Description\":\"The
+        IMPACT website provides additional information about IMPACT's projects.\",\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://earthdata.nasa.gov/esds/impact\"}],\"Addresses\":[{\"Country\":\"United
+        States\"}]},\"ShortName\":\"NASA/IMPACT\",\"LongName\":\"Interagency Implementation
+        and Advanced Concepts Team, NASA\"}],\"Platforms\":[{\"Instruments\":[{\"ComposedOf\":[{\"ShortName\":\"OLI\",\"LongName\":\"Operational
+        Land Imager\"}],\"ShortName\":\"OLI\",\"LongName\":\"Operational Land Imager\"}],\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"LANDSAT-8\",\"LongName\":\"LANDSAT-8\"},{\"Instruments\":[{\"ComposedOf\":[{\"ShortName\":\"OLI\",\"LongName\":\"Operational
+        Land Imager\"}],\"ShortName\":\"OLI\",\"LongName\":\"Operational Land Imager\"}],\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"LANDSAT-9\",\"LongName\":\"LANDSAT-9\"}],\"MetadataSpecification\":{\"URL\":\"https://cdn.earthdata.nasa.gov/umm/collection/v1.18.6\",\"Name\":\"UMM-C\",\"Version\":\"1.18.6\"},\"ArchiveAndDistributionInformation\":{\"FileArchiveInformation\":[{\"Format\":\"COG\",\"FormatType\":\"Native\",\"AverageFileSize\":20,\"AverageFileSizeUnit\":\"MB\",\"TotalCollectionFileSizeBeginDate\":\"2013-04-11T00:00:00.000Z\"}],\"FileDistributionInformation\":[{\"Media\":[\"Earthdata
+        Cloud\",\"HTTPS\"],\"Format\":\"COG\",\"FormatType\":\"Native\",\"AverageFileSize\":20,\"AverageFileSizeUnit\":\"MB\",\"TotalCollectionFileSizeBeginDate\":\"2013-04-11T00:00:00.000Z\"}]}}}]}"
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '1'
+      cmr-request-id:
+      - e741d073-2173-45df-923d-481ae2bcb58c
+      - e741d073-2173-45df-923d-481ae2bcb58c
+      cmr-search-after:
+      - '["hls landsat operational land imager surface reflectance and toa brightness
+        daily global 30m v2.0","LPCLOUD","HLSL30","2.0",2021957657,98]'
+      cmr-took:
+      - '8'
+      connection:
+      - keep-alive
+      content-length:
+      - '23852'
+      content-md5:
+      - e50e865637cec9c28323100a6ea7ac17
+      content-sha1:
+      - 96673833cf8adaa6e3b1db884dff24b1e067337a
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.6; charset=utf-8
+      date:
+      - Fri, 06 Nov 2026 10:07:25 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 359a7fead5ad9eab81fdaf8f2429f892.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - nKoLobjelzxPr2ku1wRc6EFcu771v_OxwY1QSIqZ97cJvD-PUAFKUQ==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - nKoLobjelzxPr2ku1wRc6EFcu771v_OxwY1QSIqZ97cJvD-PUAFKUQ==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2021957657-LPCLOUD&temporal=2000-01-01T00%3A00%3A00%2B00%3A00%2F2000-01-01T23%3A59%3A59%2B00%3A00&bounding_box=-93.0%2C46.0%2C-90.0%2C49.0
+  response:
+    body:
+      string: '{"hits":0,"took":24,"items":[]}'
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '0'
+      cmr-request-id:
+      - 45a9571e-ac01-48d8-947a-618468317d32
+      - 45a9571e-ac01-48d8-947a-618468317d32
+      cmr-took:
+      - '26'
+      connection:
+      - keep-alive
+      content-length:
+      - '31'
+      content-md5:
+      - 9a38a7baa070c4991a5f07ec29b5f95f
+      content-sha1:
+      - 21226da0a6a876d1b8998ba6e36613d45adf1e12
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.7; charset=utf-8
+      date:
+      - Fri, 06 Nov 2026 10:07:25 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 359a7fead5ad9eab81fdaf8f2429f892.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - Uzajun2D78SeIC3Seps6HfhvjfldErS2bsfW5ZrZrRlBAwNAHkHzEA==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - Uzajun2D78SeIC3Seps6HfhvjfldErS2bsfW5ZrZrRlBAwNAHkHzEA==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

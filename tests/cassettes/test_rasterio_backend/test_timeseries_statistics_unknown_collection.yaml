@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C9999999999-LPCLOUD
+  response:
+    body:
+      string: '{"hits":0,"took":6,"items":[]}'
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '0'
+      cmr-request-id:
+      - 8a05b600-0b29-46d6-92b8-e8e64e9c7c90
+      - 8a05b600-0b29-46d6-92b8-e8e64e9c7c90
+      cmr-took:
+      - '6'
+      connection:
+      - keep-alive
+      content-length:
+      - '30'
+      content-md5:
+      - 0206ad0cbbe2f364002d4c926fc62c45
+      content-sha1:
+      - a3f0446627bbc85f29da8e6f6aaaaf1f0c1be5b4
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.6; charset=utf-8
+      date:
+      - Fri, 06 Nov 2026 10:07:26 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 359a7fead5ad9eab81fdaf8f2429f892.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - wNvJlJTmBc-p_BZ4EETrTpm7Cb7IFoEBWgN7acRb1PaV7w4hA4EJRQ==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - wNvJlJTmBc-p_BZ4EETrTpm7Cb7IFoEBWgN7acRb1PaV7w4hA4EJRQ==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

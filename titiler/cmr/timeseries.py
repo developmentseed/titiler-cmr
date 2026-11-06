@@ -33,13 +33,20 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry
-from httpx2 import AsyncClient
+from httpx2 import AsyncClient, Client
 from httpx2 import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel, FiniteFloat
+from rasterio.crs import CRS
+from rio_tiler.utils import output_size
 from titiler.core.algorithm import algorithms as available_algorithms
-from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
+from titiler.core.dependencies import (
+    CoordCRSParams,
+    DefaultDependency,
+    DstCRSParams,
+    PartFeatureParams,
+)
 from titiler.core.factory import BaseFactory, FactoryExtension
 from titiler.core.models.mapbox import TileJSON
 from titiler.core.resources.enums import ImageType
@@ -53,7 +60,7 @@ from titiler.cmr.query import _cmr_numbers, get_granules
 from titiler.cmr.reader import XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import (
-    calculate_time_series_request_size,
+    get_aoi_native_shape,
     get_geojson_bounds,
     parse_datetime,
 )
@@ -507,6 +514,88 @@ def timeseries_cmr_query_no_bbox(
     )
 
 
+def _check_timeseries_size(
+    *,
+    concept_id: str,
+    n_steps: int,
+    image_params: PartFeatureParams,
+    is_xarray: bool,
+    bounds: tuple[float, float, float, float],
+    coord_crs: CRS | None,
+    client: Client,
+    endpoint: str,
+    max_total_size: float,
+) -> None:
+    """Reject a timeseries request that is too large.
+
+    Each step's AOI is sized at the collection's native resolution, which
+    takes a CMR collection lookup, and its output size follows from width,
+    height, and max_size the way rio-tiler derives it. A rasterio step reads
+    at its output size. An xarray step reads its AOI at native resolution
+    before reprojecting it to the output size, so it is sized by the larger of
+    the two.
+
+    The AOI is sized in degrees, so a projected dst_crs far from the equator
+    can change the output that a lone width or height, or max_size, implies.
+    A collection whose CMR record does not include a resolution is checked
+    only for a rasterio width and height.
+
+    Raises:
+        HTTPException: 400 if one step, or all steps together, are over the
+            size limits in the settings. Errors from the CMR collection
+            lookup, such as a 404 for an unknown collection, pass through.
+    """
+    native = get_aoi_native_shape(concept_id, client, *bounds, coord_crs=coord_crs)
+    if native is None:
+        # rio-tiler uses a rasterio width and height as they are, so the
+        # output size stands in for the unknown native one.
+        if is_xarray or not (image_params.height and image_params.width):
+            return
+        native = (image_params.height, image_params.width)
+
+    native_height, native_width = native
+    output_height, output_width = output_size(
+        dataset_height=native_height,
+        dataset_width=native_width,
+        output_height=image_params.height,
+        output_width=image_params.width,
+        max_size=image_params.max_size,
+    )
+    native_pixels = native_height * native_width
+    output_pixels = output_height * output_width
+
+    pixels_per_step = output_pixels
+    tip = ""
+    if is_xarray:
+        pixels_per_step = max(native_pixels, output_pixels)
+        remedy = (
+            "a smaller width and height"
+            if output_pixels > native_pixels
+            else "a smaller AOI"
+        )
+    elif image_params.height or image_params.width:
+        remedy = "a smaller width and height"
+    elif image_params.max_size:
+        remedy = "a smaller AOI or max_size"
+    else:
+        remedy = "a smaller AOI"
+        tip = ", or set width and height or max_size"
+
+    if pixels_per_step > settings.time_series_max_image_size:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Each time step of this request is too large for the {endpoint} "
+            f"endpoint for this dataset. Try again with {remedy}{tip}.",
+        )
+
+    if pixels_per_step * n_steps > max_total_size:
+        raise HTTPException(
+            status_code=400,
+            detail=f"This request is too large for the {endpoint} endpoint for this "
+            f"dataset. Try again with {remedy} or fewer time steps than {n_steps}{tip}.",
+        )
+
+
 timeseries_router = APIRouter()
 
 
@@ -582,40 +671,17 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
-
-            # check for unconstrained image reading operations
-            if is_xarray or (
-                not image_params.max_size
-                or not (image_params.height and image_params.width)
-            ):
-                # get bbox for geojson:
-                minx, miny, maxx, maxy = get_geojson_bounds(geojson)
-
-                request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id if query else "",
-                    client=request.app.state.client,
-                    n_time_steps=len(query),
-                    minx=minx,
-                    miny=miny,
-                    maxx=maxx,
-                    maxy=maxy,
-                    coord_crs=coord_crs,
-                )
-
-                image_size = request_size / len(query)
-                if image_size > settings.time_series_max_image_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="The AOI for this request is too large for the /statistics endpoint for this dataset. "
-                        "Try again with either a smaller AOI",
-                    )
-
-                if request_size > settings.time_series_statistics_max_total_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=f"This request is too large for the /timeseries/statistics endpoint for this dataset. "
-                        f"Try again with either a smaller AOI or fewer time steps than {len(query)}",
-                    )
+            _check_timeseries_size(
+                concept_id=query[0].collection_concept_id if query else "",
+                n_steps=len(query),
+                image_params=image_params,
+                is_xarray=is_xarray,
+                bounds=get_geojson_bounds(geojson),
+                coord_crs=coord_crs,
+                client=request.app.state.client,
+                endpoint="/timeseries/statistics",
+                max_total_size=settings.time_series_statistics_max_total_size,
+            )
 
             logging.info(
                 f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
@@ -782,36 +848,17 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
 
-            # check for unconstrained image reading operations
-            if is_xarray or (
-                not image_params.max_size
-                or not (image_params.height and image_params.width)
-            ):
-                request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id if query else "",
-                    client=request.app.state.client,
-                    n_time_steps=len(query),
-                    minx=minx,
-                    miny=miny,
-                    maxx=maxx,
-                    maxy=maxy,
-                    coord_crs=coord_crs,
-                )
-
-                image_size = request_size / len(query)
-                if image_size > settings.time_series_max_image_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="The AOI for this request is too large for the /bbox endpoint for this dataset. "
-                        "Try again with either a smaller AOI",
-                    )
-
-                if request_size > settings.time_series_image_max_total_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=f"This request is too large for the /timeseries/bbox endpoint for this dataset. "
-                        f"Try again with either a smaller AOI or fewer time steps than {len(query)}",
-                    )
+            _check_timeseries_size(
+                concept_id=query[0].collection_concept_id if query else "",
+                n_steps=len(query),
+                image_params=image_params,
+                is_xarray=is_xarray,
+                bounds=(minx, miny, maxx, maxy),
+                coord_crs=coord_crs,
+                client=request.app.state.client,
+                endpoint="/timeseries/bbox",
+                max_total_size=settings.time_series_image_max_total_size,
+            )
 
             logging.info(
                 f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
@@ -824,7 +871,7 @@ class TimeseriesExtension(FactoryExtension):
                 "maxy": maxy,
             }
 
-            if not is_xarray and image_params.height and image_params.width:
+            if image_params.height is not None and image_params.width is not None:
                 path_params["height"] = image_params.height
                 path_params["width"] = image_params.width
 
