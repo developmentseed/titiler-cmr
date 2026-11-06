@@ -1638,7 +1638,7 @@ titiler.core.factory.BaseFactory
 1. FastAPI resolves dependencies:
    - GranuleSearchParams            → GranuleSearch(collection_concept_id=...)
    - BackendParams                  → {client, auth_token, s3_access}  (from app.state)
-   - interpolated_xarray_ds_params  → {variables=[&quot;sst&quot;], group=None, ...}
+   - interpolated_xarray_ds_params  → {variables=["sst"], group=None, ...}
    - GranuleSearchBackendParams     → {items_limit, exitwhenfull, skipcovered}
    - XarrayDatasetParams            → {nodata, reproject_method}
 
@@ -1646,12 +1646,12 @@ titiler.core.factory.BaseFactory
    CMRBackend(
      input=GranuleSearch,
      reader=XarrayGranuleReader,
-     reader_options={&quot;variables&quot;: [&quot;sst&quot;], ...},                       ← from interpolated_xarray_ds_params
+     reader_options={"variables": ["sst"], ...},                       ← from interpolated_xarray_ds_params
      client=..., auth_token=..., s3_access=..., get_s3_credentials=... ← from BackendParams
    )
 
 3. CMRBackend.__attrs_post_init__ merges auth_token, s3_access, and get_s3_credentials into reader_options:
-   reader_options = {&quot;variables&quot;: [&quot;sst&quot;], &quot;auth_token&quot;: &quot;...&quot;, &quot;s3_access&quot;: False, &quot;get_s3_credentials&quot;: ...}
+   reader_options = {"variables": ["sst"], "auth_token": "...", "s3_access": False, "get_s3_credentials": ...}
 
 4. BaseBackend.tile(x, y, z, search_options={...}) runs:
    a. CMRBackend.assets_for_tile(x, y, z, exitwhenfull=True)
@@ -1661,10 +1661,10 @@ titiler.core.factory.BaseFactory
       XarrayGranuleReader(granule, tms=tms, **reader_options)
 
 5. XarrayGranuleReader.__attrs_post_init__:
-   a. Calls granule.get_assets() → asset dict keyed &quot;0&quot;, &quot;1&quot;, ...
-   b. Selects asset[&quot;0&quot;], resolves href (direct_href vs external_href)
+   a. Calls granule.get_assets() → asset dict keyed "0", "1", ...
+   b. Selects asset["0"], resolves href (direct_href vs external_href)
    c. Calls open_dataset(href, group=..., decode_times=..., auth_token=...)
-   d. Calls get_variables(ds, variables=[&quot;sst&quot;], sel=...) → xarray.DataArray
+   d. Calls get_variables(ds, variables=["sst"], sel=...) → xarray.DataArray
    e. Sets self.input = DataArray
    f. Calls super().__attrs_post_init__() → rio_tiler.XarrayReader sets bounds, CRS, etc.
 
