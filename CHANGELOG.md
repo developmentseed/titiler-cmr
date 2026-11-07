@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.5](https://github.com/developmentseed/titiler-cmr/compare/v1.1.4...v1.1.5) (2026-11-07)
+
+
+### Documentation
+
+* point the README CI badge at this repo ([#286](https://github.com/developmentseed/titiler-cmr/issues/286)) ([1a38224](https://github.com/developmentseed/titiler-cmr/commit/1a382243853a944ec39d1393c8b3678030386338))
+
 ## [1.1.4](https://github.com/developmentseed/titiler-cmr/compare/v1.1.3...v1.1.4) (2026-10-29)
 
 
