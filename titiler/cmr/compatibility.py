@@ -332,8 +332,12 @@ def _sample_granule(
     request: Request,
     granule_ur: str | None = None,
 ) -> Any:
-    """Return a sample granule for a collection concept."""
-    return next(
+    """Return a sample granule for a collection concept.
+
+    Raises:
+        HTTPException: A 400 if the collection does not have a matching granule
+    """
+    granule = next(
         get_granules(
             search_params=GranuleSearch(
                 collection_concept_id=concept_id,
@@ -345,6 +349,16 @@ def _sample_granule(
         ),
         None,
     )
+    if granule is None:
+        detail = (
+            f"Collection {concept_id} does not have a granule with granule_ur "
+            f"{granule_ur!r}"
+            if granule_ur
+            else f"Collection {concept_id} does not have any granules"
+        )
+        raise HTTPException(400, detail)
+
+    return granule
 
 
 def _get_auth_token(request: Request) -> str | None:
@@ -374,11 +388,12 @@ def evaluate_xarray_compatibility(
         Dictionary with xarray compatibility information
 
     Raises:
-        ValueError: If no assets found or reader incompatible
+        ValueError: If the reader is incompatible
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
-        HTTPException: If CMR rejects the search, or a 502 if the group scan
-            cannot read the granule
+        HTTPException: If CMR rejects the search, a 400 if the collection does
+            not have a matching granule, or a 502 if the group scan cannot read
+            the granule
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -387,10 +402,6 @@ def evaluate_xarray_compatibility(
     s3_access = request.app.state.s3_access
     auth_token = _get_auth_token(request)
     granule = _sample_granule(concept_id, request, granule_ur=granule_ur)
-
-    if granule is None:
-        raise ValueError("No assets found for XarrayReader")
-
     assets = granule.get_assets()
     asset = assets["0"]
     href = asset.direct_href if s3_access else asset.external_href
@@ -436,10 +447,11 @@ def evaluate_rasterio_compatibility(
         Dictionary with rasterio compatibility information
 
     Raises:
-        ValueError: If no assets found or reader incompatible
+        ValueError: If the reader is incompatible
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
-        HTTPException: If CMR rejects the search
+        HTTPException: If CMR rejects the search, or a 400 if the collection
+            does not have a matching granule
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -449,9 +461,6 @@ def evaluate_rasterio_compatibility(
     auth_token = _get_auth_token(request)
     get_s3_credentials = request.app.state.get_s3_credentials
     granule = _sample_granule(concept_id, request, granule_ur=granule_ur)
-
-    if granule is None:
-        raise ValueError("No assets found for MultiBaseGranuleReader")
 
     with MultiBaseGranuleReader(
         granule=granule,
@@ -549,8 +558,9 @@ def evaluate_concept_compatibility(
 
     Raises:
         HTTPException: If the requested group cannot be opened, neither reader
-            is compatible, the collection is not found, CMR rejects a search,
-            or the group scan cannot read the granule
+            is compatible, the collection is not found or does not have a
+            matching granule, CMR rejects a search, or the group scan cannot
+            read the granule
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
     """

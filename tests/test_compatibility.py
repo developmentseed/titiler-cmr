@@ -422,15 +422,6 @@ class TestXarrayCompatibility:
         assert result.get("compatible_groups") is None
         assert "temp" in result["variables"]
 
-    @patch("titiler.cmr.compatibility.get_granules")
-    def test_xarray_no_assets(self, mock_get_granules):
-        """Test xarray compatibility with no granules found."""
-        request = _make_request()
-        mock_get_granules.return_value = iter([])
-
-        with pytest.raises(ValueError, match="No assets found"):
-            evaluate_xarray_compatibility("C1234-TEST", request)
-
     @patch("titiler.cmr.compatibility._compatible_groups")
     @patch("titiler.cmr.compatibility.open_dataset")
     @patch("titiler.cmr.compatibility.get_granules")
@@ -551,15 +542,6 @@ class TestRasterioCompatibility:
         assert isinstance(result["example_assets"], dict)
         assert result["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
         assert result["sample_asset_raster_info"] is info_result
-
-    @patch("titiler.cmr.compatibility.get_granules")
-    def test_rasterio_no_assets(self, mock_get_granules):
-        """Test rasterio compatibility with no granules found."""
-        request = _make_request()
-        mock_get_granules.return_value = iter([])
-
-        with pytest.raises(ValueError, match="No assets found"):
-            evaluate_rasterio_compatibility("C1234-TEST", request)
 
 
 class TestConceptCompatibility:
@@ -818,6 +800,36 @@ class TestConceptCompatibility:
         assert "group not found" in exc_info.value.detail
         # The 400 for both readers failing would report a rasterio error too.
         assert "rasterio" not in exc_info.value.detail
+
+    @pytest.mark.parametrize(
+        ("params", "detail"),
+        [
+            (
+                {"group": "nope", "granule_ur": "nada"},
+                "Collection C1234-TEST does not have a granule with granule_ur 'nada'",
+            ),
+            (
+                {},
+                "Collection C1234-TEST does not have any granules",
+            ),
+        ],
+    )
+    def test_missing_sample_granule_is_reported_as_missing(self, params, detail):
+        """Test a search that finds no granule says so instead of blaming a reader."""
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(200, json={"hits": 0, "items": []}),
+        }
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_concept_compatibility("C1234-TEST", request, **params)
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail == detail
 
     def test_root_without_tileable_variables_lists_compatible_groups(
         self, tmp_path: Path
