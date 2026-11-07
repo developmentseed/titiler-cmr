@@ -15,7 +15,9 @@ from starlette.requests import Request
 
 from titiler.cmr.compatibility import (
     CompatibilityResponse,
+    VariableInfo,
     _candidate_group_paths,
+    _compatible_groups,
     _dataset_dim_scale_names,
     _group_has_spatial_dims,
     evaluate_concept_compatibility,
@@ -38,7 +40,7 @@ class _PathReader:
     def __enter__(self) -> "_PathReader":
         return self
 
-    def __exit__(self, exc_type, exc, tb) -> bool:
+    def __exit__(self, *_: object) -> bool:
         return False
 
     def __fspath__(self) -> str:
@@ -65,7 +67,7 @@ class _FakeRasterReaderContext:
     def __enter__(self) -> _FakeRasterReader:
         return self._reader
 
-    def __exit__(self, exc_type, exc, tb) -> bool:
+    def __exit__(self, *_: object) -> bool:
         return False
 
 
@@ -110,8 +112,8 @@ def _make_granule(external_href="https://example.com/file.nc") -> Granule:
                 **{"URL": "s3://bucket/file.nc", "Type": "GET DATA VIA DIRECT ACCESS"}
             ),
         ],
-        spatial_extent=GranuleSpatialExtent(
-            **{
+        spatial_extent=GranuleSpatialExtent.model_validate(
+            {
                 "HorizontalSpatialDomain": {
                     "Geometry": {
                         "BoundingRectangles": [
@@ -242,9 +244,56 @@ class TestExtractXarrayMetadata:
         )
 
         variable = result["variables"]["temperature"]
-        assert variable == {"shape": [10], "dtype": "float32"}
+        assert variable == {
+            "shape": [10],
+            "dims": ["x"],
+            "tileable": False,
+            "dtype": "float32",
+        }
         assert result["coordinates"]["x"]["min"] == 0.0
         assert result["coordinates"]["x"]["max"] == 9.0
+
+    @pytest.mark.parametrize(
+        ("dims", "shape", "tileable"),
+        [
+            (("atrack", "xtrack"), (2, 3), False),
+            (("lat", "lon"), (2, 3), True),
+            (("time", "lat", "lon"), (4, 2, 3), True),
+            (("time", "y", "x"), (1, 2, 3), True),
+            (("lat", "lon"), (1, 3), False),
+        ],
+        ids=["no-x-y", "lat-lon", "extra-dimension", "x-y", "single-row"],
+    )
+    def test_variables_are_tileable_with_recognized_x_and_y_dimensions(
+        self, dims, shape, tileable
+    ):
+        """Test a variable is tileable exactly when it has recognized x/y dimensions.
+
+        A single row is not tileable, because tiling drops size-1 dimensions
+        before it looks for x and y.
+        """
+        ds = xr.Dataset({"var": (dims, np.zeros(shape, dtype=np.float32))})
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["var"]["dims"] == list(dims)
+        assert result["variables"]["var"]["tileable"] is tileable
+
+    def test_scalar_valid_range_does_not_stop_the_tileability_check(self):
+        """Test a scalar valid_range (not a [min, max] pair) does not affect tileability."""
+        ds = xr.Dataset(
+            {
+                "var": (
+                    ("lat", "lon"),
+                    np.zeros((2, 3), dtype=np.float32),
+                    {"valid_range": np.float32(5.0)},
+                )
+            }
+        )
+
+        result = extract_xarray_metadata(ds, skip_variable_statistics=True)
+
+        assert result["variables"]["var"]["tileable"] is True
 
 
 class TestGroupPruningHelpers:
@@ -292,10 +341,10 @@ class TestGroupPruningHelpers:
             }
 
     @patch("titiler.cmr.compatibility._make_blockstore_reader")
-    def test_candidate_group_paths_falls_back_to_all_groups_when_aliases_are_unblessed(
+    def test_candidate_group_paths_returns_empty_when_aliases_are_unblessed(
         self, mock_reader, tmp_path: Path
     ):
-        """Test group discovery falls back when no group's scale names match blessed aliases."""
+        """Test group discovery rejects groups without blessed spatial aliases."""
         hdf5_path = _write_test_hdf5_with_unblessed_spatial_names(
             tmp_path / "unblessed-groups.h5"
         )
@@ -303,7 +352,21 @@ class TestGroupPruningHelpers:
 
         result = _candidate_group_paths("https://example.com/file.h5")
 
-        assert result == ["science/LSAR/GCOV/grids/frequencyA"]
+        assert result == []
+
+    def test_candidate_group_paths_includes_groups_on_x_and_y_dimensions(
+        self, tmp_path: Path
+    ):
+        """Test group discovery lists a group whose dimensions are named x and y."""
+        hdf5_path = tmp_path / "xy.h5"
+        ds = xr.Dataset(
+            {"N07_ICECON": (("y", "x"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        ds.to_netcdf(hdf5_path, group="grid", engine="h5netcdf")
+
+        result = _candidate_group_paths(f"file://{hdf5_path}")
+
+        assert result == ["grid"]
 
     @patch("titiler.cmr.compatibility._make_blockstore_reader")
     def test_candidate_group_paths_prefers_non_metadata_spatial_groups(
@@ -316,6 +379,18 @@ class TestGroupPruningHelpers:
         result = _candidate_group_paths("https://example.com/file.h5")
 
         assert result == ["science/LSAR/GCOV/grids/frequencyA"]
+
+    def test_compatible_groups_unreadable_granule_is_a_bad_gateway(
+        self, tmp_path: Path
+    ):
+        """Test a granule the group scan cannot read is a 502, not an empty list."""
+        granule_path = tmp_path / "granule.nc"
+        granule_path.write_bytes(b"not HDF5")
+
+        with pytest.raises(HTTPException) as exc_info:
+            _compatible_groups(f"file://{granule_path}")
+
+        assert exc_info.value.status_code == 502
 
 
 class TestXarrayCompatibility:
@@ -346,15 +421,6 @@ class TestXarrayCompatibility:
         assert result["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
         assert result.get("compatible_groups") is None
         assert "temp" in result["variables"]
-
-    @patch("titiler.cmr.compatibility.get_granules")
-    def test_xarray_no_assets(self, mock_get_granules):
-        """Test xarray compatibility with no granules found."""
-        request = _make_request()
-        mock_get_granules.return_value = iter([])
-
-        with pytest.raises(ValueError, match="No assets found"):
-            evaluate_xarray_compatibility("C1234-TEST", request)
 
     @patch("titiler.cmr.compatibility._compatible_groups")
     @patch("titiler.cmr.compatibility.open_dataset")
@@ -448,7 +514,12 @@ class TestXarrayCompatibility:
             skip_variable_statistics=True,
         )
 
-        assert result["variables"]["temp"] == {"shape": [10], "dtype": "float32"}
+        assert result["variables"]["temp"] == {
+            "shape": [10],
+            "dims": ["x"],
+            "tileable": False,
+            "dtype": "float32",
+        }
 
 
 class TestRasterioCompatibility:
@@ -472,15 +543,6 @@ class TestRasterioCompatibility:
         assert result["granule_ur"] == "MOD09A1.A2020001.h12v04.hdf"
         assert result["sample_asset_raster_info"] is info_result
 
-    @patch("titiler.cmr.compatibility.get_granules")
-    def test_rasterio_no_assets(self, mock_get_granules):
-        """Test rasterio compatibility with no granules found."""
-        request = _make_request()
-        mock_get_granules.return_value = iter([])
-
-        with pytest.raises(ValueError, match="No assets found"):
-            evaluate_rasterio_compatibility("C1234-TEST", request)
-
 
 class TestConceptCompatibility:
     """Test evaluate_concept_compatibility function."""
@@ -497,7 +559,14 @@ class TestConceptCompatibility:
         )
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"temp": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "temp": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {"x": 10},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -527,7 +596,14 @@ class TestConceptCompatibility:
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"temp": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "temp": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -550,13 +626,20 @@ class TestConceptCompatibility:
     def test_xarray_links_contain_variable(
         self, mock_get_collection, mock_xarray, mock_rasterio
     ):
-        """Test that xarray links include the first variable name."""
+        """Test that xarray links include the first tileable variable name."""
         request = _make_request()
 
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"sea_ice": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "sea_ice": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -569,6 +652,7 @@ class TestConceptCompatibility:
         assert "variables=sea_ice" in tilejson_link.href
         assert "{temporal}" in tilejson_link.href
         assert "/xarray/" in tilejson_link.href
+        mock_rasterio.assert_not_called()
 
     @patch("titiler.cmr.compatibility.evaluate_rasterio_compatibility")
     @patch("titiler.cmr.compatibility.evaluate_xarray_compatibility")
@@ -582,7 +666,14 @@ class TestConceptCompatibility:
         mock_get_collection.return_value = SimpleNamespace(temporal_extents=[])
         mock_xarray.return_value = {
             "backend": "xarray",
-            "variables": {"backscatter": {"shape": [10], "dtype": "float32"}},
+            "variables": {
+                "backscatter": {
+                    "shape": [2, 5],
+                    "dims": ["y", "x"],
+                    "tileable": True,
+                    "dtype": "float32",
+                }
+            },
             "dimensions": {},
             "coordinates": {},
             "example_assets": "https://example.com/file.nc",
@@ -647,6 +738,333 @@ class TestConceptCompatibility:
         assert "{temporal}" in rasterio_link.href
         mock_xarray.assert_called_once()
         mock_rasterio.assert_called_once()
+
+    def test_explicit_group_xarray_failure_does_not_fallback_to_rasterio(
+        self, tmp_path: Path
+    ):
+        """Test explicit xarray group failures are returned instead of falling back."""
+        granule_path = tmp_path / "swath.nc"
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        ds.to_netcdf(granule_path, engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "swath.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/swath.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        # The file does not have an AIRS/Radiances group, so xarray cannot open it.
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_concept_compatibility(
+                "C1234-TEST", request, group="AIRS/Radiances"
+            )
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail.startswith(
+            "Could not open sample granule with group 'AIRS/Radiances': "
+        )
+        assert "group not found" in exc_info.value.detail
+        # The 400 for both readers failing would report a rasterio error too.
+        assert "rasterio" not in exc_info.value.detail
+
+    @pytest.mark.parametrize(
+        ("params", "detail"),
+        [
+            (
+                {"group": "nope", "granule_ur": "nada"},
+                "Collection C1234-TEST does not have a granule with granule_ur 'nada'",
+            ),
+            (
+                {},
+                "Collection C1234-TEST does not have any granules",
+            ),
+        ],
+    )
+    def test_missing_sample_granule_is_reported_as_missing(self, params, detail):
+        """Test a search that finds no granule says so instead of blaming a reader."""
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(200, json={"hits": 0, "items": []}),
+        }
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        with pytest.raises(HTTPException) as exc_info:
+            evaluate_concept_compatibility("C1234-TEST", request, **params)
+
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.detail == detail
+
+    def test_root_without_tileable_variables_lists_compatible_groups(
+        self, tmp_path: Path
+    ):
+        """Test a root without tileable variables still lists groups that have them."""
+        granule_path = tmp_path / "grid.nc"
+        root = xr.Dataset({"crs": ((), np.int32(0))})
+        root.to_netcdf(granule_path, engine="h5netcdf")
+        grid = xr.Dataset(
+            {"N07_ICECON": (("y", "x"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        grid.to_netcdf(granule_path, group="grid", mode="a", engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "grid.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/grid.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        result = evaluate_concept_compatibility("C1234-TEST", request)
+
+        assert result.compatible_groups == ["grid"]
+
+    def test_root_without_tileable_variables_or_groups_is_not_tileable(
+        self, tmp_path: Path
+    ):
+        """Test a granule with nothing tileable gets a 200 that marks it not tileable."""
+        granule_path = tmp_path / "swath.nc"
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        ds.to_netcdf(granule_path, engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "swath.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/swath.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        result = evaluate_concept_compatibility(
+            "C1234-TEST", request, skip_variable_statistics=True
+        )
+
+        assert result.variables == {
+            "radiance": VariableInfo(
+                shape=[2, 3],
+                dims=["atrack", "xtrack"],
+                tileable=False,
+                dtype="float32",
+            )
+        }
+        assert result.compatible_groups == []
+        assert result.links == []
+
+    def test_explicit_group_without_tileable_variables_is_not_tileable(
+        self, tmp_path: Path
+    ):
+        """Test a group with nothing tileable gets a 200 that marks it not tileable."""
+        granule_path = tmp_path / "swath.nc"
+        ds = xr.Dataset(
+            {"radiance": (("atrack", "xtrack"), np.zeros((2, 3), dtype=np.float32))}
+        )
+        ds.to_netcdf(granule_path, group="AIRS/Radiances", engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "swath.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/swath.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+
+        result = evaluate_concept_compatibility(
+            "C1234-TEST",
+            request,
+            group="AIRS/Radiances",
+            skip_variable_statistics=True,
+        )
+
+        assert result.variables == {
+            "radiance": VariableInfo(
+                shape=[2, 3],
+                dims=["atrack", "xtrack"],
+                tileable=False,
+                dtype="float32",
+            )
+        }
+        assert result.links == []
+
+    def test_xarray_links_use_the_first_tileable_variable(self, tmp_path: Path):
+        """Test example links skip variables that cannot be tiled."""
+        granule_path = tmp_path / "sst.nc"
+        ds = xr.Dataset(
+            {
+                "crs": ((), np.int32(0)),
+                "sst": (("lat", "lon"), np.zeros((2, 3), dtype=np.float32)),
+            }
+        )
+        ds.to_netcdf(granule_path, engine="h5netcdf")
+
+        responses = {
+            "/collections.umm_json": Response(
+                200, json={"items": [{"umm": {"TemporalExtents": []}}]}
+            ),
+            "/granules.umm_json": Response(
+                200,
+                json={
+                    "hits": 1,
+                    "items": [
+                        {
+                            "meta": {
+                                "concept-id": "G1234-TEST",
+                                "native-id": "sst.nc",
+                                "collection-concept-id": "C1234-TEST",
+                            },
+                            "umm": {
+                                "RelatedUrls": [
+                                    {
+                                        "URL": f"file://{granule_path}",
+                                        "Type": "GET DATA",
+                                    },
+                                    # Every asset needs a direct-access URL,
+                                    # though this test reads the file:// one.
+                                    {
+                                        "URL": "s3://bucket/sst.nc",
+                                        "Type": "GET DATA VIA DIRECT ACCESS",
+                                    },
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ),
+        }
+
+        client = Client(transport=MockTransport(lambda req: responses[req.url.path]))
+        request = _make_request(client=client)
+        result = evaluate_concept_compatibility("C1234-TEST", request)
+        tilejson_link = next(link for link in result.links if link.rel == "tilejson")
+
+        assert "variables=sst" in tilejson_link.href
 
     @pytest.mark.parametrize(
         "rasterio_error",
@@ -730,7 +1148,14 @@ class TestCompatibilityEndpoint:
             concept_id="C1234-TEST",
             backend="xarray",
             datetime=[],
-            variables={"temp": {"shape": [10], "dtype": "float32"}},
+            variables={
+                "temp": VariableInfo(
+                    shape=[2, 5],
+                    dims=["y", "x"],
+                    tileable=True,
+                    dtype="float32",
+                )
+            },
             dimensions={"x": 10},
             coordinates={},
             example_assets="https://example.com/file.nc",
@@ -795,7 +1220,14 @@ class TestCompatibilityEndpoint:
             concept_id="C1234-TEST",
             backend="xarray",
             datetime=[],
-            variables={"temp": {"shape": [10], "dtype": "float32"}},
+            variables={
+                "temp": VariableInfo(
+                    shape=[2, 5],
+                    dims=["y", "x"],
+                    tileable=True,
+                    dtype="float32",
+                )
+            },
             links=[],
         )
 
@@ -815,8 +1247,7 @@ class TestCompatibilityEndpoint:
         parameters = response.json()["paths"]["/compatibility"]["get"]["parameters"]
         group_param = next(param for param in parameters if param["name"] == "group")
         assert group_param["description"] == (
-            "Select a specific zarr group from a zarr hierarchy. "
-            "Could be associated with a zoom level or dataset."
+            "NetCDF or HDF5 group to inspect. Defaults to the root group."
         )
         granule_ur_param = next(
             param for param in parameters if param["name"] == "granule_ur"
