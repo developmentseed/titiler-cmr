@@ -2,150 +2,344 @@ interactions:
 - request:
     body: ''
     headers:
-      Accept:
+      accept:
       - '*/*'
-      Accept-Encoding:
+      accept-encoding:
       - gzip, deflate
-      Connection:
+      connection:
       - keep-alive
-      Host:
+      host:
       - cmr.earthdata.nasa.gov
-      User-Agent:
-      - python-httpx2/2.2.0
+      user-agent:
+      - python-httpx2/2.16.0
     method: GET
     uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C2036881735-POCLOUD
   response:
     body:
-      string: !!binary |
-        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
+      string: "{\"hits\":1,\"took\":7,\"items\":[{\"meta\":{\"revision-id\":23,\"deleted\":false,\"format\":\"application/vnd.nasa.cmr.umm+json\",\"provider-id\":\"POCLOUD\",\"has-combine\":false,\"user-id\":\"viviant\",\"has-formats\":false,\"associations\":{\"variables\":[\"V2146304144-POCLOUD\",\"V2146304135-POCLOUD\",\"V2146304146-POCLOUD\",\"V2146304148-POCLOUD\",\"V2146304142-POCLOUD\",\"V2146304137-POCLOUD\",\"V2146304150-POCLOUD\",\"V2146304132-POCLOUD\"],\"services\":[\"S3616918458-LARC_CLOUD\",\"S2874702816-XYZ_PROV\"],\"tools\":[\"TL2108419875-POCLOUD\",\"TL2245207664-POCLOUD\"],\"citations\":[\"CIT3804063757-ESDIS\",\"CIT4106688197-ESDIS\",\"CIT3804173036-ESDIS\",\"CIT3804260516-ESDIS\"],\"visualizations\":[\"VIS4086833841-ESDIS\",\"VIS4086833837-ESDIS\"]},\"s3-links\":[\"podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/\",\"podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/\"],\"has-spatial-subsetting\":false,\"native-id\":\"GHRSST+Level+4+GAMSSA_28km+Global+Foundation+Sea+Surface+Temperature+Analysis+v1.0+dataset+(GDS2)\",\"has-transforms\":true,\"association-details\":{\"variables\":[{\"concept-id\":\"V2146304144-POCLOUD\"},{\"concept-id\":\"V2146304135-POCLOUD\"},{\"concept-id\":\"V2146304146-POCLOUD\"},{\"concept-id\":\"V2146304148-POCLOUD\"},{\"concept-id\":\"V2146304142-POCLOUD\"},{\"concept-id\":\"V2146304137-POCLOUD\"},{\"concept-id\":\"V2146304150-POCLOUD\"},{\"concept-id\":\"V2146304132-POCLOUD\"}],\"services\":[{\"concept-id\":\"S3616918458-LARC_CLOUD\"},{\"concept-id\":\"S2874702816-XYZ_PROV\"}],\"tools\":[{\"concept-id\":\"TL2108419875-POCLOUD\"},{\"concept-id\":\"TL2245207664-POCLOUD\"}],\"citations\":[{\"concept-id\":\"CIT3804063757-ESDIS\"},{\"concept-id\":\"CIT4106688197-ESDIS\"},{\"concept-id\":\"CIT3804173036-ESDIS\"},{\"concept-id\":\"CIT3804260516-ESDIS\"}],\"visualizations\":[{\"concept-id\":\"VIS4086833841-ESDIS\"},{\"concept-id\":\"VIS4086833837-ESDIS\"}]},\"has-variables\":true,\"concept-id\":\"C2036881735-POCLOUD\",\"revision-date\":\"2026-09-28T14:13:37.701Z\",\"has-temporal-subsetting\":false,\"concept-type\":\"collection\"},\"umm\":{\"DataLanguage\":\"eng\",\"AncillaryKeywords\":[\"GAMSSA\",\"ABOM\",\"AUS\",\"GLOB\",\"GHRSST\",\"sea
+        surface temperature\",\"SST\",\"GDS2\"],\"CollectionCitations\":[{\"Version\":\"1.0\",\"Title\":\"GHRSST
+        L4 Australian Global Multi-Sensor SST Analysis (GAMSSA), daily, 1/4 degree
+        resolution\",\"Creator\":\"Australian Bureau of Meteorology\",\"SeriesName\":\"GHRSST
+        Level 4 GAMSSA Global Foundation Sea Surface Temperature Analysis\",\"ReleaseDate\":\"2019-09-18T00:00:00.000Z\",\"ReleasePlace\":\"Australian
+        Bureau of Meteorology, Melbourne, Australia\",\"Publisher\":\"PO.DAAC\",\"OnlineResource\":{\"Linkage\":\"http://www.bom.gov.au/australia/charts/bulletins/apob77.pdf\"}}],\"AdditionalAttributes\":[{\"Name\":\"earliest_granule_start_time\",\"Description\":\"Earliest
+        Granule Start Time for dataset.\",\"Value\":\"2008-07-23T00:00:00.000Z\",\"DataType\":\"DATETIME\"},{\"Name\":\"latest_granule_end_time\",\"Description\":\"Latest
+        Granule Stop/End Time for dataset.\",\"Value\":\"2021-05-21T00:00:00.000Z\",\"DataType\":\"DATETIME\"},{\"Name\":\"data_latency\",\"Description\":\"Dataset
+        Latency\",\"Value\":\"24\",\"DataType\":\"INT\"},{\"Name\":\"Series Name\",\"Description\":\"Dataset
+        citation series name\",\"Value\":\"GHRSST Level 4 GAMSSA Global Foundation
+        Sea Surface Temperature Analysis\",\"DataType\":\"STRING\"},{\"Name\":\"Persistent
+        ID\",\"Description\":\"Dataset Persistent ID\",\"Value\":\"PODAAC-GHGAM-4FA1A\",\"DataType\":\"STRING\"}],\"SpatialExtent\":{\"SpatialCoverageType\":\"HORIZONTAL\",\"HorizontalSpatialDomain\":{\"Geometry\":{\"CoordinateSystem\":\"CARTESIAN\",\"BoundingRectangles\":[{\"NorthBoundingCoordinate\":90.0,\"WestBoundingCoordinate\":-180.0,\"EastBoundingCoordinate\":180.0,\"SouthBoundingCoordinate\":-90.0}]},\"ResolutionAndCoordinateSystem\":{\"Description\":\"Projection
+        Type: Cylindrical Lat-Lon, Projection Detail: Regular 0.25 degree grid\",\"GeodeticModel\":{\"HorizontalDatumName\":\"World
+        Geodetic System 1984\",\"EllipsoidName\":\"WGS 84\",\"SemiMajorAxis\":6378137.0,\"DenominatorOfFlatteningRatio\":298.2572236},\"HorizontalDataResolution\":{\"GenericResolutions\":[{\"XDimension\":0.25,\"YDimension\":0.25,\"Unit\":\"Decimal
+        Degrees\"}]}}},\"GranuleSpatialRepresentation\":\"CARTESIAN\"},\"CollectionProgress\":\"ACTIVE\",\"StandardProduct\":false,\"ScienceKeywords\":[{\"Category\":\"EARTH
+        SCIENCE\",\"Topic\":\"OCEANS\",\"Term\":\"OCEAN TEMPERATURE\",\"VariableLevel1\":\"SEA
+        SURFACE TEMPERATURE\",\"VariableLevel2\":\"SEA SURFACE FOUNDATION TEMPERATURE\"}],\"TemporalExtents\":[{\"RangeDateTimes\":[{\"BeginningDateTime\":\"2008-07-23T00:00:00.000Z\"}]}],\"ProcessingLevel\":{\"Id\":\"4\"},\"DOI\":{\"DOI\":\"10.5067/GHGAM-4FA1A\",\"Authority\":\"https://doi.org\"},\"ShortName\":\"GAMSSA_28km-ABOM-L4-GLOB-v01\",\"EntryTitle\":\"GHRSST
+        Level 4 GAMSSA_28km Global Foundation Sea Surface Temperature Analysis v1.0
+        dataset (GDS2)\",\"PublicationReferences\":[{\"Title\":\"Operational Implementation
+        of Global Australian Multi-Sensor Sea Surface Temperature Analysis\",\"Publisher\":\"Analysis
+        and Prediction Operations Bulletin No. 77\",\"Author\":\"Zhong, Aihong and
+        Helen Beggs\",\"PublicationDate\":\"2008-10-02T00:00:00.000Z\",\"OnlineResource\":{\"Name\":\"Reference
+        URL\",\"Linkage\":\"http://www.bom.gov.au/australia/charts/bulletins/apob77.pdf\"}}],\"DirectDistributionInformation\":{\"Region\":\"us-west-2\",\"S3BucketAndObjectPrefixNames\":[\"podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/\",\"podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/\"],\"S3CredentialsAPIEndpoint\":\"https://archive.podaac.earthdata.nasa.gov/s3credentials\",\"S3CredentialsAPIDocumentationURL\":\"https://archive.podaac.earthdata.nasa.gov/s3credentialsREADME\"},\"MetadataLanguage\":\"eng\",\"RelatedUrls\":[{\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Description\":\"Data Use and Citation Guidelines\",\"URLContentType\":\"PublicationURL\",\"Subtype\":\"DATA
+        CITATION GUIDELINES\",\"URL\":\"https://podaac.jpl.nasa.gov/CitingPODAAC\"},{\"Description\":\"Generic
+        Data Readers\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW RELATED
+        INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/podaac/data-readers
+        \"},{\"Description\":\"GHRSST Project\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"http://www.ghrsst.org\"},{\"Description\":\"Group
+        for High Resolution Sea Surface Temperature Information\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"https://ghrsst.jpl.nasa.gov\"},{\"Description\":\"HTTPS
+        endpoint for data browse and download\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"DATA TREE\",\"URL\":\"https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2036881735-POCLOUD\",\"GetData\":{\"Format\":\"Not
+        provided\",\"MimeType\":\"text/html\",\"Size\":0.0,\"Unit\":\"MB\"}},{\"Description\":\"Browse
+        granule search results in Earthdata Search\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"Earthdata Search\",\"URL\":\"https://search.earthdata.nasa.gov/search/granules?p=C2036881735-POCLOUD\",\"GetData\":{\"Format\":\"Not
+        provided\",\"MimeType\":\"text/html\",\"Size\":0.0,\"Unit\":\"MB\"}},{\"Type\":\"GET
+        RELATED VISUALIZATION\",\"Description\":\"Thumbnail\",\"URLContentType\":\"VisualizationURL\",\"URL\":\"https://podaac.jpl.nasa.gov/Podaac/thumbnails/GAMSSA_28km-ABOM-L4-GLOB-v01.jpg\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"Data Access Tool\",\"URL\":\"https://github.com/podaac/data-subscriber\",\"Description\":\"This
+        dataset can be downloaded using the podaac-data-subscriber (the recommended
+        tool for bulk downloading PO.DAAC data). It is a Python package for downloading
+        one or many files using the command line interface. The URL redirects to the
+        data-subscriber home page with instructions for utilizing the tool\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"USE
+        SERVICE API\",\"Subtype\":\"OPENDAP DATA\",\"URL\":\"https://opendap.earthdata.nasa.gov\",\"Description\":\"This
+        dataset can be accessed with the Open-source Project for a Network Data Access
+        Protocol (OPeNDAP) API framework. This service enables variable and dimensional
+        subsetting. The URL redirects to a page with information about utilizing the
+        service.\"},{\"URLContentType\":\"VisualizationURL\",\"Type\":\"GET RELATED
+        VISUALIZATION\",\"Subtype\":\"WORLDVIEW\",\"URL\":\"https://www.earthdata.nasa.gov/data/tools/worldview\",\"Description\":\"The
+        Worldview tool from NASA's Earth Observing System Data and Information System
+        (EOSDIS) provides the capability to interactively browse and visualize satellite
+        imagery layers and then download the underlying data. Many of the layers are
+        updated within three hours of observation. This link redirects to the Worldview
+        home page - from there, users can launch the tool and search for this dataset.\"}],\"DataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2019-08-23T23:59:16.644Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2019-08-23T23:59:16.644Z\"}],\"Abstract\":\"A
+        Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface
+        temperature analysis, produced daily on an operational basis at the Australian
+        Bureau of Meteorology (BoM) using optimal interpolation (OI) on a global 0.25
+        degree grid. This Global Australian Multi-Sensor SST Analysis (GAMSSA) v1.0
+        system blends satellite SST observations from passive infrared and passive
+        microwave radiometers with in situ data from ships, drifting buoys and moorings
+        from the Global Telecommunications System (GTS). SST observations that have
+        experienced recent surface wind speeds less than 6 m/s during the day or less
+        than 2 m/s during night are rejected from the analysis.  The processing results
+        in daily foundation SST estimates that are largely free of nocturnal cooling
+        and diurnal warming effects.  Sea ice concentrations are supplied by the NOAA/NCEP
+        12.7 km sea ice analysis.  In the absence of observations, the analysis relaxes
+        to the Reynolds and Smith (1994) Monthly 1 degree SST climatology for 1961
+        - 1990.\",\"LocationKeywords\":[{\"Category\":\"GEOGRAPHIC REGION\",\"Type\":\"GLOBAL\"}],\"MetadataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2021-07-26T23:15:00.000Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2021-10-29T21:29:00.000Z\"}],\"Version\":\"1.0\",\"Projects\":[{\"ShortName\":\"GHRSST\",\"LongName\":\"Group
+        for High Resolution Sea Surface Temperature\"}],\"CollectionDataType\":\"SCIENCE_QUALITY\",\"DataCenters\":[{\"Roles\":[\"ARCHIVER\",\"DISTRIBUTOR\"],\"ShortName\":\"NASA/JPL/PODAAC\",\"LongName\":\"Physical
+        Oceanography Distributed Active Archive Center, Jet Propulsion Laboratory,
+        NASA\",\"ContactInformation\":{\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/po-daac\",\"Description\":\"Physical
+        Oceanography Distributed Active Archive Center Page\"}]},\"ContactGroups\":[{\"Roles\":[\"Data
+        Center Contact\"],\"GroupName\":\"Help Desk\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"podaac@podaac.jpl.nasa.gov\"}],\"RelatedUrls\":[{\"URLContentType\":\"DataContactURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/po-daac\",\"Description\":\"Physical
+        Oceanography Distributed Active Archive Center Page\"}]}}]},{\"Roles\":[\"PROCESSOR\"],\"ShortName\":\"AU/BOM\",\"LongName\":\"Bureau
+        of Meteorology, Australia\",\"ContactInformation\":{\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"http://www.bom.gov.au/\"}]}}],\"TemporalKeywords\":[\"Daily
+        - < Weekly\"],\"Platforms\":[{\"Type\":\"Water-based Platforms\",\"ShortName\":\"Buoys\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"-999.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"-999.0\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"DRIFTING
+        BUOYS\",\"LongName\":\"DRIFTING BUOYS\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"-999.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"Suomi-NPP\",\"LongName\":\"Suomi
+        National Polar-orbiting Partnership\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"97.1\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"VIIRS\",\"LongName\":\"Visible-Infrared
+        Imager-Radiometer Suite\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"3040.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"GCOM-W1\",\"LongName\":\"Global Change
+        Observation Mission 1st-Water\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"100.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.19\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AMSR2\",\"LongName\":\"Advanced
+        Microwave Scanning Radiometer 2\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"1450.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"METOP-A\",\"LongName\":\"Meteorological
+        Operational Satellite - A\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.3\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.7\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AVHRR-3\",\"LongName\":\"Advanced
+        Very High Resolution Radiometer-3\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2400.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"NOAA-20\",\"LongName\":\"Joint Polar
+        Satellite System - 1\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"102.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"99.0\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"VIIRS\",\"LongName\":\"Visible-Infrared
+        Imager-Radiometer Suite\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"3040.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"METOP-B\",\"LongName\":\"Meteorological
+        Operational Satellite - B\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.3\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.7\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AVHRR-3\",\"LongName\":\"Advanced
+        Very High Resolution Radiometer-3\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2400.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]}],\"MetadataSpecification\":{\"URL\":\"https://cdn.earthdata.nasa.gov/umm/collection/v1.18.6\",\"Name\":\"UMM-C\",\"Version\":\"1.18.6\"},\"ArchiveAndDistributionInformation\":{\"FileArchiveInformation\":[{\"Format\":\"netCDF-4\",\"FormatType\":\"Native\",\"AverageFileSize\":1.2,\"AverageFileSizeUnit\":\"MB\"}],\"FileDistributionInformation\":[{\"Format\":\"netCDF-4\",\"FormatType\":\"Native\",\"AverageFileSize\":1.2,\"AverageFileSizeUnit\":\"MB\"}]}}}]}"
     headers:
-      Access-Control-Allow-Origin:
+      access-control-allow-origin:
       - '*'
-      Access-Control-Expose-Headers:
+      access-control-expose-headers:
       - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
         CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
-      CMR-Hits:
+      cmr-hits:
       - '1'
-      CMR-Request-Id:
-      - 0d47b986-e3c8-4e23-8114-9bf32d3e83ee
-      CMR-Search-After:
+      cmr-request-id:
+      - 4834f43f-b6b3-4cef-bbd2-bb69efa3330d
+      - 4834f43f-b6b3-4cef-bbd2-bb69efa3330d
+      cmr-search-after:
       - '["ghrsst level 4 gamssa_28km global foundation sea surface temperature analysis
-        v1.0 dataset (gds2)","POCLOUD","GAMSSA_28km-ABOM-L4-GLOB-v01","1.0",2036881735,21]'
-      CMR-Took:
-      - '8'
-      Connection:
+        v1.0 dataset (gds2)","POCLOUD","GAMSSA_28km-ABOM-L4-GLOB-v01","1.0",2036881735,23]'
+      cmr-took:
+      - '9'
+      connection:
       - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-MD5:
-      - 7c8e3e0d7c97032db3cff67103bc098e
-      Content-SHA1:
-      - 8f0812fb8e46674f71502a53e884214924814def
-      Content-Type:
-      - application/vnd.nasa.cmr.umm_results+json;version=1.18.5; charset=utf-8
-      Date:
-      - Tue, 09 Jun 2026 18:10:49 GMT
-      Server:
+      content-length:
+      - '15750'
+      content-md5:
+      - 426fb971cd1029c25c2cc61a23eaed08
+      content-sha1:
+      - f474000875bd1aed1282fa79d57da47726aa49ab
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.6; charset=utf-8
+      date:
+      - Thu, 05 Nov 2026 17:35:06 GMT
+      server:
       - ServerTokens ProductOnly
-      Strict-Transport-Security:
+      strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      Transfer-Encoding:
-      - chunked
-      Vary:
+      vary:
       - Accept-Encoding
-      Via:
-      - 1.1 fceb63dbf1fbc4e3a04b2e56b5a550c8.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - _jv0og_5GrhkxUfYMso_D30rcb44Ssy3at7f0th6u-RlEUI8AZe1sQ==
-      X-Amz-Cf-Pop:
-      - MSP50-P1
-      X-Cache:
+      via:
+      - 1.1 860f2dc10b0841f5a59fb82d818a36c2.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - LU1peAErkHsUY8rYTWoWMfN_oxHoJT8gtHriedsURNEnHgKuoydOtA==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
       - Miss from cloudfront
-      X-Content-Type-Options:
+      x-content-type-options:
       - nosniff
-      X-Frame-Options:
+      x-frame-options:
       - SAMEORIGIN
-      X-Request-Id:
-      - _jv0og_5GrhkxUfYMso_D30rcb44Ssy3at7f0th6u-RlEUI8AZe1sQ==
-      X-XSS-Protection:
+      x-request-id:
+      - LU1peAErkHsUY8rYTWoWMfN_oxHoJT8gtHriedsURNEnHgKuoydOtA==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-12T06%3A00%3A00%2B00%3A00%2F2024-10-12T18%3A00%3A00%2B00%3A00&bounding_box=-20.799%2C75.011%2C14.483%2C83.559
+  response:
+    body:
+      string: '{"hits":1,"took":71,"items":[{"meta":{"concept-type":"granule","concept-id":"G3265639283-POCLOUD","revision-id":2,"native-id":"20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0","collection-concept-id":"C2036881735-POCLOUD","provider-id":"POCLOUD","format":"application/vnd.nasa.cmr.umm+json","revision-date":"2024-10-13T08:32:11.738Z"},"umm":{"TemporalExtent":{"RangeDateTime":{"EndingDateTime":"2024-10-13T00:00:00.000Z","BeginningDateTime":"2024-10-12T00:00:00.000Z"}},"MetadataSpecification":{"URL":"https://cdn.earthdata.nasa.gov/umm/granule/v1.6.7","Name":"UMM-G","Version":"1.6.7"},"GranuleUR":"20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0","ProviderDates":[{"Type":"Insert","Date":"2024-10-13T08:31:38.154Z"},{"Type":"Update","Date":"2024-10-13T08:31:38.154Z"}],"SpatialExtent":{"HorizontalSpatialDomain":{"Geometry":{"BoundingRectangles":[{"WestBoundingCoordinate":-179.875,"SouthBoundingCoordinate":-89.875,"EastBoundingCoordinate":179.875,"NorthBoundingCoordinate":89.875}]}}},"DataGranule":{"ArchiveAndDistributionInformation":[{"SizeUnit":"MB","Size":0.9885768890380859,"Checksum":{"Value":"f8ee8a8a020352628d08bb7fac6c229c","Algorithm":"MD5"},"SizeInBytes":1036598,"Name":"20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc"},{"SizeUnit":"MB","Size":9.822845458984375E-5,"SizeInBytes":103,"Name":"20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5"}],"DayNightFlag":"Unspecified","ProductionDateTime":"2024-10-13T12:00:00.000Z"},"CollectionReference":{"Version":"1.0","ShortName":"GAMSSA_28km-ABOM-L4-GLOB-v01"},"RelatedUrls":[{"URL":"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc","Description":"Download
+        20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc","Type":"GET
+        DATA"},{"URL":"s3://podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc","Description":"This
+        link provides direct download access via S3 to the granule","Type":"GET DATA
+        VIA DIRECT ACCESS"},{"URL":"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5","Description":"Download
+        20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5","Type":"EXTENDED
+        METADATA"},{"URL":"s3://podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5","Description":"This
+        link provides direct download access via S3 to the granule","Type":"EXTENDED
+        METADATA"},{"URL":"https://archive.podaac.earthdata.nasa.gov/s3credentials","Description":"api
+        endpoint to retrieve temporary credentials valid for same-region direct s3
+        access","Type":"VIEW RELATED INFORMATION"},{"URL":"https://opendap.earthdata.nasa.gov/collections/C2036881735-POCLOUD/granules/20241012120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0","Type":"USE
+        SERVICE API","Subtype":"OPENDAP DATA","Description":"OPeNDAP request URL"}]}}]}'
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '1'
+      cmr-request-id:
+      - ee02be57-b162-4026-94ec-d2e2ed0d212d
+      - ee02be57-b162-4026-94ec-d2e2ed0d212d
+      cmr-search-after:
+      - '["pocloud",1728691200000,3265639283]'
+      cmr-took:
+      - '71'
+      connection:
+      - keep-alive
+      content-length:
+      - '3177'
+      content-md5:
+      - 9167ff11683f7bff8a96c0c539ec3e9f
+      content-sha1:
+      - cf974245690a597fb64b3678dc0041eddd817b48
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.7; charset=utf-8
+      date:
+      - Thu, 05 Nov 2026 17:35:06 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 860f2dc10b0841f5a59fb82d818a36c2.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - s5tWzeVjHH8oFak-bct_v7Ax9c4bhZI3OQmCxA9zcQLw5LP4VMMBUQ==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - s5tWzeVjHH8oFak-bct_v7Ax9c4bhZI3OQmCxA9zcQLw5LP4VMMBUQ==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2024-10-11T06%3A00%3A00%2B00%3A00%2F2024-10-11T18%3A00%3A00%2B00%3A00&bounding_box=-20.799%2C75.011%2C14.483%2C83.559
+  response:
+    body:
+      string: '{"hits":1,"took":80,"items":[{"meta":{"concept-type":"granule","concept-id":"G3264876018-POCLOUD","revision-id":2,"native-id":"20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0","collection-concept-id":"C2036881735-POCLOUD","provider-id":"POCLOUD","format":"application/vnd.nasa.cmr.umm+json","revision-date":"2024-10-12T08:33:12.691Z"},"umm":{"TemporalExtent":{"RangeDateTime":{"EndingDateTime":"2024-10-12T00:00:00.000Z","BeginningDateTime":"2024-10-11T00:00:00.000Z"}},"MetadataSpecification":{"URL":"https://cdn.earthdata.nasa.gov/umm/granule/v1.6.7","Name":"UMM-G","Version":"1.6.7"},"GranuleUR":"20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0","ProviderDates":[{"Type":"Insert","Date":"2024-10-12T08:32:40.819Z"},{"Type":"Update","Date":"2024-10-12T08:32:40.819Z"}],"SpatialExtent":{"HorizontalSpatialDomain":{"Geometry":{"BoundingRectangles":[{"WestBoundingCoordinate":-179.875,"SouthBoundingCoordinate":-89.875,"EastBoundingCoordinate":179.875,"NorthBoundingCoordinate":89.875}]}}},"DataGranule":{"ArchiveAndDistributionInformation":[{"SizeUnit":"MB","Size":0.9880571365356445,"Checksum":{"Value":"ed46e0dae99d7c5a84c4b659ebbdb2f0","Algorithm":"MD5"},"SizeInBytes":1036053,"Name":"20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc"},{"SizeUnit":"MB","Size":9.822845458984375E-5,"SizeInBytes":103,"Name":"20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5"}],"DayNightFlag":"Unspecified","ProductionDateTime":"2024-10-12T12:00:00.000Z"},"CollectionReference":{"Version":"1.0","ShortName":"GAMSSA_28km-ABOM-L4-GLOB-v01"},"RelatedUrls":[{"URL":"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc","Description":"Download
+        20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc","Type":"GET
+        DATA"},{"URL":"s3://podaac-ops-cumulus-protected/GAMSSA_28km-ABOM-L4-GLOB-v01/20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc","Description":"This
+        link provides direct download access via S3 to the granule","Type":"GET DATA
+        VIA DIRECT ACCESS"},{"URL":"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5","Description":"Download
+        20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5","Type":"EXTENDED
+        METADATA"},{"URL":"s3://podaac-ops-cumulus-public/GAMSSA_28km-ABOM-L4-GLOB-v01/20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0.nc.md5","Description":"This
+        link provides direct download access via S3 to the granule","Type":"EXTENDED
+        METADATA"},{"URL":"https://archive.podaac.earthdata.nasa.gov/s3credentials","Description":"api
+        endpoint to retrieve temporary credentials valid for same-region direct s3
+        access","Type":"VIEW RELATED INFORMATION"},{"URL":"https://opendap.earthdata.nasa.gov/collections/C2036881735-POCLOUD/granules/20241011120000-ABOM-L4_GHRSST-SSTfnd-GAMSSA_28km-GLOB-v02.0-fv01.0","Type":"USE
+        SERVICE API","Subtype":"OPENDAP DATA","Description":"OPeNDAP request URL"}]}}]}'
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '1'
+      cmr-request-id:
+      - 763efccd-68e6-4b74-a6a1-e783d23ab8d7
+      - 763efccd-68e6-4b74-a6a1-e783d23ab8d7
+      cmr-search-after:
+      - '["pocloud",1728604800000,3264876018]'
+      cmr-took:
+      - '82'
+      connection:
+      - keep-alive
+      content-length:
+      - '3177'
+      content-md5:
+      - 996838968efda5d3705efd6862397ea6
+      content-sha1:
+      - 75b9ed0c5860a651f7cfb61a41fd30f71498d791
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.7; charset=utf-8
+      date:
+      - Thu, 05 Nov 2026 17:35:06 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 6f92c32c93758eda6243792a44156738.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - bvBLzpXDopEvUumIvPFl3pcPeXxlxmYIXc4VT0eOd4HCOaDFrLc0uA==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - bvBLzpXDopEvUumIvPFl3pcPeXxlxmYIXc4VT0eOd4HCOaDFrLc0uA==
+      x-xss-protection:
       - 1; mode=block
     status:
       code: 200

@@ -11,7 +11,7 @@ import moto
 import pytest
 from fastapi.testclient import TestClient
 from geojson_pydantic import Feature, FeatureCollection, Polygon
-from httpx2 import Client
+from httpx2 import ASGITransport, AsyncClient, Client
 from moto.server import ThreadedMotoServer
 from mypy_boto3_s3.service_resource import Bucket, Object, S3ServiceResource
 from vcr.request import Request
@@ -107,6 +107,7 @@ def patch_httpcore2_for_vcr(vcr):
 def app():
     """Create a TestClient instance for the app."""
     from titiler.cmr.main import app
+    from titiler.cmr.timeseries import timestep_client
 
     # Do NOT use a context manager so that we do NOT invoke lifespan during testing.
     # Set app state manually since lifespan is skipped.
@@ -114,6 +115,12 @@ def app():
     app.state.s3_access = False
     app.state.earthdata_token_provider = None
     app.state.get_s3_credentials = None
+
+    # The timeseries endpoints send each step to http://testserver, which only
+    # the test client can reach, so route those requests to the app in process.
+    app.dependency_overrides[timestep_client] = lambda: AsyncClient(
+        transport=ASGITransport(app=app)
+    )
 
     client = TestClient(app)
     try:
