@@ -601,7 +601,7 @@ def evaluate_concept_compatibility(
         if group:
             raise HTTPException(
                 400,
-                f"Could not open group {group!r} in the sample granule: {xarray_error}",
+                f"Could not open sample granule with group {group!r}: {xarray_error}",
             ) from xarray_error
         try:
             result = evaluate_rasterio_compatibility(
