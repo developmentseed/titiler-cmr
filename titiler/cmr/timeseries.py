@@ -583,16 +583,18 @@ class TimeseriesExtension(FactoryExtension):
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
 
-            # check for unconstrained image reading operations
-            if is_xarray or (
-                not image_params.max_size
-                or not (image_params.height and image_params.width)
+            # Check for unconstrained image reading operations, which a request
+            # without steps does not make.
+            if query and (
+                is_xarray
+                or not image_params.max_size
+                or not image_params.height
+                or not image_params.width
             ):
                 # get bbox for geojson:
                 minx, miny, maxx, maxy = get_geojson_bounds(geojson)
-
                 request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id if query else "",
+                    concept_id=query[0].collection_concept_id,
                     client=request.app.state.client,
                     n_time_steps=len(query),
                     minx=minx,
@@ -601,8 +603,8 @@ class TimeseriesExtension(FactoryExtension):
                     maxy=maxy,
                     coord_crs=coord_crs,
                 )
-
                 image_size = request_size / len(query)
+
                 if image_size > settings.time_series_max_image_size:
                     raise HTTPException(
                         status_code=400,
@@ -782,13 +784,16 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
 
-            # check for unconstrained image reading operations
-            if is_xarray or (
-                not image_params.max_size
-                or not (image_params.height and image_params.width)
+            # Check for unconstrained image reading operations, which a request
+            # without steps does not make.
+            if query and (
+                is_xarray
+                or not image_params.max_size
+                or not image_params.height
+                or not image_params.width
             ):
                 request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id if query else "",
+                    concept_id=query[0].collection_concept_id,
                     client=request.app.state.client,
                     n_time_steps=len(query),
                     minx=minx,
@@ -797,8 +802,8 @@ class TimeseriesExtension(FactoryExtension):
                     maxy=maxy,
                     coord_crs=coord_crs,
                 )
-
                 image_size = request_size / len(query)
+
                 if image_size > settings.time_series_max_image_size:
                     raise HTTPException(
                         status_code=400,
