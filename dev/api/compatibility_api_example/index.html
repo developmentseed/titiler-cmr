@@ -2114,7 +2114,7 @@ tilejson link for selected group: https://openveda.cloud/api/titiler-cmr/xarray/
 <li>Call <code>/compatibility</code> without <code>group</code> to get candidate <code>compatible_groups</code>.</li>
 <li>Choose one of those group paths.</li>
 <li>Call <code>/compatibility</code> again with <code>group=...</code> to inspect variables and dimensions for that group.</li>
-<li>Pick a variable name from <code>variables</code>.</li>
+<li>Pick a variable name from <code>variables</code> whose <code>tileable</code> is <code>true</code>.</li>
 <li>Reuse the returned xarray links from the grouped response.</li>
 </ol>
 <p>That keeps the root compatibility response lightweight while still giving you a practical path to the next xarray request.</p>
