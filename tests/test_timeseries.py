@@ -12,7 +12,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.routing import APIRoute
 from freezegun import freeze_time
-from httpx2 import AsyncClient, Client, MockTransport, Response
+from httpx2 import AsyncClient, Client, MockTransport, Response, Timeout
 from pydantic import TypeAdapter
 from rio_tiler.models import ImageData
 from starlette.applications import Starlette
@@ -28,6 +28,7 @@ from titiler.cmr.timeseries import (
     build_request_urls,
     generate_datetime_ranges,
     timeseries_cmr_query,
+    timestep_client,
 )
 
 
@@ -583,3 +584,10 @@ async def test_timestep_request_reports_gateway_message_as_is():
 
     assert exc_info.value.status_code == 503
     assert exc_info.value.detail == "Service Unavailable"
+
+
+@pytest.mark.asyncio
+async def test_timestep_client_has_no_timeout():
+    """A slow step does not fail at httpx2's 5-second default timeout."""
+    async for client in timestep_client():
+        assert client.timeout == Timeout(None)

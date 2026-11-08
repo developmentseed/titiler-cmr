@@ -282,8 +282,12 @@ def build_request_urls(
 
 
 async def timestep_client() -> AsyncIterator[AsyncClient]:
-    """Supply the HTTP client that sends a timeseries request's per-step requests."""
-    async with AsyncClient() as client:
+    """Supply the HTTP client that sends a timeseries request's per-step requests.
+
+    The client has no timeout, so one slow step does not fail the whole request
+    at httpx2's 5-second default.
+    """
+    async with AsyncClient(timeout=None) as client:
         yield client
 
 
@@ -300,7 +304,7 @@ async def _timestep_request(
         url: Full URL to request.
         method: HTTP method — either ``"GET"`` or ``"POST"``.
         **kwargs: Additional arguments forwarded to the underlying httpx method
-            (e.g. ``json``, ``timeout``).
+            (e.g. ``json``).
 
     Returns:
         The httpx Response object.
@@ -345,7 +349,6 @@ async def _fetch_statistics(
         url,
         method="POST",
         json=geojson.model_dump(exclude_none=True),
-        timeout=None,
     )
 
 
@@ -357,7 +360,7 @@ async def _fetch_tilejson(client: AsyncClient, url: str) -> dict[str, Any]:
 
 async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
     """Fetch a PNG sub-request and return an opened PIL Image, or ``None`` for 204."""
-    response = await _timestep_request(client, url, method="GET", timeout=None)
+    response = await _timestep_request(client, url, method="GET")
     if response.status_code == 200:
         return await asyncio.to_thread(Image.open, io.BytesIO(response.content))
     if response.status_code == 204:
