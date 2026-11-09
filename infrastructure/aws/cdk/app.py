@@ -39,6 +39,11 @@ DEFAULT_ENV = {
     "GDAL_INGESTED_BYTES_AT_OPEN": "32768",  # get more bytes when opening the files.
     "GDAL_HTTP_MERGE_CONSECUTIVE_RANGES": "YES",
     "GDAL_HTTP_MULTIPLEX": "YES",
+    # Retry a read that fails with a transient error, such as a 503, rather than
+    # failing the whole request. GDAL's default delay before the first retry is
+    # 30s, the same as the default StackSettings.timeout, so set a shorter one.
+    "GDAL_HTTP_MAX_RETRY": "3",
+    "GDAL_HTTP_RETRY_DELAY": "0.5",
     "GDAL_HTTP_VERSION": "2",
     "PYTHONWARNINGS": "ignore",
     "VSI_CACHE": "TRUE",
