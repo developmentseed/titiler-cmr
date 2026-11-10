@@ -248,6 +248,97 @@ def test_timeseries_query_formats_bbox_for_cmr() -> None:
     assert sent == ["0.00001,-0.00001,1.0,1.0"]
 
 
+def test_timeseries_query_steps_keep_granule_search() -> None:
+    """Each step's search keeps every granule-search parameter of the request."""
+    granule_search = GranuleSearch(
+        collection_concept_id="C123",
+        granule_ur="G1",
+        temporal="2024-06-01T00:00:00Z/2024-06-02T00:00:00Z",
+        cloud_cover="0,50",
+        bounding_box="-10,-10,10,10",
+        sort_key=["-start_date"],
+        orbit_number=2512,
+        attribute=["string,CompositingPeriod,Daily"],
+    )
+
+    query = timeseries_cmr_query(
+        request=Request({"type": "http", "app": Starlette()}),
+        granule_search=granule_search,
+        timeseries_params=TimeseriesParams(
+            temporal="2024-06-01T00:00:00Z/2024-06-02T00:00:00Z",
+            step="P1D",
+            temporal_mode=TemporalMode.point,
+        ),
+    )
+
+    # Each step keeps every other parameter, and its temporal is the step's
+    # datetime as a closed interval.
+    assert query == [
+        GranuleSearch(
+            collection_concept_id="C123",
+            granule_ur="G1",
+            temporal="2024-06-01T00:00:00+00:00/2024-06-01T00:00:00+00:00",
+            cloud_cover="0,50",
+            bounding_box="-10,-10,10,10",
+            sort_key=["-start_date"],
+            orbit_number=2512,
+            attribute=["string,CompositingPeriod,Daily"],
+        ),
+        GranuleSearch(
+            collection_concept_id="C123",
+            granule_ur="G1",
+            temporal="2024-06-02T00:00:00+00:00/2024-06-02T00:00:00+00:00",
+            cloud_cover="0,50",
+            bounding_box="-10,-10,10,10",
+            sort_key=["-start_date"],
+            orbit_number=2512,
+            attribute=["string,CompositingPeriod,Daily"],
+        ),
+    ]
+
+
+def test_timeseries_query_no_step_search_keeps_filters() -> None:
+    """The search that finds the timesteps applies the request's filters."""
+    sent = []
+
+    def cmr(request):
+        sent.append(request.url.params)
+        return Response(200, json={"hits": 0, "items": []})
+
+    app = Starlette()
+    app.state.client = Client(transport=MockTransport(cmr))
+
+    timeseries_cmr_query(
+        request=Request({"type": "http", "app": app}),
+        granule_search=GranuleSearch(
+            collection_concept_id="C123",
+            granule_ur="G1",
+            cloud_cover="0,50",
+            sort_key=["-start_date"],
+            orbit_number=2512,
+            attribute=[
+                "string,CompositingPeriod,Daily",
+                "string,SpatialResolution,4km",
+            ],
+        ),
+        timeseries_params=TimeseriesParams(
+            temporal="2024-06-01T00:00:00Z/2024-06-05T23:59:59Z"
+        ),
+    )
+
+    [params] = sent
+    assert params["granule_ur"] == "G1"
+    assert params["cloud_cover"] == "0,50"
+    assert params["orbit_number"] == "2512"
+    assert params.get_list("attribute[]") == [
+        "string,CompositingPeriod,Daily",
+        "string,SpatialResolution,4km",
+    ]
+    # sort_key only chooses among granules within a step, so it stays out of the
+    # search that finds the timesteps.
+    assert "sort_key[]" not in params
+
+
 @pytest.mark.vcr
 def test_timeseries_query_no_step(
     xarray_query_params: Callable[..., dict[str, str]],

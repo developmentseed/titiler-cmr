@@ -438,7 +438,15 @@ def timeseries_cmr_query(  # noqa: C901
                 else granule_search.bounding_box
             )
             cmr_search = GranuleSearch(
-                collection_concept_id=granule_search.collection_concept_id,
+                # Keep the request's filters, so every timestep comes from a
+                # granule that matches them. Leave out sort_key, which only
+                # chooses among granules within a step. Here it would reorder
+                # the timesteps and change which granules fit get_granules' limit.
+                # Exclude temporal and bounding_box so they can be passed as
+                # keywords (Python rejects a keyword given twice).
+                **granule_search.model_dump(
+                    exclude={"temporal", "bounding_box", "sort_key"}
+                ),
                 temporal=f"{start.isoformat()}/{search_end.isoformat()}",
                 bounding_box=bbox_str,
             )
@@ -476,14 +484,13 @@ def timeseries_cmr_query(  # noqa: C901
             f"time series points/intervals of {settings.time_series_max_requests}",
         )
 
+    # Use the constructor, not model_copy, so normalize_temporal turns a
+    # single-datetime step into a closed interval (CMR reads a bare datetime as
+    # open-ended). Exclude temporal so it can be passed as a keyword (Python
+    # rejects a keyword given twice).
     return [
         GranuleSearch(
-            collection_concept_id=granule_search.collection_concept_id,
-            granule_ur=granule_search.granule_ur,
-            cloud_cover=granule_search.cloud_cover,
-            bounding_box=granule_search.bounding_box,
-            sort_key=granule_search.sort_key,
-            temporal=temporal_,
+            **granule_search.model_dump(exclude={"temporal"}), temporal=temporal_
         )
         for temporal_ in temporal_params
     ]
