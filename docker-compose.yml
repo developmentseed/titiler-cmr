@@ -55,6 +55,11 @@ services:
       - GDAL_HTTP_MERGE_CONSECUTIVE_RANGES=YES
       - GDAL_HTTP_COOKIEJAR=/tmp/cookies.txt
       - GDAL_HTTP_MULTIPLEX=YES
+      # Retry a read that fails with a transient error, such as a 503, rather
+      # than failing the whole request. GDAL waits 30s before its first retry
+      # by default, so set a shorter delay.
+      - GDAL_HTTP_MAX_RETRY=3
+      - GDAL_HTTP_RETRY_DELAY=0.5
       - GDAL_HTTP_VERSION=2
       # The file can be cached in RAM by setting the configuration option VSI_CACHE to TRUE.
       # The cache size defaults to 25 MB, but can be modified by setting the configuration option VSI_CACHE_SIZE (in bytes).

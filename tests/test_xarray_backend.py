@@ -278,6 +278,44 @@ def test_timeseries_gif(
     assert Image.open(io.BytesIO(response.content)).n_frames == 2
 
 
+@pytest.mark.vcr
+def test_timeseries_statistics_no_granules(
+    app: TestClient,
+    xarray_query_params,
+    arctic_geojson,
+) -> None:
+    """A request without `step` that matches no granules returns empty statistics."""
+    response = app.post(
+        "/xarray/timeseries/statistics",
+        # The collection has no granules in this range.
+        params=xarray_query_params(
+            temporal="2001-01-01T00:00:00Z/2001-01-02T00:00:00Z"
+        ),
+        json=arctic_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["properties"]["statistics"] == {}
+
+
+@pytest.mark.vcr
+def test_timeseries_gif_no_granules(
+    app: TestClient,
+    xarray_query_params,
+    arctic_bounds,
+) -> None:
+    """A request without `step` that matches no granules returns 204."""
+    response = app.get(
+        f"/xarray/timeseries/bbox/{','.join(str(coord) for coord in arctic_bounds)}.gif",
+        # The collection has no granules in this range.
+        params=xarray_query_params(
+            temporal="2001-01-01T00:00:00Z/2001-01-02T00:00:00Z"
+        ),
+    )
+
+    assert response.status_code == 204
+
+
 def test_unbounded_start(app, xarray_query_params) -> None:
     """Make sure a datetime interval with an unbounded start returns a 400"""
     response = app.get(

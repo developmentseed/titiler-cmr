@@ -1,18 +1,18 @@
 """titiler.cmr.compatibility: Compatibility testing utilities."""
 
 import urllib.parse
-from typing import Any, Literal, TypeAlias, cast
+from typing import Any, Literal
 
 import h5py
 import numpy as np
 from fastapi import APIRouter, Depends, HTTPException, Query
 from obspec_utils.readers import BlockStoreReader
 from obstore import store
+from obstore.exceptions import BaseError as ObstoreError
 from pydantic import BaseModel
 from rio_tiler.errors import MissingAssets
 from rio_tiler.models import Info
 from starlette.requests import Request
-from titiler.xarray.dependencies import XarrayIOParams
 
 from titiler.cmr.errors import S3CredentialsEndpointMissing
 from titiler.cmr.logger import logger
@@ -22,6 +22,7 @@ from titiler.cmr.reader import (
     X_DIM_NAMES,
     Y_DIM_NAMES,
     MultiBaseGranuleReader,
+    is_tileable,
     open_dataset,
 )
 
@@ -30,6 +31,8 @@ class VariableInfo(BaseModel):
     """Metadata for a single xarray variable."""
 
     shape: list[int]
+    dims: list[str]
+    tileable: bool
     dtype: str
     min: float | None = None
     max: float | None = None
@@ -71,7 +74,7 @@ class CompatibilityResponse(BaseModel):
     granule_ur: str | None = None
     example_assets: dict[str, str] | str | None = None
     sample_asset_raster_info: Info | None = None
-    links: list[TemplateLink] | None = None
+    links: list[TemplateLink]
 
 
 def extract_xarray_metadata(
@@ -97,6 +100,8 @@ def extract_xarray_metadata(
     for var in ds.data_vars:
         var_info: dict[str, Any] = {
             "shape": list(ds[var].shape),
+            "dims": list(ds[var].dims),
+            "tileable": is_tileable(ds[var]),
             "dtype": str(ds[var].dtype),
         }
 
@@ -268,21 +273,11 @@ def _candidate_group_paths(
     credential_provider: Any = None,
 ) -> list[str]:
     """Return likely xarray group paths, preferring spatial non-metadata groups."""
-    all_group_paths: list[str] = []
     spatial_group_paths: list[str] = []
     spatial_metadata_group_paths: list[str] = []
 
     def visitor(name: str, obj: Any) -> None:
-        if not (
-            name
-            and isinstance(obj, h5py.Group)
-            and any(isinstance(child, h5py.Dataset) for child in obj.values())
-        ):
-            return
-
-        all_group_paths.append(name)
-
-        if not _group_has_spatial_dims(obj):
+        if not (isinstance(obj, h5py.Group) and _group_has_spatial_dims(obj)):
             return
 
         if "/metadata/" in f"/{name.strip('/')}/":
@@ -300,7 +295,7 @@ def _candidate_group_paths(
     ):
         file_handle.visititems(visitor)
 
-    return spatial_group_paths or spatial_metadata_group_paths or all_group_paths
+    return spatial_group_paths or spatial_metadata_group_paths
 
 
 def _compatible_groups(
@@ -312,6 +307,10 @@ def _compatible_groups(
 
     This stays intentionally lightweight. It only scans HDF5 groups for datasets
     with spatial dimension aliases and does not open each candidate with xarray.
+
+    Raises:
+        HTTPException: A 502 (Bad Gateway) when the granule cannot be read. An
+            empty list would instead claim that no group is compatible.
     """
     try:
         return _candidate_group_paths(
@@ -319,9 +318,13 @@ def _compatible_groups(
             auth_token=auth_token,
             credential_provider=credential_provider,
         )
-    except Exception as exc:
-        logger.info("Skipping group inspection for %s: %s", src_path, exc)
-        return []
+    except (OSError, ObstoreError) as exc:
+        # obstore follows its first line with a multi-line Rust debug dump.
+        reason = str(exc).partition("\n")[0]
+        raise HTTPException(
+            status_code=502,
+            detail=f"Could not inspect the granule's groups: {reason}",
+        ) from exc
 
 
 def _sample_granule(
@@ -329,8 +332,12 @@ def _sample_granule(
     request: Request,
     granule_ur: str | None = None,
 ) -> Any:
-    """Return a sample granule for a collection concept."""
-    return next(
+    """Return a sample granule for a collection concept.
+
+    Raises:
+        HTTPException: A 400 if the collection does not have a matching granule
+    """
+    granule = next(
         get_granules(
             search_params=GranuleSearch(
                 collection_concept_id=concept_id,
@@ -342,6 +349,16 @@ def _sample_granule(
         ),
         None,
     )
+    if granule is None:
+        detail = (
+            f"Collection {concept_id} does not have a granule with granule_ur "
+            f"{granule_ur!r}"
+            if granule_ur
+            else f"Collection {concept_id} does not have any granules"
+        )
+        raise HTTPException(400, detail)
+
+    return granule
 
 
 def _get_auth_token(request: Request) -> str | None:
@@ -371,10 +388,12 @@ def evaluate_xarray_compatibility(
         Dictionary with xarray compatibility information
 
     Raises:
-        ValueError: If no assets found or reader incompatible
+        ValueError: If the reader is incompatible
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
-        HTTPException: If CMR rejects the search
+        HTTPException: If CMR rejects the search, a 400 if the collection does
+            not have a matching granule, or a 502 if the group scan cannot read
+            the granule
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -383,10 +402,6 @@ def evaluate_xarray_compatibility(
     s3_access = request.app.state.s3_access
     auth_token = _get_auth_token(request)
     granule = _sample_granule(concept_id, request, granule_ur=granule_ur)
-
-    if granule is None:
-        raise ValueError("No assets found for XarrayReader")
-
     assets = granule.get_assets()
     asset = assets["0"]
     href = asset.direct_href if s3_access else asset.external_href
@@ -404,7 +419,7 @@ def evaluate_xarray_compatibility(
         skip_variable_statistics=skip_variable_statistics,
     )
 
-    if not group and not result["variables"]:
+    if not group and not any(info["tileable"] for info in result["variables"].values()):
         result["compatible_groups"] = _compatible_groups(
             href,
             auth_token=auth_token,
@@ -432,10 +447,11 @@ def evaluate_rasterio_compatibility(
         Dictionary with rasterio compatibility information
 
     Raises:
-        ValueError: If no assets found or reader incompatible
+        ValueError: If the reader is incompatible
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
-        HTTPException: If CMR rejects the search
+        HTTPException: If CMR rejects the search, or a 400 if the collection
+            does not have a matching granule
         OSError: If file access fails
         KeyError: If expected data structure is missing
     """
@@ -445,9 +461,6 @@ def evaluate_rasterio_compatibility(
     auth_token = _get_auth_token(request)
     get_s3_credentials = request.app.state.get_s3_credentials
     granule = _sample_granule(concept_id, request, granule_ur=granule_ur)
-
-    if granule is None:
-        raise ValueError("No assets found for MultiBaseGranuleReader")
 
     with MultiBaseGranuleReader(
         granule=granule,
@@ -528,8 +541,9 @@ def evaluate_concept_compatibility(
 ) -> CompatibilityResponse:
     """Test which reader backend is compatible with a CMR concept.
 
-    Tries XarrayReader first, falls back to MultiBaseGranuleReader.
-    Also fetches and includes CMR metadata in the response.
+    Tries XarrayReader first and, unless a group is requested, falls back to
+    MultiBaseGranuleReader. Also fetches and includes CMR metadata in the
+    response.
 
     Args:
         concept_id: CMR concept ID to test
@@ -543,8 +557,10 @@ def evaluate_concept_compatibility(
         CompatibilityResponse with backend info, temporal extent, and metadata
 
     Raises:
-        HTTPException: If neither reader is compatible, the collection is not
-            found, or CMR rejects a search
+        HTTPException: If the requested group cannot be opened, neither reader
+            is compatible, the collection is not found or does not have a
+            matching granule, CMR rejects a search, or the group scan cannot
+            read the granule
         CMRQueryTimeout: If CMR does not answer in time
         CMROutage: If CMR fails on its side
     """
@@ -563,12 +579,15 @@ def evaluate_concept_compatibility(
             granule_ur=granule_ur,
             skip_variable_statistics=skip_variable_statistics,
         )
-        first_var = next(iter(result.get("variables") or {}), None)
+        variables = result.get("variables") or {}
+        first_tileable_var = next(
+            (name for name, info in variables.items() if info["tileable"]), None
+        )
         links = _build_links(
             base_url,
             concept_id,
             "xarray",
-            first_var,
+            first_tileable_var,
             group,
         )
         return CompatibilityResponse(
@@ -579,6 +598,11 @@ def evaluate_concept_compatibility(
         )
     except (ValueError, OSError, KeyError) as xarray_error:
         logger.warning(f"XarrayReader failed: {xarray_error}")
+        if group:
+            raise HTTPException(
+                400,
+                f"Could not open sample granule with group {group!r}: {xarray_error}",
+            ) from xarray_error
         try:
             result = evaluate_rasterio_compatibility(
                 concept_id,
@@ -615,9 +639,6 @@ def _concept_id_param(
     return collection_concept_id or concept_id
 
 
-XarrayGroupParam: TypeAlias = cast(Any, XarrayIOParams.__annotations__["group"])
-
-
 router = APIRouter()
 
 
@@ -625,7 +646,10 @@ router = APIRouter()
 def compatibility_check(
     request: Request,
     concept_id: str | None = Depends(_concept_id_param),
-    group: XarrayGroupParam = None,
+    group: str | None = Query(
+        default=None,
+        description="NetCDF or HDF5 group to inspect. Defaults to the root group.",
+    ),
     granule_ur: GranuleUr = None,
     skip_variable_statistics: bool = Query(
         default=False,
