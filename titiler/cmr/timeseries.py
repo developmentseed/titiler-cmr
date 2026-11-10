@@ -282,8 +282,12 @@ def build_request_urls(
 
 
 async def timestep_client() -> AsyncIterator[AsyncClient]:
-    """Supply the HTTP client that sends a timeseries request's per-step requests."""
-    async with AsyncClient() as client:
+    """Supply the HTTP client that sends a timeseries request's per-step requests.
+
+    The client has no timeout, so one slow step does not fail the whole request
+    at httpx2's 5-second default.
+    """
+    async with AsyncClient(timeout=None) as client:
         yield client
 
 
@@ -300,7 +304,7 @@ async def _timestep_request(
         url: Full URL to request.
         method: HTTP method — either ``"GET"`` or ``"POST"``.
         **kwargs: Additional arguments forwarded to the underlying httpx method
-            (e.g. ``json``, ``timeout``).
+            (e.g. ``json``).
 
     Returns:
         The httpx Response object.
@@ -345,7 +349,6 @@ async def _fetch_statistics(
         url,
         method="POST",
         json=geojson.model_dump(exclude_none=True),
-        timeout=None,
     )
 
 
@@ -357,7 +360,7 @@ async def _fetch_tilejson(client: AsyncClient, url: str) -> dict[str, Any]:
 
 async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
     """Fetch a PNG sub-request and return an opened PIL Image, or ``None`` for 204."""
-    response = await _timestep_request(client, url, method="GET", timeout=None)
+    response = await _timestep_request(client, url, method="GET")
     if response.status_code == 200:
         return await asyncio.to_thread(Image.open, io.BytesIO(response.content))
     if response.status_code == 204:
@@ -435,7 +438,15 @@ def timeseries_cmr_query(  # noqa: C901
                 else granule_search.bounding_box
             )
             cmr_search = GranuleSearch(
-                collection_concept_id=granule_search.collection_concept_id,
+                # Keep the request's filters, so every timestep comes from a
+                # granule that matches them. Leave out sort_key, which only
+                # chooses among granules within a step. Here it would reorder
+                # the timesteps and change which granules fit get_granules' limit.
+                # Exclude temporal and bounding_box so they can be passed as
+                # keywords (Python rejects a keyword given twice).
+                **granule_search.model_dump(
+                    exclude={"temporal", "bounding_box", "sort_key"}
+                ),
                 temporal=f"{start.isoformat()}/{search_end.isoformat()}",
                 bounding_box=bbox_str,
             )
@@ -473,14 +484,13 @@ def timeseries_cmr_query(  # noqa: C901
             f"time series points/intervals of {settings.time_series_max_requests}",
         )
 
+    # Use the constructor, not model_copy, so normalize_temporal turns a
+    # single-datetime step into a closed interval (CMR reads a bare datetime as
+    # open-ended). Exclude temporal so it can be passed as a keyword (Python
+    # rejects a keyword given twice).
     return [
         GranuleSearch(
-            collection_concept_id=granule_search.collection_concept_id,
-            granule_ur=granule_search.granule_ur,
-            cloud_cover=granule_search.cloud_cover,
-            bounding_box=granule_search.bounding_box,
-            sort_key=granule_search.sort_key,
-            temporal=temporal_,
+            **granule_search.model_dump(exclude={"temporal"}), temporal=temporal_
         )
         for temporal_ in temporal_params
     ]
@@ -583,16 +593,18 @@ class TimeseriesExtension(FactoryExtension):
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
 
-            # check for unconstrained image reading operations
-            if is_xarray or (
-                not image_params.max_size
-                or not (image_params.height and image_params.width)
+            # Check for unconstrained image reading operations, which a request
+            # without steps does not make.
+            if query and (
+                is_xarray
+                or not image_params.max_size
+                or not image_params.height
+                or not image_params.width
             ):
                 # get bbox for geojson:
                 minx, miny, maxx, maxy = get_geojson_bounds(geojson)
-
                 request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id if query else "",
+                    concept_id=query[0].collection_concept_id,
                     client=request.app.state.client,
                     n_time_steps=len(query),
                     minx=minx,
@@ -601,8 +613,8 @@ class TimeseriesExtension(FactoryExtension):
                     maxy=maxy,
                     coord_crs=coord_crs,
                 )
-
                 image_size = request_size / len(query)
+
                 if image_size > settings.time_series_max_image_size:
                     raise HTTPException(
                         status_code=400,
@@ -782,13 +794,16 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
 
-            # check for unconstrained image reading operations
-            if is_xarray or (
-                not image_params.max_size
-                or not (image_params.height and image_params.width)
+            # Check for unconstrained image reading operations, which a request
+            # without steps does not make.
+            if query and (
+                is_xarray
+                or not image_params.max_size
+                or not image_params.height
+                or not image_params.width
             ):
                 request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id if query else "",
+                    concept_id=query[0].collection_concept_id,
                     client=request.app.state.client,
                     n_time_steps=len(query),
                     minx=minx,
@@ -797,8 +812,8 @@ class TimeseriesExtension(FactoryExtension):
                     maxy=maxy,
                     coord_crs=coord_crs,
                 )
-
                 image_size = request_size / len(query)
+
                 if image_size > settings.time_series_max_image_size:
                     raise HTTPException(
                         status_code=400,
