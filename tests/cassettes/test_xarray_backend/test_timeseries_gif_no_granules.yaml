@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2001-01-01T00%3A00%3A00%2B00%3A00%2F2001-01-02T00%3A00%3A00%2B00%3A00&bounding_box=-20.799%2C75.011%2C14.483%2C83.559
+  response:
+    body:
+      string: '{"hits":0,"took":25,"items":[]}'
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '0'
+      cmr-request-id:
+      - 74f24816-2ba3-44d5-94d7-22fd7f60ce3a
+      - 74f24816-2ba3-44d5-94d7-22fd7f60ce3a
+      cmr-took:
+      - '25'
+      connection:
+      - keep-alive
+      content-length:
+      - '31'
+      content-md5:
+      - b82591078d3ce0eecd0ce115e45a2eda
+      content-sha1:
+      - a0d15df02e0d08c0445513d47735e38d2c5ffb46
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.7; charset=utf-8
+      date:
+      - Sat, 07 Nov 2026 17:22:11 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 48ef409da41fe0542cf5af7ce8fe0a50.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - BsKd2WdshrRoRC_lMK-iLl5nipuXvZT2VY_qwoYnBtymRcvl5JUocw==
+      x-amz-cf-pop:
+      - BCN50-P1
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - BsKd2WdshrRoRC_lMK-iLl5nipuXvZT2VY_qwoYnBtymRcvl5JUocw==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

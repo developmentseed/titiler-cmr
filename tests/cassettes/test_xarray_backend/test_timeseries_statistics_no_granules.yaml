@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/granules.umm_json?page_size=20&collection_concept_id=C2036881735-POCLOUD&temporal=2001-01-01T00%3A00%3A00%2B00%3A00%2F2001-01-02T00%3A00%3A00%2B00%3A00
+  response:
+    body:
+      string: '{"hits":0,"took":18,"items":[]}'
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '0'
+      cmr-request-id:
+      - cea0e76b-3659-4689-80f7-84504b7f6c5e
+      - cea0e76b-3659-4689-80f7-84504b7f6c5e
+      cmr-took:
+      - '18'
+      connection:
+      - keep-alive
+      content-length:
+      - '31'
+      content-md5:
+      - 32d95fb27572d9af39623ae129c92dc7
+      content-sha1:
+      - 5a46329196b1ca99a9d4bfabeccc9d57869fca8e
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.6.7; charset=utf-8
+      date:
+      - Sat, 07 Nov 2026 17:22:11 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 48ef409da41fe0542cf5af7ce8fe0a50.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - dJ4RRwoEx6QyrGMgTSQOl0bg0nPzNkNo7XkfN4P1kmsJuoQx_Q8CjA==
+      x-amz-cf-pop:
+      - BCN50-P1
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - dJ4RRwoEx6QyrGMgTSQOl0bg0nPzNkNo7XkfN4P1kmsJuoQx_Q8CjA==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
