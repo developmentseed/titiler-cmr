@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.5](https://github.com/developmentseed/titiler-cmr/compare/v1.1.4...v1.1.5) (2026-11-10)
+
+
+### Bug Fixes
+
+* apply timeseries filters to every step ([#300](https://github.com/developmentseed/titiler-cmr/issues/300)) ([ef762ed](https://github.com/developmentseed/titiler-cmr/commit/ef762ed469858619be91852825bb42c0cd7e8c84)), closes [#287](https://github.com/developmentseed/titiler-cmr/issues/287)
+* check for x/y dimensions when evaluating xarray compatibility ([#208](https://github.com/developmentseed/titiler-cmr/issues/208)) ([46d9c2c](https://github.com/developmentseed/titiler-cmr/commit/46d9c2c360c2e61e226d54e4bc14ae60b1ca01a5))
+* drop the 5s timeout on timeseries tilejson steps ([#304](https://github.com/developmentseed/titiler-cmr/issues/304)) ([af2a38c](https://github.com/developmentseed/titiler-cmr/commit/af2a38cabcc6fa1d9e708e3d90ffe9fec4c62f89)), closes [#302](https://github.com/developmentseed/titiler-cmr/issues/302)
+* retry granule reads after a transient HTTP error ([#306](https://github.com/developmentseed/titiler-cmr/issues/306)) ([f39065a](https://github.com/developmentseed/titiler-cmr/commit/f39065a9a6d319f33f1b14bdc639afb61647510f))
+* skip the timeseries size check for zero steps ([#301](https://github.com/developmentseed/titiler-cmr/issues/301)) ([36d77d5](https://github.com/developmentseed/titiler-cmr/commit/36d77d591bb540439b6cb980963b93e657eaf2a5)), closes [#294](https://github.com/developmentseed/titiler-cmr/issues/294)
+
+
+### Documentation
+
+* point the README CI badge at this repo ([#286](https://github.com/developmentseed/titiler-cmr/issues/286)) ([1a38224](https://github.com/developmentseed/titiler-cmr/commit/1a382243853a944ec39d1393c8b3678030386338))
+
 ## [1.1.4](https://github.com/developmentseed/titiler-cmr/compare/v1.1.3...v1.1.4) (2026-10-29)
 
 
