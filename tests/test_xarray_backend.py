@@ -402,6 +402,64 @@ def test_timeseries_statistics_image_size_limit(
 
 
 @pytest.mark.vcr
+def test_timeseries_statistics_image_size_limit_with_output_size(
+    app,
+    global_geojson,
+):
+    """An xarray request with a small output size is still sized by its AOI.
+
+    The error does not suggest an output size, because it would not help.
+    """
+    # xarray reads the AOI at native resolution before resizing it to the
+    # output size, so a small output size does not make the read small.
+    response = app.post(
+        "/xarray/timeseries/statistics",
+        params={
+            "collection_concept_id": "C1996881146-POCLOUD",
+            "variables": "analysed_sst",
+            "temporal": "2024-01-01T00:00:00Z/2024-01-01T23:59:59Z",
+            "step": "P1D",
+            "width": 256,
+            "height": 256,
+        },
+        json=global_geojson,
+    )
+
+    assert response.status_code == 400
+    assert "Each time step of this request is too large" in response.text
+    assert "width and height" not in response.text
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_image_size_limit_large_output_size(app):
+    """An xarray request is sized by its output when the output is larger."""
+    geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(-5, -5, 0, 0),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/xarray/timeseries/statistics",
+        params={
+            "collection_concept_id": "C1996881146-POCLOUD",
+            "variables": "analysed_sst",
+            "temporal": "2024-01-01T00:00:00Z/2024-01-01T23:59:59Z",
+            "step": "P1D",
+            # At MUR SST's native 0.01 degree, this AOI is only 500 x 500, but
+            # xarray reprojects it onto 8000 x 8000 pixels, over the per-step
+            # limit of 7500 x 7500.
+            "width": 8000,
+            "height": 8000,
+        },
+        json=geojson,
+    )
+
+    assert response.status_code == 400
+    assert "Try again with a smaller width and height." in response.text
+
+
+@pytest.mark.vcr
 def test_timeseries_statistics_request_size_limit(
     app,
 ):
