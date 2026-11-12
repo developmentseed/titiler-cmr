@@ -1,9 +1,11 @@
 """Test titiler-cmr rasterio backend."""
 
+import io
 from typing import Tuple
 
 import pytest
 from geojson_pydantic import Feature, Polygon
+from PIL import Image
 
 
 @pytest.mark.vcr
@@ -373,3 +375,23 @@ def test_timeseries_statistics_unknown_collection(
     )
 
     assert response.status_code == 404
+
+
+@pytest.mark.vcr
+def test_timeseries_gif_zero_width(
+    app,
+    mock_cmr_get_assets,
+    rasterio_query_params,
+    mn_bounds: Tuple[float, float, float, float],
+) -> None:
+    """A GIF with a zero width gets frames of the requested height."""
+    # rio-tiler derives a zero width from the height and the AOI's aspect
+    # ratio, and the size check does too, so the steps need the same size.
+    response = app.get(
+        f"/rasterio/timeseries/bbox/{','.join(str(coord) for coord in mn_bounds)}"
+        "/0x50.gif",
+        params={**rasterio_query_params, "step": "P1D"},
+    )
+
+    assert response.status_code == 200
+    assert Image.open(io.BytesIO(response.content)).height == 50

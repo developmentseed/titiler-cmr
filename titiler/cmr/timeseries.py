@@ -887,7 +887,7 @@ class TimeseriesExtension(FactoryExtension):
                 "maxy": maxy,
             }
 
-            if not is_xarray and image_params.height and image_params.width:
+            if image_params.height is not None and image_params.width is not None:
                 path_params["height"] = image_params.height
                 path_params["width"] = image_params.width
 
