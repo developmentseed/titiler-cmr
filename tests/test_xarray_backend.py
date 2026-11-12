@@ -316,6 +316,36 @@ def test_timeseries_gif_no_granules(
     assert response.status_code == 204
 
 
+@pytest.mark.vcr
+def test_timeseries_statistics_no_resolution(
+    app: TestClient,
+    xarray_query_params,
+    global_geojson,
+) -> None:
+    """A collection without a resolution in its CMR record is not size checked.
+
+    The check cannot size such a collection, e.g., GPM IMERG, so it passes the
+    request on instead of failing it with a 500.
+    """
+    response = app.post(
+        "/xarray/timeseries/statistics",
+        params={
+            **xarray_query_params(
+                collection_concept_id="C2723754850-GES_DISC",
+                variables="precipitation",
+                # IMERG does not have granules this early, so the step does not
+                # read data.
+                temporal="1990-01-01T00:00:00Z/1990-01-01T23:59:59Z",
+            ),
+            "step": "P1D",
+        },
+        json=global_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["properties"]["statistics"] == {}
+
+
 def test_unbounded_start(app, xarray_query_params) -> None:
     """Make sure a datetime interval with an unbounded start returns a 400"""
     response = app.get(
@@ -368,7 +398,7 @@ def test_timeseries_statistics_image_size_limit(
     )
 
     assert response.status_code == 400
-    assert "The AOI for this request is too large" in response.text
+    assert "Each time step of this request is too large" in response.text
 
 
 @pytest.mark.vcr

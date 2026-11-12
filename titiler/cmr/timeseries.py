@@ -17,7 +17,7 @@ import asyncio
 import io
 import logging
 import os
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Sequence
 from dataclasses import dataclass, fields
 from datetime import datetime, timedelta, timezone
 from enum import Enum
@@ -33,11 +33,12 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry
-from httpx2 import AsyncClient
+from httpx2 import AsyncClient, Client
 from httpx2 import Response as HttpxResponse
 from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel, FiniteFloat
+from rasterio.crs import CRS
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
 from titiler.core.factory import BaseFactory, FactoryExtension
@@ -53,7 +54,7 @@ from titiler.cmr.query import _cmr_numbers, get_granules
 from titiler.cmr.reader import XarrayGranuleReader
 from titiler.cmr.settings import ApiSettings
 from titiler.cmr.utils import (
-    calculate_time_series_request_size,
+    get_aoi_native_shape,
     get_geojson_bounds,
     parse_datetime,
 )
@@ -517,6 +518,58 @@ def timeseries_cmr_query_no_bbox(
     )
 
 
+def _check_timeseries_size(
+    *,
+    steps: Sequence[GranuleSearch],
+    bounds: tuple[float, float, float, float],
+    coord_crs: CRS | None,
+    client: Client,
+    endpoint: str,
+    max_total_size: float,
+) -> None:
+    """Reject a timeseries request that is too large.
+
+    Each step is sized by its AOI at the collection's native resolution, which
+    takes a CMR collection lookup. A collection whose CMR record does not
+    include a resolution is not checked.
+
+    Raises:
+        HTTPException: 400 if one step, or all steps together, are over the
+            size limits in the settings. Errors from the CMR collection
+            lookup, such as a 404 for an unknown collection, pass through.
+    """
+    if not steps:
+        # A request without steps does not read any images, so it is never too large.
+        return
+
+    concept_id = steps[0].collection_concept_id
+    # timeseries_cmr_query rejects a request without a collection_concept_id.
+    assert concept_id is not None
+
+    native = get_aoi_native_shape(concept_id, client, *bounds, coord_crs=coord_crs)
+
+    if native is None:
+        return
+
+    native_height, native_width = native
+    pixels_per_step = native_height * native_width
+
+    if pixels_per_step > settings.time_series_max_image_size:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Each time step of this request is too large for the {endpoint} "
+            "endpoint for this dataset. Try again with a smaller AOI.",
+        )
+
+    if pixels_per_step * len(steps) > max_total_size:
+        raise HTTPException(
+            status_code=400,
+            detail=f"This request is too large for the {endpoint} endpoint for "
+            "this dataset. Try again with a smaller AOI or fewer time steps than "
+            f"{len(steps)}.",
+        )
+
+
 timeseries_router = APIRouter()
 
 
@@ -552,7 +605,6 @@ class TimeseriesExtension(FactoryExtension):
 
     def register_statistics(self, factory: CMRTilerFactory):
         """Register timeseries statistics endpoint"""
-        is_xarray = factory.dataset_reader == XarrayGranuleReader
 
         @factory.router.post(
             "/timeseries/statistics",
@@ -592,42 +644,14 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
-
-            # Check for unconstrained image reading operations, which a request
-            # without steps does not make.
-            if query and (
-                is_xarray
-                or not image_params.max_size
-                or not image_params.height
-                or not image_params.width
-            ):
-                # get bbox for geojson:
-                minx, miny, maxx, maxy = get_geojson_bounds(geojson)
-                request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id,
-                    client=request.app.state.client,
-                    n_time_steps=len(query),
-                    minx=minx,
-                    miny=miny,
-                    maxx=maxx,
-                    maxy=maxy,
-                    coord_crs=coord_crs,
-                )
-                image_size = request_size / len(query)
-
-                if image_size > settings.time_series_max_image_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="The AOI for this request is too large for the /statistics endpoint for this dataset. "
-                        "Try again with either a smaller AOI",
-                    )
-
-                if request_size > settings.time_series_statistics_max_total_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=f"This request is too large for the /timeseries/statistics endpoint for this dataset. "
-                        f"Try again with either a smaller AOI or fewer time steps than {len(query)}",
-                    )
+            _check_timeseries_size(
+                steps=query,
+                bounds=get_geojson_bounds(geojson),
+                coord_crs=coord_crs,
+                client=request.app.state.client,
+                endpoint="/timeseries/statistics",
+                max_total_size=settings.time_series_statistics_max_total_size,
+            )
 
             logging.info(
                 f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
@@ -794,39 +818,14 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
 
-            # Check for unconstrained image reading operations, which a request
-            # without steps does not make.
-            if query and (
-                is_xarray
-                or not image_params.max_size
-                or not image_params.height
-                or not image_params.width
-            ):
-                request_size = calculate_time_series_request_size(
-                    concept_id=query[0].collection_concept_id,
-                    client=request.app.state.client,
-                    n_time_steps=len(query),
-                    minx=minx,
-                    miny=miny,
-                    maxx=maxx,
-                    maxy=maxy,
-                    coord_crs=coord_crs,
-                )
-                image_size = request_size / len(query)
-
-                if image_size > settings.time_series_max_image_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="The AOI for this request is too large for the /bbox endpoint for this dataset. "
-                        "Try again with either a smaller AOI",
-                    )
-
-                if request_size > settings.time_series_image_max_total_size:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=f"This request is too large for the /timeseries/bbox endpoint for this dataset. "
-                        f"Try again with either a smaller AOI or fewer time steps than {len(query)}",
-                    )
+            _check_timeseries_size(
+                steps=query,
+                bounds=(minx, miny, maxx, maxy),
+                coord_crs=coord_crs,
+                client=request.app.state.client,
+                endpoint="/timeseries/bbox",
+                max_total_size=settings.time_series_image_max_total_size,
+            )
 
             logging.info(
                 f"Initial memory usage: {process.memory_info().rss / 1024 / 1024} MB"
