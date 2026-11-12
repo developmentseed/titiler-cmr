@@ -346,6 +346,32 @@ def test_timeseries_statistics_no_resolution(
     assert response.json()["properties"]["statistics"] == {}
 
 
+@pytest.mark.vcr
+def test_timeseries_gif_custom_size(
+    app,
+    mock_cmr_get_assets,
+    xarray_query_params,
+    arctic_bounds,
+) -> None:
+    """Each frame of an xarray GIF has the requested width and height."""
+    response = app.get(
+        "/xarray/timeseries/bbox/"
+        f"{','.join(str(coord) for coord in arctic_bounds)}/100x50.gif",
+        params={
+            **xarray_query_params(),
+            "temporal": (
+                "2024-10-11T06:00:00Z/2024-10-11T18:00:00Z,"
+                "2024-10-12T06:00:00Z/2024-10-12T18:00:00Z"
+            ),
+            "step": "P1D",
+            "rescale": "0,1",
+        },
+    )
+
+    assert response.status_code == 200
+    assert Image.open(io.BytesIO(response.content)).size == (100, 50)
+
+
 def test_unbounded_start(app, xarray_query_params) -> None:
     """Make sure a datetime interval with an unbounded start returns a 400"""
     response = app.get(
