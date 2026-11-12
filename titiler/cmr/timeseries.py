@@ -540,7 +540,9 @@ def _check_timeseries_size(
     Each step's AOI is sized at the collection's native resolution, which
     takes a CMR collection lookup, and its output size follows from width,
     height, and max_size the way rio-tiler derives it. A rasterio step reads
-    at its output size. An xarray step is sized by its AOI.
+    at its output size. An xarray step reads its AOI at native resolution
+    before reprojecting it to the output size, so it is sized by the larger of
+    the two.
 
     The AOI is sized in degrees, but each step reads in dst_crs, or in
     coord_crs when dst_crs is unset. A projected read CRS far from the
@@ -582,8 +584,12 @@ def _check_timeseries_size(
     tip = ""
 
     if is_xarray:
-        pixels_per_step = native_pixels
-        remedy = "a smaller AOI"
+        pixels_per_step = max(native_pixels, output_pixels)
+        remedy = (
+            "a smaller width and height"
+            if output_pixels > native_pixels
+            else "a smaller AOI"
+        )
     elif image_params.height or image_params.width:
         remedy = "a smaller width and height"
     elif image_params.max_size:

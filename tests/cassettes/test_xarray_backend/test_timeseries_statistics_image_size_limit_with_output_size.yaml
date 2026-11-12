@@ -1,0 +1,229 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - cmr.earthdata.nasa.gov
+      user-agent:
+      - python-httpx2/2.16.0
+    method: GET
+    uri: https://cmr.earthdata.nasa.gov/search/collections.umm_json?concept_id=C1996881146-POCLOUD
+  response:
+    body:
+      string: "{\"hits\":1,\"took\":8,\"items\":[{\"meta\":{\"revision-id\":61,\"deleted\":false,\"format\":\"application/vnd.nasa.cmr.umm+json\",\"provider-id\":\"POCLOUD\",\"has-combine\":false,\"user-id\":\"viviant\",\"has-formats\":true,\"associations\":{\"variables\":[\"V2262655973-POCLOUD\",\"V2112015425-POCLOUD\",\"V2028632047-POCLOUD\",\"V2112015422-POCLOUD\",\"V2028668049-POCLOUD\",\"V2028632042-POCLOUD\",\"V2112015420-POCLOUD\",\"V2028632044-POCLOUD\"],\"services\":[\"S3177988677-POCLOUD\",\"S2164732315-XYZ_PROV\",\"S3616918458-LARC_CLOUD\",\"S2874702816-XYZ_PROV\"],\"tools\":[\"TL2108419875-POCLOUD\",\"TL2245207664-POCLOUD\"],\"citations\":[\"CIT3857569446-ESDIS\",\"CIT3857571366-ESDIS\",\"CIT3804349989-ESDIS\",\"CIT3804194576-ESDIS\",\"CIT3804141393-ESDIS\",\"CIT3804125595-ESDIS\",\"CIT3804114928-ESDIS\",\"CIT3804112011-ESDIS\",\"CIT3804094641-ESDIS\",\"CIT3804354668-ESDIS\",\"CIT3804022173-ESDIS\",\"CIT3803939147-ESDIS\",\"CIT3804029401-ESDIS\",\"CIT3804053469-ESDIS\",\"CIT3804269984-ESDIS\",\"CIT3804342654-ESDIS\",\"CIT3803969225-ESDIS\",\"CIT3804190727-ESDIS\",\"CIT3804087796-ESDIS\",\"CIT4321028504-ESDIS\",\"CIT3804031749-ESDIS\",\"CIT3804000646-ESDIS\",\"CIT3804304312-ESDIS\",\"CIT3857564160-ESDIS\",\"CIT3804382187-ESDIS\",\"CIT3803952173-ESDIS\",\"CIT3804152107-ESDIS\",\"CIT3804141432-ESDIS\",\"CIT3804259415-ESDIS\",\"CIT3804107566-ESDIS\",\"CIT3857569303-ESDIS\",\"CIT3804240103-ESDIS\",\"CIT3804318517-ESDIS\",\"CIT3804187414-ESDIS\",\"CIT3804318609-ESDIS\",\"CIT3804282131-ESDIS\",\"CIT3804331554-ESDIS\",\"CIT3804184885-ESDIS\",\"CIT3804093356-ESDIS\",\"CIT4201251564-ESDIS\",\"CIT3804143738-ESDIS\",\"CIT3804324033-ESDIS\",\"CIT3804198998-ESDIS\",\"CIT3804003458-ESDIS\",\"CIT3804352270-ESDIS\",\"CIT3804192615-ESDIS\",\"CIT4106688197-ESDIS\",\"CIT3804375004-ESDIS\",\"CIT3803944930-ESDIS\",\"CIT4248451208-ESDIS\",\"CIT4248451225-ESDIS\",\"CIT3804374834-ESDIS\",\"CIT3803969487-ESDIS\",\"CIT3804228470-ESDIS\",\"CIT3804008221-ESDIS\",\"CIT3804116263-ESDIS\",\"CIT3804230606-ESDIS\",\"CIT3804103961-ESDIS\",\"CIT3804348146-ESDIS\",\"CIT3804251556-ESDIS\",\"CIT3804318553-ESDIS\",\"CIT3963297113-ESDIS\",\"CIT3804182256-ESDIS\",\"CIT3803974451-ESDIS\",\"CIT3963290282-ESDIS\",\"CIT3804102521-ESDIS\",\"CIT3804105123-ESDIS\",\"CIT3804183263-ESDIS\",\"CIT3804078460-ESDIS\",\"CIT3803941798-ESDIS\",\"CIT3804263000-ESDIS\",\"CIT3804171580-ESDIS\",\"CIT3804219265-ESDIS\",\"CIT4321023164-ESDIS\",\"CIT4106684604-ESDIS\",\"CIT3804349698-ESDIS\",\"CIT3804165285-ESDIS\",\"CIT3804065393-ESDIS\",\"CIT3804165313-ESDIS\",\"CIT3804116607-ESDIS\",\"CIT3804152112-ESDIS\",\"CIT3804194005-ESDIS\",\"CIT3857570456-ESDIS\",\"CIT3804249163-ESDIS\",\"CIT4201251557-ESDIS\",\"CIT3803974348-ESDIS\",\"CIT3804367536-ESDIS\",\"CIT3857556881-ESDIS\",\"CIT3857566639-ESDIS\",\"CIT3804182375-ESDIS\",\"CIT3804363465-ESDIS\",\"CIT4201248148-ESDIS\",\"CIT3804312595-ESDIS\",\"CIT3804231854-ESDIS\",\"CIT3804140347-ESDIS\",\"CIT3803953654-ESDIS\",\"CIT3804096203-ESDIS\",\"CIT3804103659-ESDIS\",\"CIT3804208331-ESDIS\",\"CIT3804365867-ESDIS\",\"CIT3804148923-ESDIS\",\"CIT3804210290-ESDIS\",\"CIT3857564035-ESDIS\",\"CIT4321022466-ESDIS\",\"CIT3804382182-ESDIS\",\"CIT3804229816-ESDIS\",\"CIT3804174291-ESDIS\",\"CIT3804159484-ESDIS\",\"CIT3804018370-ESDIS\",\"CIT3803956337-ESDIS\",\"CIT4201247658-ESDIS\",\"CIT4201246787-ESDIS\",\"CIT3804109062-ESDIS\",\"CIT3804001850-ESDIS\",\"CIT3804178863-ESDIS\",\"CIT4106694637-ESDIS\",\"CIT3857572013-ESDIS\",\"CIT4248451249-ESDIS\",\"CIT4201250350-ESDIS\",\"CIT3803939145-ESDIS\",\"CIT3857574265-ESDIS\",\"CIT3804153181-ESDIS\",\"CIT3804350808-ESDIS\",\"CIT3804352023-ESDIS\",\"CIT3804236390-ESDIS\",\"CIT3804253479-ESDIS\",\"CIT3804382185-ESDIS\",\"CIT3803994825-ESDIS\",\"CIT3804098045-ESDIS\",\"CIT4106700847-ESDIS\",\"CIT3804067649-ESDIS\",\"CIT3804306687-ESDIS\",\"CIT4201251560-ESDIS\",\"CIT3804212229-ESDIS\",\"CIT3804144802-ESDIS\",\"CIT3804212947-ESDIS\",\"CIT3804269756-ESDIS\",\"CIT3857568051-ESDIS\",\"CIT3804170927-ESDIS\",\"CIT3804196816-ESDIS\",\"CIT3804307108-ESDIS\",\"CIT3804024390-ESDIS\",\"CIT3804116843-ESDIS\",\"CIT3804100874-ESDIS\",\"CIT3804233420-ESDIS\",\"CIT4201249880-ESDIS\",\"CIT3804006928-ESDIS\",\"CIT3804382189-ESDIS\",\"CIT3804382174-ESDIS\",\"CIT3804219575-ESDIS\",\"CIT3857562011-ESDIS\",\"CIT3804129575-ESDIS\",\"CIT3857570477-ESDIS\",\"CIT3803944973-ESDIS\",\"CIT3804287716-ESDIS\",\"CIT3804201935-ESDIS\",\"CIT3804070667-ESDIS\",\"CIT3804197261-ESDIS\",\"CIT3804266066-ESDIS\",\"CIT3803972151-ESDIS\",\"CIT3804354559-ESDIS\",\"CIT3857561667-ESDIS\",\"CIT3804223011-ESDIS\",\"CIT4321023197-ESDIS\",\"CIT4201248192-ESDIS\",\"CIT3804169092-ESDIS\",\"CIT3804073263-ESDIS\",\"CIT3803970606-ESDIS\",\"CIT3804159452-ESDIS\",\"CIT3804088793-ESDIS\",\"CIT4106697554-ESDIS\",\"CIT3857562051-ESDIS\",\"CIT3803959676-ESDIS\",\"CIT3804211475-ESDIS\",\"CIT3804133276-ESDIS\",\"CIT3804255467-ESDIS\",\"CIT3857558868-ESDIS\",\"CIT3803943629-ESDIS\",\"CIT3803939177-ESDIS\",\"CIT3804113453-ESDIS\",\"CIT3803975100-ESDIS\",\"CIT3803996824-ESDIS\",\"CIT3804224135-ESDIS\",\"CIT3804144895-ESDIS\",\"CIT3857573269-ESDIS\",\"CIT3804150577-ESDIS\",\"CIT3804017661-ESDIS\",\"CIT3804382167-ESDIS\",\"CIT4106687182-ESDIS\",\"CIT4248451209-ESDIS\",\"CIT3804098868-ESDIS\",\"CIT3804118320-ESDIS\",\"CIT3804205470-ESDIS\",\"CIT3804194076-ESDIS\",\"CIT3804067066-ESDIS\",\"CIT3804231625-ESDIS\",\"CIT3804023683-ESDIS\",\"CIT3804282332-ESDIS\",\"CIT4248447685-ESDIS\",\"CIT3803990861-ESDIS\",\"CIT3804119760-ESDIS\",\"CIT4201248154-ESDIS\",\"CIT3804259289-ESDIS\",\"CIT3804282263-ESDIS\",\"CIT3804194155-ESDIS\",\"CIT3804283347-ESDIS\",\"CIT3804042063-ESDIS\",\"CIT3803959857-ESDIS\",\"CIT3804283856-ESDIS\",\"CIT3803958027-ESDIS\",\"CIT3804151649-ESDIS\",\"CIT3803978906-ESDIS\",\"CIT3804318511-ESDIS\",\"CIT3803996051-ESDIS\",\"CIT3804161181-ESDIS\",\"CIT3804241848-ESDIS\",\"CIT3804206127-ESDIS\",\"CIT3804095432-ESDIS\",\"CIT3804306693-ESDIS\",\"CIT3804141398-ESDIS\",\"CIT3804308064-ESDIS\",\"CIT3803955185-ESDIS\",\"CIT3804227583-ESDIS\",\"CIT3803946657-ESDIS\",\"CIT3963290308-ESDIS\",\"CIT3804170282-ESDIS\",\"CIT3804085382-ESDIS\",\"CIT4106687508-ESDIS\",\"CIT3804119502-ESDIS\",\"CIT3804085476-ESDIS\",\"CIT4248446846-ESDIS\",\"CIT3857562311-ESDIS\",\"CIT4248448953-ESDIS\",\"CIT3803985645-ESDIS\",\"CIT3804087138-ESDIS\",\"CIT4106689242-ESDIS\",\"CIT3857559935-ESDIS\",\"CIT4321025721-ESDIS\",\"CIT3804183996-ESDIS\",\"CIT3804233912-ESDIS\",\"CIT4106693919-ESDIS\"],\"visualizations\":[\"VIS4200814936-ESDIS\",\"VIS4086833843-ESDIS\",\"VIS4086833844-ESDIS\",\"VIS4086833853-ESDIS\"]},\"s3-links\":[\"podaac-ops-cumulus-public/MUR-JPL-L4-GLOB-v4.1/\",\"podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/\"],\"has-spatial-subsetting\":true,\"native-id\":\"GHRSST+Level+4+MUR+Global+Foundation+Sea+Surface+Temperature+Analysis+(v4.1)\",\"has-transforms\":true,\"association-details\":{\"variables\":[{\"concept-id\":\"V2262655973-POCLOUD\"},{\"concept-id\":\"V2112015425-POCLOUD\"},{\"concept-id\":\"V2028632047-POCLOUD\"},{\"concept-id\":\"V2112015422-POCLOUD\"},{\"concept-id\":\"V2028668049-POCLOUD\"},{\"concept-id\":\"V2028632042-POCLOUD\"},{\"concept-id\":\"V2112015420-POCLOUD\"},{\"concept-id\":\"V2028632044-POCLOUD\"}],\"services\":[{\"concept-id\":\"S3177988677-POCLOUD\"},{\"concept-id\":\"S2164732315-XYZ_PROV\"},{\"concept-id\":\"S3616918458-LARC_CLOUD\"},{\"concept-id\":\"S2874702816-XYZ_PROV\"}],\"tools\":[{\"concept-id\":\"TL2108419875-POCLOUD\"},{\"concept-id\":\"TL2245207664-POCLOUD\"}],\"citations\":[{\"concept-id\":\"CIT3857569446-ESDIS\"},{\"concept-id\":\"CIT3857571366-ESDIS\"},{\"concept-id\":\"CIT3804349989-ESDIS\"},{\"concept-id\":\"CIT3804194576-ESDIS\"},{\"concept-id\":\"CIT3804141393-ESDIS\"},{\"concept-id\":\"CIT3804125595-ESDIS\"},{\"concept-id\":\"CIT3804114928-ESDIS\"},{\"concept-id\":\"CIT3804112011-ESDIS\"},{\"concept-id\":\"CIT3804094641-ESDIS\"},{\"concept-id\":\"CIT3804354668-ESDIS\"},{\"concept-id\":\"CIT3804022173-ESDIS\"},{\"concept-id\":\"CIT3803939147-ESDIS\"},{\"concept-id\":\"CIT3804029401-ESDIS\"},{\"concept-id\":\"CIT3804053469-ESDIS\"},{\"concept-id\":\"CIT3804269984-ESDIS\"},{\"concept-id\":\"CIT3804342654-ESDIS\"},{\"concept-id\":\"CIT3803969225-ESDIS\"},{\"concept-id\":\"CIT3804190727-ESDIS\"},{\"concept-id\":\"CIT3804087796-ESDIS\"},{\"concept-id\":\"CIT4321028504-ESDIS\"},{\"concept-id\":\"CIT3804031749-ESDIS\"},{\"concept-id\":\"CIT3804000646-ESDIS\"},{\"concept-id\":\"CIT3804304312-ESDIS\"},{\"concept-id\":\"CIT3857564160-ESDIS\"},{\"concept-id\":\"CIT3804382187-ESDIS\"},{\"concept-id\":\"CIT3803952173-ESDIS\"},{\"concept-id\":\"CIT3804152107-ESDIS\"},{\"concept-id\":\"CIT3804141432-ESDIS\"},{\"concept-id\":\"CIT3804259415-ESDIS\"},{\"concept-id\":\"CIT3804107566-ESDIS\"},{\"concept-id\":\"CIT3857569303-ESDIS\"},{\"concept-id\":\"CIT3804240103-ESDIS\"},{\"concept-id\":\"CIT3804318517-ESDIS\"},{\"concept-id\":\"CIT3804187414-ESDIS\"},{\"concept-id\":\"CIT3804318609-ESDIS\"},{\"concept-id\":\"CIT3804282131-ESDIS\"},{\"concept-id\":\"CIT3804331554-ESDIS\"},{\"concept-id\":\"CIT3804184885-ESDIS\"},{\"concept-id\":\"CIT3804093356-ESDIS\"},{\"concept-id\":\"CIT4201251564-ESDIS\"},{\"concept-id\":\"CIT3804143738-ESDIS\"},{\"concept-id\":\"CIT3804324033-ESDIS\"},{\"concept-id\":\"CIT3804198998-ESDIS\"},{\"concept-id\":\"CIT3804003458-ESDIS\"},{\"concept-id\":\"CIT3804352270-ESDIS\"},{\"concept-id\":\"CIT3804192615-ESDIS\"},{\"concept-id\":\"CIT4106688197-ESDIS\"},{\"concept-id\":\"CIT3804375004-ESDIS\"},{\"concept-id\":\"CIT3803944930-ESDIS\"},{\"concept-id\":\"CIT4248451208-ESDIS\"},{\"concept-id\":\"CIT4248451225-ESDIS\"},{\"concept-id\":\"CIT3804374834-ESDIS\"},{\"concept-id\":\"CIT3803969487-ESDIS\"},{\"concept-id\":\"CIT3804228470-ESDIS\"},{\"concept-id\":\"CIT3804008221-ESDIS\"},{\"concept-id\":\"CIT3804116263-ESDIS\"},{\"concept-id\":\"CIT3804230606-ESDIS\"},{\"concept-id\":\"CIT3804103961-ESDIS\"},{\"concept-id\":\"CIT3804348146-ESDIS\"},{\"concept-id\":\"CIT3804251556-ESDIS\"},{\"concept-id\":\"CIT3804318553-ESDIS\"},{\"concept-id\":\"CIT3963297113-ESDIS\"},{\"concept-id\":\"CIT3804182256-ESDIS\"},{\"concept-id\":\"CIT3803974451-ESDIS\"},{\"concept-id\":\"CIT3963290282-ESDIS\"},{\"concept-id\":\"CIT3804102521-ESDIS\"},{\"concept-id\":\"CIT3804105123-ESDIS\"},{\"concept-id\":\"CIT3804183263-ESDIS\"},{\"concept-id\":\"CIT3804078460-ESDIS\"},{\"concept-id\":\"CIT3803941798-ESDIS\"},{\"concept-id\":\"CIT3804263000-ESDIS\"},{\"concept-id\":\"CIT3804171580-ESDIS\"},{\"concept-id\":\"CIT3804219265-ESDIS\"},{\"concept-id\":\"CIT4321023164-ESDIS\"},{\"concept-id\":\"CIT4106684604-ESDIS\"},{\"concept-id\":\"CIT3804349698-ESDIS\"},{\"concept-id\":\"CIT3804165285-ESDIS\"},{\"concept-id\":\"CIT3804065393-ESDIS\"},{\"concept-id\":\"CIT3804165313-ESDIS\"},{\"concept-id\":\"CIT3804116607-ESDIS\"},{\"concept-id\":\"CIT3804152112-ESDIS\"},{\"concept-id\":\"CIT3804194005-ESDIS\"},{\"concept-id\":\"CIT3857570456-ESDIS\"},{\"concept-id\":\"CIT3804249163-ESDIS\"},{\"concept-id\":\"CIT4201251557-ESDIS\"},{\"concept-id\":\"CIT3803974348-ESDIS\"},{\"concept-id\":\"CIT3804367536-ESDIS\"},{\"concept-id\":\"CIT3857556881-ESDIS\"},{\"concept-id\":\"CIT3857566639-ESDIS\"},{\"concept-id\":\"CIT3804182375-ESDIS\"},{\"concept-id\":\"CIT3804363465-ESDIS\"},{\"concept-id\":\"CIT4201248148-ESDIS\"},{\"concept-id\":\"CIT3804312595-ESDIS\"},{\"concept-id\":\"CIT3804231854-ESDIS\"},{\"concept-id\":\"CIT3804140347-ESDIS\"},{\"concept-id\":\"CIT3803953654-ESDIS\"},{\"concept-id\":\"CIT3804096203-ESDIS\"},{\"concept-id\":\"CIT3804103659-ESDIS\"},{\"concept-id\":\"CIT3804208331-ESDIS\"},{\"concept-id\":\"CIT3804365867-ESDIS\"},{\"concept-id\":\"CIT3804148923-ESDIS\"},{\"concept-id\":\"CIT3804210290-ESDIS\"},{\"concept-id\":\"CIT3857564035-ESDIS\"},{\"concept-id\":\"CIT4321022466-ESDIS\"},{\"concept-id\":\"CIT3804382182-ESDIS\"},{\"concept-id\":\"CIT3804229816-ESDIS\"},{\"concept-id\":\"CIT3804174291-ESDIS\"},{\"concept-id\":\"CIT3804159484-ESDIS\"},{\"concept-id\":\"CIT3804018370-ESDIS\"},{\"concept-id\":\"CIT3803956337-ESDIS\"},{\"concept-id\":\"CIT4201247658-ESDIS\"},{\"concept-id\":\"CIT4201246787-ESDIS\"},{\"concept-id\":\"CIT3804109062-ESDIS\"},{\"concept-id\":\"CIT3804001850-ESDIS\"},{\"concept-id\":\"CIT3804178863-ESDIS\"},{\"concept-id\":\"CIT4106694637-ESDIS\"},{\"concept-id\":\"CIT3857572013-ESDIS\"},{\"concept-id\":\"CIT4248451249-ESDIS\"},{\"concept-id\":\"CIT4201250350-ESDIS\"},{\"concept-id\":\"CIT3803939145-ESDIS\"},{\"concept-id\":\"CIT3857574265-ESDIS\"},{\"concept-id\":\"CIT3804153181-ESDIS\"},{\"concept-id\":\"CIT3804350808-ESDIS\"},{\"concept-id\":\"CIT3804352023-ESDIS\"},{\"concept-id\":\"CIT3804236390-ESDIS\"},{\"concept-id\":\"CIT3804253479-ESDIS\"},{\"concept-id\":\"CIT3804382185-ESDIS\"},{\"concept-id\":\"CIT3803994825-ESDIS\"},{\"concept-id\":\"CIT3804098045-ESDIS\"},{\"concept-id\":\"CIT4106700847-ESDIS\"},{\"concept-id\":\"CIT3804067649-ESDIS\"},{\"concept-id\":\"CIT3804306687-ESDIS\"},{\"concept-id\":\"CIT4201251560-ESDIS\"},{\"concept-id\":\"CIT3804212229-ESDIS\"},{\"concept-id\":\"CIT3804144802-ESDIS\"},{\"concept-id\":\"CIT3804212947-ESDIS\"},{\"concept-id\":\"CIT3804269756-ESDIS\"},{\"concept-id\":\"CIT3857568051-ESDIS\"},{\"concept-id\":\"CIT3804170927-ESDIS\"},{\"concept-id\":\"CIT3804196816-ESDIS\"},{\"concept-id\":\"CIT3804307108-ESDIS\"},{\"concept-id\":\"CIT3804024390-ESDIS\"},{\"concept-id\":\"CIT3804116843-ESDIS\"},{\"concept-id\":\"CIT3804100874-ESDIS\"},{\"concept-id\":\"CIT3804233420-ESDIS\"},{\"concept-id\":\"CIT4201249880-ESDIS\"},{\"concept-id\":\"CIT3804006928-ESDIS\"},{\"concept-id\":\"CIT3804382189-ESDIS\"},{\"concept-id\":\"CIT3804382174-ESDIS\"},{\"concept-id\":\"CIT3804219575-ESDIS\"},{\"concept-id\":\"CIT3857562011-ESDIS\"},{\"concept-id\":\"CIT3804129575-ESDIS\"},{\"concept-id\":\"CIT3857570477-ESDIS\"},{\"concept-id\":\"CIT3803944973-ESDIS\"},{\"concept-id\":\"CIT3804287716-ESDIS\"},{\"concept-id\":\"CIT3804201935-ESDIS\"},{\"concept-id\":\"CIT3804070667-ESDIS\"},{\"concept-id\":\"CIT3804197261-ESDIS\"},{\"concept-id\":\"CIT3804266066-ESDIS\"},{\"concept-id\":\"CIT3803972151-ESDIS\"},{\"concept-id\":\"CIT3804354559-ESDIS\"},{\"concept-id\":\"CIT3857561667-ESDIS\"},{\"concept-id\":\"CIT3804223011-ESDIS\"},{\"concept-id\":\"CIT4321023197-ESDIS\"},{\"concept-id\":\"CIT4201248192-ESDIS\"},{\"concept-id\":\"CIT3804169092-ESDIS\"},{\"concept-id\":\"CIT3804073263-ESDIS\"},{\"concept-id\":\"CIT3803970606-ESDIS\"},{\"concept-id\":\"CIT3804159452-ESDIS\"},{\"concept-id\":\"CIT3804088793-ESDIS\"},{\"concept-id\":\"CIT4106697554-ESDIS\"},{\"concept-id\":\"CIT3857562051-ESDIS\"},{\"concept-id\":\"CIT3803959676-ESDIS\"},{\"concept-id\":\"CIT3804211475-ESDIS\"},{\"concept-id\":\"CIT3804133276-ESDIS\"},{\"concept-id\":\"CIT3804255467-ESDIS\"},{\"concept-id\":\"CIT3857558868-ESDIS\"},{\"concept-id\":\"CIT3803943629-ESDIS\"},{\"concept-id\":\"CIT3803939177-ESDIS\"},{\"concept-id\":\"CIT3804113453-ESDIS\"},{\"concept-id\":\"CIT3803975100-ESDIS\"},{\"concept-id\":\"CIT3803996824-ESDIS\"},{\"concept-id\":\"CIT3804224135-ESDIS\"},{\"concept-id\":\"CIT3804144895-ESDIS\"},{\"concept-id\":\"CIT3857573269-ESDIS\"},{\"concept-id\":\"CIT3804150577-ESDIS\"},{\"concept-id\":\"CIT3804017661-ESDIS\"},{\"concept-id\":\"CIT3804382167-ESDIS\"},{\"concept-id\":\"CIT4106687182-ESDIS\"},{\"concept-id\":\"CIT4248451209-ESDIS\"},{\"concept-id\":\"CIT3804098868-ESDIS\"},{\"concept-id\":\"CIT3804118320-ESDIS\"},{\"concept-id\":\"CIT3804205470-ESDIS\"},{\"concept-id\":\"CIT3804194076-ESDIS\"},{\"concept-id\":\"CIT3804067066-ESDIS\"},{\"concept-id\":\"CIT3804231625-ESDIS\"},{\"concept-id\":\"CIT3804023683-ESDIS\"},{\"concept-id\":\"CIT3804282332-ESDIS\"},{\"concept-id\":\"CIT4248447685-ESDIS\"},{\"concept-id\":\"CIT3803990861-ESDIS\"},{\"concept-id\":\"CIT3804119760-ESDIS\"},{\"concept-id\":\"CIT4201248154-ESDIS\"},{\"concept-id\":\"CIT3804259289-ESDIS\"},{\"concept-id\":\"CIT3804282263-ESDIS\"},{\"concept-id\":\"CIT3804194155-ESDIS\"},{\"concept-id\":\"CIT3804283347-ESDIS\"},{\"concept-id\":\"CIT3804042063-ESDIS\"},{\"concept-id\":\"CIT3803959857-ESDIS\"},{\"concept-id\":\"CIT3804283856-ESDIS\"},{\"concept-id\":\"CIT3803958027-ESDIS\"},{\"concept-id\":\"CIT3804151649-ESDIS\"},{\"concept-id\":\"CIT3803978906-ESDIS\"},{\"concept-id\":\"CIT3804318511-ESDIS\"},{\"concept-id\":\"CIT3803996051-ESDIS\"},{\"concept-id\":\"CIT3804161181-ESDIS\"},{\"concept-id\":\"CIT3804241848-ESDIS\"},{\"concept-id\":\"CIT3804206127-ESDIS\"},{\"concept-id\":\"CIT3804095432-ESDIS\"},{\"concept-id\":\"CIT3804306693-ESDIS\"},{\"concept-id\":\"CIT3804141398-ESDIS\"},{\"concept-id\":\"CIT3804308064-ESDIS\"},{\"concept-id\":\"CIT3803955185-ESDIS\"},{\"concept-id\":\"CIT3804227583-ESDIS\"},{\"concept-id\":\"CIT3803946657-ESDIS\"},{\"concept-id\":\"CIT3963290308-ESDIS\"},{\"concept-id\":\"CIT3804170282-ESDIS\"},{\"concept-id\":\"CIT3804085382-ESDIS\"},{\"concept-id\":\"CIT4106687508-ESDIS\"},{\"concept-id\":\"CIT3804119502-ESDIS\"},{\"concept-id\":\"CIT3804085476-ESDIS\"},{\"concept-id\":\"CIT4248446846-ESDIS\"},{\"concept-id\":\"CIT3857562311-ESDIS\"},{\"concept-id\":\"CIT4248448953-ESDIS\"},{\"concept-id\":\"CIT3803985645-ESDIS\"},{\"concept-id\":\"CIT3804087138-ESDIS\"},{\"concept-id\":\"CIT4106689242-ESDIS\"},{\"concept-id\":\"CIT3857559935-ESDIS\"},{\"concept-id\":\"CIT4321025721-ESDIS\"},{\"concept-id\":\"CIT3804183996-ESDIS\"},{\"concept-id\":\"CIT3804233912-ESDIS\"},{\"concept-id\":\"CIT4106693919-ESDIS\"}],\"visualizations\":[{\"concept-id\":\"VIS4200814936-ESDIS\"},{\"concept-id\":\"VIS4086833843-ESDIS\"},{\"concept-id\":\"VIS4086833844-ESDIS\"},{\"concept-id\":\"VIS4086833853-ESDIS\"}]},\"has-variables\":true,\"concept-id\":\"C1996881146-POCLOUD\",\"revision-date\":\"2026-09-28T14:11:46.658Z\",\"has-temporal-subsetting\":true,\"concept-type\":\"collection\"},\"umm\":{\"DataLanguage\":\"eng\",\"AncillaryKeywords\":[\"GHRSST\",\"sea
+        surface temperature\",\"Level 4\",\"SST\",\"surface temperature\",\"MUR\",\"foundation
+        SST\",\"SST anomaly\",\"anomaly\"],\"CollectionCitations\":[{\"Creator\":\"JPL
+        MUR MEaSUREs Project\",\"OnlineResource\":{\"Linkage\":\"https://podaac.jpl.nasa.gov/MEaSUREs-MUR\"},\"Publisher\":\"JPL
+        NASA\",\"Title\":\"GHRSST Level 4 MUR Global Foundation Sea Surface Temperature
+        Analysis\",\"SeriesName\":\"GHRSST Level 4 MUR Global Foundation Sea Surface
+        Temperature Analysis\",\"OtherCitationDetails\":\"JPL MUR MEaSUREs Project,
+        JPL NASA, 2015-03-11, GHRSST Level 4 MUR Global Foundation Sea Surface Temperature
+        Analysis (v4.1)\",\"ReleaseDate\":\"2015-03-11T00:00:00.000Z\",\"Version\":\"4.1\",\"ReleasePlace\":\"Jet
+        Propulsion Laboratory\"}],\"AdditionalAttributes\":[{\"Name\":\"earliest_granule_start_time\",\"Description\":\"Earliest
+        Granule Start Time for dataset.\",\"Value\":\"2002-06-01T09:00:00.000Z\",\"DataType\":\"DATETIME\"},{\"Name\":\"latest_granule_end_time\",\"Description\":\"Latest
+        Granule Stop/End Time for dataset.\",\"Value\":\"2021-01-25T09:00:00.000Z\",\"DataType\":\"DATETIME\"},{\"Name\":\"Series
+        Name\",\"Description\":\"Dataset citation series name\",\"Value\":\"GHRSST
+        Level 4 MUR Global Foundation Sea Surface Temperature Analysis\",\"DataType\":\"STRING\"},{\"Name\":\"Persistent
+        ID\",\"Description\":\"Dataset Persistent ID\",\"Value\":\"PODAAC-GHGMR-4FJ04\",\"DataType\":\"STRING\"}],\"SpatialExtent\":{\"SpatialCoverageType\":\"HORIZONTAL\",\"HorizontalSpatialDomain\":{\"Geometry\":{\"CoordinateSystem\":\"CARTESIAN\",\"BoundingRectangles\":[{\"NorthBoundingCoordinate\":90,\"WestBoundingCoordinate\":-180,\"EastBoundingCoordinate\":180,\"SouthBoundingCoordinate\":-90}]},\"ResolutionAndCoordinateSystem\":{\"Description\":\"Projection
+        Type: Cylindrical Lat-Lon, Projection Detail: Geolocation information included
+        for each pixel\",\"GeodeticModel\":{\"HorizontalDatumName\":\"World Geodetic
+        System 1984\",\"EllipsoidName\":\"WGS 84\",\"SemiMajorAxis\":6378137,\"DenominatorOfFlatteningRatio\":298.2572236},\"HorizontalDataResolution\":{\"GenericResolutions\":[{\"XDimension\":0.01,\"YDimension\":0.01,\"Unit\":\"Decimal
+        Degrees\"}]}}},\"GranuleSpatialRepresentation\":\"CARTESIAN\"},\"CollectionProgress\":\"ACTIVE\",\"StandardProduct\":false,\"ScienceKeywords\":[{\"Category\":\"EARTH
+        SCIENCE\",\"Topic\":\"OCEANS\",\"Term\":\"OCEAN TEMPERATURE\",\"VariableLevel1\":\"SEA
+        SURFACE TEMPERATURE\",\"DetailedVariable\":\"FOUNDATION SEA SURFACE TEMPERATURE\"}],\"TemporalExtents\":[{\"RangeDateTimes\":[{\"BeginningDateTime\":\"2002-05-31T21:00:00.000Z\"}]}],\"ProcessingLevel\":{\"Id\":\"4\",\"ProcessingLevelDescription\":\"Level
+        4  following GHRSST Data Specification\"},\"DOI\":{\"DOI\":\"10.5067/GHGMR-4FJ04\",\"Authority\":\"https://doi.org\"},\"ShortName\":\"MUR-JPL-L4-GLOB-v4.1\",\"EntryTitle\":\"GHRSST
+        Level 4 MUR Global Foundation Sea Surface Temperature Analysis (v4.1)\",\"PublicationReferences\":[{\"Title\":\"
+        A multi-scale high-resolution analysis of global sea surface temperature\",\"Publisher\":\"Remote
+        Sensing of Environment \",\"DOI\":{\"DOI\":\"https://doi.org/10.1016/j.rse.2017.07.029\\r\\n\"},\"Author\":\"Chin,
+        T.M,  J. Vazquez-Cuervo, and E.M. Armstrong\",\"PublicationDate\":\"2017-10-01T00:00:00.000Z\",\"Volume\":\"200
+        \",\"Pages\":\"154-169\"}],\"DirectDistributionInformation\":{\"Region\":\"us-west-2\",\"S3BucketAndObjectPrefixNames\":[\"podaac-ops-cumulus-public/MUR-JPL-L4-GLOB-v4.1/\",\"podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/\"],\"S3CredentialsAPIEndpoint\":\"https://archive.podaac.earthdata.nasa.gov/s3credentials\",\"S3CredentialsAPIDocumentationURL\":\"https://archive.podaac.earthdata.nasa.gov/s3credentialsREADME\"},\"RelatedUrls\":[{\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Description\":\"Data Use and Citation Guidelines\",\"URLContentType\":\"PublicationURL\",\"Subtype\":\"DATA
+        CITATION GUIDELINES\",\"URL\":\"https://podaac.jpl.nasa.gov/CitingPODAAC\"},{\"Description\":\"Group
+        for High Resolution Sea Surface Temperature Information\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"https://ghrsst.jpl.nasa.gov\"},{\"Description\":\"Homepage
+        for the NASA MEaSUREs projects\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"https://earthdata.nasa.gov/esds/competitive-programs/measures/mur-sst\"},{\"Description\":\"Chin
+        T.M., Milliff R.F., Large W.G. (1998). Basin-scale, high-wavenumber sea surface
+        wind fields from a multiresolution analysis of scatterometer data. Journal
+        of Atmospheric and Oceanic Technology, 15: 741-763\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"PUBLICATIONS\",\"URL\":\"http://journals.ametsoc.org/doi/abs/10.1175/1520-0426%281998%29015%3C0741:BSHWSS%3E2.0.CO;2\"},{\"Description\":\"Documentation
+        on the GDS version 2 format specification\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"USER'S GUIDE\",\"URL\":\"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/ghrsst/open/docs/GDS20r5.pdf\"},{\"Description\":\"Generic
+        data readers\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW RELATED
+        INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/podaac/data-readers\"},{\"Description\":\"Chin,
+        Toshio Michael, Jorge Vazquez-Cuervo, and Edward M. Armstrong. A multi-scale
+        high-resolution analysis of global sea surface temperature. Remote sensing
+        of environment 200 (2017): 154-169.\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"PUBLICATIONS\",\"URL\":\"https://doi.org/10.1016/j.rse.2017.07.029\"},{\"Description\":\"GHRSST
+        Project website\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW RELATED
+        INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"http://www.ghrsst.org\"},{\"Description\":\"HTTPS
+        endpoint for data browse and download\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"DIRECT DOWNLOAD\",\"URL\":\"https://cmr.earthdata.nasa.gov/virtual-directory/collections/C1996881146-POCLOUD
+        \",\"GetData\":{\"Format\":\"netCDF-4 classic\",\"MimeType\":\"application/x-netcdf\",\"Size\":300,\"Unit\":\"MB\"}},{\"Description\":\"Browse
+        granule search results in Earthdata Search\",\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"Earthdata Search\",\"URL\":\" https://search.earthdata.nasa.gov/search/granules?p=C1996881146-POCLOUD
+        \",\"GetData\":{\"Format\":\"netCDF-4 classic\",\"MimeType\":\"application/x-netcdf\",\"Size\":700,\"Unit\":\"MB\"}},{\"Description\":\"MUR
+        Project homepage\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW RELATED
+        INFORMATION\",\"Subtype\":\"GENERAL DOCUMENTATION\",\"URL\":\"https://podaac.jpl.nasa.gov/MEaSUREs-MUR\"},{\"Description\":\"Jupyter
+        python notebook to co-locate MUR and MODIS L2P satellite data with  Argo in-situ
+        data for cross-validation\",\"URLContentType\":\"PublicationURL\",\"Type\":\"VIEW
+        RELATED INFORMATION\",\"Subtype\":\"DATA RECIPE\",\"URL\":\"https://github.com/podaac/tutorials/blob/master/notebooks/SWOT-EA-2021/Colocate_satellite_insitu_ocean.ipynb\"},{\"Description\":\"SOTO
+        (State of the Ocean) Visualization\",\"URLContentType\":\"VisualizationURL\",\"Type\":\"GET
+        RELATED VISUALIZATION\",\"Subtype\":\"SOTO\",\"URL\":\"https://soto.podaac.earthdatacloud.nasa.gov/?l=GHRSST_L4_MUR_Sea_Surface_Temperature,BlueMarble_ShadedRelief_Bathymetry,Coastlines_15m\"},{\"Description\":\"Virtual
+        data set reference file for first decade of MUR record in JSON (experimental)\",\"URLContentType\":\"DistributionURL\",\"URL\":\"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/ghrsst/open/docs/MUR-JPL-L4-GLOB-v4.1_combined-ref.json\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"VIRTUAL COLLECTION\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"VIRTUAL COLLECTION\",\"Description\":\"Virtual data set
+        reference file for first decade of MUR record in PARQUET (experimental)\",\"URL\":\"https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/ghrsst/open/docs/MUR-JPL-L4-GLOB-v4.1_combined-ref.parq.zip\"},{\"Type\":\"GET
+        RELATED VISUALIZATION\",\"Description\":\"Thumbnail\",\"URLContentType\":\"VisualizationURL\",\"URL\":\"https://podaac.jpl.nasa.gov/Podaac/thumbnails/MUR-JPL-L4-GLOB-v4.1.jpg\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"GET
+        DATA\",\"Subtype\":\"Data Access Tool\",\"URL\":\"https://github.com/podaac/data-subscriber\",\"Description\":\"This
+        dataset can be downloaded using the podaac-data-subscriber (the recommended
+        tool for bulk downloading PO.DAAC data). It is a Python package for downloading
+        one or many files using the command line interface. The URL redirects to the
+        data-subscriber home page with instructions for utilizing the tool\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"USE
+        SERVICE API\",\"Subtype\":\"OPENDAP DATA\",\"URL\":\"https://opendap.earthdata.nasa.gov\",\"Description\":\"This
+        dataset can be accessed with the Open-source Project for a Network Data Access
+        Protocol (OPeNDAP) API framework. This service enables variable and dimensional
+        subsetting. The URL redirects to a page with information about utilizing the
+        service.\"},{\"URLContentType\":\"DistributionURL\",\"Type\":\"GOTO WEB TOOL\",\"Subtype\":\"SUBSETTER\",\"URL\":\"https://harmony.earthdata.nasa.gov/\",\"Description\":\"This
+        dataset can be accessed with the Harmony subsetter service to subset and regrid
+        data on-the-fly. Several subsetting options are available such as spatial,
+        variable, temporal, and vertical level. The URL redirects to a general page
+        with information about utilizing the service. An example query:  https://harmony.earthdata.nasa.gov/C3378626164-POCLOUD/ogc-api-coverages/1.0.0/collections/all/coverage/rangeset?subset=lat(minLat:maxLat)&subset=lon(minLon:maxLon)&subset=time(startTime:stopTime)&format=application%2Fx-netcdf4\"},{\"URLContentType\":\"VisualizationURL\",\"Type\":\"GET
+        RELATED VISUALIZATION\",\"Subtype\":\"WORLDVIEW\",\"URL\":\"https://www.earthdata.nasa.gov/data/tools/worldview\",\"Description\":\"The
+        Worldview tool from NASA's Earth Observing System Data and Information System
+        (EOSDIS) provides the capability to interactively browse and visualize satellite
+        imagery layers and then download the underlying data. Many of the layers are
+        updated within three hours of observation. This link redirects to the Worldview
+        home page - from there, users can launch the tool and search for this dataset.\"}],\"DataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2014-10-31T16:30:37.998Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2017-04-28T05:01:45.000Z\"}],\"Abstract\":\"A
+        Group for High Resolution Sea Surface Temperature (GHRSST) Level 4 sea surface
+        temperature analysis produced as a retrospective dataset (four day latency)
+        and near-real-time dataset (one day latency) at the JPL Physical Oceanography
+        DAAC using wavelets as basis functions in an optimal interpolation approach
+        on a global 0.01 degree grid. The version 4 Multiscale Ultrahigh Resolution
+        (MUR) L4 analysis is based upon nighttime GHRSST L2P skin and subskin SST
+        observations from several instruments including the NASA Advanced Microwave
+        Scanning Radiometer-EOS (AMSR-E), the JAXA Advanced Microwave Scanning Radiometer
+        2 on GCOM-W1, the Moderate Resolution Imaging Spectroradiometers (MODIS) on
+        the NASA Aqua and Terra platforms, the US Navy microwave WindSat radiometer,
+        the Advanced Very High Resolution Radiometer (AVHRR) on several NOAA satellites,
+        and in situ SST observations from the NOAA iQuam project. The ice concentration
+        data are from the archives at the EUMETSAT Ocean and Sea Ice Satellite Application
+        Facility (OSI SAF) High Latitude Processing Center and are also used for an
+        improved SST parameterization for the high-latitudes.  The dataset also contains
+        additional variables for some granules including the SST anomaly (variable
+        sst_anomaly) derived from a MUR climatology, and the temporal distance in
+        hours to the nearest IR measurement for each pixel (variable dt_1km_data).
+        Variable dt_1km_data first appears in the time series on October 4, 2015,
+        \ while sst_anomaly starts July 23, 2019.  This dataset was originally funded
+        by the NASA MEaSUREs program (http://earthdata.nasa.gov/our-community/community-data-system-programs/measures-projects),
+        and created by a team led by Dr. Toshio M. Chin from JPL. It adheres to the
+        GHRSST Data Processing Specification (GDS) version 2 format specifications.
+        Use the file global metadata \\\"history:\\\" attribute to determine if a
+        granule is near-realtime or retrospective.\",\"LocationKeywords\":[{\"Category\":\"GEOGRAPHIC
+        REGION\",\"Type\":\"GLOBAL\"}],\"MetadataDates\":[{\"Type\":\"CREATE\",\"Date\":\"2021-04-07T16:30:00.000Z\"},{\"Type\":\"UPDATE\",\"Date\":\"2023-05-30T16:42:00.000Z\"}],\"Version\":\"4.1\",\"Projects\":[{\"ShortName\":\"GHRSST\",\"LongName\":\"Group
+        for High Resolution Sea Surface Temperature\"}],\"ContactPersons\":[{\"Roles\":[\"Science
+        Contact\"],\"FirstName\":\"Toshio\",\"MiddleName\":\"Mike\",\"LastName\":\"Chin\",\"NonDataCenterAffiliation\":\"NASA
+        Jet Propulsion Laboratory\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"toshio.m.chin@jpl.nasa.gov\"}]}}],\"DataCenters\":[{\"Roles\":[\"ARCHIVER\"],\"ShortName\":\"NASA/JPL/PODAAC\",\"LongName\":\"Physical
+        Oceanography Distributed Active Archive Center, Jet Propulsion Laboratory,
+        NASA\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"podaac@podaac.jpl.nasa.gov\"}],\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/po-daac\",\"Description\":\"Physical
+        Oceanography Distributed Active Archive Center Page\"}]},\"ContactGroups\":[{\"Roles\":[\"Data
+        Center Contact\"],\"GroupName\":\"Help Desk\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"podaac@podaac.jpl.nasa.gov\"}],\"RelatedUrls\":[{\"URLContentType\":\"DataContactURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://www.earthdata.nasa.gov/centers/po-daac\",\"Description\":\"Physical
+        Oceanography Distributed Active Archive Center Page\"}]}}]},{\"Roles\":[\"PROCESSOR\"],\"ShortName\":\"NASA/JPL\",\"LongName\":\"Jet
+        Propulsion Laboratory, NASA\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"podaac@podaac.jpl.nasa.gov\"}],\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://podaac.jpl.nasa.gov/missions\"}]}},{\"Roles\":[\"DISTRIBUTOR\"],\"ShortName\":\"NASA/JPL/PODAAC\",\"LongName\":\"Physical
+        Oceanography Distributed Active Archive Center, Jet Propulsion Laboratory,
+        NASA\",\"ContactInformation\":{\"ContactMechanisms\":[{\"Type\":\"Email\",\"Value\":\"podaac@podaac.jpl.nasa.gov\"}],\"RelatedUrls\":[{\"URLContentType\":\"DataCenterURL\",\"Type\":\"HOME
+        PAGE\",\"URL\":\"https://podaac.jpl.nasa.gov/\"}]}}],\"TemporalKeywords\":[\"Hourly
+        - < Daily\"],\"Platforms\":[{\"Type\":\"Earth Observation Satellites\",\"ShortName\":\"Aqua\",\"LongName\":\"Earth
+        Observing System, Aqua\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"98.4\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.1\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"MODIS\",\"LongName\":\"Moderate-Resolution
+        Imaging Spectroradiometer\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2330.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]},{\"ShortName\":\"AMSR-E\",\"LongName\":\"Advanced
+        Microwave Scanning Radiometer-EOS\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"1450.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"CORIOLIS\",\"LongName\":\"Coriolis\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"101.6\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.7\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"WINDSAT\",\"LongName\":\"WindSat\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"1200.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"Terra\",\"LongName\":\"Earth Observing
+        System, Terra (AM-1)\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"98.8\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.2\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"MODIS\",\"LongName\":\"Moderate-Resolution
+        Imaging Spectroradiometer\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2330.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"NOAA-19\",\"LongName\":\"National
+        Oceanic & Atmospheric Administration-19\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"102.12\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.74\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AVHRR-3\",\"LongName\":\"Advanced
+        Very High Resolution Radiometer-3\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"2400.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Earth
+        Observation Satellites\",\"ShortName\":\"GCOM-W1\",\"LongName\":\"Global Change
+        Observation Mission 1st-Water\",\"Characteristics\":[{\"Name\":\"OrbitPeriod\",\"Description\":\"Nominal
+        period of a spacecraft\u2019s single revolution on an orbital plane.\",\"Value\":\"100.0\",\"Unit\":\"Minutes\",\"DataType\":\"FLOAT\"},{\"Name\":\"InclinationAngle\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"98.19\",\"Unit\":\"Degrees\",\"DataType\":\"FLOAT\"}],\"Instruments\":[{\"ShortName\":\"AMSR2\",\"LongName\":\"Advanced
+        Microwave Scanning Radiometer 2\",\"Characteristics\":[{\"Name\":\"SwathWidth\",\"Description\":\"Spacecraft
+        angular distance from orbital plane relative to the Equator.\",\"Value\":\"1450.0\",\"Unit\":\"Kilometers\",\"DataType\":\"FLOAT\"}]}]},{\"Type\":\"Water-based
+        Platforms\",\"ShortName\":\"Buoys\",\"Instruments\":[{\"ShortName\":\"DRIFTING
+        BUOYS\"}]}],\"MetadataSpecification\":{\"URL\":\"https://cdn.earthdata.nasa.gov/umm/collection/v1.18.6\",\"Name\":\"UMM-C\",\"Version\":\"1.18.6\"},\"ArchiveAndDistributionInformation\":{\"FileArchiveInformation\":[{\"Format\":\"netCDF-4\",\"FormatType\":\"Native\",\"AverageFileSize\":700,\"AverageFileSizeUnit\":\"MB\",\"TotalCollectionFileSizeBeginDate\":\"2002-06-01T00:00:00.000Z\"}],\"FileDistributionInformation\":[{\"Format\":\"netCDF-4\",\"FormatType\":\"Native\",\"AverageFileSize\":700,\"AverageFileSizeUnit\":\"MB\",\"TotalCollectionFileSizeBeginDate\":\"2002-06-01T00:00:00.000Z\"}]}}}]}"
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - CMR-Hits, CMR-Request-Id, X-Request-Id, CMR-Scroll-Id, CMR-Search-After, CMR-Timed-Out,
+        CMR-Shapefile-Original-Point-Count, CMR-Shapefile-Simplified-Point-Count
+      cmr-hits:
+      - '1'
+      cmr-request-id:
+      - 37aba5a7-e904-49eb-99fd-e1f7fb31d4c6
+      - 37aba5a7-e904-49eb-99fd-e1f7fb31d4c6
+      cmr-search-after:
+      - '["ghrsst level 4 mur global foundation sea surface temperature analysis (v4.1)","POCLOUD","MUR-JPL-L4-GLOB-v4.1","4.1",1996881146,61]'
+      cmr-took:
+      - '10'
+      connection:
+      - keep-alive
+      content-length:
+      - '34804'
+      content-md5:
+      - 27c4ee311512840b1288c034ef89b677
+      content-sha1:
+      - a9d1c2322f9f0a2a006df28a2abef90d7a810a03
+      content-type:
+      - application/vnd.nasa.cmr.umm_results+json;version=1.18.6; charset=utf-8
+      date:
+      - Fri, 06 Nov 2026 10:07:28 GMT
+      server:
+      - ServerTokens ProductOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      vary:
+      - Accept-Encoding
+      via:
+      - 1.1 359a7fead5ad9eab81fdaf8f2429f892.cloudfront.net (CloudFront)
+      x-amz-cf-id:
+      - bDP8VwTbmGSywW8EVYJAoXvLNRABcGfvv2AEqdelj4dydAm5t6iTVQ==
+      x-amz-cf-pop:
+      - MAD53-P6
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - bDP8VwTbmGSywW8EVYJAoXvLNRABcGfvv2AEqdelj4dydAm5t6iTVQ==
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
