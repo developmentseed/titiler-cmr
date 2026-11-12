@@ -39,8 +39,14 @@ from isodate import parse_duration
 from PIL import Image
 from pydantic import BaseModel, FiniteFloat
 from rasterio.crs import CRS
+from rio_tiler.utils import output_size
 from titiler.core.algorithm import algorithms as available_algorithms
-from titiler.core.dependencies import CoordCRSParams, DefaultDependency, DstCRSParams
+from titiler.core.dependencies import (
+    CoordCRSParams,
+    DefaultDependency,
+    DstCRSParams,
+    PartFeatureParams,
+)
 from titiler.core.factory import BaseFactory, FactoryExtension
 from titiler.core.models.mapbox import TileJSON
 from titiler.core.resources.enums import ImageType
@@ -521,6 +527,8 @@ def timeseries_cmr_query_no_bbox(
 def _check_timeseries_size(
     *,
     steps: Sequence[GranuleSearch],
+    image_params: PartFeatureParams,
+    is_xarray: bool,
     bounds: tuple[float, float, float, float],
     coord_crs: CRS | None,
     client: Client,
@@ -529,9 +537,18 @@ def _check_timeseries_size(
 ) -> None:
     """Reject a timeseries request that is too large.
 
-    Each step is sized by its AOI at the collection's native resolution, which
-    takes a CMR collection lookup. A collection whose CMR record does not
-    include a resolution is not checked.
+    Each step's AOI is sized at the collection's native resolution, which
+    takes a CMR collection lookup, and its output size follows from width,
+    height, and max_size the way rio-tiler derives it. A rasterio step reads
+    at its output size. An xarray step is sized by its AOI.
+
+    The AOI is sized in degrees, but each step reads in dst_crs, or in
+    coord_crs when dst_crs is unset. A projected read CRS far from the
+    equator can change the output that a lone width or height, or max_size,
+    implies.
+
+    A collection whose CMR record does not include a resolution is not
+    checked.
 
     Raises:
         HTTPException: 400 if one step, or all steps together, are over the
@@ -552,21 +569,42 @@ def _check_timeseries_size(
         return
 
     native_height, native_width = native
-    pixels_per_step = native_height * native_width
+    output_height, output_width = output_size(
+        dataset_height=native_height,
+        dataset_width=native_width,
+        output_height=image_params.height,
+        output_width=image_params.width,
+        max_size=image_params.max_size,
+    )
+    native_pixels = native_height * native_width
+    output_pixels = output_height * output_width
+    pixels_per_step = output_pixels
+    tip = ""
+
+    if is_xarray:
+        pixels_per_step = native_pixels
+        remedy = "a smaller AOI"
+    elif image_params.height or image_params.width:
+        remedy = "a smaller width and height"
+    elif image_params.max_size:
+        remedy = "a smaller AOI or max_size"
+    else:
+        remedy = "a smaller AOI"
+        tip = ", or set width and height or max_size"
 
     if pixels_per_step > settings.time_series_max_image_size:
         raise HTTPException(
             status_code=400,
             detail=f"Each time step of this request is too large for the {endpoint} "
-            "endpoint for this dataset. Try again with a smaller AOI.",
+            f"endpoint for this dataset. Try again with {remedy}{tip}.",
         )
 
     if pixels_per_step * len(steps) > max_total_size:
         raise HTTPException(
             status_code=400,
             detail=f"This request is too large for the {endpoint} endpoint for "
-            "this dataset. Try again with a smaller AOI or fewer time steps than "
-            f"{len(steps)}.",
+            f"this dataset. Try again with {remedy} or fewer time steps than "
+            f"{len(steps)}{tip}.",
         )
 
 
@@ -605,6 +643,7 @@ class TimeseriesExtension(FactoryExtension):
 
     def register_statistics(self, factory: CMRTilerFactory):
         """Register timeseries statistics endpoint"""
+        is_xarray = factory.dataset_reader == XarrayGranuleReader
 
         @factory.router.post(
             "/timeseries/statistics",
@@ -646,6 +685,8 @@ class TimeseriesExtension(FactoryExtension):
             logging.info("Checking size of time series request")
             _check_timeseries_size(
                 steps=query,
+                image_params=image_params,
+                is_xarray=is_xarray,
                 bounds=get_geojson_bounds(geojson),
                 coord_crs=coord_crs,
                 client=request.app.state.client,
@@ -820,6 +861,8 @@ class TimeseriesExtension(FactoryExtension):
 
             _check_timeseries_size(
                 steps=query,
+                image_params=image_params,
+                is_xarray=is_xarray,
                 bounds=(minx, miny, maxx, maxy),
                 coord_crs=coord_crs,
                 client=request.app.state.client,
