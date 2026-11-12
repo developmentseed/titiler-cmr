@@ -3,6 +3,7 @@
 from typing import Tuple
 
 import pytest
+from geojson_pydantic import Feature, Polygon
 
 
 @pytest.mark.vcr
@@ -98,3 +99,277 @@ def test_rasterio_part(
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/tiff; application=geotiff"
+
+
+@pytest.mark.vcr
+@pytest.mark.parametrize(
+    "size_params",
+    [{"width": 256, "height": 256}, {"max_size": 256}],
+    ids=["width-height", "max_size"],
+)
+def test_timeseries_statistics_sized_by_output_size(
+    app, rasterio_query_params, size_params
+) -> None:
+    """A request that sets its output size is sized by it, not by its AOI."""
+    # At HLS's native 30m, this 3 x 3 degree AOI is over the per-step limit.
+    geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(-93, 46, -90, 49),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            # HLS does not have granules this early, so the step does not read data.
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            **size_params,
+        },
+        json=geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["properties"]["statistics"] == {}
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_aoi_limit_suggests_output_size(
+    app, rasterio_query_params
+) -> None:
+    """A rasterio request over the AOI limit is told that it can set an output size."""
+    # At HLS's native 30m, this 3 x 3 degree AOI is over the per-step limit.
+    geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(-93, 46, -90, 49),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+        },
+        json=geojson,
+    )
+
+    assert response.status_code == 400
+    assert "set width and height or max_size" in response.json()["detail"]
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_width_height_limit(
+    app, rasterio_query_params, mn_geojson
+) -> None:
+    """A width and height over the per-step limit are rejected even for a small AOI."""
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            # 8000 x 8000 pixels is over the per-step limit of 7500 x 7500.
+            "width": 8000,
+            "height": 8000,
+        },
+        json=mn_geojson,
+    )
+
+    assert response.status_code == 400
+    assert "width and height" in response.json()["detail"]
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_max_size_limit(app, rasterio_query_params) -> None:
+    """A max_size that caps the AOI above the per-step limit is rejected."""
+    # At HLS's native 30m, this 3 x 3 degree AOI is about 1e8 pixels per step,
+    # and max_size caps it at 8000 x 8000, still over the limit of 7500 x 7500.
+    geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(-93, 46, -90, 49),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            "max_size": 8000,
+        },
+        json=geojson,
+    )
+
+    assert response.status_code == 400
+    assert "Try again with a smaller AOI or max_size." in response.json()["detail"]
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_max_size_over_native_size(
+    app, rasterio_query_params, mn_geojson
+) -> None:
+    """A max_size larger than the AOI at native resolution does not enlarge it."""
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            # HLS does not have granules this early, so the step does not read data.
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            # rio-tiler never enlarges a read to max_size, so this AOI is read
+            # at its native size of about 820 x 403 pixels, under the limit,
+            # although 8000 x 8000 is over it.
+            "max_size": 8000,
+        },
+        json=mn_geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["properties"]["statistics"] == {}
+
+
+@pytest.mark.vcr
+def test_timeseries_gif_sized_by_output_size(app, rasterio_query_params) -> None:
+    """A GIF request with a custom size is sized by it, not by its AOI."""
+    # At HLS's native 30m, this 3 x 3 degree AOI is over the per-step limit.
+    response = app.get(
+        "/rasterio/timeseries/bbox/-93,46,-90,49/256x256.gif",
+        params={
+            **rasterio_query_params,
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    # HLS does not have granules this early, so no step returns a frame.
+    assert response.status_code == 204
+
+
+@pytest.mark.vcr
+def test_timeseries_gif_output_size_times_steps_limit(
+    app,
+    rasterio_query_params,
+    mn_bounds: Tuple[float, float, float, float],
+) -> None:
+    """Each step's output size counts toward the GIF endpoint's total limit."""
+    # 7 steps of 4000 x 4000 pixels are over the total limit of 1e8, although
+    # each step is under the per-step limit.
+    response = app.get(
+        f"/rasterio/timeseries/bbox/{','.join(str(coord) for coord in mn_bounds)}"
+        "/4000x4000.gif",
+        params={
+            **rasterio_query_params,
+            "temporal": "2000-01-01T00:00:00Z/2000-01-07T23:59:59Z",
+            "step": "P1D",
+        },
+    )
+
+    assert response.status_code == 400
+    assert "fewer time steps than 7" in response.json()["detail"]
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_negative_width(
+    app, rasterio_query_params, mn_geojson
+) -> None:
+    """A negative width does not let a large height past the per-step limit."""
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            # rio-tiler reads a negative width as 1, so this step is 1 x 1e8
+            # pixels, over the per-step limit of 7500 x 7500.
+            "width": -1,
+            "height": 100_000_000,
+        },
+        json=mn_geojson,
+    )
+
+    assert response.status_code == 400
+    assert "width and height" in response.json()["detail"]
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_width_only(app, rasterio_query_params) -> None:
+    """A request that sets only width is sized by the output that width implies."""
+    # At HLS's native 30m, this 3 x 3 degree AOI is over the per-step limit,
+    # but rio-tiler reads it at 256 x 256 pixels to keep its aspect ratio.
+    geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(-93, 46, -90, 49),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            # HLS does not have granules this early, so the step does not read data.
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            "width": 256,
+        },
+        json=geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["properties"]["statistics"] == {}
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_max_size_elongated_aoi(
+    app, rasterio_query_params
+) -> None:
+    """A max_size that caps a narrow AOI below the per-step limit is accepted.
+
+    Sizing max_size as a square, 8000 x 8000, would wrongly reject this request.
+    """
+    # At HLS's native 30m, this 30 x 0.5 degree AOI is about 1e5 x 1667 pixels,
+    # which max_size shrinks to about 8000 x 134, under the per-step limit.
+    geojson = Feature(
+        type="Feature",
+        properties={},
+        geometry=Polygon.from_bounds(-100, 46, -70, 46.5),
+    ).model_dump(exclude_none=True)
+
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            # HLS does not have granules this early, so the step does not read data.
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            "max_size": 8000,
+        },
+        json=geojson,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["properties"]["statistics"] == {}
+
+
+@pytest.mark.vcr
+def test_timeseries_statistics_unknown_collection(
+    app, rasterio_query_params, mn_geojson
+) -> None:
+    """An unknown collection is reported before any step is sent."""
+    response = app.post(
+        "/rasterio/timeseries/statistics",
+        params={
+            **rasterio_query_params,
+            "collection_concept_id": "C9999999999-LPCLOUD",
+            "temporal": "2000-01-01T00:00:00Z/2000-01-01T23:59:59Z",
+            "step": "P1D",
+            "width": 256,
+            "height": 256,
+        },
+        json=mn_geojson,
+    )
+
+    assert response.status_code == 404
