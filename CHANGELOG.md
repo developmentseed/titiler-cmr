@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.6](https://github.com/developmentseed/titiler-cmr/compare/v1.1.5...v1.1.6) (2026-11-18)
+
+
+### Bug Fixes
+
+* count output size in xarray timeseries steps ([eaa37de](https://github.com/developmentseed/titiler-cmr/commit/eaa37de8c5979a27a0ec18dd694d381cb194fd0c))
+* forward GIF width and height to every step ([2865648](https://github.com/developmentseed/titiler-cmr/commit/2865648ccfd37a69b66cf9ef2c209987323c52a0))
+* size rasterio timeseries steps by output size ([fd455b0](https://github.com/developmentseed/titiler-cmr/commit/fd455b0f7d9f255ed1303700e49ea2d30454a3a2)), closes [#214](https://github.com/developmentseed/titiler-cmr/issues/214)
+
+
+### Documentation
+
+* describe how timeseries requests are sized ([675eb88](https://github.com/developmentseed/titiler-cmr/commit/675eb881ecc081d19fa86c4df48428e41153a945))
+
 ## [1.1.5](https://github.com/developmentseed/titiler-cmr/compare/v1.1.4...v1.1.5) (2026-11-10)
 
 
