@@ -296,3 +296,28 @@ during request handling), this field is derived from the `otelTraceID` injected 
 outside an active span (cold start, background tasks), it falls back to `_X_AMZN_TRACE_ID` from
 the environment. The `otelTraceID` and `otelSpanID` fields are also emitted as separate fields
 on every in-span log record.
+
+## AWS account setup: Transaction Search
+
+X-Ray's OTLP endpoint only accepts spans when
+[CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html)
+is enabled in the account and region. Without it, no traces appear and the function logs
+`OTLP export failed: status=... body=...` on each export.
+
+Transaction Search is an account-wide, per-region setting, so an account administrator must
+enable it. It is not managed by titiler-cmr's CDK stack since whichever stack owns this setting
+controls tracing for every service in the region. We recommend enabling it with the CLI or
+console by following
+[Enable Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html).
+The documentation also explains how to enable it using CloudFormation which might be preferable
+if you have a single account-wide configuration stack.
+
+Once enabled:
+
+- Spans from every service in the account and region, including segments sent with `PutTraceSegments`, are stored in
+  the shared `aws/spans` log group. Its retention defaults to never expire, so set it explicitly (classic X-Ray keeps
+  30 days).
+- Billing moves from per-trace to span ingestion and indexing.
+
+To verify, check that the `OTLP export failed` errors stop, then look up a log record's `xray_trace_id` in
+Transaction Search.
