@@ -376,6 +376,18 @@ async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
     raise HTTPException(status_code=response.status_code, detail=response.text)
 
 
+def _combine_statistics(
+    responses: Sequence[HttpxResponse],
+    datetime_strs: Sequence[str],
+) -> dict[str, Any]:
+    """Map each datetime to the statistics parsed from its step's response."""
+    return {
+        datetime_str: response.json()["properties"]["statistics"]
+        for response, datetime_str in zip(responses, datetime_strs)
+        if response.status_code == 200
+    }
+
+
 def _encode_gif(frames: Sequence[Image.Image], fps: int) -> io.BytesIO:
     """Encode *frames* as a looping animated GIF played at *fps*.
 
@@ -747,12 +759,9 @@ class TimeseriesExtension(FactoryExtension):
             datetime_strs = [d.temporal for d in query]
             if geojson.properties is None:
                 geojson.properties = {}
-            geojson.properties["statistics"] = {}
-            for response, datetime_str in zip(timestep_requests, datetime_strs):
-                if response.status_code == 200:
-                    geojson.properties["statistics"][datetime_str] = response.json()[
-                        "properties"
-                    ]["statistics"]
+            geojson.properties["statistics"] = await run_in_threadpool(
+                _combine_statistics, timestep_requests, datetime_strs
+            )
 
             logging.info(f"Time to create output: {time() - combine_start:.2f}s")
             logging.info(f"Total time: {time() - start_time:.2f}s")
