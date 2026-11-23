@@ -376,6 +376,24 @@ async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
     raise HTTPException(status_code=response.status_code, detail=response.text)
 
 
+def _encode_gif(frames: Sequence[Image.Image], fps: int) -> io.BytesIO:
+    """Encode *frames* as a looping animated GIF played at *fps*.
+
+    Decoding the lazily opened frames and encoding the GIF are both CPU bound.
+    """
+    gif_bytes = io.BytesIO()
+    frames[0].save(
+        gif_bytes,
+        format="GIF",
+        save_all=True,
+        append_images=frames[1:],
+        loop=0,
+        duration=1000 // fps,
+    )
+    gif_bytes.seek(0)
+    return gif_bytes
+
+
 # The rest is titiler-cmr specific
 
 TimeseriesCMRQueryParameters = List[GranuleSearch]
@@ -930,18 +948,7 @@ class TimeseriesExtension(FactoryExtension):
             logging.info("Starting GIF creation with %d frames", len(valid_pngs))
             gif_start = time()
 
-            gif_bytes = io.BytesIO()
-
-            valid_pngs[0].save(
-                gif_bytes,
-                format="GIF",
-                save_all=True,
-                append_images=valid_pngs[1:],
-                loop=0,
-                duration=1000 // fps,
-            )
-
-            gif_bytes.seek(0)
+            gif_bytes = await run_in_threadpool(_encode_gif, valid_pngs, fps)
 
             logging.info(f"Time to create GIF: {time() - gif_start:.2f}s")
             logging.info(f"Total time: {time() - start_time:.2f}s")
