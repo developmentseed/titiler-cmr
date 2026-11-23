@@ -40,6 +40,7 @@ from PIL import Image
 from pydantic import BaseModel, FiniteFloat
 from rasterio.crs import CRS
 from rio_tiler.utils import output_size
+from starlette.concurrency import run_in_threadpool
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import (
     CoordCRSParams,
@@ -689,7 +690,8 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
-            _check_timeseries_size(
+            await run_in_threadpool(
+                _check_timeseries_size,
                 steps=query,
                 image_params=image_params,
                 is_xarray=is_xarray,
@@ -865,7 +867,8 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
 
-            _check_timeseries_size(
+            await run_in_threadpool(
+                _check_timeseries_size,
                 steps=query,
                 image_params=image_params,
                 is_xarray=is_xarray,
