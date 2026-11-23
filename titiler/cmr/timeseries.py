@@ -363,14 +363,14 @@ async def _fetch_statistics(
 async def _fetch_tilejson(client: AsyncClient, url: str) -> dict[str, Any]:
     """Fetch a TileJSON sub-request and return the parsed JSON body."""
     response = await _timestep_request(client, url, method="GET")
-    return await asyncio.to_thread(response.json)
+    return await run_in_threadpool(response.json)
 
 
 async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
     """Fetch a PNG sub-request and return an opened PIL Image, or ``None`` for 204."""
     response = await _timestep_request(client, url, method="GET")
     if response.status_code == 200:
-        return await asyncio.to_thread(Image.open, io.BytesIO(response.content))
+        return await run_in_threadpool(Image.open, io.BytesIO(response.content))
     if response.status_code == 204:
         return None
     raise HTTPException(status_code=response.status_code, detail=response.text)
