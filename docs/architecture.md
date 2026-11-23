@@ -216,6 +216,9 @@ imported and the Lambda function has `Tracing.DISABLED`. When enabled, the CDK s
 the X-Ray native OTLP ingestion endpoint (`xray:PutSpans`, `xray:PutSpansForIndexing`,
 `xray:PutTraceSegments`, `xray:PutTelemetryRecords`).
 
+The OTLP endpoint only accepts spans once CloudWatch Transaction Search is enabled in the
+account and region. See [Enabling X-Ray Transaction Search](transaction-search.md).
+
 ### Instrumentation setup
 
 The entire OTEL setup lives behind the `TITILER_CMR_TELEMETRY_ENABLED` setting and an

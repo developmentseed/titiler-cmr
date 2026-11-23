@@ -44,6 +44,7 @@ nav:
     - Compatibility Testing Tool: compatibility/tool.ipynb  
     - Compatibility Report: compatibility/report.ipynb
   - Architecture: architecture.md
+  - Enabling X-Ray Transaction Search: transaction-search.md
   - Migration Guide: migration.md
   - Development + Contributing: contributing.md
   - Release notes: release-notes.md
