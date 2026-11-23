@@ -238,10 +238,16 @@ Three instrumentors are activated:
 
 ### Trace export
 
-Spans are exported synchronously via `SimpleSpanProcessor` (not `BatchSpanProcessor`).
-`SimpleSpanProcessor` has no background flush thread, which is correct for Lambda: the export
-HTTP call completes before the invocation returns, and there is no thread to lose during a
-SnapStart snapshot or freeze.
+Spans are exported via `BatchSpanProcessor`, which runs exports on a background worker
+thread rather than inline in `span.end()`. Exporting inline would block the asyncio event loop
+for an HTTPS round-trip per span, and endpoints that fan out many concurrent httpx
+sub-requests (e.g. `/timeseries`) would serialize behind those exports.
+
+Because Lambda freezes the execution environment as soon as the handler returns, buffered
+spans would otherwise sit in the queue until the next invocation (or be lost). The
+`lambda_handler` wrapper therefore calls `force_flush()` on the tracer provider after Mangum
+has produced the response and before returning, with a 5 second timeout so a slow X-Ray
+endpoint cannot push the invocation past the function timeout.
 
 The exporter sends OTLP/protobuf to X-Ray's native OTLP endpoint
 (`https://xray.{region}.amazonaws.com/v1/traces`). Requests are signed with AWS SigV4 using
