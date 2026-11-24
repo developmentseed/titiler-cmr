@@ -1,5 +1,7 @@
 """Test timeseries module"""
 
+import asyncio
+import threading
 import json
 from collections.abc import Callable
 from datetime import datetime
@@ -9,10 +11,10 @@ from urllib.parse import parse_qs, urlparse
 
 import numpy
 import pytest
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.routing import APIRoute
 from freezegun import freeze_time
-from httpx2 import AsyncClient, Client, MockTransport, Response, Timeout
+from httpx2 import AsyncClient, Client, MockTransport, Response, Timeout, ASGITransport
 from pydantic import TypeAdapter
 from rio_tiler.models import ImageData
 from starlette.applications import Starlette
@@ -682,3 +684,80 @@ async def test_timestep_client_has_no_timeout():
     """A slow step does not fail at httpx2's 5-second default timeout."""
     async for client in timestep_client():
         assert client.timeout == Timeout(None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("method", "url", "body"),
+    # Any AOI works, because each request ends at the size check's CMR lookup.
+    [
+        (
+            "POST",
+            "/rasterio/timeseries/statistics",
+            {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+                },
+            },
+        ),
+        ("GET", "/rasterio/timeseries/bbox/0,0,1,1.gif", None),
+    ],
+    ids=["statistics", "gif"],
+)
+async def test_timeseries_answers_other_requests_during_cmr_lookup(
+    method, url, body, rasterio_query_params
+) -> None:
+    """The app answers other requests while a time series request waits on CMR.
+
+    Before sending its steps, /timeseries/statistics and /timeseries/bbox check
+    whether the request is too large (`_check_timeseries_size`), which looks up the
+    collection in CMR with a sync client. If that lookup ran on the event loop,
+    every other request to the process would wait until CMR answered.
+    """
+    lookup_started = threading.Event()
+    other_request_answered = threading.Event()
+    answered_during_lookup: list[bool] = []
+
+    def cmr(request):
+        # Simulate a slow CMR answering the size check's collection lookup. Hold
+        # the answer until the app has answered another request, or for at most 5 s.
+        lookup_started.set()
+        answered_during_lookup.append(other_request_answered.wait(timeout=5))
+        # Answer that no collection matches, so the request ends here.
+        return Response(200, json={"hits": 0, "items": []})
+
+    app = FastAPI()
+    app.include_router(rasterio_factory.router, prefix="/rasterio")
+    app.state.client = Client(
+        base_url=CMR_GRANULE_SEARCH_API, transport=MockTransport(cmr)
+    )
+
+    @app.get("/ping")
+    async def ping():
+        return "pong"
+
+    async def ping_once_lookup_starts(client):
+        # Send the ping only once the lookup is under way. Waiting in a thread
+        # keeps this wait off the event loop, and the 5s cap keeps the test from
+        # hanging if the lookup never starts.
+        await asyncio.to_thread(lookup_started.wait, 5)
+        await client.get("/ping")
+        other_request_answered.set()
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as client:
+        await asyncio.gather(
+            client.request(
+                method,
+                url,
+                params={**rasterio_query_params, "step": "P1D"},
+                json=body,
+            ),
+            ping_once_lookup_starts(client),
+        )
+
+    assert answered_during_lookup == [True]
