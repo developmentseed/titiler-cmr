@@ -1,8 +1,8 @@
 """Test timeseries module"""
 
 import asyncio
-import threading
 import json
+import threading
 from collections.abc import Callable
 from datetime import datetime
 from typing import Any
@@ -14,7 +14,7 @@ import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.routing import APIRoute
 from freezegun import freeze_time
-from httpx2 import AsyncClient, Client, MockTransport, Response, Timeout, ASGITransport
+from httpx2 import ASGITransport, AsyncClient, Client, MockTransport, Response, Timeout
 from pydantic import TypeAdapter
 from rio_tiler.models import ImageData
 from starlette.applications import Starlette
@@ -750,7 +750,7 @@ async def test_timeseries_answers_other_requests_during_cmr_lookup(
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://testserver"
     ) as client:
-        await asyncio.gather(
+        response, _ = await asyncio.gather(
             client.request(
                 method,
                 url,
@@ -760,4 +760,5 @@ async def test_timeseries_answers_other_requests_during_cmr_lookup(
             ping_once_lookup_starts(client),
         )
 
+    assert response.status_code == 404, response.text
     assert answered_during_lookup == [True]
