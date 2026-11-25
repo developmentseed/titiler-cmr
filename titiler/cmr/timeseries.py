@@ -40,6 +40,7 @@ from PIL import Image
 from pydantic import BaseModel, FiniteFloat
 from rasterio.crs import CRS
 from rio_tiler.utils import output_size
+from starlette.concurrency import run_in_threadpool
 from titiler.core.algorithm import algorithms as available_algorithms
 from titiler.core.dependencies import (
     CoordCRSParams,
@@ -362,17 +363,47 @@ async def _fetch_statistics(
 async def _fetch_tilejson(client: AsyncClient, url: str) -> dict[str, Any]:
     """Fetch a TileJSON sub-request and return the parsed JSON body."""
     response = await _timestep_request(client, url, method="GET")
-    return await asyncio.to_thread(response.json)
+    return await run_in_threadpool(response.json)
 
 
 async def _fetch_png(client: AsyncClient, url: str) -> Optional[Image.Image]:
     """Fetch a PNG sub-request and return an opened PIL Image, or ``None`` for 204."""
     response = await _timestep_request(client, url, method="GET")
     if response.status_code == 200:
-        return await asyncio.to_thread(Image.open, io.BytesIO(response.content))
+        return await run_in_threadpool(Image.open, io.BytesIO(response.content))
     if response.status_code == 204:
         return None
     raise HTTPException(status_code=response.status_code, detail=response.text)
+
+
+def _combine_statistics(
+    responses: Sequence[HttpxResponse],
+    datetime_strs: Sequence[str],
+) -> dict[str, Any]:
+    """Map each datetime to the statistics parsed from its step's response."""
+    return {
+        datetime_str: response.json()["properties"]["statistics"]
+        for response, datetime_str in zip(responses, datetime_strs)
+        if response.status_code == 200
+    }
+
+
+def _encode_gif(frames: Sequence[Image.Image], fps: int) -> io.BytesIO:
+    """Encode *frames* as a looping animated GIF played at *fps*.
+
+    Decoding the lazily opened frames and encoding the GIF are both CPU bound.
+    """
+    gif_bytes = io.BytesIO()
+    frames[0].save(
+        gif_bytes,
+        format="GIF",
+        save_all=True,
+        append_images=frames[1:],
+        loop=0,
+        duration=1000 // fps,
+    )
+    gif_bytes.seek(0)
+    return gif_bytes
 
 
 # The rest is titiler-cmr specific
@@ -689,7 +720,8 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
             logging.info("Checking size of time series request")
-            _check_timeseries_size(
+            await run_in_threadpool(
+                _check_timeseries_size,
                 steps=query,
                 image_params=image_params,
                 is_xarray=is_xarray,
@@ -727,12 +759,9 @@ class TimeseriesExtension(FactoryExtension):
             datetime_strs = [d.temporal for d in query]
             if geojson.properties is None:
                 geojson.properties = {}
-            geojson.properties["statistics"] = {}
-            for response, datetime_str in zip(timestep_requests, datetime_strs):
-                if response.status_code == 200:
-                    geojson.properties["statistics"][datetime_str] = response.json()[
-                        "properties"
-                    ]["statistics"]
+            geojson.properties["statistics"] = await run_in_threadpool(
+                _combine_statistics, timestep_requests, datetime_strs
+            )
 
             logging.info(f"Time to create output: {time() - combine_start:.2f}s")
             logging.info(f"Total time: {time() - start_time:.2f}s")
@@ -865,7 +894,8 @@ class TimeseriesExtension(FactoryExtension):
             start_time = time()
             process = psutil.Process(os.getpid())
 
-            _check_timeseries_size(
+            await run_in_threadpool(
+                _check_timeseries_size,
                 steps=query,
                 image_params=image_params,
                 is_xarray=is_xarray,
@@ -927,18 +957,7 @@ class TimeseriesExtension(FactoryExtension):
             logging.info("Starting GIF creation with %d frames", len(valid_pngs))
             gif_start = time()
 
-            gif_bytes = io.BytesIO()
-
-            valid_pngs[0].save(
-                gif_bytes,
-                format="GIF",
-                save_all=True,
-                append_images=valid_pngs[1:],
-                loop=0,
-                duration=1000 // fps,
-            )
-
-            gif_bytes.seek(0)
+            gif_bytes = await run_in_threadpool(_encode_gif, valid_pngs, fps)
 
             logging.info(f"Time to create GIF: {time() - gif_start:.2f}s")
             logging.info(f"Total time: {time() - start_time:.2f}s")
