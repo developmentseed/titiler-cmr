@@ -1727,6 +1727,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/89/87/b27650a01459c8b428c30234ba39dcb31b2d50762b67989806fd754ce225/h5netcdf-1.8.2-py3-none-any.whl", hash = "sha256:a0306ee81addee2abe2d2e18433fd5e9f33952272f4db960679d2e41db4ac079", size = 63566, upload-time = "2026-10-27T07:26:48.917Z" },
 ]
 
+[package.optional-dependencies]
+pyfive = [
+    { name = "pyfive" },
+]
+
 [[package]]
 name = "h5py"
 version = "3.16.0"
@@ -4510,6 +4515,21 @@ wheels = [
 ]
 
 [[package]]
+name = "pyfive"
+version = "1.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fsspec" },
+    { name = "numcodecs" },
+    { name = "numpy" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c6/d8/887db703cb0b3901015e2756d3a7fc3a999340373f1e08b82a15c437bee8/pyfive-1.3.1.tar.gz", hash = "sha256:61caceaa2e41bdc3a28068cf722af64b57d50315da8001e20d38d206d5979bc1", size = 76307854, upload-time = "2026-11-02T14:52:23.9Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/58/a1/7ad9aabc74c79b4d3d3d0e34e6a0413c534f89930f669f1a4960e298d01d/pyfive-1.3.1-py3-none-any.whl", hash = "sha256:e1a6bc31535905c7515179e2e0ff7ad582ba358cc155888c57bde21b267c709a", size = 74712, upload-time = "2026-11-02T14:52:21.122Z" },
+]
+
+[[package]]
 name = "pygments"
 version = "2.21.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5953,7 +5973,7 @@ dependencies = [
     { name = "dask" },
     { name = "fastapi" },
     { name = "geojson-pydantic" },
-    { name = "h5netcdf" },
+    { name = "h5netcdf", extra = ["pyfive"] },
     { name = "h5py" },
     { name = "httpx2" },
     { name = "isodate" },
@@ -6028,7 +6048,7 @@ requires-dist = [
     { name = "dask", specifier = ">=2026.1.2" },
     { name = "fastapi", specifier = ">=0.124.4" },
     { name = "geojson-pydantic", specifier = ">=2.1.0" },
-    { name = "h5netcdf", specifier = ">=1.8.1" },
+    { name = "h5netcdf", extras = ["pyfive"], specifier = ">=1.8.2" },
     { name = "h5py", specifier = ">=3.15.1" },
     { name = "httpx2", specifier = ">=2.2.0" },
     { name = "isodate", specifier = ">=0.7.2" },

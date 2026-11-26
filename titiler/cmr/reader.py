@@ -33,6 +33,7 @@ from titiler.core.errors import BadRequestError
 from titiler.xarray.io import _parse_dsl
 from xarray import DataArray, Dataset
 from xarray import open_dataset as xarray_open_dataset
+from xarray.backends.locks import SerializableLock
 
 from titiler.cmr.credentials import EarthdataS3CredentialProvider
 from titiler.cmr.errors import InvalidMediaType, S3CredentialsEndpointMissing
@@ -272,7 +273,11 @@ def open_dataset(
             decode_timedelta=decode_times,
             phony_dims="sort",
             engine="h5netcdf",
-            lock=False,
+            # pyfive reads without h5py's process-wide lock, so the granules of
+            # one tile read in parallel. pyfive seeks and reads this one shared
+            # reader, so a lock per file keeps dask's chunk reads from interleaving.
+            driver_kwds={"backend": "pyfive"},
+            lock=SerializableLock(),
             chunks={},
             **kwargs,
         )
