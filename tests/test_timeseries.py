@@ -26,6 +26,7 @@ from titiler.cmr.query import CMR_GRANULE_SEARCH_API
 from titiler.cmr.timeseries import (
     TemporalMode,
     TimeseriesParams,
+    _combine_statistics,
     _timestep_request,
     build_request_urls,
     generate_datetime_ranges,
@@ -622,6 +623,40 @@ def test_timeseries_statistics_response_model_preserves_empty_interval(mn_geojso
     )
 
     assert output["properties"]["statistics"][interval] == sub_response
+
+
+def test_combine_statistics_leaves_out_steps_without_granules():
+    """/timeseries/statistics leaves out each step that has no granules.
+
+    /statistics answers such a step with 204 today, and with 200 and empty
+    statistics once titiler-cmr uses a titiler release that includes
+    developmentseed/titiler#1579. Keeping the empty answers would add an entry
+    without statistics for every step without granules, e.g., most days of a
+    daily series over a collection that revisits an area every few days. A step
+    whose granules have no valid pixels still has an entry for each band, so it
+    stays.
+    """
+    b1 = {"min": 0.1, "max": 0.9, "mean": 0.5, "count": 4.0}
+    b1_no_valid_pixels = {"min": None, "max": None, "mean": None, "count": 0.0}
+    responses = [
+        Response(200, json={"properties": {"statistics": {"b1": b1}}}),
+        Response(204),
+        Response(200, json={"properties": {"statistics": {}}}),
+        Response(200, json={"properties": {"statistics": {"b1": b1_no_valid_pixels}}}),
+    ]
+    datetime_strs = [
+        "2024-07-13T00:00:00+00:00/2024-07-13T23:59:59+00:00",
+        "2024-07-14T00:00:00+00:00/2024-07-14T23:59:59+00:00",
+        "2024-07-15T00:00:00+00:00/2024-07-15T23:59:59+00:00",
+        "2024-07-16T00:00:00+00:00/2024-07-16T23:59:59+00:00",
+    ]
+
+    assert _combine_statistics(responses, datetime_strs) == {
+        "2024-07-13T00:00:00+00:00/2024-07-13T23:59:59+00:00": {"b1": b1},
+        "2024-07-16T00:00:00+00:00/2024-07-16T23:59:59+00:00": {
+            "b1": b1_no_valid_pixels
+        },
+    }
 
 
 @pytest.mark.asyncio
