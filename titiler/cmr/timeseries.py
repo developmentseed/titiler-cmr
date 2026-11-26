@@ -380,11 +380,16 @@ def _combine_statistics(
     responses: Sequence[HttpxResponse],
     datetime_strs: Sequence[str],
 ) -> dict[str, Any]:
-    """Map each datetime to the statistics parsed from its step's response."""
+    """Map each datetime to the statistics parsed from its step's response.
+
+    A step without granules is left out, whether /statistics answered it with 204
+    or with 200 and empty statistics.
+    """
     return {
-        datetime_str: response.json()["properties"]["statistics"]
+        datetime_str: stats
         for response, datetime_str in zip(responses, datetime_strs)
         if response.status_code == 200
+        and (stats := response.json()["properties"]["statistics"])
     }
 
 
