@@ -162,6 +162,19 @@ cp -P \
     /asset/shared.libs/
 find /asset/shared.libs -name '*.so*' -not -type l | xargs -I{} patchelf --set-rpath '$ORIGIN' {}
 
+# Store each library once, under its soname, the name that binaries load it by.
+# Lambda rejects a bundle whose unzipped size exceeds 262,144,000 bytes, and
+# CDK's zip follows symlinks, storing a full copy of the file behind each one.
+# Every link that `cp -P` kept would add a copy (libgdal three times), needlessly
+# pushing the bundle toward that limit and leaving less room for new packages.
+for lib in /asset/shared.libs/*; do
+    [ -L "$lib" ] && continue
+    soname=$(patchelf --print-soname "$lib")
+    [ "$(basename "$lib")" = "$soname" ] || mv -f "$lib" "/asset/shared.libs/$soname"
+done
+
+find /asset/shared.libs -maxdepth 1 -type l -delete
+
 cp /usr/lib64/libexpat.so.1 /asset/
 find /usr/lib64 -maxdepth 1 \( -name 'libgfortran.so.5' -o -name 'libquadmath.so.0' \) \
     -exec cp -L {} /asset/ \;
