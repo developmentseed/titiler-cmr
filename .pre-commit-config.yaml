@@ -32,4 +32,4 @@ repos:
           - types-attrs
           - types-python-dateutil
           - types-requests
-          - pydantic>=2.14.2
+          - pydantic>=2.14.3
