@@ -489,11 +489,8 @@ def timeseries_cmr_query(  # noqa: C901
                 bounding_box=bbox_str,
             )
             for granule in get_granules(cmr_search, client=request.app.state.client):
-                rdt = (
-                    granule.temporal_extent.range_date_time
-                    if granule.temporal_extent
-                    else None
-                )
+                extent = granule.temporal_extent
+                rdt = extent.range_date_time if extent else None
                 if rdt and rdt.beginning_date_time:
                     g_start = datetime.fromisoformat(
                         rdt.beginning_date_time.replace("Z", "+00:00")
@@ -507,6 +504,13 @@ def timeseries_cmr_query(  # noqa: C901
                     )
                     midpoint = g_start + (g_end - g_start) / 2
                     temporal_params.append(midpoint.isoformat())
+                elif extent and extent.single_date_time:
+                    # a granule without a RangeDateTime gives its time as a
+                    # SingleDateTime (e.g. ASTER AST14DEM)
+                    single = datetime.fromisoformat(
+                        extent.single_date_time.replace("Z", "+00:00")
+                    )
+                    temporal_params.append(single.isoformat())
 
         else:
             raise HTTPException(

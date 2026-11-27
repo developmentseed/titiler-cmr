@@ -285,11 +285,16 @@ class RangeDateTime(BaseModel):
 
 
 class GranuleTemporalExtent(BaseModel):
-    """UMM TemporalExtent container for granules."""
+    """UMM TemporalExtent container for granules.
+
+    A granule gives its time either as a ``RangeDateTime`` or as a
+    ``SingleDateTime`` (e.g. ASTER AST14DEM).
+    """
 
     model_config = ConfigDict(populate_by_name=True)
 
     range_date_time: RangeDateTime | None = Field(None, alias="RangeDateTime")
+    single_date_time: str | None = Field(None, alias="SingleDateTime")
 
 
 class AdditionalAttribute(BaseModel):
