@@ -97,5 +97,5 @@ jobs:
           open=$(gh pr list --head refresh-lock --state open --json number --jq length)
           [ "$open" -eq 0 ] || exit 0
           gh pr create --head refresh-lock --title "chore(deps): refresh uv.lock" \
-            --label dependencies --label chore \
+            --label dependencies \
             --body "Monthly uv lock --upgrade. CI on this pull request fails without starting any job until someone closes and reopens it. If uv.lock conflicts with main, run the Refresh uv.lock workflow again (gh workflow run refresh-lock.yml) to rebuild this pull request from main."
