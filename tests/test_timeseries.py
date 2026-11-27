@@ -341,6 +341,59 @@ def test_timeseries_query_no_step_search_keeps_filters() -> None:
     assert "sort_key[]" not in params
 
 
+def test_timeseries_query_no_step_keeps_steps_within_temporal() -> None:
+    """Without step, a granule whose midpoint is outside temporal makes no step.
+
+    CMR returns every granule that overlaps the range, so a daily granule that
+    starts at 21:00 on the last day is returned too (issue #334).
+    """
+
+    def granule(n: int, start: str, end: str) -> dict[str, Any]:
+        return {
+            "meta": {
+                "concept-id": f"G{n}-TEST",
+                "native-id": f"granule-{n}",
+                "collection-concept-id": "C123",
+            },
+            "umm": {
+                "TemporalExtent": {
+                    "RangeDateTime": {
+                        "BeginningDateTime": start,
+                        "EndingDateTime": end,
+                    }
+                }
+            },
+        }
+
+    items = [
+        # midpoint 2023-12-31T19:00, before the range
+        granule(1, "2023-12-31T12:00:00Z", "2024-01-01T02:00:00Z"),
+        granule(2, "2023-12-31T21:00:00Z", "2024-01-01T21:00:00Z"),
+        granule(3, "2024-01-30T21:00:00Z", "2024-01-31T21:00:00Z"),
+        # midpoint 2024-02-01T09:00, after the range
+        granule(4, "2024-01-31T21:00:00Z", "2024-02-01T21:00:00Z"),
+    ]
+
+    def cmr(request):
+        return Response(200, json={"hits": len(items), "items": items})
+
+    app = Starlette()
+    app.state.client = Client(transport=MockTransport(cmr))
+
+    query = timeseries_cmr_query(
+        request=Request({"type": "http", "app": app}),
+        granule_search=GranuleSearch(collection_concept_id="C123"),
+        timeseries_params=TimeseriesParams(
+            temporal="2024-01-01T00:00:00Z/2024-01-31T23:59:59Z"
+        ),
+    )
+
+    assert [q.temporal for q in query] == [
+        "2024-01-01T09:00:00+00:00/2024-01-01T09:00:00+00:00",
+        "2024-01-31T09:00:00+00:00/2024-01-31T09:00:00+00:00",
+    ]
+
+
 @pytest.mark.vcr
 def test_timeseries_query_no_step(
     xarray_query_params: Callable[..., dict[str, str]],

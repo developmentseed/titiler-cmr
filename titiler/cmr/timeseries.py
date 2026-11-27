@@ -506,6 +506,13 @@ def timeseries_cmr_query(  # noqa: C901
                         else g_start
                     )
                     midpoint = g_start + (g_end - g_start) / 2
+                    # CMR returns every granule that overlaps the range, so a
+                    # granule can start inside it and have its midpoint after
+                    # the end (or end inside it, with its midpoint before the
+                    # start). The step is named and searched by its midpoint,
+                    # so leave such a step out.
+                    if not start <= midpoint <= search_end:
+                        continue
                     temporal_params.append(midpoint.isoformat())
 
         else:
