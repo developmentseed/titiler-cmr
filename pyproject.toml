@@ -117,6 +117,17 @@ exclude = ["tests/", "**/.mypy_cache", "**/.DS_Store"]
 
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }]
+# A 7-day cooldown for every resolution, the same window as Dependabot's
+# `cooldown`, so the monthly lock refresh (.github/workflows/refresh-lock.yml)
+# also leaves a new release a week to be caught. Unlike Dependabot's cooldown,
+# it also applies to Dependabot's security updates, so a security update fails
+# while its fix is less than 7 days old. It is set here rather than passed as
+# `--exclude-newer`, because uv records it in uv.lock, so a flag would make
+# every later `uv lock --check` without it fail. To take a newer release of one
+# package sooner (e.g., that security fix), add
+# `exclude-newer-package = { <name> = false }` here, and remove it once the
+# release is 7 days old.
+exclude-newer = "7 days"
 
 [tool.coverage.run]
 branch = true

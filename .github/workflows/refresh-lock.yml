@@ -1,0 +1,101 @@
+# Monthly lock refresh: re-lock every dependency to the newest release allowed,
+# and open a pull request when uv.lock changes, or update the one already open.
+#
+# Dependabot (configured in dependabot.yml) updates only the dependencies that
+# pyproject.toml lists, apart from boto3, so the following uv.lock entries go
+# stale without this workflow:
+#
+# - Indirect dependencies (packages in uv.lock that pyproject.toml does not
+#   list). Dependabot re-resolves the whole lock once per package, so checking
+#   every package in uv.lock takes longer than its 55-minute job limit, while
+#   `uv lock --upgrade` updates them all in one resolution.
+# - boto3, which Dependabot ignores (see dependabot.yml).
+#
+# A pull request that a workflow opens or updates with GITHUB_TOKEN gets CI runs
+# that fail without starting any job, so close and reopen it to run CI.
+name: Refresh uv.lock
+
+on:
+  schedule:
+    - cron: "0 6 1 * *" # 06:00 UTC on the first of each month
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  # This job runs `uv lock --upgrade`, which picks the newest allowed version of
+  # every dependency and writes uv.lock. --no-build keeps uv from running any
+  # package's build code, and as a second guard this job holds only read
+  # access. The job that holds write access never runs uv, and only commits the
+  # uv.lock this job uploads. Jobs run on separate runners, so nothing that runs
+  # here can reach the write token. Steps within one job share a runner, so code
+  # from an earlier step could reach a token scoped to a later one.
+  lock:
+    # Only main is refreshed. A dispatch from another branch skips both jobs.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # This job writes uv.lock, so it takes the newest uv that this setup-uv
+      # release knows rather than the release the other workflows pin, because
+      # an older uv re-locks with an older lock `revision` than Dependabot's.
+      # uv changes only when Dependabot bumps setup-uv.
+      - name: Set up uv
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          version: latest-known
+          enable-cache: false
+      - name: Re-lock every dependency
+        run: uv lock --upgrade --no-build
+      - name: Upload the lock
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: uv-lock
+          path: uv.lock
+
+  pull-request:
+    needs: lock
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Unpack outside the checkout and copy in only uv.lock, so a tampered
+      # artifact cannot plant other files (e.g., .git/config) where git runs
+      # with the write token.
+      - name: Download the lock
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: uv-lock
+          path: ${{ runner.temp }}/uv-lock
+      # Each run rebuilds the lock from main and force-pushes it to the same
+      # branch, so an open refresh pull request is updated in place instead of
+      # being joined by a second one.
+      - name: Open or update the pull request if the lock changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp "$RUNNER_TEMP/uv-lock/uv.lock" uv.lock
+          git diff --quiet -- uv.lock && exit 0
+          gh auth setup-git
+          git switch -c refresh-lock
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "chore(deps): refresh uv.lock" -- uv.lock
+          git push --force origin refresh-lock
+          open=$(gh pr list --head refresh-lock --state open --json number --jq length)
+          [ "$open" -eq 0 ] || exit 0
+          gh pr create --head refresh-lock --title "chore(deps): refresh uv.lock" \
+            --label dependencies \
+            --body "Monthly uv lock --upgrade. CI on this pull request fails without starting any job until someone closes and reopens it. If uv.lock conflicts with main, run the Refresh uv.lock workflow again (gh workflow run refresh-lock.yml) to rebuild this pull request from main."

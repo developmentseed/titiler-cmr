@@ -1,12 +1,23 @@
 version: 2
 updates:
+  # Dependabot updates only the dependencies that pyproject.toml lists, and the
+  # monthly refresh-lock.yml workflow re-locks the rest of uv.lock.
   - package-ecosystem: uv
+    # Keep this equal to `exclude-newer` in pyproject.toml, because uv applies
+    # that setting to Dependabot's runs too. With a shorter cooldown here,
+    # Dependabot targets releases that uv refuses, and its job fails instead of
+    # opening a pull request for that package.
     cooldown:
       default-days: 7
     directory: "/"
-    # Include indirect dependencies, which only uv.lock pins.
-    allow:
-      - dependency-type: "all"
+    # Dependabot targets boto3's newest release, which requires a newer botocore
+    # than aiobotocore (via earthaccess and s3fs) allows, so its job fails.
+    # refresh-lock.yml resolves all three together, so it moves boto3 as soon
+    # as a new aiobotocore allows a newer botocore.
+    # Remove this ignore once Dependabot skips an update it cannot resolve
+    # instead of failing the job (dependabot/dependabot-core#15603).
+    ignore:
+      - dependency-name: "boto3"
     schedule:
       interval: monthly
     groups:
