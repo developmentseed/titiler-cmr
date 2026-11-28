@@ -1,6 +1,10 @@
 """Tests for reader.py"""
 
+import os
 import re
+import subprocess
+import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -95,3 +99,21 @@ def test_time_invariant_mask_with_sel() -> None:
     )
 
     assert da.dims == ("y", "x")
+
+
+def test_open_dataset_with_cache_disabled(tmp_path: Path) -> None:
+    """open_dataset opens a granule when TITILER_CMR_CACHE_DISABLE is set (#278)."""
+    path = tmp_path / "granule.nc"
+    xr.Dataset({"sst": (("y", "x"), np.zeros((2, 3)))}).to_netcdf(
+        path, engine="h5netcdf"
+    )
+    code = f"from titiler.cmr.reader import open_dataset; open_dataset('file://{path}')"
+
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        env={**os.environ, "TITILER_CMR_CACHE_DISABLE": "true"},
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr

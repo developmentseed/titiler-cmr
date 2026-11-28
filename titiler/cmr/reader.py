@@ -279,7 +279,10 @@ def open_dataset(
         read_time = time.perf_counter() - t0
         logger.info(f"reading {src_path} took {read_time:.2f}s")
 
-        cache_client[cache_key] = pickle.dumps(ds)
+        # With the cache disabled, cache_client has maxsize 0 and every write
+        # raises ValueError("value too large"), so don't write to it.
+        if not cache_config.disable:
+            cache_client[cache_key] = pickle.dumps(ds)
 
         return ds
 
