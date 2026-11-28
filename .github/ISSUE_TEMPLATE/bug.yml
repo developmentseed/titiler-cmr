@@ -1,0 +1,29 @@
+name: Bug
+description: titiler-cmr gives a wrong result, an error it should not, or a timeout
+type: Bug
+body:
+  - type: textarea
+    attributes:
+      label: How to reproduce
+      description: The full request URL, or the command, that shows the problem.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What happened
+      description: The response status and body, or a screenshot of the tile.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Version
+      description: >-
+        The `info.version` value at `/api` on the host you sent the request to
+        (e.g., https://openveda.cloud/api/titiler-cmr/api).
+    validations:
+      required: true
