@@ -2,6 +2,7 @@
 name: Release + deploy vX.X.X to staging
 about: Steps to release and test titiler-cmr
 title: Release + deploy vX.X.X to staging
+type: Task
 labels: ''
 assignees: ''
 
@@ -10,6 +11,7 @@ assignees: ''
 - [ ] Deploy the `main` branch to the test deployment API endpoint by dispatching [CDK Deploy Dev Workflow](https://github.com/developmentseed/titiler-cmr/actions/workflows/deploy-dev.yml) using the develop branch.
 - [ ] Test https://github.com/developmentseed/titiler-cmr/issues/57 with both the dev endpoint (https://v4jec6i5c0.execute-api.us-west-2.amazonaws.com) and https://staging.openveda.cloud/api/titiler-cmr
 - [ ] Assuming all is working, merge the release-please PR (changes will accumulate there from other merged PRs). This will create a new tag (vX.Y.Z) and generate a new release in GitHub.
+- [ ] Check that the lowest open milestone is vX.Y.Z (if it is not, shift the milestones as the Milestones section of CONTRIBUTING.md describes), then move its open issues to the next milestone and close it.
 - [ ] Email the mailing list (use bcc, ask Aimee or Henry for the list of email addresses)
 - [ ] Update the `TITILER_CMR_GIT_REF` github environment variable for the [smce-staging environment](https://github.com/NASA-IMPACT/veda-deploy/settings/environments/4556936903/edit) then dispatch the deployment to the `smce-staging` environment from [dispatch workflow in GitHub Actions](https://github.com/NASA-IMPACT/veda-deploy/actions/workflows/dispatch.yml) with only the `DEPLOY_TITILER_CMR` box checked
 - [ ] Once deploy completes, retest the requests in https://github.com/developmentseed/titiler-cmr/issues/57 on the staging endpoint (https://staging.openveda.cloud/api/titiler-cmr/)

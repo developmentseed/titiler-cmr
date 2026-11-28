@@ -1,0 +1,13 @@
+name: Task
+description: Anything that is not a bug or a feature, e.g., build, deploy, CI, dependencies, tests, or docs
+type: Task
+body:
+  - type: textarea
+    attributes:
+      label: What and why
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Acceptance criteria
+      description: The check that shows the task is finished.

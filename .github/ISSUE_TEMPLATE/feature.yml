@@ -1,0 +1,16 @@
+name: Feature
+description: A new capability a user can call
+type: Feature
+body:
+  - type: textarea
+    attributes:
+      label: What you are trying to do
+      description: >-
+        The task, any CMR collection it uses (by concept ID), and what stops
+        you today.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposal
+      description: How titiler-cmr could support it, if you have an idea.
