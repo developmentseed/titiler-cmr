@@ -341,6 +341,46 @@ def test_timeseries_query_no_step_search_keeps_filters() -> None:
     assert "sort_key[]" not in params
 
 
+def test_timeseries_query_no_step_single_date_time() -> None:
+    """A granule that gives its time as a SingleDateTime adds a step."""
+    times = [
+        "2020-02-14T19:07:31.93400Z",
+        "2020-02-21T19:13:50.24900Z",
+        "2020-02-28T19:19:54.54100Z",
+    ]
+    items = [
+        {
+            "meta": {
+                "concept-id": f"G{i}-LPCLOUD",
+                "native-id": f"AST14DEM_{i}",
+                "collection-concept-id": "C3306855744-LPCLOUD",
+            },
+            "umm": {"TemporalExtent": {"SingleDateTime": time}},
+        }
+        for i, time in enumerate(times)
+    ]
+    app = Starlette()
+    app.state.client = Client(
+        transport=MockTransport(
+            lambda _: Response(200, json={"hits": len(items), "items": items})
+        )
+    )
+
+    query = timeseries_cmr_query(
+        request=Request({"type": "http", "app": app}),
+        granule_search=GranuleSearch(collection_concept_id="C3306855744-LPCLOUD"),
+        timeseries_params=TimeseriesParams(
+            temporal="2020-02-01T00:00:00Z/2020-02-29T23:59:59Z"
+        ),
+    )
+
+    assert [q.temporal for q in query] == [
+        "2020-02-14T19:07:31.934000+00:00/2020-02-14T19:07:31.934000+00:00",
+        "2020-02-21T19:13:50.249000+00:00/2020-02-21T19:13:50.249000+00:00",
+        "2020-02-28T19:19:54.541000+00:00/2020-02-28T19:19:54.541000+00:00",
+    ]
+
+
 @pytest.mark.vcr
 def test_timeseries_query_no_step(
     xarray_query_params: Callable[..., dict[str, str]],
